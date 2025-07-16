@@ -1,0 +1,115 @@
+# ================================================================================================
+# PROJECT CONFIGURATION FOR DOCUMENT PROCESSING PIPELINE
+# Design: Niko Nikolov
+# Code: Various LLMs
+# ================================================================================================
+
+[project]
+name = "book_expert"
+version = "0.0.0"
+
+# ================================================================================================
+# [paths]
+# Defines the directory structure for the pipeline.
+# ================================================================================================
+[paths]
+# Directory for raw PDF inputs
+input_dir = "/home/niko/Dev/book_expert/data/raw"
+output_dir = "/home/niko/Dev/book_expert/data"
+
+[directories]
+polished_dir= "polished"
+chunks= "chunks"
+tts_chunks= "tts_chunks"
+wav = "wav"
+mp3 = "mp3"
+
+# ================================================================================================
+# [processing_dir]
+# Processing temp director
+# ================================================================================================
+[processing_dir]
+pdf_to_png = "/tmp/pdf_to_png"
+png_to_text= "/tmp/png_to_text"
+polish_text = "/tmp/polished"
+text_to_chunks = "/tmp/text_to_chunks"
+chunks_to_wav = "/tmp/chunks_to_wav"
+combine_chunks = "/tmp/combine_chunks"
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+[logs_dir]
+pdf_to_png = "/tmp/logs/pdf_to_png"
+png_to_text= "/tmp/logs/png_to_text"
+polish_text = "/tmp/logs/polished"
+text_to_chunks = "/tmp/logs/text_to_chunks"
+chunks_to_wav = "/tmp/logs/chunks_to_wav"
+combine_chunks = "/tmp/logs/combine_chunks"
+# ================================================================================================
+# [settings]
+# General settings for preprocessing and generation.
+# ================================================================================================
+[settings]
+# DPI for PDF-to-PNG conversion (higher DPI means better quality for OCR)
+dpi = 600
+# Number of parallel workers for tasks like PNG processing and text polishing
+workers = 4
+# Overlap size for chunking text
+overlap_chars = 2000
+
+[tesseract]
+language = "eng+equ"
+
+skip_blank_pages = true        # Enable blank page detection
+blank_threshold = 1000         # Standard deviation threshol
+
+
+# ================================================================================================
+# [api]
+# API settings for Nvidia's Large Language Model (used for text correction and concept extraction).
+# ================================================================================================
+[nvidia_api]
+url = "https://integrate.api.nvidia.com/v1/chat/completions"
+# Model for Stage 2: Text correction from OCR output
+text_fix_model = "deepseek-ai/deepseek-r1-0528"
+# Model for Stage 2: Visual concept extraction from images
+concept_model = "mistralai/mistral-medium-3-instruct"
+# Environment variable name for the Nvidia API key
+api_key_variable = "NVIDIA_API_KEY"
+
+max_concurrent_calls = 4
+
+
+# ================================================================================================
+# [google_api]
+# Google Gemini API settings for final narration polishing.
+# ================================================================================================
+[google_api]
+polish_model = "gemini-2.5-flash-lite-preview-06-17"
+# Environment variable name for the Google Gemini API key
+api_key_variable = "GEMINI_API_KEY"
+# Maximum number of retry attempts for Google API calls
+max_retries = 5
+# Delay in seconds between retry attempts for Google API
+retry_delay_seconds = 30
+
+
+# ================================================================================================
+# [f5_tts_settings]
+# Settings for the F5-TTS engine used in Stage 4 (Chunks to WAV).
+# ================================================================================================
+[f5_tts_settings]
+model = "E2TTS_Base"
+workers = 2
+# Timeout in seconds to prevent stalled TTS jobs
+timeout_duration = 300
+
+# ================================================================================================
+# [retry]
+# Settings for the failure retry mechanism for API calls and TTS conversion.
+# ================================================================================================
+[retry]
+# Maximum number of retry attempts for failed operations
+max_retries = 5
+# Delay in seconds between retry attempts
+retry_delay_seconds = 60
