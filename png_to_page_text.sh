@@ -2,15 +2,13 @@
 # png_to_page_text.sh
 # Design: Niko Nikolov
 # Code: Various LLMs
-# Revision: Gemini
-# ===============================================================================================
 # ## Code Guidelines:
 # - Declare variables before assignment to prevent undefined variable errors.
 # - Use explicit if/then/fi blocks for readability.
-# - Ensure all if/fi blocks are closed correctly
+# - Ensure all if/fi blocks are closed correctly.
 # - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
 # - Avoid mixing API calls.
-# - Lint with shellcheck for portability and correctness.
+# - Lint with shellcheck correctness.
 # - Use grep -q for silent checks.
 # - Check for unbound variables with set -u.
 # - Clean up unused variables and maintain detailed comments.
@@ -18,66 +16,53 @@
 # - Keep code concise, clear, and self-documented.
 # - Avoid 'useless cat' use cmd < file.
 # - If not in a function use declare not local.
-# - For Ghostscript use `ghostscript <cmd>`
-# - Use `rsync` not cp
-# - Initialize all variables
-# - Code should be self documenting
-# COMMENTS SHOULD NOT BE REMOVED, INCONCISTENCIES SHOULD BE UPDATED WHEN DETECTED
+# - Use `rsync` not cp.
+# - Initialize all variables.
+# - Code should be self-documenting.
+# - Flows should have solid retry logic.
+# - Do more with less. Do not add code for the sake of adding code. It should have clear purpose.
+# - No hardcoded values.
+# COMMENTS SHOULD NOT BE REMOVED, INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
 # USE MARKDOWN WITHIN THE COMMENT BLOCKS FOR COMMENTS
 # ===============================================================================================
 set -euo pipefail
 
 # --- Configuration ---
 CONFIG_FILE="$HOME/Dev/book_expert/project.toml"
-MAX_API_RETRIES=3
-BASE_RETRY_DELAY=5
 
 # --- Global Variables ---
-declare OUTPUT_DIR="" WORKERS=0 TEMP_PATH="" \
+declare OUTPUT_DIR="" MAX_RETRIES=5 \
 	NVIDIA_API_URL="" NVIDIA_API_KEY_VAR="" TEXT_FIX_MODEL="" CONCEPT_MODEL="" \
-	MAX_RETRIES=0 RETRY_DELAY_SECONDS=0 \
-	LOG_DIR="" FAILED_LOG="" LOG_FILE="" \
-	TESSERACT_LANG="eng+equ" MAX_CONCURRENT_API_CALLS=10
-declare -a worker_pids=()
-declare -a pdf_subdirs=()
-declare cleanup_called=false
+	LOG_DIR="" LOG_FILE="" GOOGLE_API_KEY_VAR="" POLISH_MODEL="" CURL_TIMEOUT=60 \
+	PROCESSING_DIR="" INPUT_DIR="" API_RETRY_DELAY=60
 
-# Semaphore for API rate limiting
-declare api_semaphore_dir=""
-
-get_config()
+# Helper functions that need to be defined elsewhere in your script
+error()
 {
-	local key="$1"
-	local default_value="${2:-}"
-	local value
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE") || {
-		if [[ -n $default_value ]]; then
-			echo "$default_value"
-			return 0
-		fi
-		error "Failed to read configuration key '$key' from $CONFIG_FILE"
-		exit 1
-	}
-	if [[ -z $value ]]; then
-		if [[ -n $default_value ]]; then
-			echo "$default_value"
-			return 0
-		fi
-		error "Missing required configuration key '$key' in $CONFIG_FILE"
-		exit 1
-	fi
-	echo "$value"
+	echo "ERROR: $1" >&2
 }
 
 log()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $*" | tee -a "${LOG_FILE:-/dev/null}"
+	echo "LOG: $1" >&2
 }
 
-error()
+print_line()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $*" >&2
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $*" >>"${LOG_FILE:-/dev/null}"
+	echo "================================================================"
+}
+
+get_config()
+{
+	local key="$1"
+	local value
+	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE")
+	if [[ -z $value ]]; then
+		echo "Missing or empty configuration key $key in $CONFIG_FILE"
+		return 1
+	fi
+	echo "$value"
+	return 0
 }
 
 check_dependencies()
@@ -85,619 +70,462 @@ check_dependencies()
 	local deps=("yq" "jq" "curl" "base64" "tesseract" "rsync" "mktemp" "nproc" "awk")
 	for dep in "${deps[@]}"; do
 		if ! command -v "$dep" >/dev/null; then
-			error "'$dep' is not installed."
+			echo "ERROR: '$dep' is not installed."
 			exit 1
 		fi
 	done
 
 	# Check if NVIDIA_API_KEY_VAR is set and then validate its value
 	if [[ -z ${NVIDIA_API_KEY_VAR:-} ]]; then
-		error "NVIDIA_API_KEY_VAR is not configured in $CONFIG_FILE."
+		echo "ERROR: NVIDIA_API_KEY_VAR is not configured in $CONFIG_FILE."
 		exit 1
 	elif [[ -z ${!NVIDIA_API_KEY_VAR:-} ]]; then
-		error "API key environment variable '$NVIDIA_API_KEY_VAR' is not set or is empty."
+		echo "ERROR: API key environment variable '$NVIDIA_API_KEY_VAR' is not set or is empty."
+		exit 1
+	fi
+
+	# Check Google API key if using Google API
+	if [[ -n ${GOOGLE_API_KEY_VAR:-} && -z ${!GOOGLE_API_KEY_VAR:-} ]]; then
+		echo "ERROR: API key environment variable '$GOOGLE_API_KEY_VAR' is not set or is empty."
 		exit 1
 	fi
 
 	# Validate other required variables
 	if [[ -z ${TEXT_FIX_MODEL:-} ]]; then
-		error "TEXT_FIX_MODEL is not set."
+		echo "ERROR: TEXT_FIX_MODEL is not set."
 		exit 1
 	fi
 
 	if [[ -z ${CONCEPT_MODEL:-} ]]; then
-		error "CONCEPT_MODEL is not set."
+		echo "ERROR: CONCEPT_MODEL is not set."
 		exit 1
 	fi
+
+	echo "INFO: NO DEPENDENCY ISSUES"
+	print_line
 }
 
-# Initialize API semaphore for rate limiting
-init_api_semaphore()
+# Extract text from PNG using Google API
+extract_text()
 {
-	api_semaphore_dir=$(mktemp -d -p "$TEMP_PATH" "api_semaphore.XXXXXX") || {
-		error "Failed to create API semaphore directory"
-		exit 1
+	local png_path="$1"
+	local prompt temp_file response b64_temp_file
+
+	# Create temporary files
+	temp_file=$(mktemp) || {
+		error "Failed to create temporary file"
+		return 1
 	}
 
-	# Create semaphore files
-	for ((i = 1; i <= MAX_CONCURRENT_API_CALLS; i++)); do
-		touch "$api_semaphore_dir/slot_$i"
-	done
+	b64_temp_file=$(mktemp) || {
+		error "Failed to create temporary file for base64 data"
+		rm -f "$temp_file"
+		return 1
+	}
 
-	log "API semaphore initialized with $MAX_CONCURRENT_API_CALLS concurrent slots"
-}
+	# Ensure cleanup on exit
+	trap 'rm -f "$temp_file" "$b64_temp_file"' RETURN
 
-# Acquire API semaphore slot
-acquire_api_slot()
-{
-	local slot_file
-	while true; do
-		for ((i = 1; i <= MAX_CONCURRENT_API_CALLS; i++)); do
-			slot_file="$api_semaphore_dir/slot_$i"
-			if (
-				flock -n 9
-				if [[ -f $slot_file ]]; then
-					rm -f "$slot_file"
-					echo "$i"
-					return 0
-				fi
-				return 1
-			) 9>"$slot_file.lock" 2>/dev/null; then
+	# Encode PNG to base64 and save to temporary file
+	if ! base64 -w 0 "$png_path" >"$b64_temp_file"; then
+		error "Failed to encode PNG to base64"
+		return 1
+	fi
+
+	prompt="**********
+GUIDELINES: * Avoid lists, headers, and emphasis like bold and italic, prefer plain paragraph text. * Instead describe any elements with words. * You are an expert STEM scientist with deep domain knowledge. * Read verbatim the provided text, fixing grammar and formatting for clarity and readability. * Expand and explain technical terms, code blocks, data, jargon, and abbreviations to ensure accessibility for a Masters-level audience. * This is not an interactive chat; output must be standalone text without conversational elements like introductions or confirmations. * The text will be part of a larger collection, narrated via text-to-speech (TTS) for accessibility, requiring clear and natural flow. * Do not include notes, feedback, or confirmations in the output, as they disrupt the narration flow. * Provide only the extracted and formatted text, suitable for TTS narration.
+**********"
+
+	# Create Google API payload by building JSON in parts to avoid argument limits
+	{
+		echo '{"contents":[{"parts":['
+		printf '{"text":%s},' "$(echo "$prompt" | jq -R -s .)"
+		printf '{"inline_data":{"mime_type":"image/png","data":%s}}' "$(jq -R -s . <"$b64_temp_file")"
+		echo ']}]}'
+	} >"$temp_file"
+
+	# Validate JSON
+	if ! jq . "$temp_file" >/dev/null 2>&1; then
+		error "Invalid JSON payload created"
+		return 1
+	fi
+
+	# Google API call with retry logic
+	for ((attempt = 1; attempt <= MAX_RETRIES; attempt++)); do
+
+		response=$(curl --fail --silent --show-error \
+			-H "x-goog-api-key: ${!GOOGLE_API_KEY_VAR}" \
+			-H "Content-Type: application/json" \
+			-X POST --data-binary "@$temp_file" \
+			--max-time "$CURL_TIMEOUT" \
+			"https://generativelanguage.googleapis.com/v1beta/models/$POLISH_MODEL:generateContent" 2>>"$LOG_FILE")
+
+		local http_code=$?
+
+		# Check for successful response
+		if [[ $http_code -eq 0 && -n $response ]]; then
+			# Extract response content
+			local extracted_response
+			extracted_response=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text // empty')
+
+			if [[ -n $extracted_response && $extracted_response != "null" ]]; then
+				echo "$extracted_response"
 				return 0
+			else
+				log "Empty or null response from Google API (attempt $attempt/$MAX_RETRIES)"
 			fi
-		done
-		sleep 0.1
-	done
-}
-
-# Release API semaphore slot
-release_api_slot()
-{
-	local slot_num="$1"
-	local slot_file="$api_semaphore_dir/slot_$slot_num"
-	touch "$slot_file"
-	rm -f "$slot_file.lock"
-}
-
-# Extract text content from API response
-extract_text_from_response()
-{
-	local response="$1"
-	local content
-
-	# Validate JSON first
-	if ! echo "$response" | jq empty 2>/dev/null; then
-		error "Invalid JSON response received"
-		echo "$response" | head -c 500 >&2
-		return 1
-	fi
-
-	# Check for API-level errors first
-	if echo "$response" | jq -e '.error' >/dev/null 2>&1; then
-		local error_msg
-		error_msg=$(echo "$response" | jq -r '.error.message // .error // "Unknown API error"')
-		error "API returned error: $error_msg"
-		return 1
-	fi
-
-	# Try to extract content from the response JSON
-	content=$(echo "$response" | jq -r '.choices[0].message.content // empty' 2>/dev/null)
-
-	if [[ -z $content || $content == "null" ]]; then
-		# Try alternative JSON structures
-		content=$(echo "$response" | jq -r '.content // .text // .response // empty' 2>/dev/null)
-	fi
-
-	if [[ -z $content || $content == "null" ]]; then
-		error "Failed to extract content from API response"
-		echo "$response" | jq . >&2 2>/dev/null || echo "$response" | head -c 500 >&2
-		return 1
-	fi
-
-	echo "$content"
-}
-
-call_api()
-{
-	local payload_file="$1"
-	local response_file
-	response_file=$(mktemp)
-	local http_code
-	local slot_num
-
-	# Acquire API rate limiting slot
-	slot_num=$(acquire_api_slot)
-
-	for ((i = 1; i <= MAX_API_RETRIES; i++)); do
-		local current_delay=$((BASE_RETRY_DELAY * (2 ** (i - 1))))
-
-		http_code=$(curl -sS -w "%{http_code}" --request POST \
-			--url "$NVIDIA_API_URL" \
-			--header "Authorization: Bearer ${!NVIDIA_API_KEY_VAR}" \
-			--header "Content-Type: application/json" \
-			--data-binary "@$payload_file" \
-			--connect-timeout 30 \
-			--max-time 300 \
-			--retry 60 \
-			-o "$response_file" 2>>"$LOG_FILE")
-
-		# Success case
-		if [[ $http_code -eq 200 && -s $response_file ]]; then
-			# Validate JSON and check for API errors
-			if jq empty <"$response_file" 2>/dev/null &&
-				! jq -e '.error' "$response_file" >/dev/null 2>&1; then
-				cat "$response_file"
-				rm -f "$response_file"
-				release_api_slot "$slot_num"
-				sleep 30
-				return 0
-			fi
+		else
+			log "Google API call failed (attempt $attempt/$MAX_RETRIES)"
 		fi
-
-		# Log specific error types
-		case $http_code in
-		429) log "Rate limited (attempt $i/$MAX_API_RETRIES). Waiting ${current_delay}s..." ;;
-		504) log "Gateway timeout (attempt $i/$MAX_API_RETRIES). Waiting ${current_delay}s..." ;;
-		500 | 502 | 503) log "Server error $http_code (attempt $i/$MAX_API_RETRIES). Waiting ${current_delay}s..." ;;
-		*) log "API call failed (attempt $i/$MAX_API_RETRIES) with HTTP code: $http_code. Waiting ${current_delay}s..." ;;
-		esac
 
 		# Don't sleep after the last attempt
-		if [[ $i -lt $MAX_API_RETRIES ]]; then
-			sleep "$current_delay"
+		if [[ $attempt -lt $MAX_RETRIES ]]; then
+			log "Waiting ${API_RETRY_DELAY}s before retry..."
+			sleep "$API_RETRY_DELAY"
 		fi
 	done
 
-	error "API call failed after $MAX_API_RETRIES attempts. Last HTTP code: $http_code"
-	if [[ -s $response_file ]]; then
-		error "Last response saved to: $response_file"
-		# Don't remove the file for debugging
-	fi
-	release_api_slot "$slot_num"
+	error "Google API call failed after $MAX_RETRIES attempts"
+	print_line
 	return 1
 }
 
-validate_text_directory()
-{
-	local pdf_name="$1"
-	local text_dir="$OUTPUT_DIR/$pdf_name/text"
-	local png_dir="$OUTPUT_DIR/$pdf_name/png"
-
-	if [[ ! -d $text_dir ]]; then return 1; fi
-	if [[ ! -d $png_dir ]]; then return 1; fi
-
-	# Optimize by using single find command with counting
-	local png_count text_count
-	png_count=$(find "$png_dir" -name "*.png" -type f | wc -l)
-	text_count=$(find "$text_dir" -name "*.txt" -type f | wc -l)
-
-	if [[ $text_count -ne $png_count ]]; then
-		log "Incomplete text directory for '$pdf_name'. PNG files: $png_count, Text files: $text_count. Reprocessing."
-		rm -rf "$text_dir"
-		return 1
-	fi
-	return 0
-}
-
-get_pdf_subdirs()
-{
-	local -a dirs=()
-	mapfile -d '' -t dirs < <(find "$OUTPUT_DIR" -mindepth 1 -maxdepth 1 -type d -print0 | sort -zV)
-	if [[ ${#dirs[@]} -eq 0 ]]; then
-		error "No PDF subdirectories found in $OUTPUT_DIR"
-		exit 1
-	fi
-
-	for dir in "${dirs[@]}"; do
-		pdf_subdirs+=("$(basename "$dir")")
-	done
-}
-
-run_tesseract_ocr()
-{
-	local image_path="$1"
-	tesseract "$image_path" stdout -l "$TESSERACT_LANG" 2>>"$LOG_FILE"
-}
-
-correct_text()
-{
-	local raw_text="$1"
-	local prompt="**********
-GUIDELINES: You are an expert STEM scientist with deep domain knowledge.
-* Correct OCR errors in the provided text, fixing grammar and formatting for clarity and readability.
-* Expand and explain technical terms, code blocks, data, jargon, and abbreviations to ensure accessibility for a Masters-level audience.
-* This is not an interactive chat; output must be standalone text without conversational elements like introductions or confirmations.
-* The text will be part of a larger collection, narrated via text-to-speech (TTS) for accessibility, requiring clear and natural flow.
-* If the text contains excessive garbage characters, focus only on coherent sections and discard the rest to maintain quality.
-* Do not include notes, feedback, or confirmations in the output, as they disrupt the narration flow.
-* Provide only the corrected and formatted text, suitable for TTS narration.
-**********
-	TEXT: $raw_text"
-
-	local payload_file response
-	payload_file=$(mktemp) || {
-		error "Failed to create temporary payload file"
-		return 1
-	}
-
-	jq -n --arg model "$TEXT_FIX_MODEL" --arg prompt "$prompt" \
-		'{model: $model, messages: [{"role": "user", "content": $prompt}], max_tokens: 8192, temperature: 0.3, top_p: 0.5, stream: false}' >"$payload_file" || {
-		error "Failed to create JSON payload"
-		rm -f "$payload_file"
-		return 1
-	}
-
-	if response=$(call_api "$payload_file"); then
-		rm -f "$payload_file"
-		extract_text_from_response "$response"
-	else
-		rm -f "$payload_file"
-		return 1
-	fi
-}
-
+# Extract concepts from PNG using NVIDIA API
 extract_concepts()
 {
-	local image_path="$1"
-	local corrected_text="$2"
-	local b64_file prompt_file payload_file response
-	b64_file=$(mktemp) || {
-		error "Failed to create base64 temp file"
-		return 1
-	}
-	prompt_file=$(mktemp) || {
-		error "Failed to create prompt temp file"
-		rm -f "$b64_file"
-		return 1
-	}
-	payload_file=$(mktemp) || {
-		error "Failed to create payload temp file"
-		rm -f "$b64_file" "$prompt_file"
+	local png_path="$1"
+	local temp_file response b64_temp_file
+
+	# Create temporary files for JSON payload and base64 data
+	temp_file=$(mktemp) || {
+		error "Failed to create temporary file"
 		return 1
 	}
 
-	base64 -w 0 "$image_path" >"$b64_file" || {
-		error "Failed to encode image to base64"
-		rm -f "$b64_file" "$prompt_file" "$payload_file"
+	b64_temp_file=$(mktemp) || {
+		error "Failed to create temporary file for base64 data"
+		rm -f "$temp_file"
 		return 1
 	}
 
-	local new_prompt="**********
-GUIDELINES: You are a STEM professor with deep expertise in technical domains.
-* Identify and explain concepts and technical information from a page of a technical document, focusing on clarity and insight.
-* Write as if contributing to a technical book, in an engaging, accessible style for a Masters student.
-* This is not an interactive chat; output must exclude conversational elements like introductions or summaries.
-* The text will be part of a larger collection, narrated via TTS for accessibility, requiring clear and natural flow.
-* Ensure explanations are insightful, reflecting a deep understanding of the concepts for educational value.
-* Avoid summaries, conclusions, or introductions to ensure seamless integration into the collection.
-* Do not reference 'text', 'page', 'image', or 'picture'; focus directly on the concepts as the main subject.
-* Start with the concepts as the primary focus for narrative coherence. It should be technical and detailed
-**********
-	TEXT: $corrected_text"
+	# Ensure cleanup on exit
+	trap 'rm -f "$temp_file" "$b64_temp_file"' RETURN
 
-	printf "%s" "$new_prompt" >"$prompt_file"
-
-	jq -n --arg model "$CONCEPT_MODEL" --rawfile prompt "$prompt_file" --rawfile b64 "$b64_file" \
-		'{model: $model, messages: [{"role": "user", "content": [{"type": "text", "text": $prompt}, {"type": "image_url", "image_url": {"url": ("data:image/png;base64," + $b64)}}]}], max_tokens: 8192, temperature: 0.5, top_p: 0.5, stream: false}' >"$payload_file" || {
-		error "Failed to create concept extraction payload"
-		rm -f "$b64_file" "$prompt_file" "$payload_file"
-		return 1
-	}
-
-	if response=$(call_api "$payload_file"); then
-		rm -f "$b64_file" "$prompt_file" "$payload_file"
-		extract_text_from_response "$response"
-	else
-		rm -f "$b64_file" "$prompt_file" "$payload_file"
-		return 1
-	fi
-}
-
-record_failure()
-{
-	local file_path="$1"
-	local error_msg="${2:-Unknown error}"
-	(
-		flock -x 201
-		echo "$file_path" >>"$FAILED_LOG"
-		echo "[$(date +'%Y-%m-%d %H:%M:%S')] FAILED: $file_path - $error_msg" >>"$LOG_FILE"
-	) 201>>"$FAILED_LOG.lock"
-}
-
-process_image()
-{
-	local image_file="$1"
-	local image_name pdf_name final_text_dir final_output_file temp_output_file
-	image_name=$(basename "$image_file")
-	# Navigate up two directories from image_file to get PDF name
-	pdf_name=$(basename "$(dirname "$(dirname "$image_file")")")
-	final_text_dir="$OUTPUT_DIR/$pdf_name/text"
-	final_output_file="$final_text_dir/${image_name%.png}.txt"
-	temp_output_file="$final_output_file.tmp.$$"
-
-	mkdir -p "$final_text_dir"
-
-	# Create lock file to prevent race conditions
-	local lock_file="$final_output_file.lock"
-
-	# Use exec to properly handle file descriptor
-	exec 9>"$lock_file"
-
-	if ! flock -n 9; then
-		log "Another process is handling: $pdf_name/$image_name"
-		exec 9>&-
-		return 0
-	fi
-
-	# Double-check after acquiring lock
-	if [[ -s $final_output_file ]]; then
-		log "File completed by another process: $pdf_name/$image_name"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 0
-	fi
-
-	log "--- Processing: $pdf_name/$image_name ---"
-
-	local raw_text corrected_text concepts
-
-	# OCR processing with error handling
-	if ! raw_text=$(run_tesseract_ocr "$image_file"); then
-		record_failure "$image_file" "OCR failed"
-		exec 9>&-
-		rm -f "$lock_file"
+	# Check file size before processing
+	local file_size
+	file_size=$(stat -f%z "$png_path" 2>/dev/null || stat -c%s "$png_path" 2>/dev/null || echo "0")
+	if [[ $file_size -gt 5000000 ]]; then # 5MB limit
+		error "PNG file too large for processing: ${file_size} bytes"
 		return 1
 	fi
 
-	if [[ -z $raw_text ]]; then
-		record_failure "$image_file" "OCR produced no text"
-		exec 9>&-
-		rm -f "$lock_file"
+	# Encode PNG to base64 and save to temporary file
+	if ! base64 -w 0 "$png_path" >"$b64_temp_file"; then
+		error "Failed to encode PNG to base64"
 		return 1
 	fi
 
-	# Text correction with error handling
-	if ! corrected_text=$(correct_text "$raw_text"); then
-		record_failure "$image_file" "Text correction failed"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 1
-	fi
+	local prompt="**********
+GUIDELINES: * You are a STEM professor with deep expertise in technical domains. * Identify and explain concepts and technical information from a page of a technical document, focusing on clarity and insight. * Write as if contributing to a technical book, in an engaging, accessible style for a Masters student. * This is not an interactive chat; output must exclude conversational elements like introductions or summaries. * The text will be part of a larger collection, narrated via TTS for accessibility, requiring clear and natural flow. * Ensure explanations are insightful, reflecting a deep understanding of the concepts for educational value. * Avoid summaries, conclusions, or introductions to ensure seamless integration into the collection. * Do not reference 'text', 'page', 'image', or 'picture'; focus directly on the concepts as the main subject. * Start with the concepts as the primary focus for narrative coherence. It should be technical and detailed. * This is not a summarization task. Do not provide summary. * Your response should not have any lists, emphasis, bold or italic, instead describe these elements or structure the text implicitly to convey it.
+**********"
 
-	if [[ -z $corrected_text ]]; then
-		record_failure "$image_file" "Text correction produced no output"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 1
-	fi
-
-	# Concept extraction with error handling
-	if ! concepts=$(extract_concepts "$image_file" "$corrected_text"); then
-		record_failure "$image_file" "Concept extraction failed"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 1
-	fi
-
-	if [[ -z $concepts ]]; then
-		record_failure "$image_file" "Concept extraction produced no output"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 1
-	fi
-
-	# Create final merged text with clear separation
+	# Create NVIDIA API payload by building JSON in parts to avoid argument limits
 	{
-		echo "$corrected_text"
-		echo ""
-		echo "$concepts"
-	} >"$temp_output_file"
+		printf '{"model":%s,' "$(echo "$CONCEPT_MODEL" | jq -R .)"
+		echo '"messages":[{"role":"user","content":['
+		printf '{"type":"text","text":%s},' "$(echo "$prompt" | jq -R -s .)"
+		printf '{"type":"image_url","image_url":{"url":%s}}' "$(printf "data:image/png;base64,%s" "$(cat "$b64_temp_file")" | jq -R .)"
+		echo ']}],'
+		echo '"max_tokens":8192,'
+		echo '"temperature":0.5,'
+		echo '"top_p":0.5,'
+		echo '"stream":false}'
+	} >"$temp_file"
 
-	if mv "$temp_output_file" "$final_output_file"; then
-		log "--- Success: $pdf_name/$image_name ---"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 0
-	else
-		rm -f "$temp_output_file"
-		record_failure "$image_file" "Failed to write final output"
-		exec 9>&-
-		rm -f "$lock_file"
+	# Validate JSON
+	if ! jq . "$temp_file" >/dev/null 2>&1; then
+		error "Invalid JSON payload created for concept extraction"
 		return 1
 	fi
-}
 
-process_worker_block()
-{
-	local worker_id="$1"
-	shift
-	local -a files_for_worker=("$@")
-	log "Worker $worker_id starting with ${#files_for_worker[@]} files."
+	# NVIDIA API call with retry logic
+	for ((attempt = 1; attempt <= MAX_RETRIES; attempt++)); do
+		log "NVIDIA: API call attempt $attempt/$MAX_RETRIES"
 
-	for file in "${files_for_worker[@]}"; do
-		if ! process_image "$file"; then
-			error "Worker $worker_id: Failed to process '$file'"
+		response=$(curl -sS --request POST \
+			--url "$NVIDIA_API_URL" \
+			--header "Authorization: Bearer ${!NVIDIA_API_KEY_VAR}" \
+			--header "Content-Type: application/json" \
+			--data-binary "@$temp_file" \
+			--connect-timeout 30 \
+			--max-time 60 \
+			2>>"$LOG_FILE")
+
+		local http_code=$?
+
+		# Check for successful response
+		if [[ $http_code -eq 0 && -n $response ]]; then
+			# Check if it's valid JSON with error
+			if echo "$response" | jq -e '.error' >/dev/null 2>&1; then
+				local error_msg
+				error_msg=$(echo "$response" | jq -r '.error.message // .error // "Unknown API error"')
+				log "API returned error in response: $error_msg (attempt $attempt/$MAX_RETRIES)"
+			else
+				# Success - extract and return response directly
+				local extracted_response
+				extracted_response=$(echo "$response" | jq -r '.choices[0].message.content // empty')
+				if [[ -n $extracted_response && $extracted_response != "null" ]]; then
+					echo "$extracted_response"
+					return 0
+				else
+					log "Empty or null response content (attempt $attempt/$MAX_RETRIES)"
+				fi
+			fi
+		else
+			log "API call failed (attempt $attempt/$MAX_RETRIES)"
+		fi
+
+		# Don't sleep after the last attempt
+		if [[ $attempt -lt $MAX_RETRIES ]]; then
+			log "Waiting ${API_RETRY_DELAY}s before retry..."
+			sleep "$API_RETRY_DELAY"
 		fi
 	done
 
-	log "Worker $worker_id finished."
+	error "API call failed after $MAX_RETRIES attempts"
+	return 1
 }
 
-run_parallel_processing()
+# Process a single PNG file with retry logic
+process_single_png()
 {
-	local -a files_to_process=("$@")
-	if [[ ${#files_to_process[@]} -eq 0 ]]; then return 0; fi
+	local png="$1"
+	local storage_dir="$2"
+	local max_retries="$MAX_RETRIES"
+	local retries=0
+	local base_name
+	base_name=$(basename "$png" .png)
+	local output_file="$storage_dir/${base_name}.txt"
 
-	log "Distributing ${#files_to_process[@]} files to $WORKERS workers."
+	# Ensure storage directory exists
+	mkdir -p "$storage_dir"
 
-	worker_pids=()
-	local total_files=${#files_to_process[@]}
-	local files_per_worker=$(((total_files + WORKERS - 1) / WORKERS))
-	local worker_delay=120
+	while [[ $retries -lt $max_retries ]]; do
+		echo "Processing: $png (attempt $((retries + 1))/$max_retries)"
 
-	for ((i = 0; i < WORKERS; i++)); do
-		local start_index=$((i * files_per_worker))
-		if ((start_index >= total_files)); then break; fi
+		# Extract text from the PNG
+		if extracted_text=$(extract_text "$png"); then
+			echo "Text extraction completed for: $png"
+			# Save extracted text to file
+			echo "$extracted_text" >"$output_file"
+			echo "Text saved to: '$output_file'"
 
-		local -a worker_files=("${files_to_process[@]:start_index:files_per_worker}")
-
-		if [[ ${#worker_files[@]} -gt 0 ]]; then
-			process_worker_block "$i" "${worker_files[@]}" &
-			worker_pids+=($!)
-
-			if [[ $i -lt $((WORKERS - 1)) && $((start_index + files_per_worker)) -lt $total_files ]]; then
-				sleep "$worker_delay"
+			echo "Starting concept extraction for: $png"
+			if concepts=$(extract_concepts "$png"); then
+				echo "Concept extraction completed for: $png"
+				# Append concepts to the same file
+				echo "$concepts" >>"$output_file"
+				echo "Concepts saved to: '$output_file'"
+				echo "SUCCESS: $output_file"
+				print_line
+				return 0
+			else
+				echo "Concept extraction failed for: $png" >&2
+				echo "ERROR: $output_file"
+				return 1
 			fi
+		else
+			echo "Text extraction failed for: $png" >&2
+			((retries++))
+			if [[ $retries -lt $max_retries ]]; then
+				echo "INFO: RETRYING $png (attempt $((retries + 1))/$max_retries)"
+				sleep "$API_RETRY_DELAY"
+			fi
+		fi
+		echo "SUCCESS: $png"
+		print_line
+	done
+
+	echo "ERROR: Failed to process $png after $max_retries retries"
+	return 1
+}
+
+# Process multiple PNG files
+process_pngs()
+{
+	local -a png_files=("$@")
+	local storage_dir="${png_files[-1]}" # Last argument is storage_dir
+	unset 'png_files[-1]'                # Remove storage_dir from array
+
+	for png in "${png_files[@]}"; do
+		if ! process_single_png "$png" "$storage_dir"; then
+			echo "ERROR: Failed to process $png"
+			print_line
 		fi
 	done
 
-	for pid in "${worker_pids[@]}"; do
-		wait "$pid" || error "Worker with PID $pid failed."
-	done
-	worker_pids=()
+	echo "All processing complete."
 }
 
-cleanup_and_exit()
+pre_process_png()
 {
-	local exit_code=$?
-	if [[ $cleanup_called == true ]]; then return; fi
-	cleanup_called=true
-	log "Cleaning up and exiting..."
+	local png_directory="$1"
+	local processing_png_dir="$2"
+	local storage_dir="$3"
 
-	if [[ ${#worker_pids[@]} -gt 0 ]]; then
-		log "Terminating ${#worker_pids[@]} worker processes..."
-		for pid in "${worker_pids[@]}"; do
-			if [[ $pid -gt 1 ]] && kill -0 "$pid" 2>/dev/null; then
-				kill "$pid" 2>/dev/null || true
+	# Ensure processing directory exists
+	mkdir -p "$PROCESSING_DIR"
+	mkdir -p "$storage_dir"
+
+	echo "STORAGE: $storage_dir"
+	# Create safe temp directory name
+	local safe_name
+	safe_name=$(echo "$processing_png_dir" | tr '/' '_') # extensible_firmware_png
+	echo "INFO: Removing old directories with the same base directory"
+	rm -rf "$PROCESSING_DIR/${safe_name}"_*
+	temp_dir=$(mktemp -d "$PROCESSING_DIR/${safe_name}_XXXXXX")
+
+	echo "STAGING TO NEW PROCESSING DIR: $temp_dir"
+	print_line
+	rsync -a --info=progress2 "$png_directory/" "$temp_dir/"
+
+	# Silent verification
+	output=$(rsync -a --checksum --dry-run "$png_directory/" "$temp_dir/" 2>/dev/null)
+	if [[ -z $output ]]; then
+		echo "SUCCESS: STAGING COMPLETE"
+	else
+		echo "ERROR: Files differ:"
+		echo "$output"
+	fi
+
+	declare -a png_array=()
+	mapfile -t png_array < <(find "$temp_dir" -type f -name "*.png" | sort -V)
+
+	if [ ${#png_array[@]} -eq 0 ]; then
+		echo "ERROR: No png files? This is odd."
+		print_line
+		return 1
+	else
+		echo "SUCCESS: Found pngs. Processing ..."
+
+		print_line
+
+		if process_pngs "${png_array[@]}" "$storage_dir"; then
+			echo "SUCCESS: PNG processing completed successfully for $temp_dir"
+		else
+			echo "ERROR: PNG processing failed"
+			return 1
+		fi
+	fi
+
+}
+
+declare -a PNG_DIRS_GLOBAL=()
+are_png_in_dirs()
+{
+	local -a pdf_array=("$@")
+	PNG_DIRS_GLOBAL=() # Reset global array
+
+	for pdf_name in "${pdf_array[@]}"; do
+		echo "Checking document: $pdf_name"
+		dir_path="$OUTPUT_DIR/$pdf_name/png"
+		if [ -d "$dir_path" ]; then
+			file_count=$(find "$dir_path" -type f | wc -l)
+			if [ "$file_count" -gt 0 ]; then
+				echo "$dir_path exists and contains $file_count file(s)"
+				PNG_DIRS_GLOBAL+=("$dir_path")
+			else
+				echo "$dir_path exists but is empty"
+				print_line
 			fi
-		done
+		else
+			echo "$dir_path does not exist"
+			print_line
+		fi
+	done
 
-		sleep 2
-
-		for pid in "${worker_pids[@]}"; do
-			if [[ $pid -gt 1 ]] && kill -0 "$pid" 2>/dev/null; then
-				log "Force killing worker $pid..."
-				kill -9 "$pid" 2>/dev/null || true
-			fi
-		done
+	if [ ${#PNG_DIRS_GLOBAL[@]} -eq 0 ]; then
+		echo "ERROR: No directories with png with valid png"
+		print_line
+		return 1
+	else
+		echo "SUCCESS: Found directories to process"
+		print_line
+		return 0
 	fi
+}
 
-	# Clean up API semaphore
-	if [[ -n ${api_semaphore_dir:-} && -d $api_semaphore_dir && $api_semaphore_dir == "$TEMP_PATH/api_semaphore."* ]]; then
-		log "Removing API semaphore directory: $api_semaphore_dir"
-		rm -rf "$api_semaphore_dir"
-	fi
-
-	# Clean up any remaining lock files
-	if [[ -n ${OUTPUT_DIR:-} && -d $OUTPUT_DIR ]]; then
-		find "$OUTPUT_DIR" -name "*.lock" -type f -delete 2>/dev/null || true
-	fi
-
-	rm -f "${FAILED_LOG}.lock"
-	log "Cleanup finished. Exiting with code $exit_code."
-	exit "$exit_code"
+get_last_two_dirs()
+{
+	local full_path="$1"
+	local parent_dir
+	parent_dir=$(basename "$(dirname "$full_path")")
+	local current_dir
+	current_dir=$(basename "$full_path")
+	echo "$parent_dir/$current_dir"
 }
 
 main()
 {
+	declare date_time
+	date_time=$(date +%c)
+	echo "START CONVERSION: $date_time"
+	print_line
 	# Load configuration with validation
+	echo "Loading configurations"
+	print_line
+	INPUT_DIR=$(get_config "paths.input_dir")
 	OUTPUT_DIR=$(get_config "paths.output_dir")
-	WORKERS=$(get_config "settings.workers")
-	TEMP_PATH=$(get_config "processing_dir.png_to_text")
 	NVIDIA_API_URL=$(get_config "nvidia_api.url")
 	NVIDIA_API_KEY_VAR=$(get_config "nvidia_api.api_key_variable")
 	TEXT_FIX_MODEL=$(get_config "nvidia_api.text_fix_model")
 	CONCEPT_MODEL=$(get_config "nvidia_api.concept_model")
-	MAX_RETRIES=$(get_config "retry.max_retries")
-	RETRY_DELAY_SECONDS=$(get_config "retry.retry_delay_seconds")
 	LOG_DIR=$(get_config "logs_dir.png_to_text")
-	mkdir -p "$TEMP_PATH"
+	PROCESSING_DIR=$(get_config "processing_dir.png_to_text")
+	MAX_RETRIES=$(get_config "retry.max_retries")
+	API_RETRY_DELAY=$(get_config "retry.retry_delay_seconds")
 
-	# Make tesseract language configurable
-	TESSERACT_LANG=$(get_config "tesseract.language" "eng+equ")
+	# Load Google API configuration (if available)
+	GOOGLE_API_KEY_VAR=$(get_config "google_api.api_key_variable" 2>/dev/null || true)
+	POLISH_MODEL=$(get_config "google_api.polish_model" 2>/dev/null || true)
 
-	# Make API concurrency configurable
-	MAX_CONCURRENT_API_CALLS=$(get_config "nvidia_api.max_concurrent_calls" "10")
-
-	# Validate worker count
-	local core_count
-	core_count=$(nproc) || {
-		error "Failed to determine number of CPU cores."
-		exit 1
-	}
-	if [[ $WORKERS -gt $core_count ]]; then
-		log "Reducing worker count from $WORKERS to $core_count (available cores)"
-		WORKERS=$core_count
-	fi
-
+	mkdir -p "$PROCESSING_DIR"
 	mkdir -p "$LOG_DIR" || {
-		error "Failed to create log directory: $LOG_DIR"
+		echo "Failed to create log directory: $LOG_DIR"
 		exit 1
 	}
 	LOG_FILE="$LOG_DIR/log_$(date +'%Y%m%d_%H%M%S').log"
-	FAILED_LOG="$LOG_DIR/failed_pages.log"
-	touch "$LOG_FILE" "$FAILED_LOG" || {
-		error "Failed to create log files."
+	touch "$LOG_FILE" || {
+		echo "Failed to create log file."
 		exit 1
 	}
-	log "Script started. Log file: $LOG_FILE"
-
-	trap 'cleanup_and_exit' EXIT INT TERM
+	echo "Script started. Log file: $LOG_FILE"
+	echo "Checking dependencies"
 	check_dependencies
-	init_api_semaphore
 
-	get_pdf_subdirs
+	declare -a pdf_array=()
+	# Get all pdf files in INPUT_DIR (directory for pdf raw files)
+	mapfile -t pdf_array < <(find "$INPUT_DIR" -type f -name "*.pdf" -exec basename {} .pdf \;)
+	if [ ${#pdf_array[@]} -eq 0 ]; then
+		echo "No pdf files in input directory"
+		exit 1
+	else
+		echo "Found pdf for processing. Checking for valid png .."
+	fi
+	print_line
 
-	local -a all_files_to_process=()
-	for pdf_name in "${pdf_subdirs[@]}"; do
-		log "Checking document: $pdf_name"
-		if ! validate_text_directory "$pdf_name"; then
-			log "Document '$pdf_name' requires processing."
-			local pdf_png_dir="$OUTPUT_DIR/$pdf_name/png"
-			if [[ -d $pdf_png_dir ]]; then
-				mapfile -d '' -t pdf_files < <(find "$pdf_png_dir" -name "*.png" -type f -print0 | sort -zV)
-				all_files_to_process+=("${pdf_files[@]}")
-			else
-				error "PNG directory not found for '$pdf_name' at '$pdf_png_dir'"
-			fi
-		else
-			log "Document '$pdf_name' is already complete. Skipping."
-		fi
-	done
-
-	if [[ ${#all_files_to_process[@]} -eq 0 ]]; then
-		log "All documents are complete. No new pages to process."
-		return 0
+	if are_png_in_dirs "${pdf_array[@]}"; then
+		# Process png
+		for png_path in "${PNG_DIRS_GLOBAL[@]}"; do
+			printf "PROCESSING: %s\n" "$png_path"
+			staging_dir_name=$(get_last_two_dirs "$png_path")
+			parent_dir=$OUTPUT_DIR/$(basename "$(dirname "$png_path")")/text
+			pre_process_png "$png_path" "$staging_dir_name" "$parent_dir"
+			print_line
+		done
 	fi
 
-	log "Found ${#all_files_to_process[@]} total pages to process across all documents."
-	run_parallel_processing "${all_files_to_process[@]}"
-
-	# Retry logic with exponential backoff for any failed pages
-	local retry_attempt=0
-	local retry_delay="$RETRY_DELAY_SECONDS"
-
-	while [[ $retry_attempt -le $MAX_RETRIES && -s $FAILED_LOG ]]; do
-		local -a failed_files
-		mapfile -t failed_files <"$FAILED_LOG"
-		: >"$FAILED_LOG" # Clear the log for the next retry run
-
-		log "--- Retrying ${#failed_files[@]} failed pages (Attempt $retry_attempt/$MAX_RETRIES) after ${retry_delay}s delay..."
-		sleep "$retry_delay"
-		run_parallel_processing "${failed_files[@]}"
-
-		retry_delay=$((retry_delay * 2))
-		((retry_attempt++))
-	done
-
-	if [[ -s $FAILED_LOG ]]; then
-		local failed_count
-		failed_count=$(wc -l <"$FAILED_LOG")
-		error "$failed_count pages failed after all retries. See '$FAILED_LOG' for details."
-		return 1
-	fi
-
-	log "All processing jobs completed successfully."
+	log "All processing jobs completed."
 	return 0
 }
 
