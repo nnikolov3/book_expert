@@ -16,7 +16,7 @@ version = "0.0.0"
 # Directory for raw PDF inputs
 input_dir = "/home/niko/Dev/book_expert/data/raw"
 output_dir = "/home/niko/Dev/book_expert/data"
-
+python_path ="/home/niko/Dev/book_expert/.venv/bin"
 [directories]
 polished_dir= "polished"
 chunks= "chunks"
@@ -53,7 +53,7 @@ combine_chunks = "/tmp/logs/combine_chunks"
 # DPI for PDF-to-PNG conversion (higher DPI means better quality for OCR)
 dpi = 600
 # Number of parallel workers for tasks like PNG processing and text polishing
-workers = 4
+workers = 16
 # Overlap size for chunking text
 overlap_chars = 2000
 
@@ -75,9 +75,10 @@ text_fix_model = "deepseek-ai/deepseek-r1-0528"
 # Model for Stage 2: Visual concept extraction from images
 concept_model = "mistralai/mistral-medium-3-instruct"
 # Environment variable name for the Nvidia API key
+polish_model = "nvidia/llama-3.3-nemotron-super-49b-v1"
 api_key_variable = "NVIDIA_API_KEY"
 
-max_concurrent_calls = 4
+max_concurrent_calls = 16
 
 
 # ================================================================================================
@@ -90,8 +91,9 @@ polish_model = "gemini-2.5-flash-lite-preview-06-17"
 api_key_variable = "GEMINI_API_KEY"
 # Maximum number of retry attempts for Google API calls
 max_retries = 5
-# Delay in seconds between retry attempts for Google API
-retry_delay_seconds = 30
+# Delay in eeconds between retry attempts for Google API
+retry_delay_seconds = 60
+# url
 
 
 # ================================================================================================
