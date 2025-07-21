@@ -132,9 +132,16 @@ extract_text()
 		return 1
 	fi
 
-	prompt="**********
-GUIDELINES: * Avoid lists, headers, and emphasis like bold and italic, prefer plain paragraph text. * Instead describe any elements with words. * You are an expert STEM scientist with deep domain knowledge. * Read verbatim the provided text, fixing grammar and formatting for clarity and readability. * Expand and explain technical terms, code blocks, data, jargon, and abbreviations to ensure accessibility for a Masters-level audience. * This is not an interactive chat; output must be standalone text without conversational elements like introductions or confirmations. * The text will be part of a larger collection, narrated via text-to-speech (TTS) for accessibility, requiring clear and natural flow. * Do not include notes, feedback, or confirmations in the output, as they disrupt the narration flow. * Provide only the extracted and formatted text, suitable for TTS narration.
-**********"
+	prompt="GUIDELINES: You are a Ph.D STEM expert. You are provided a page to transcribe and extract the exact text from. 
+    1. Avoid lists, headers, and emphasis like bold and italic, prefer plain paragraph text. 
+    2. Describe any elements with words.  Example, 'List: *1. item*, 2.item' becomes 'the list has 2 items, the first item serves for the purpose ..' 
+    3. Read verbatim the provided text, fixing grammar and formatting for clarity and readability. 
+    4. Expand and explain technical terms, code blocks, data, jargon, and abbreviations to ensure accessibility for a Ph.D level audience.
+    5. This is not an interactive chat; output must be standalone text without conversational elements like introductions or confirmations. 
+    6. The text is a part of a larger collection, narrated via text-to-speech (TTS) for accessibility, requiring clear and natural flow. 
+    7. Do not include notes, feedback, or confirmations in the output, as they disrupt the narration flow. 
+    8. Provide only the extracted and formatted text, suitable for TTS narration.
+    9. The technical description should allow for the listener to envision the description."
 
 	# Create Google API payload by building JSON in parts to avoid argument limits
 	{
@@ -225,9 +232,19 @@ extract_concepts()
 		return 1
 	fi
 
-	local prompt="**********
-GUIDELINES: * You are a STEM professor with deep expertise in technical domains. * Identify and explain concepts and technical information from a page of a technical document, focusing on clarity and insight. * Write as if contributing to a technical book, in an engaging, accessible style for a Masters student. * This is not an interactive chat; output must exclude conversational elements like introductions or summaries. * The text will be part of a larger collection, narrated via TTS for accessibility, requiring clear and natural flow. * Ensure explanations are insightful, reflecting a deep understanding of the concepts for educational value. * Avoid summaries, conclusions, or introductions to ensure seamless integration into the collection. * Do not reference 'text', 'page', 'image', or 'picture'; focus directly on the concepts as the main subject. * Start with the concepts as the primary focus for narrative coherence. It should be technical and detailed. * This is not a summarization task. Do not provide summary. * Your response should not have any lists, emphasis, bold or italic, instead describe these elements or structure the text implicitly to convey it.
-**********"
+	local prompt="GUIDELINES:
+    1. You are a STEM professor with deep expertise in technical domains. 
+    2. Identify and explain the concepts and technical information from a page of a technical document, focusing on clarity and insight. 
+    3. Grapnhs, code, formula, assembly code, write as if contributing to a technical book, in an engaging, accessible style for a Ph.D student. 
+    4. This is not an interactive chat; output must exclude conversational elements like introductions or summaries. 
+    5. The text will be part of a larger collection, narrated via TTS for accessibility, requiring clear and natural flow. 
+    6. Ensure explanations are insightful, correct, deep, and reflecting a thorough understanding of the concepts for educational value. 
+    7. Avoid summaries, conclusions, or introductions to ensure seamless integration into the collection.  
+    8. Do not reference 'text', 'page', 'image', or 'picture'; focus directly on the concepts as the main subject. 
+    9. Start with the concepts as the primary focus for narrative coherence. Explain them educationally adding verbal emphasis, context, examples, analogies.
+    10. This is not a summarization task. Do not provide summary. 
+    11. Your response should not have any lists, emphasis, bold or italic, instead describe these elements or structure the text implicitly to convey it.
+    12. Graphs and graphical content should be narrated, such as 'In the table, the x and y axis.."
 
 	# Create NVIDIA API payload by building JSON in parts to avoid argument limits
 	{
@@ -399,7 +416,7 @@ pre_process_png()
 	fi
 
 	declare -a png_array=()
-	mapfile -t png_array < <(find "$temp_dir" -type f -name "*.png" | sort -V)
+	mapfile -t png_array < <(find "$temp_dir" -type f -name "*.png" | sort -h)
 
 	if [ ${#png_array[@]} -eq 0 ]; then
 		echo "ERROR: No png files? This is odd."
@@ -425,15 +442,27 @@ are_png_in_dirs()
 {
 	local -a pdf_array=("$@")
 	PNG_DIRS_GLOBAL=() # Reset global array
-
+	local dir_path
+	local text_path
+	local png_count
+	local text_count
 	for pdf_name in "${pdf_array[@]}"; do
 		echo "Checking document: $pdf_name"
 		dir_path="$OUTPUT_DIR/$pdf_name/png"
+		text_path="$OUTPUT_DIR/$pdf_name/text"
+		if [[ -d $text_path ]]; then
+			text_count=$(find "$text_path" -type f | wc -l)
+		fi
 		if [ -d "$dir_path" ]; then
-			file_count=$(find "$dir_path" -type f | wc -l)
-			if [ "$file_count" -gt 0 ]; then
-				echo "$dir_path exists and contains $file_count file(s)"
+			png_count=$(find "$dir_path" -type f | wc -l)
+			if [[ ($png_count -eq $text_count) && ($text_count -gt 0) ]]; then
+				echo "WARN: REVIEW $text_path, there are text files."
+				echo "INFO: Remove the directory if you want to generate the text"
+				print_line
+			elif [ "$png_count" -gt 0 ]; then
+				echo "$dir_path exists and contains $png_count file(s)"
 				PNG_DIRS_GLOBAL+=("$dir_path")
+				print_line
 			else
 				echo "$dir_path exists but is empty"
 				print_line
