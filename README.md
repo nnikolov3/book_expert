@@ -1,298 +1,192 @@
+<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
+
 # Document Processing Pipeline
 
-Note: The `examples` directory contains examples of converting pdf to an audio book. I do not own the rights of the pdf. The pdfs are used for reference only. This is entirely meant for educational purposes only.
+**Note:** The `examples` directory contains examples of converting PDF to an audiobook. *PDFs are for reference and educational purposes only and may not be redistributed.*
 
-This repository contains a suite of Bash scripts designed to automate the conversion of PDF documents into polished text and then into audio (WAV) files. The pipeline is modular, allowing for easy extension and customization of each processing stage.
+This repository provides a robust, modular suite of Bash scripts to convert **PDF documents** into **polished text** and then into a **cohesive audio file (WAV/MP3)**. The workflow uses configurable APIs, parallel processing, and strong error handling, and all major settings are maintained in a single TOML configuration file.
 
 ## Table of Contents
 
-1.  [Prerequisites](https://www.google.com/search?q=%23prerequisites)
-2.  [Project Structure](https://www.google.com/search?q=%23project-structure)
-3.  [Configuration](https://www.google.com/search?q=%23configuration)
-4.  [Setup Instructions](https://www.google.com/search?q=%23setup-instructions)
-5.  [Usage](https://www.google.com/search?q=%23usage)
-6.  [Pipeline Stages](https://www.google.com/search?q=%23pipeline-stages)
-7.  [Code Guidelines](https://www.google.com/search?q=%23code-guidelines)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Configuration](#configuration)
+- [Setup Instructions](#setup-instructions)
+- [Usage](#usage)
+- [Pipeline Stages](#pipeline-stages)
+- [Code Guidelines](#code-guidelines)
 
-## 1\. Prerequisites
 
-Before you begin, ensure you have the following installed on your system:
+## Prerequisites
 
-  * **Bash**: The scripts are written in Bash.
-  * **ImageMagick**: Required for `pdf_to_png.sh` to convert PDFs to PNG images.
-    ```bash
-    sudo apt-get update
-    sudo apt-get install imagemagick
-    ```
-  * **Ghostscript**: Often comes with ImageMagick, but ensure it's available for PDF processing.
-    ```bash
-    sudo apt-get install ghostscript
-    ```
-  * **Tesseract OCR**: Required for `png_to_page_text.sh` to extract text from PNG images.
-    ```bash
-    sudo apt-get install tesseract-ocr
-    ```
-  * **`toml-cli`**: Used for parsing the `project.toml` configuration file.
-    ```bash
-    pip install toml-cli
-    ```
-  * **`f5-tts` (or similar TTS engine)**: The `text_chunks_to_wav.sh` script is designed to interface with an F5-TTS inference engine. You will need to set up and run this engine separately, ensuring its API is accessible as configured in `project.toml`.
-  * **Google Gemini API Key**: Required for `png_to_page_text.sh` and `polish_pdf_text.sh` for text extraction and polishing. This key should be set as an environment variable (e.g., `GEMINI_API_KEY`).
-  * **`rsync`**: Used for efficient file synchronization and copying.
-    ```bash
-    sudo apt-get install rsync
-    ```
-  * **`shellcheck`**: Recommended for linting the Bash scripts.
-    ```bash
-    sudo apt-get install shellcheck
-    ```
+Ensure your system provides the following:
 
-## 2\. Project Structure
+- **Bash** (with `set -euo pipefail` support)
+- **yq** (for TOML/YAML parsing):
+`pip install yq`
+- **jq** (`apt install jq`)
+- **ImageMagick** (for identify, etc.):
+`sudo apt-get install imagemagick`
+- **Ghostscript** (for PDF rasterization):
+`sudo apt-get install ghostscript`
+- **Tesseract OCR** (OCR functionality):
+`sudo apt-get install tesseract-ocr`
+- **rsync** (robust file sync):
+`sudo apt-get install rsync`
+- **shellcheck** (bash linter):
+`sudo apt-get install shellcheck`
+- **nproc, flock, sort, awk, base64, curl** and dependencies as used by the scripts
 
-The core project structure is as follows:
+API-based functionality requires:
+
+- **Google Gemini API**:
+Set your API key as an env variable (e.g., `export GEMINI_API_KEY="..."`)
+- **NVIDIA AI Cloud API key** (for concept and text correction stages):
+`export NVIDIA_API_KEY="..."`
+- **F5-TTS engine** or compatible engine for TTS inference (ensure it matches your configuration)
+
+
+## Project Structure
 
 ```
 book_expert/
 ├── data/
-│   ├── raw/                # Input directory for raw PDF files
-│   └── (output_dir)/       # Main output directory (configured in project.toml)
-│       ├── {pdf_name}/
-│           ├── png/            # PNG images generated from PDF pages
-│           ├── text/           # Raw text extracted from PNGs
-│           ├── polished/       # Polished text files
-│           ├── tts_chunks/     # Text chunks ready for TTS
-│           ├── wav/            # Final WAV audio files
-│           └── logs/           # Project-specific logs
-├── scripts/
-│   ├── combine.sh
-│   ├── pdf_to_png.sh
-│   ├── png_to_page_text.sh
-│   ├── polish_pdf_text.sh
-│   ├── text_chunks_to_wav.sh
-│   └── text_page_to_text_chunks.sh
-├── project.toml            # Main configuration file
-└── README.md
+│   ├── raw/               # PDF input directory
+│   └── <output_dir>/      # Configured work/output root
+│       └── <pdf_name>/
+│           ├── png/
+│           ├── text/
+│           ├── polished/
+│           ├── tts_chunks/
+│           ├── wav/
+│           ├── mp3/
+│           └── concat/
+└── scripts/
+    ├── pdf_to_png.sh
+    ├── png_to_page_text.sh
+    ├── polish_pdf_text.sh
+    ├── concat_pages.sh
+    ├── text_to_wav.sh
+    ├── combine.sh
+    └── ...
+├── project.toml           # Central configuration file
+├── README.md
 ```
 
-## 3\. Configuration
 
-The pipeline's behavior is controlled by the `project.toml` file. This file defines paths, API settings, retry mechanisms, and other crucial parameters.
+## Configuration
 
-**`project.toml` Example Snippets and Explanation:**
+**All settings are defined in `project.toml`:**
 
-```toml
-# ================================================================================================
-# PROJECT CONFIGURATION FOR DOCUMENT PROCESSING PIPELINE
-# Design: Niko Nikolov
-# Code: Various LLMs
-# ================================================================================================
+- **[paths]**: Set `input_dir` (PDFs), `output_dir` (root for output)
+- **[directories]**: Subdirectory layout by stage ("polished", "chunks", "wav", etc.)
+- **[processing_dir] \& [logs_dir]**: Intermediate and log file storage (use fast storage, e.g., `/tmp`)
+- **[nvidia_api] \& [google_api]**:
+Contains model names, endpoints, and the *variable name* that will be checked in your shell for API keys
+- **[retry]**: Control retry counts/delays for external API failures
+- **[f5_tts_settings]**: Controls TTS model and resources
 
-[project]
-name = "book_expert"
-version = "0.0.0"
+*You MUST update any absolute paths in `project.toml` to your environment and provide your API keys as environment variables before running the scripts*.
 
-# ================================================================================================
-# [paths]
-# Defines the directory structure for the pipeline.
-# ================================================================================================
-[paths]
-# Directory for raw PDF inputs
-input_dir = "/home/niko/Dev/book_expert/data/raw"
-output_dir = "/home/niko/Dev/book_expert/data"
+## Setup Instructions
 
-[directories]
-polished_dir= "polished"
-chunks= "chunks"
-tts_chunks= "tts_chunks"
-wav = "wav"
-mp3 = "mp3"
-
-# ================================================================================================
-# [processing_dir]
-# Processing temp director
-# ================================================================================================
-[processing_dir]
-pdf_to_png = "/tmp/pdf_to_png"
-png_to_text= "/tmp/png_to_text"
-polish_text = "/tmp/polished"
-text_to_chunks = "/tmp/text_to_chunks"
-chunks_to_wav = "/tmp/chunks_to_wav"
-combine_chunks = "/tmp/combine_chunks"
-
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-[logs_dir]
-pdf_to_png = "/tmp/logs/pdf_to_png"
-png_to_text= "/tmp/logs/png_to_text"
-polish_text = "/tmp/logs/polished"
-text_to_chunks = "/tmp/logs/text_to_chunks"
-chunks_to_wav = "/tmp/logs/chunks_to_wav"
-combine_chunks = "/tmp/logs/combine_chunks"
-
-# ===============================================================================================
-# [nvidia_api]
-# NVIDIA API settings for text extraction from PNGs.
-# ===============================================================================================
-[nvidia_api]
-url = "http://localhost:5000/v1/infer" # Example URL, adjust to your NVIDIA API endpoint
-api_key_variable = "NVIDIA_API_KEY"
-max_retries = 5
-retry_delay_seconds = 10
-
-# ===============================================================================================
-# [google_api]
-# Google Gemini API settings for final narration polishing.
-# ===============================================================================================
-[google_api]
-polish_model = "gemini-2.5-flash-preview-05-20"
-url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-api_key_variable = "GEMINI_API_KEY"
-max_retries = 5
-retry_delay_seconds = 30
-
-
-# ===============================================================================================
-# [f5_tts_settings]
-# Settings for the F5-TTS engine used in Stage 4 (Chunks to WAV).
-# ===============================================================================================
-[f5_tts_settings]
-model = "E2TTS_Base"
-workers = 2
-timeout_duration = 300
-
-# ===============================================================================================
-# [retry]
-# Settings for the failure retry mechanism for API calls and TTS conversion.
-# ===============================================================================================
-[retry]
-max_retries = 5
-retry_delay_seconds = 60
-```
-
-**Key Configuration Points:**
-
-  * **`[paths]`**: Define `input_dir` (where your raw PDFs are placed) and `output_dir` (the root for all processed outputs).
-  * **`[directories]`**: Specifies the names of subdirectories created within each PDF's output folder.
-  * **`[processing_dir]`**: Defines temporary directories used by each script for intermediate processing. Ensure these paths are accessible and have sufficient disk space.
-  * **`[logs_dir]`**: Specifies directories for logs generated by each script.
-  * **`[nvidia_api]`**: Configure the URL and API key variable for your NVIDIA text extraction service.
-  * **`[google_api]`**: Configure the URL, model, and API key variable for the Google Gemini API, used for text polishing.
-  * **`[f5_tts_settings]`**: Set the TTS model, number of parallel workers, and timeout for the F5-TTS engine.
-  * **`[retry]`**: Global retry settings for failed operations.
-
-**Important:**
-
-  * Update `input_dir` and `output_dir` in `project.toml` to reflect your local file system.
-  * Ensure the API key environment variables (e.g., `NVIDIA_API_KEY`, `GEMINI_API_KEY`) are set in your shell environment before running the scripts.
-
-## 4\. Setup Instructions
-
-1.  **Clone the Repository (if applicable):**
-
-    ```bash
-    git clone <repository_url>
-    cd book_expert
-    ```
-
-2.  **Install Prerequisites:**
-    Follow the instructions in the [Prerequisites](https://www.google.com/search?q=%23prerequisites) section to install all necessary software and libraries.
-
-3.  **Configure `project.toml`:**
-    Open `project.toml` and adjust the `input_dir`, `output_dir`, and API endpoints/keys according to your environment.
-
-      * **Example for `input_dir` and `output_dir`:**
-        ```toml
-        [paths]
-        input_dir = "/path/to/your/raw_pdfs"
-        output_dir = "/path/to/your/processed_data"
-        ```
-      * **Set API Keys:**
-        ```bash
-        export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-        export NVIDIA_API_KEY="YOUR_NVIDIA_API_KEY" # If applicable
-        ```
-        It is recommended to add these `export` commands to your `~/.bashrc` or `~/.zshrc` file to set them automatically on shell startup.
-
-4.  **Make Scripts Executable:**
-    Navigate to the `scripts/` directory and make all `.sh` files executable:
-
-    ```bash
-    chmod +x scripts/*.sh
-    ```
-
-5.  **Prepare Input Directory:**
-    Place your PDF files into the directory specified by `input_dir` in `project.toml`.
-
-## 5\. Usage
-
-The pipeline is designed to be run sequentially, with each script performing a specific stage. You can run individual scripts or orchestrate them with a master script (not provided, but `combine.sh` gives an idea of orchestration).
-
-**General Execution Pattern:**
+1. **Clone repository**
 
 ```bash
-./scripts/<script_name>.sh [optional_arguments]
+git clone <repository_url>
+cd book_expert
 ```
 
-Each script typically reads its configuration from `project.toml`.
+2. **Install prerequisites**
+    - See [Prerequisites](#prerequisites) for all CLI tools and Python packages.
+    - Install `yq` via `pip` (`pip install yq`) and ensure all listed CLI tools are available.
+3. **Configure your environment**
+    - Edit `project.toml` and adjust all `[paths]`, `[directories]`, and API sections as needed.
+    - Set required API keys for both Google Gemini and NVIDIA APIs, e.g.:
 
-## 6\. Pipeline Stages
+```bash
+export GEMINI_API_KEY="..."
+export NVIDIA_API_KEY="..."
+```
 
-Here's a brief overview of each script's role in the pipeline:
+4. **Make scripts executable**
 
-  * **`pdf_to_png.sh`**:
+```bash
+chmod +x scripts/*.sh
+```
 
-      * **Input**: PDF files from `input_dir`.
-      * **Output**: Converts each page of a PDF into a high-resolution PNG image, stored in `{output_dir}/{pdf_name}/png/`.
-      * **Purpose**: Prepares visual data for OCR.
+5. **Prepare input directory**
+    - Place all source PDFs in the directory defined by `paths.input_dir` in your `project.toml`.
 
-  * **`png_to_page_text.sh`**:
+## Usage
 
-      * **Input**: PNG images from `{output_dir}/{pdf_name}/png/`.
-      * **Output**: Extracts text from each PNG image using OCR (Tesseract) and potentially refines it with an NVIDIA API, saving raw text files to `{output_dir}/{pdf_name}/text/`.
-      * **Purpose**: Converts visual page data into raw textual content.
+The pipeline is run **sequentially stage-by-stage**; each script operates on the outputs of the previous.
 
-  * **`polish_pdf_text.sh`**:
+**Basic script pattern:**
 
-      * **Input**: Raw text files from `{output_dir}/{pdf_name}/text/`.
-      * **Output**: Combines sequential text pages (e.g., page 1 & 2, page 3 & 4) and polishes the text using the Google Gemini API, saving results to `{output_dir}/{pdf_name}/polished/`. Handles odd numbers of pages by processing the last page alone.
-      * **Purpose**: Improves text quality and readability, preparing it for chunking.
+```bash
+./scripts/<stage>.sh
+```
 
-  * **`text_page_to_text_chunks.sh`**:
+Example full pipeline sequence (each is a separate script):
 
-      * **Input**: Polished text files from `{output_dir}/{pdf_name}/polished/`.
-      * **Output**: Splits the polished text into smaller, paragraph-based chunks, saving them to `{output_dir}/{pdf_name}/tts_chunks/`.
-      * **Purpose**: Creates appropriately sized text segments for Text-to-Speech conversion.
+1. `pdf_to_png.sh` – PDF → PNG images
+2. `png_to_page_text.sh` – PNG → text/concepts (API via Tesseract/NVIDIA/Google)
+3. `polish_pdf_text.sh` – text pages → polished, TTS-ready narration (Google Gemini)
+4. `concat_pages.sh` – group polished text into longer blocks for narration chunking
+5. `text_to_wav.sh` – text chunks → WAV (via F5-TTS)
+6. `combine.sh` – combine WAVs to a single long WAV \& transcode to MP3
 
-  * **`text_chunks_to_wav.sh`**:
+Each script will read `project.toml` and logs to its own directory.
 
-      * **Input**: Text chunks from `{output_dir}/{pdf_name}/tts_chunks/`.
-      * **Output**: Converts each text chunk into an individual WAV audio file using the F5-TTS engine, saving them to `{output_dir}/{pdf_name}/wav/`. Supports parallel processing and GPU management.
-      * **Purpose**: Generates audio versions of the document content.
+## Pipeline Stages
 
-  * **`combine.sh`**:
+| Script Name | Input Directory | Output Directory | Function |
+| :-- | :-- | :-- | :-- |
+| **pdf_to_png.sh** | data/raw/ | data/<pdf_name>/png/ | Converts PDF pages to PNG images |
+| **png_to_page_text.sh** | data/<pdf_name>/png/ | data/<pdf_name>/text/ | OCR + API extraction: PNG to raw text and concept summaries |
+| **polish_pdf_text.sh** | data/<pdf_name>/text/ | data/<pdf_name>/polished/ | Groups and polishes text for natural narration (API: Google Gemini) |
+| **concat_pages.sh** | data/<pdf_name>/polished/ | data/<pdf_name>/concat/ | Concatenates polished text files into larger blocks for TTS |
+| **text_to_wav.sh** | data/<pdf_name>/concat/ | data/<pdf_name>/wav/ | Converts textual chunks into WAV using F5-TTS or compatible engine |
+| **combine.sh** | data/<pdf_name>/wav/ | data/<pdf_name>/mp3/ | Stages, sorts, validates, resamples, and merges WAV files — then outputs a single .wav and .mp3 for the book |
 
-      * **Input**: WAV files from `{output_dir}/{pdf_name}/wav/`.
-      * **Output**: Combines the individual WAV files for a given PDF project into a single, cohesive audio file (e.g., an MP3).
-      * **Purpose**: Creates a complete audio rendition of the document.
+## Code Guidelines
 
-## 7\. Code Guidelines
+All scripts conform to strict guidelines:
 
-The scripts adhere to a set of internal code guidelines to ensure consistency, readability, and robustness:
+- **Declare all variables** prior to assignment
+- Use **explicit `if/then/fi`** for clarity
+- Always **close file/block/loops**, check error codes and **return/exit on errors**
+- *Atomic operations*: Use `mv`, `flock`, and safe temporary directories to avoid parallelization issues
+- *Dependency Checks*: All external tools and APIs are checked at runtime
+- *Retry Logic*: Robust retry, exponential backoff for all API stages (see `project.toml`)
+- *Logging*: Each stage writes its own log file; most stages print to both terminal and log
+- *Use `rsync`* instead of `cp` for staging files
+- Remove unused variables, unreachable code, keep code concise and self-documented
+- *No hardcoded values*: All paths and settings must reference `project.toml`
+- *Comments*: Extensive use of **Markdown** and descriptive comments in code
 
-  * Declare variables before assignment.
-  * Use explicit `if/then/fi` blocks.
-  * Employ atomic file operations (`mv`, `flock`) for race condition prevention.
-  * Avoid mixing API calls within a single function/block.
-  * Lint with `shellcheck`.
-  * Use `grep -q` for silent checks.
-  * Check for unbound variables with `set -u`.
-  * Clean up unused variables and maintain detailed comments.
-  * Avoid unreachable code or redundant commands.
-  * Keep code concise, clear, and self-documented.
-  * Avoid `cat` where `cmd < file` is more appropriate.
-  * Use `declare` for global variables and `local` for function-scoped variables.
-  * Initialize all variables.
-  * Use `rsync` instead of `cp` for directory synchronization.
-  * Comments should be maintained and updated, using Markdown within comment blocks.
+**Note:** For full reproducibility, review each script, as configuration key names and functions are subject to change between versions. Always prefer running scripts under environments where all dependencies and API keys are properly set.
 
------
+---
+
+<div style="text-align: center">⁂</div>
+
+[^1]: combine.sh
+
+[^2]: concat_pages.sh
+
+[^3]: pdf_to_png.sh
+
+[^4]: png_to_page_text.sh
+
+[^5]: polish_pdf_text.sh
+
+[^6]: project.toml
+
+[^7]: README.md
+
+[^8]: text_to_wav.sh
+
+[^9]: README.md
+
