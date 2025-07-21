@@ -20,6 +20,7 @@
 # - Use `rsync` not cp.
 # - Initialize all variables.
 # - Code should be self-documenting.
+# - Flows should have solid retry logic.
 # COMMENTS SHOULD NOT BE REMOVED, INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
 # USE MARKDOWN WITHIN THE COMMENT BLOCKS FOR COMMENTS
 # ===============================================================================================
@@ -359,11 +360,14 @@ merge_wav_files_enhanced()
 	local retry_delay="$RETRY_DELAY_SECONDS"
 	while [[ $attempt -le $MAX_RETRIES ]]; do
 		log_debug "Concatenating files (attempt $attempt/$MAX_RETRIES)..."
-		if ffmpeg -f concat -safe 0 -i "$concat_list_file" \
-			-c copy -avoid_negative_ts make_zero \
-			-fflags +genpts -max_muxing_queue_size 1024 \
-			-hide_banner -loglevel error -y \
-			"$output_file"; then
+		if
+			ffmpeg -f concat -safe 0 -i "$concat_list_file" \
+				-c copy -avoid_negative_ts make_zero \
+				-fflags +genpts -max_muxing_queue_size 1024 \
+				-rf64 auto \
+				-hide_banner -loglevel error -y \
+				"$output_file"
+		then
 			log_info "All WAV files merged successfully into: $output_file"
 			exec 9>&-
 			rm -f "$lock_file" "$concat_list_file"

@@ -214,6 +214,7 @@ text_chunks_to_wav()
 			--speed 0.9 \
 			--remove_silence \
 			--ref_text "" \
+			--load_vocoder_from_local \
 			--no_legacy_text 2>&1); then
 
 			# Verify the output file was created and has reasonable size
@@ -299,6 +300,8 @@ clean_text()
 		sed 's/\bUSB\b/U S B/g' |
 		sed 's/\bUEFI\b/U E F I/g' |
 		sed 's/  */ /g' |
+		sed 's/*//g' |
+		sed 's/#//g' |
 		sed 's/^[[:space:]]*//' |
 		sed 's/[[:space:]]*$//')
 

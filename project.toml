@@ -56,6 +56,8 @@ dpi = 600
 workers = 16
 # Overlap size for chunking text
 overlap_chars = 2000
+skip_blank_pages = true
+blank_threshold = 1000
 
 [tesseract]
 language = "eng+equ"

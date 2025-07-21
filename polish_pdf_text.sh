@@ -1,9 +1,34 @@
 #!/usr/bin/env bash
-# polish_pdf_text.sh - Multi-worker text polishing system
+# polish_pdf_text.sh - Serial text polishing system using Gemini API
 # Combines sequential pages (1+2+3, 4+5+6, etc.) into polished text files
 # Validates text directory by comparing with PNG directory
 # Processes incomplete directories with proper retry logic
 
+# ## Code Guidelines:
+# - Declare variables before assignment to prevent undefined variable errors.
+# - Use explicit if/then/fi blocks for readability.
+# - Ensure all if/fi blocks are closed correctly
+# - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
+# - Avoid mixing API calls.
+# - Lint with shellcheck for portability and correctness.
+# - Use grep -q for silent checks.
+# - Check for unbound variables with set -u.
+# - Clean up unused variables and maintain detailed comments.
+# - Avoid unreachable code or redundant commands.
+# - Keep code concise, clear, and self-documented.
+# - Avoid 'useless cat' use cmd < file.
+# - If not in a function use declare not local.
+# - For Ghostscript use `ghostscript <cmd>`
+# - Use `rsync` not cp
+# - Initialize all variables
+# - Code should be self documenting
+# - Flows should have robust retry mechanisms
+# - Prefer mapfile or read -a to split command outputs (or quote to avoid splitting)
+# - Do not expand the code. Do more with less.
+# - Follow bash best practices.
+# COMMENTS SHOULD NOT BE REMOVED, INCONCISTENCIES SHOULD BE UPDATED WHEN DETECTED
+# USE MARKDOWN WITHIN THE COMMENT BLOCKS FOR COMMENTS
+# ===============================================================================================
 set -euo pipefail
 
 # --- Configuration ---
@@ -11,13 +36,17 @@ CONFIG_FILE="$HOME/Dev/book_expert/project.toml"
 CURL_TIMEOUT=120
 
 # --- Global Variables ---
-declare OUTPUT_DIR="" WORKERS=0 TEMP_PATH="" \
-	GOOGLE_API_KEY_VAR="" POLISH_MODEL="" \
-	LOG_DIR="" LOG_FILE="" PROCESSING_DIR="" \
+declare OUTPUT_DIR="" PROCESSING_DIR="" \
+	GEMINI_API_KEY_VAR="" POLISH_MODEL="" \
+	LOG_DIR="" LOG_FILE="" INPUT_DIR="" TEXT_DIRS_GLOBAL="" \
 	FAILED_LOG="" MAX_API_RETRIES=0 RETRY_DELAY_SECONDS=0
-declare -a pdf_dirs=()
-declare cleanup_called=false
 
+declare -a RESULT_ARRAY=()
+
+print_line()
+{
+	echo "======================================================================="
+}
 get_config()
 {
 	local key="$1"
@@ -44,165 +73,60 @@ get_config()
 
 log()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $*" | tee -a "${LOG_FILE:-/dev/null}"
-}
-
-record_failure()
-{
-	local file_path="$1"
-	local error_msg="${2:-Unknown error}"
-	(
-		flock -x 201
-		echo "$file_path" >>"$FAILED_LOG"
-		echo "[$(date +'%Y-%m-%d %H:%M:%S')] FAILED: $file_path - $error_msg" >>"$LOG_FILE"
-	) 201>>"$FAILED_LOG.lock"
+	echo "LOG: $1" >&2
 }
 
 check_dependencies()
 {
-	local deps=("yq" "jq" "curl" "rsync" "mktemp" "nproc")
+	local deps=("yq" "jq" "curl" "rsync" "mktemp")
 	for dep in "${deps[@]}"; do
 		command -v "$dep" >/dev/null || {
-			log "Dependency '$dep' is not installed."
+			echo "Dependency '$dep' is not installed."
 			exit 1
 		}
 	done
 
-	[[ -z ${GOOGLE_API_KEY_VAR:-} ]] && {
-		log "GOOGLE_API_KEY_VAR not configured"
+	[[ -z ${GEMINI_API_KEY_VAR:-} ]] && {
+		echo "GEMINI_API_KEY_VAR not configured"
 		exit 1
 	}
-	[[ -z ${!GOOGLE_API_KEY_VAR:-} ]] && {
-		log "API key variable '$GOOGLE_API_KEY_VAR' not set"
+	[[ -z ${!GEMINI_API_KEY_VAR:-} ]] && {
+		echo "API key variable '$GEMINI_API_KEY_VAR' not set"
 		exit 1
 	}
+
 	[[ -z ${POLISH_MODEL:-} ]] && {
-		log "POLISH_MODEL not set"
+		echo "POLISH_MODEL not set"
 		exit 1
 	}
-
-	# Validate API endpoint
-	local curl_error_file
-	curl_error_file=$(mktemp -p "$TEMP_PATH" "curl_error.XXXXXX")
-
-	local test_response
-	test_response=$(curl --fail --silent --show-error -o /dev/null -w "%{http_code}" \
-		-H "x-goog-api-key: ${!GOOGLE_API_KEY_VAR}" \
-		-H "Content-Type: application/json" \
-		-X POST -d '{"contents":[{"parts":[{"text":"Test"}]}]}' \
-		--max-time 120 \
-		"https://generativelanguage.googleapis.com/v1beta/models/$POLISH_MODEL:generateContent" \
-		2>"$curl_error_file") || true
-
-	if [[ $test_response -ne 200 ]]; then
-		log "API validation failed with HTTP code $test_response"
-		log "Curl error: $(cat "$curl_error_file")"
-		rm -f "$curl_error_file"
-		exit 1
-	fi
-	rm -f "$curl_error_file"
-}
-
-validate_polished_directory()
-{
-	local pdf_name="$1"
-	local polished_dir="$OUTPUT_DIR/$pdf_name/polished"
-	local text_dir="$OUTPUT_DIR/$pdf_name/text"
-	local png_dir="$OUTPUT_DIR/$pdf_name/png"
-
-	[[ ! -d $text_dir || ! -d $png_dir ]] && {
-		log "Skipping '$pdf_name': Missing 'text' or 'png' directory"
-		return 1
-	}
-
-	local text_count png_count
-	text_count=$(find "$text_dir" -name "*.txt" -type f | wc -l)
-	png_count=$(find "$png_dir" -name "*.png" -type f | wc -l)
-
-	# Check PNG/text count difference
-	local max_diff
-	max_diff=$(get_config "settings.max_png_text_diff" "3")
-	local diff=$((png_count > text_count ? png_count - text_count : text_count - png_count))
-	[[ $diff -gt $max_diff ]] && {
-		log "Skipping '$pdf_name': PNG/text count difference ($diff) exceeds max ($max_diff)"
-		return 1
-	}
-
-	mkdir -p "$polished_dir"
-	local polished_count
-	polished_count=$(find "$polished_dir" -name "polished_*.txt" -type f | wc -l)
-
-	[[ $png_count -lt 1 ]] && {
-		log "Skipping '$pdf_name': No PNG files found"
-		return 1
-	}
-
-	# Calculate expected polished files
-	local expected_polished=$(((png_count + 2) / 3)) # Ceiling division
-	local polish_diff=$((polished_count > expected_polished ? polished_count - expected_polished : expected_polished - polished_count))
-
-	[[ $polish_diff -le 3 ]] && {
-		log "Directory '$pdf_name' complete: $polished_count/$expected_polished polished files"
-		return 1
-	}
-
-	log "Processing '$pdf_name': PNG=$png_count, Polished=$polished_count/$expected_polished"
+	echo "SUCCESS: Dependencies verified"
+	print_line
 	return 0
 }
 
-get_pdf_names()
-{
-	local -a text_files=()
-	mapfile -d '' -t text_files < <(find "$OUTPUT_DIR" -path "*/text/*.txt" -type f -print0)
-	[[ ${#text_files[@]} -eq 0 ]] && {
-		log "No text files found"
-		exit 1
-	}
-
-	local -A unique_pdfs=()
-	for text_file in "${text_files[@]}"; do
-		local pdf_name
-		pdf_name=$(basename "$(dirname "$(dirname "$text_file")")")
-		[[ $pdf_name != "." && $pdf_name != ".." ]] && unique_pdfs["$pdf_name"]=1
-	done
-	pdf_dirs=("${!unique_pdfs[@]}")
-}
-
-copy_text_for_processing()
-{
-	local -a pdfs_to_copy=("$@")
-	for pdf_name in "${pdfs_to_copy[@]}"; do
-		local source_text_dir="$OUTPUT_DIR/$pdf_name/text"
-		local dest_text_dir="$PROCESSING_DIR/$pdf_name/text"
-		mkdir -p "$dest_text_dir"
-		rsync -a --quiet "$source_text_dir/" "$dest_text_dir/" || {
-			log "Failed to copy text files for PDF: $pdf_name"
-			exit 1
-		}
-	done
-}
-
-call_api()
+call_api_gemini()
 {
 	local payload_file="$1"
 	local response_file
-	response_file=$(mktemp -p "$TEMP_PATH" "api_response.XXXXXX")
+	response_file=$(mktemp -p "$PROCESSING_DIR" "api_response.XXXXXX")
 
 	local curl_error_file
-	curl_error_file=$(mktemp -p "$TEMP_PATH" "curl_error.XXXXXX")
+	curl_error_file=$(mktemp -p "$PROCESSING_DIR" "curl_error.XXXXXX")
 
 	local http_code
 	http_code=$(curl --fail --silent --show-error -w "%{http_code}" -o "$response_file" \
-		-H "x-goog-api-key: ${!GOOGLE_API_KEY_VAR}" \
+		--request POST \
+		--url "https://generativelanguage.googleapis.com/v1beta/models/${POLISH_MODEL}:generateContent" \
+		-H "x-goog-api-key: ${!GEMINI_API_KEY_VAR}" \
 		-H "Content-Type: application/json" \
-		-X POST -d @"$payload_file" \
+		-d @"$payload_file" \
 		--max-time "$CURL_TIMEOUT" \
-		"https://generativelanguage.googleapis.com/v1beta/models/$POLISH_MODEL:generateContent" \
 		2>"$curl_error_file") || true
 
 	if [[ $http_code -ne 200 || ! -s $response_file ]]; then
-		log "API call failed with HTTP code: $http_code"
+		log "Gemini API call failed with HTTP code: $http_code"
 		log "Curl error: $(cat "$curl_error_file")"
+		log "Response file content: $(cat "$response_file")"
 		rm -f "$response_file" "$curl_error_file"
 		return 1
 	fi
@@ -210,11 +134,12 @@ call_api()
 
 	local content
 	content=$(jq -r '.candidates[0].content.parts[0].text // empty' "$response_file" 2>/dev/null)
-	[[ -z $content || $content == "null" ]] && {
-		log "Failed to extract content from API response"
+	if [[ -z $content || $content == "null" ]]; then
+		log "Failed to extract content from Gemini API response"
+		log "Full API response: $(cat "$response_file")"
 		rm -f "$response_file"
 		return 1
-	}
+	fi
 
 	echo "$content" >"$response_file"
 	echo "$response_file"
@@ -226,78 +151,67 @@ process_text_group()
 	local second_file="$2"
 	local third_file="$3"
 	local output_index="$4"
-	local pdf_name final_output_file temp_output_file
-
-	pdf_name=$(basename "$(dirname "$(dirname "$first_file")")")
-	final_output_file="$OUTPUT_DIR/$pdf_name/polished/polished_$output_index.txt"
-	temp_output_file="$final_output_file.tmp.$$"
-
-	mkdir -p "$OUTPUT_DIR/$pdf_name/polished"
-	local lock_file="$final_output_file.lock"
-
-	exec 9>"$lock_file"
-	flock -n 9 || {
-		log "Another process handling: $pdf_name/polished_$output_index.txt"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 0
-	}
-
-	[[ -s $final_output_file ]] && {
-		log "Already completed: $pdf_name/polished_$output_index.txt"
-		rm -f "$first_file" "$second_file" "$third_file"
-		exec 9>&-
-		rm -f "$lock_file"
-		return 0
-	}
+	local storage_dir="$5"
 
 	# Build file description
-	local desc="$pdf_name: $(basename "$first_file")"
-	[[ -n $second_file && $second_file != "EMPTY" ]] && desc="$desc + $(basename "$second_file")"
-	[[ -n $third_file && $third_file != "EMPTY" ]] && desc="$desc + $(basename "$third_file")"
-	log "Processing: $desc -> polished_$output_index.txt"
+	local desc="$first_file"
+	local polished_file
+	polished_file="polished_${output_index}.txt"
+
+	[[ -n $second_file && $second_file != "" ]] && desc="$desc + $(basename "$second_file")"
+	[[ -n $third_file && $third_file != "" ]] && desc="$desc + $(basename "$third_file")"
+	log "Processing: $desc -> $polished_file"
 
 	# Combine text files
 	local combined_text
 	combined_text=$(cat "$first_file")
-	[[ -n $second_file && $second_file != "EMPTY" ]] && combined_text="$combined_text\n\n$(cat "$second_file")"
-	[[ -n $third_file && $third_file != "EMPTY" ]] && combined_text="$combined_text\n\n$(cat "$third_file")"
+	[[ -n $second_file && $second_file != "" ]] && combined_text="$combined_text\n\n$(cat "$second_file")"
+	[[ -n $third_file && $third_file != "" ]] && combined_text="$combined_text\n\n$(cat "$third_file")"
 
-	local prompt="**********
-GUIDELINES: You are an expert Ph.D STEM technical editor and educator, and writing specialist.
-* Polish and refine the provided text for clarity, coherence, and professional presentation.
-* Maintain all technical accuracy while improving readability and flow.
-* Ensure the text flows naturally and is suitable for text-to-speech (TTS) narration.
-* Fix any grammatical errors, awkward phrasing, or unclear expressions.
-* Enhance transitions between concepts and improve overall narrative structure.
-* Maintain the technical depth and educational value of the content.
-* This is not an interactive chat; output must be standalone polished text without conversational elements.
-* The text will be part of a larger technical collection, so ensure consistency in style and tone.
-* Focus on creating engaging, accessible content for a Ph.D level technical audience.
-* Remove any artifacts, redundancies, or formatting issues that would disrupt TTS narration.
-* Provide only the polished and refined text, ready for final use.
-* No chapter, page numbers or other invalid artifacts.
-* Start and focus on the concepts as the main point
-* This is not a summarization task, do not summarize the content.
-* This is a educational content. You can add analogies, examples, and further the explanation to promote learning, you should be as technical as posible, while maintaining TTS narration flow.
-**********
-TEXT: $combined_text"
+	local prompt="GUIDELINES: You are an expert Ph.D STEM technical editor and educator, and writing specialist. 
+    1. Polish and refine the provided text for clarity, coherence, and professional presentation. 
+    2. Maintain all technical accuracy while improving readability and flow. 
+    3. Ensure the text flows naturally and is suitable for text-to-speech (TTS) narration. 
+    4. Fix any grammatical errors, awkward phrasing, or unclear expressions. 
+    5. Enhance transitions between concepts and improve overall narrative structure. 
+    6. Maintain the technical depth and educational value of the content. 
+    7. This is not an interactive chat; output must be standalone polished text without conversational elements such as confirming the request. 
+    8. The text will be part of a larger technical collection, so ensure consistency in style and tone. 
+    9. Focus on creating engaging, accessible content for a Ph.D level technical audience. 
+    10. Remove any artifacts, redundancies, or formatting issues that would disrupt TTS narration. 
+    11. Provide only the polished and refined text, ready for final use.
+    12. No chapter, page numbers or other invalid artifacts. 
+    13. Start and focus on the concepts as the main point. 
+    14. This is not a summarization task, do not summarize the content.  
+    15. This is a educational content. 
+    16. You can add analogies, examples, and further the explanation to promote learning.  
+    17. Do not dumb down the content. 
+    18. Maintain TTS narration flow.  
+    19. Write everything in plain text paragraphs, no emphasis, headers, bold, italic, no conversational elements.  
+    20. Code, graphs, diagrams and similar, should be described word for word as being explained to someone who can't seem them.  
+    21. If anything needs emphasizing, describe it via words. 
+    22. Avoid using directrly technical examples, formulas, assembly instructions, instead describe it in words.
+    Example, 'E=mc^2', 'Energy is equal to mass and speed of light squared.', '1 + 1 = 2', one plus one equals two. There should no special characters in the response. For code, if '(a > 0){ printf(\"Hello\")}', 'the C code checks if a is larger than zero, if it is larger, then it prints Hello'
+    23. If there are problems (textbook type problems ) solve them, explain the solution. 
+
+    TEXT TO POLISH AND RETURN ONLY THE POLISHED TEXT: $combined_text"
 
 	local payload_file
-	payload_file=$(mktemp -p "$TEMP_PATH" "api_payload.XXXXXX")
-	jq -n --arg prompt "$prompt" '{ "contents": [{ "parts": [{ "text": $prompt }] }] }' >"$payload_file"
+	payload_file=$(mktemp -p "$PROCESSING_DIR" "api_payload.XXXXXX")
+	jq -n --arg prompt "$prompt" \
+		'{ "contents": [{ "parts": [{ "text": $prompt }] }] }' >"$payload_file"
 
 	# Retry logic for API calls
 	local retry_count=0
 	local api_response_file=""
 
 	while [[ $retry_count -lt $MAX_API_RETRIES ]]; do
-		if api_response_file=$(call_api "$payload_file"); then
+		if api_response_file=$(call_api_gemini "$payload_file"); then
 			break
 		fi
 		((retry_count++))
 		[[ $retry_count -lt $MAX_API_RETRIES ]] && {
-			log "API retry $retry_count/$MAX_API_RETRIES for $pdf_name/polished_$output_index.txt"
+			log "API retry $retry_count/$MAX_API_RETRIES for $polished_file"
 			sleep "$RETRY_DELAY_SECONDS"
 		}
 	done
@@ -305,272 +219,287 @@ TEXT: $combined_text"
 	rm -f "$payload_file"
 
 	if [[ -z $api_response_file ]]; then
-		log "API call failed after $MAX_API_RETRIES retries"
-		record_failure "$first_file" "API call failed after retries"
-		exec 9>&-
-		rm -f "$lock_file"
+		log "ERROR: API call failed after $MAX_API_RETRIES retries for $polished_file"
 		return 1
 	fi
 
+	# Read the polished content from the API response file
 	local polished_text
 	polished_text=$(cat "$api_response_file")
 	rm -f "$api_response_file"
 
-	[[ -z $polished_text ]] && {
-		log "Empty polished text for $pdf_name/polished_$output_index.txt"
-		record_failure "$first_file" "Empty polished text"
-		exec 9>&-
-		rm -f "$lock_file"
+	if [[ -z $polished_text ]]; then
+		log "ERROR: Empty polished text received for $polished_file"
 		return 1
-	}
+	fi
 
-	if echo "$polished_text" >"$temp_output_file" && mv "$temp_output_file" "$final_output_file"; then
-		log "Success: $pdf_name/polished_$output_index.txt"
-		# Remove processed files only on success
-		rm -f "$first_file"
-		[[ -n $second_file && $second_file != "EMPTY" ]] && rm -f "$second_file"
-		[[ -n $third_file && $third_file != "EMPTY" ]] && rm -f "$third_file"
-		exec 9>&-
-		rm -f "$lock_file"
+	# Save the polished text to the output file
+	local output_file_path="${storage_dir}/${polished_file}"
+	if echo "$polished_text" >"$output_file_path"; then
+		echo "SUCCESS: Saved $output_file_path"
+		print_line
 		return 0
 	else
-		log "Failed to write output file: $final_output_file"
-		record_failure "$first_file" "Failed to write output file"
-		rm -f "$temp_output_file"
-		exec 9>&-
-		rm -f "$lock_file"
+		log "ERROR: Failed to save polished text to $output_file_path"
 		return 1
 	fi
 }
 
-process_worker_block()
+polish_text()
 {
-	local worker_id="$1"
-	shift
-	local -a work_items=("$@")
-	log "Worker $worker_id processing $((${#work_items[@]} / 4)) work items"
+	local storage_dir="$1"
 
-	for ((i = 0; i < ${#work_items[@]}; i += 4)); do
-		local first_file="${work_items[i]}"
-		local second_file="${work_items[i + 1]}"
-		local third_file="${work_items[i + 2]}"
-		local output_index="${work_items[i + 3]}"
+	local total_files=${#RESULT_ARRAY[@]}
+	local output_index=0
 
-		[[ $second_file == "EMPTY" ]] && second_file=""
-		[[ $third_file == "EMPTY" ]] && third_file=""
+	if [[ $total_files -eq 0 ]]; then
+		log "No text files to process"
+		return 1
+	fi
 
-		process_text_group "$first_file" "$second_file" "$third_file" "$output_index" ||
-			log "Worker $worker_id: Failed to process group starting with '$first_file'"
+	log "Processing $total_files text files in groups of 3"
+	print_line
+	# Process files in groups of 3
+	for ((i = 0; i < total_files; i += 3)); do
+		local first_file="${RESULT_ARRAY[i]}"
+		local second_file=""
+		local third_file=""
+
+		# Check if files exist and are readable
+		if [[ ! -r $first_file ]]; then
+			log "ERROR: Cannot read file: $first_file"
+			return 1
+		fi
+
+		# Check if second file exists
+		if [[ $((i + 1)) -lt $total_files ]]; then
+			local candidate="${RESULT_ARRAY[$((i + 1))]}"
+			if [[ -r $candidate ]]; then
+				second_file="$candidate"
+			fi
+		fi
+
+		# Check if third file exists
+		if [[ $((i + 2)) -lt $total_files ]]; then
+			local candidate="${RESULT_ARRAY[$((i + 2))]}"
+			if [[ -r $candidate ]]; then
+				third_file="$candidate"
+			fi
+		fi
+
+		local end_file=$((i + 3 <= total_files ? i + 3 : total_files))
+		log "Processing group $output_index: files $((i + 1))-$end_file of $total_files"
+		print_line
+		# Call existing process_text_group function
+		if process_text_group "$first_file" "$second_file" "$third_file" "$output_index" "$storage_dir"; then
+			echo "SUCCESS: Processed polished_'$output_index"
+			print_line
+		else
+			echo "WARN: Failed to process group $output_index"
+
+		fi
+		output_index=$((output_index + 1))
 	done
 
-	log "Worker $worker_id finished"
+	print_line
+	return 0
 }
 
-build_work_queue()
+pre_process_text()
 {
-	local -a pdfs_to_process=("$@")
-	local -a work_items=()
+	local text_directory="$1"
+	local processing_text_dir="$2"
+	local storage_dir="$3"
+	# Reset
+	RESULT_ARRAY=()
 
-	for pdf_name in "${pdfs_to_process[@]}"; do
-		local -a text_files=()
-		mapfile -d '' -t text_files < <(find "$PROCESSING_DIR/$pdf_name/text" -name "*.txt" -type f -print0 | sort -zV)
-		[[ ${#text_files[@]} -eq 0 ]] && continue
+	# Input validation
+	if [[ -z $text_directory ]] || [[ ! -d $text_directory ]]; then
+		echo "ERROR: Invalid text directory: $text_directory"
+		return 1
+	fi
 
-		mkdir -p "$OUTPUT_DIR/$pdf_name/polished"
+	if [[ -z $processing_text_dir ]]; then
+		echo "ERROR: Processing text directory not specified"
+		return 1
+	fi
 
-		local output_index=1
-		local processed_text_files=0
-		local text_count=${#text_files[@]}
+	if [[ -z $storage_dir ]] || [[ ! -d $storage_dir ]]; then
+		echo "ERROR: Invalid storage directory: $storage_dir"
+		return 1
+	fi
 
-		while [[ $processed_text_files -lt $text_count ]]; do
-			local expected_polished_file="$OUTPUT_DIR/$pdf_name/polished/polished_$output_index.txt"
+	# Check if PROCESSING_DIR is defined
+	if [[ -z $PROCESSING_DIR ]]; then
+		echo "ERROR: PROCESSING_DIR environment variable not set"
+		return 1
+	fi
 
-			if [[ -s $expected_polished_file ]]; then
-				# Skip existing files and increment counters appropriately
-				local remaining_files=$((text_count - processed_text_files))
-				if [[ $remaining_files -ge 3 ]]; then
-					processed_text_files=$((processed_text_files + 3))
-				elif [[ $remaining_files -eq 2 ]]; then
-					processed_text_files=$((processed_text_files + 2))
-				else
-					processed_text_files=$((processed_text_files + 1))
-				fi
-				((output_index++))
+	echo "INFO: STORAGE $storage_dir"
+	print_line
+
+	# Create safe directory name
+	local safe_name
+	safe_name=$(echo "$processing_text_dir" | tr '/' '_')
+
+	echo "INFO: Removing old directories with the same base directory"
+	rm -rf "${PROCESSING_DIR:?}/${safe_name}"_*
+
+	# Create temporary directory with error handling
+	local temp_dir
+	if ! temp_dir=$(mktemp -d "$PROCESSING_DIR/${safe_name}_XXXX"); then
+		echo "ERROR: Failed to create temporary directory"
+		return 1
+	fi
+
+	echo "STAGING TO PROCESSING DIR: $temp_dir"
+	print_line
+
+	# Copy files with progress and error handling
+	rsync -a "$text_directory/" "$temp_dir/"
+
+	# Verify copy integrity
+	local rsync_output
+	if rsync_output=$(rsync -a --checksum --dry-run "$text_directory/" "$temp_dir/"); then
+		if [[ -z $rsync_output ]]; then
+			echo "SUCCESS: STAGING COMPLETE"
+			print_line
+		else
+			echo "WARNING: Files may differ:"
+			echo "$rsync_output"
+		fi
+	else
+		echo "ERROR: Failed to verify staging integrity"
+		rm -rf "$temp_dir"
+		return 1
+	fi
+
+	# Look for text files with various extensions
+	declare -a text_array=()
+	mapfile -t text_array < <(find "$temp_dir" -type f -name "*.txt" | sort -h)
+	if [[ ${#text_array[@]} -eq 0 ]]; then
+		echo "ERROR: No TEXT files found in $temp_dir"
+		echo "DEBUG: Directory structure (first 5 files):"
+		find "$temp_dir" -type f | head -5
+		print_line
+		rm -rf "$temp_dir" # Cleanup on failure
+		return 1
+	else
+		echo "SUCCESS: Found ${#text_array[@]} text files. Continue Processing ..."
+		print_line
+		# Copy array to the reference
+		RESULT_ARRAY=("${text_array[@]}")
+	fi
+
+}
+are_png_and_text()
+{
+	local -a pdf_array=("$@")
+	TEXT_DIRS_GLOBAL=() # Reset global directory
+	for pdf_name in "${pdf_array[@]}"; do
+		echo "Checking document: $pdf_name"
+		png_path="$OUTPUT_DIR/$pdf_name/png"
+		text_path="$OUTPUT_DIR/$pdf_name/text"
+		polished_path="$OUTPUT_DIR/$pdf_name/polished"
+		if [[ -d $polished_path ]]; then
+			polished_count=$(find "$polished_path" -type f | wc -l)
+			if [[ $polished_count -gt 0 ]]; then
+				echo "WARN: There is an existing directory with polished text"
+				echo "INFO: Erase the directory if you want to generate new text"
 				continue
 			fi
-
-			# Create work item for missing polished file
-			local first_file="${text_files[$processed_text_files]}"
-			local second_file="EMPTY"
-			local third_file="EMPTY"
-
-			[[ $((processed_text_files + 1)) -lt $text_count ]] && second_file="${text_files[processed_text_files + 1]}"
-			[[ $((processed_text_files + 2)) -lt $text_count ]] && third_file="${text_files[processed_text_files + 2]}"
-
-			work_items+=("$first_file" "$second_file" "$third_file" "$output_index")
-
-			# Update processed count based on actual files assigned
-			if [[ $third_file != "EMPTY" ]]; then
-				processed_text_files=$((processed_text_files + 3))
-			elif [[ $second_file != "EMPTY" ]]; then
-				processed_text_files=$((processed_text_files + 2))
+		fi
+		if [[ -d $png_path && -d $text_path ]]; then
+			png_count=$(find "$png_path" -type f | wc -l)
+			text_count=$(find "$text_path" -type f | wc -l)
+			if [[ $text_count -gt 0 && $text_count -eq $png_count ]]; then
+				echo "INFO: PNG: $png_count | TEXT: $text_count"
+				echo "INFO: adding directory for processing"
+				print_line
+				TEXT_DIRS_GLOBAL+=("$text_path")
 			else
-				processed_text_files=$((processed_text_files + 1))
+				echo "INFO: TEXT and PNG do not match"
+				echo "WARN: Review $text_path"
+				print_line
 			fi
-			((output_index++))
-		done
+		else
+			echo "WARN: Confirm paths $png_path and $text_path"
+			print_line
+		fi
 	done
 
-	printf '%s\n' "${work_items[@]}"
-}
-
-run_parallel_processing()
-{
-	local -a work_items=("$@")
-	[[ ${#work_items[@]} -eq 0 ]] && return 0
-
-	[[ $((${#work_items[@]} % 4)) -ne 0 ]] && {
-		log "Error: work_items array length not multiple of 4"
+	if [ ${#TEXT_DIRS_GLOBAL[@]} -eq 0 ]; then
+		echo "ERROR: No directories to process with valid png and text"
+		print_line
 		exit 1
-	}
-
-	local item_count=$((${#work_items[@]} / 4))
-	log "Processing $item_count work items with $WORKERS workers"
-
-	local -a worker_pids=()
-	local items_per_worker=$(((item_count + WORKERS - 1) / WORKERS))
-
-	for ((i = 0; i < WORKERS; i++)); do
-		local start_index=$((i * items_per_worker * 4))
-		[[ $start_index -ge ${#work_items[@]} ]] && break
-
-		local -a worker_items=("${work_items[@]:start_index:items_per_worker*4}")
-		[[ ${#worker_items[@]} -gt 0 ]] && {
-			process_worker_block "$i" "${worker_items[@]}" &
-			worker_pids+=($!)
-			[[ $i -lt $((WORKERS - 1)) && $((start_index + items_per_worker * 4)) -lt ${#work_items[@]} ]] && sleep 60
-		}
-	done
-
-	for pid in "${worker_pids[@]}"; do
-		wait "$pid" || log "Worker with PID $pid failed"
-	done
+	else
+		echo "SUCCESS: Found directories to process"
+		return 0
+	fi
 }
 
-cleanup_and_exit()
+get_last_two_dirs()
 {
-	local exit_code=$?
-	[[ $cleanup_called == true ]] && return
-	cleanup_called=true
-	log "Cleaning up and exiting..."
-
-	[[ -n ${TEMP_PATH:-} && -d $TEMP_PATH ]] && {
-		find "$TEMP_PATH" -name "api_response*" -o -name "api_payload*" -o -name "curl_error*" -type f -delete 2>/dev/null || true
-	}
-
-	[[ -n ${OUTPUT_DIR:-} && -d $OUTPUT_DIR ]] && {
-		find "$OUTPUT_DIR" -name "*.lock" -type f -delete 2>/dev/null || true
-	}
-
-	[[ -n ${FAILED_LOG:-} && -f "$FAILED_LOG.lock" ]] && rm -f "$FAILED_LOG.lock"
-
-	log "Cleanup finished. Exiting with code $exit_code"
-	exit "$exit_code"
-}
-
-setup_temp_dir()
-{
-	mkdir -p "$TEMP_PATH"
-	PROCESSING_DIR=$(mktemp -d -p "$TEMP_PATH" "processing_text.XXXXXX") || {
-		log "Failed to create temporary processing directory"
-		exit 1
-	}
-	log "Created temporary processing directory: $PROCESSING_DIR"
+	local full_path="$1"
+	local parent_dir
+	parent_dir=$(basename "$(dirname "$full_path")")
+	local current_dir
+	current_dir=$(basename "$full_path")
+	echo "$parent_dir/$current_dir"
 }
 
 main()
 {
 	# Load configuration
+	INPUT_DIR=$(get_config "paths.input_dir")
 	OUTPUT_DIR=$(get_config "paths.output_dir")
-	WORKERS=$(get_config "settings.workers")
-	TEMP_PATH=$(get_config "processing_dir.polish_text")
-	GOOGLE_API_KEY_VAR=$(get_config "google_api.api_key_variable")
-	POLISH_MODEL=$(get_config "google_api.polish_model" "gemini-2.5-flash")
+	PROCESSING_DIR=$(get_config "processing_dir.polish_text")
+	GEMINI_API_KEY_VAR=$(get_config "google_api.api_key_variable")
+	POLISH_MODEL=$(get_config "google_api.polish_model")
 	LOG_DIR=$(get_config "logs_dir.polish_text")
 	MAX_API_RETRIES=$(get_config "retry.max_retries" "5")
 	RETRY_DELAY_SECONDS=$(get_config "retry.retry_delay_seconds" "5")
 	FAILED_LOG="$LOG_DIR/failed_pages.log"
 
-	# Adjust workers to available cores
-	local core_count
-	core_count=$(nproc)
-	[[ $WORKERS -gt $core_count ]] && {
-		log "Reducing worker count from $WORKERS to $core_count"
-		WORKERS=$core_count
-	}
+	# Reset directories
+	echo "INFO: RESETTING DIRS"
+	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
+	rm -rf "$PROCESSING_DIR" "$LOG_DIR"
+	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
 
-	# Setup logging
-	mkdir -p "$LOG_DIR"
 	LOG_FILE="$LOG_DIR/log_$(date +'%Y%m%d_%H%M%S').log"
 	touch "$LOG_FILE" "$FAILED_LOG"
-	log "Script started. Log file: $LOG_FILE"
+	echo "Script started. Log file: $LOG_FILE"
 
-	trap 'cleanup_and_exit' EXIT INT TERM
 	check_dependencies
-	setup_temp_dir
-	get_pdf_names
+	declare -a pdf_array=()
+	# Get all pdf files in INPUT_DIR (directory for pdf raw files)
+	mapfile -t pdf_array < <(find "$INPUT_DIR" -type f -name "*.pdf" -exec basename {} .pdf \;)
+	if [[ ${#pdf_array[@]} -eq 0 ]]; then
+		echo "No pdf files in input directory"
+		exit 1
+	else
+		echo "Found pdf for processing."
+	fi
+	print_line
 
-	# Find PDFs needing processing
-	local -a pdfs_to_process=()
-	for pdf_name in "${pdf_dirs[@]}"; do
-		validate_polished_directory "$pdf_name" && pdfs_to_process+=("$pdf_name")
-	done
+	# Confirm we have text to process
+	# Text should have the same number of files as png
+	if are_png_and_text "${pdf_array[@]}"; then
+		for text_path in "${TEXT_DIRS_GLOBAL[@]}"; do
+			echo "PROCESSING: $text_path"
+			staging_dir_name=$(get_last_two_dirs "$text_path")
+			storage_dir="${OUTPUT_DIR}/$(basename "$(dirname "$text_path")")/polished"
+			mkdir -p "$storage_dir"
 
-	[[ ${#pdfs_to_process[@]} -eq 0 ]] && {
-		log "All polished directories complete. No processing needed."
-		return 0
-	}
+			if pre_process_text "$text_path" "$staging_dir_name" "$storage_dir"; then
+				echo "INFO: Captured ${#RESULT_ARRAY[@]} files:"
+				print_line
+				polish_text "$storage_dir"
 
-	log "Processing ${#pdfs_to_process[@]} PDFs"
-	copy_text_for_processing "${pdfs_to_process[@]}"
+			fi
+		done
 
-	# Main processing loop - retry entire queue if needed
-	local queue_retry_count=0
-	local max_queue_retries=3
-
-	while [[ $queue_retry_count -lt $max_queue_retries ]]; do
-		local -a work_items=()
-		mapfile -t work_items < <(build_work_queue "${pdfs_to_process[@]}")
-
-		[[ ${#work_items[@]} -eq 0 ]] && {
-			log "All processing completed successfully"
-			break
-		}
-
-		local item_count=$((${#work_items[@]} / 4))
-		log "Queue attempt $((queue_retry_count + 1))/$max_queue_retries: Processing $item_count work items"
-
-		run_parallel_processing "${work_items[@]}"
-
-		# Check remaining work
-		local remaining_files
-		remaining_files=$(find "$PROCESSING_DIR" -name "*.txt" -type f | wc -l)
-		[[ $remaining_files -eq 0 ]] && {
-			log "All processing completed successfully"
-			break
-		}
-
-		log "Retrying $remaining_files unprocessed files after ${RETRY_DELAY_SECONDS}s delay"
-		sleep "$RETRY_DELAY_SECONDS"
-		((queue_retry_count++))
-	done
-
-	# Final status check
-	local failed_count
-	failed_count=$(find "$PROCESSING_DIR" -name "*.txt" -type f | wc -l)
-	if [[ $failed_count -gt 0 ]]; then
-		log "$failed_count files remain unprocessed after $max_queue_retries queue retries"
-		return 1
 	fi
 
 	log "All processing completed successfully"
