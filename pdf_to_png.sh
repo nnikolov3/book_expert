@@ -3,8 +3,35 @@
 # SIMPLIFIED SERIAL PDF TO PNG CONVERTER
 # Design: Niko Nikolov
 # Simplified for serial processing with directory checking
-# ================================================================================================
-
+# ------------------------------------------------------------------------------------
+# ## Code Guidelines to LLMs
+# - Declare (and assign separetly) variables to prevent undefined variable errors.
+# - Use explicit if/then/fi blocks for readability.
+# - Ensure all if/fi blocks are closed correctly.
+# - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
+# - Avoid mixing API calls.
+# - Lint with shellcheck correctness.
+# - Use grep -q for silent checks.
+# - Check for unbound variables with set -u.
+# - Clean up unused variables and maintain detailed comments.
+# - Avoid unreachable code or redundant commands.
+# - Keep code concise, clear, and self-documented.
+# - Avoid 'useless cat' use cmd < file.
+# - If not in a function use declare not local.
+# - Use `rsync` not cp.
+# - Initialize all variables.
+# - Code should be self-documenting.
+# - Flows should have solid retry logic.
+# - Do more with less. Do not add code for the sake of adding code. It should have clear purpose.
+# - No hardcoded values.
+# - DO NOT USE if <cmd>; then. Rather, use output=$(cmd) if $output; then
+# - DO NOT USE 2>>"$LOG_FILE"
+# - DO NOT USE ((i++)) instead use i=$((i + 1))
+# - DO NOT IGNORE the guidelines
+# - AVOID Redirections 2>/dev/null
+# - Declare / assign each variable on its own line
+# COMMENTS SHOULD NOT BE REMOVED, INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
+# ------------------------------------------------------------------------------------
 set -euo pipefail
 
 # --- Global Variables ---
@@ -31,24 +58,31 @@ get_config()
 	return 0
 }
 
-get_config_optional()
-{
-	local key="$1"
-	local default_value="${2:-}"
-	local value
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE" 2>/dev/null)
-	[[ -z $value ]] && value="$default_value"
-	echo "$value"
-}
-
 log_info()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $*" | tee -a "${LOG_FILE:-/dev/stderr}"
+	local message
+	message="INFO: $(date +%c) $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
 }
 
 log_error()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $*" | tee -a "${LOG_FILE:-/dev/stderr}" >&2
+	local message
+	message="ERROR: $(date +%c) $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
+}
+
+log_warn()
+{
+	local message
+	message="WARN: $(date +%c) $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
 }
 
 check_dependencies()
@@ -65,14 +99,15 @@ check_dependencies()
 
 print_line()
 {
-	echo "========================================================================="
+	local line="========================================================================="
+	echo "$line"
+	echo "$line" >>"$LOG_FILE"
 }
 
 cleanup_and_exit()
 {
 	local exit_code=${1:-0}
 	log_info "Exiting with code $exit_code"
-	print_line
 	exit "$exit_code"
 }
 
@@ -102,34 +137,15 @@ should_skip_pdf()
 	local pdf_name="$1"
 	local pdf_dir="$OUTPUT_DIR/$pdf_name"
 	local png_dir="$pdf_dir/png"
-	local text_dir="$pdf_dir/text"
 
-	# Check if both directories exist
-	if [[ ! -d $png_dir ]]; then
-		echo "WARN: PNG directory does not exist"
-		echo "INFO: Creating directory $png_dir"
-		mkdir -p "$png_dir"
-		print_line
-
-	fi
-	if [[ ! -d $text_dir ]]; then
-		echo "WARN: TEXT directory does not exist"
-		echo "INFO: Creating directory $text_dir"
-		mkdir -p "$text_dir"
-		print_line
-	fi
-
-	# Count files in each directory
-	local png_count=0
-	local text_count=0
-	png_count=$(count_files_in_dir "$png_dir" "*.png")
-	text_count=$(count_files_in_dir "$text_dir" "*.txt")
-
-	# Skip if both directories have files and same count
-	if [[ $png_count -gt 0 && $text_count -gt 0 && $png_count -eq $text_count ]]; then
-		log_info "WARN: Skipping '$pdf_name': png ($png_count) and text ($text_count) files already exist"
-		print_line
-		return 0 # Skip
+	# If PNG directory exists and has PNG files, skip with warning
+	if [[ -d $png_dir ]]; then
+		local png_count
+		png_count=$(count_files_in_dir "$png_dir" "*.png")
+		if [[ $png_count -gt 0 ]]; then
+			log_warn "Skipping '$pdf_name': PNG directory exists with $png_count files. Remove '$png_dir' to regenerate PNGs."
+			return 0 # Skip
+		fi
 	fi
 
 	return 1 # Don't skip
@@ -142,7 +158,7 @@ convert_pdf()
 	pdf_name=$(basename "$pdf_path" .pdf)
 	local final_png_dir="$OUTPUT_DIR/$pdf_name/png"
 
-	log_info "INFO: --- Starting conversion for: $pdf_name ---"
+	log_info "Starting conversion for: $pdf_name"
 
 	# Check if we should skip this PDF
 	if should_skip_pdf "$pdf_name"; then
@@ -151,45 +167,53 @@ convert_pdf()
 
 	# Create output directory
 	if ! mkdir -p "$final_png_dir"; then
-		log_error "ERROR: Failed to create output directory: $final_png_dir"
+		log_error "Failed to create output directory: $final_png_dir"
 		return 1
 	fi
 
 	# Get page count
-	if ! num_pages=$(pdfinfo "$pdf_path" | awk '/Pages:/ {print $2}'); then
-		log_error "ERROR: Failed to get page count for '$pdf_path'"
-		print_line
+	local pdf_info_output
+	local num_pages
+	pdf_info_output=$(pdfinfo "$pdf_path" 2>/dev/null)
+	if [[ -z $pdf_info_output ]]; then
+		log_error "Failed to get PDF info for '$pdf_path'"
+		return 1
+	fi
+	num_pages=$(echo "$pdf_info_output" | awk '/Pages:/ {print $2}')
+	if [[ -z $num_pages ]]; then
+		log_error "Failed to extract page count from PDF info for '$pdf_path'"
 		return 1
 	fi
 
 	if [[ $num_pages -eq 0 ]]; then
-		log_error "ERROR: Invalid page count for '$pdf_path': $num_pages"
-		print_line
+		log_error "Invalid page count for '$pdf_path': $num_pages"
 		return 1
 	fi
 
-	log_info "INFO: Converting $num_pages pages from '$pdf_name'"
-	print_line
+	log_info "Converting $num_pages pages from '$pdf_name'"
 
 	# Check for required variables
 	if [[ -z $DPI ]]; then
-		log_error "ERROR: DPI variable not set"
-
+		log_error "DPI variable not set"
 		return 1
 	fi
 
-	digits=4 # Zero-pad to 4 digits for consistency, e.g., page_0001.png
+	local digits=4 # Zero-pad to 4 digits for consistency, e.g., page_0001.png
 
-	mkdir -p "$final_png_dir"
-	echo "INFO: Creating final directory"
+	log_info "Creating final directory: $final_png_dir"
+
 	# Convert PDF to PNGs (Ghostscript)
 	if ! ghostscript -dNOPAUSE -dBATCH -sDEVICE=png16m -r"$DPI" \
 		-sOutputFile="${final_png_dir}/page_%0${digits}d.png" "$pdf_path"; then
-		log_error "ERROR: GS failed"
-		print_line
+		log_error "Ghostscript conversion failed for '$pdf_name'"
+		return 1
 	fi
 
-	log_info "--- Successfully converted '$pdf_name': Kept $processed_count, Skipped $skipped_count ---"
+	# Count generated files for verification
+	local generated_count
+	generated_count=$(count_files_in_dir "$final_png_dir" "*.png")
+
+	log_info "Successfully converted '$pdf_name': Generated $generated_count PNG files"
 	return 0
 }
 
@@ -204,81 +228,94 @@ main()
 
 	# Validate config file
 	if [[ ! -f $CONFIG_FILE ]]; then
-		log_error "ERROR: Configuration file not found: $CONFIG_FILE"
-		cleanup_and_exit 1
+		echo "ERROR: Configuration file not found: $CONFIG_FILE"
+		exit 1
 	fi
 
 	# Load configurations
-	date +%c
-	print_line
-	log_info "Loading configuration from $CONFIG_FILE"
-	print_line
+	local start_time
+	start_time=$(date +%c)
+
 	# Load log directory and create log file
 	local log_dir
-	if ! log_dir=$(get_config "logs_dir.pdf_to_png"); then
-		log_error "ERROR: Failed to load logs_dir.pdf_to_png"
-		cleanup_and_exit 1
+	local config_result
+	config_result=$(get_config "logs_dir.pdf_to_png" 2>/dev/null)
+	if [[ $? -ne 0 || -z $config_result ]]; then
+		echo "ERROR: Failed to load logs_dir.pdf_to_png"
+		exit 1
 	fi
-	if ! mkdir -p "$log_dir" 2>/dev/null; then
-		log_error "ERROR: Failed to create log directory: $log_dir"
-		cleanup_and_exit 1
+	log_dir="$config_result"
+	if ! mkdir -p "$log_dir"; then
+		echo "ERROR: Failed to create log directory: $log_dir"
+		exit 1
 	fi
 	LOG_FILE="$log_dir/log_$(date +'%Y%m%d_%H%M%S').log"
 	if ! touch "$LOG_FILE" 2>/dev/null; then
-		log_error "ERROR: Failed to create log file: $LOG_FILE"
-		cleanup_and_exit 1
+		echo "ERROR: Failed to create log file: $LOG_FILE"
+		exit 1
 	fi
 
-	log_info "PDF to PNG conversion process started"
-	print_line
+	log_info "PDF to PNG conversion process started at $start_time"
+	log_info "Loading configuration from $CONFIG_FILE"
 
 	# Load other configurations
-	OUTPUT_DIR=$(get_config "paths.output_dir")
-	INPUT_DIR=$(get_config "paths.input_dir")
-	DPI=$(get_config "settings.dpi")
+	config_result=$(get_config "paths.output_dir" 2>/dev/null)
+	if [[ $? -ne 0 || -z $config_result ]]; then
+		log_error "Failed to load paths.output_dir"
+		cleanup_and_exit 1
+	fi
+	OUTPUT_DIR="$config_result"
+
+	config_result=$(get_config "paths.input_dir" 2>/dev/null)
+	if [[ $? -ne 0 || -z $config_result ]]; then
+		log_error "Failed to load paths.input_dir"
+		cleanup_and_exit 1
+	fi
+	INPUT_DIR="$config_result"
+
+	config_result=$(get_config "settings.dpi" 2>/dev/null)
+	if [[ $? -ne 0 || -z $config_result ]]; then
+		log_error "Failed to load settings.dpi"
+		cleanup_and_exit 1
+	fi
+	DPI="$config_result"
 
 	# Validate directories
 	if [[ ! -d $INPUT_DIR ]]; then
 		log_error "Input directory does not exist: $INPUT_DIR"
 		cleanup_and_exit 1
 	fi
-	if ! mkdir -p "$OUTPUT_DIR" 2>>"$LOG_FILE"; then
+	if ! mkdir -p "$OUTPUT_DIR"; then
 		log_error "Failed to create output directory: $OUTPUT_DIR"
 		cleanup_and_exit 1
 	fi
 
 	# Validate numeric values
-	for var in DPI; do
-		if ! [[ ${!var} =~ ^[0-9]+$ ]] || ((${!var} < 0)); then
-			log_error "$var must be a non-negative integer: ${!var}"
-			cleanup_and_exit 1
-		fi
-	done
+	if ! [[ $DPI =~ ^[0-9]+$ ]] || [[ $DPI -lt 1 ]]; then
+		log_error "DPI must be a positive integer: $DPI"
+		cleanup_and_exit 1
+	fi
 
 	log_info "Configuration loaded: INPUT_DIR=$INPUT_DIR, OUTPUT_DIR=$OUTPUT_DIR, DPI=$DPI"
 
 	# Check dependencies
 	if ! check_dependencies; then
-		log_error "ERROR: Dependency check failed"
-		print_line
+		log_error "Dependency check failed"
 		cleanup_and_exit 1
 	fi
 
 	local -a pdf_array
-	log_info "INFO: Searching for PDF files in $INPUT_DIR"
-	print_line
+	log_info "Searching for PDF files in $INPUT_DIR"
 
 	# Store full paths in the array
 	mapfile -t pdf_array < <(find "$INPUT_DIR" -type f -name "*.pdf")
 
 	if [[ ${#pdf_array[@]} -eq 0 ]]; then
-		log_error "ERROR: No PDF files found in $INPUT_DIR"
-		print_line
+		log_error "No PDF files found in $INPUT_DIR"
 		cleanup_and_exit 1
 	fi
 
-	log_info "SUCCESS: Found ${#pdf_array[@]} PDF file(s) to process"
-	print_line
+	log_info "Found ${#pdf_array[@]} PDF file(s) to process"
 
 	# Process PDFs serially
 	local processed_count=0
@@ -291,31 +328,22 @@ main()
 		local pdf_name
 		pdf_name=$(basename "$pdf_path" .pdf)
 
-		processed_count=$((processed_count + 1))
-		log_info "INFO: Proceeding with '$pdf_name' ($processed_count of $total_files)"
-		log_info "INFO: PATH $pdf_path"
-		print_line
+		local current_file=$((processed_count + 1))
+		log_info "Processing '$pdf_name' ($current_file of $total_files)"
+		log_info "Full path: $pdf_path"
 
 		if should_skip_pdf "$pdf_name"; then
 			skipped_count=$((skipped_count + 1))
-			echo "INFO: SKIPPING $pdf_name"
-			print_line
-			continue
-		fi
-
-		if convert_pdf "$pdf_path"; then
-			log_info "SUCCESS: Successfully processed '$pdf_name'"
-			print_line
+		elif convert_pdf "$pdf_path"; then
+			processed_count=$((processed_count + 1))
 		else
-			log_error "ERROR: Failed to process '$pdf_path'"
+			log_error "Failed to process '$pdf_path'"
 			failed_count=$((failed_count + 1))
-			print_line
 		fi
 	done
 
-	trap - INT TERM
-	log_info "INFO: Processing complete: Processed $((processed_count - skipped_count - failed_count)), Skipped $skipped_count, Failed $failed_count of $total_files"
-	print_line
+	local successful_count=$((total_files - skipped_count - failed_count))
+	log_info "Processing complete: Successful $successful_count, Skipped $skipped_count, Failed $failed_count of $total_files"
 	cleanup_and_exit 0
 }
 
