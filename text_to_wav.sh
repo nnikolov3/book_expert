@@ -189,6 +189,13 @@ text_chunks_to_wav()
 		printf -v chunk_filename "chunk_%04d.wav" "$chunk_num"
 		full_output_path="$output_dir/$chunk_filename"
 
+		# Skip if this chunk's file already exists
+		if [[ -f $full_output_path ]]; then
+			log_info "Skipping existing chunk file $chunk_filename"
+			chunk_num=$((chunk_num + 1))
+			continue
+		fi
+
 		# Dynamic preview length
 		if [[ $chunk_length -gt $preview_length ]]; then
 			chunk_preview="${chunk:0:preview_length}..."

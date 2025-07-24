@@ -24,6 +24,7 @@
 # - Prefer mapfile or read -a to split command outputs (or quote to avoid splitting)
 # - Do not expand the code. Do more with less.
 # - Follow bash best practices.
+# - Avoid hardcoded values
 # COMMENTS SHOULD NOT BE REMOVED, INCONCISTENCIES SHOULD BE UPDATED WHEN DETECTED
 # USE MARKDOWN WITHIN THE COMMENT BLOCKS FOR COMMENTS
 # ===============================================================================================
@@ -80,12 +81,28 @@ print_line()
 is_polished_text()
 {
 	local -a pdf_array=("$@")
+	local text_path
+	local polished_path
+	local concat_path
+	local concat_count
+	local text_count
+	local polished_count
 	POLISHED_DIRS_GLOBAL=()
 	for pdf_name in "${pdf_array[@]}"; do
 		echo "Checking document: $pdf_name"
 		text_path="$OUTPUT_DIR/$pdf_name/text"
 		polished_path="$OUTPUT_DIR/$pdf_name/polished"
+		concat_path="$OUTPUT_DIR/$pdf_name/concat"
 		if [[ -d $text_path && -d $polished_path ]]; then
+			if [[ -d $concat_path ]]; then
+				concat_count=$(find "$concat_path" -type f | wc -l)
+				if [[ $concat_count -eq 1 ]]; then
+					echo "WARN: $pdf_name has already a concatenated text"
+					echo "INFO: If you want to generate a new file, remove the directory"
+					print_line
+					continue
+				fi
+			fi
 			text_count=$(find "$text_path" -type f | wc -l)
 			polished_count=$(find "$polished_path" -type f | wc -l)
 			threshold=$(((text_count / 3) - 2))
@@ -221,7 +238,7 @@ create_single_file()
 		# Export the content to a global variable for use elsewhere
 		CONCATENATED_CONTENT="$concatenated_content"
 		CONCATENATED_FILE_PATH="$concat_filepath"
-		if $CONCATENATED_CONTENT; then
+		if [[ $CONCATENATED_CONTENT ]]; then
 			echo "INFO: Path $CONCATENATED_FILE_PATH"
 			print_line
 		fi

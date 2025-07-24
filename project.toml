@@ -24,6 +24,8 @@ tts_chunks= "tts_chunks"
 wav = "wav"
 mp3 = "mp3"
 
+[api]
+provider = "google"
 # ================================================================================================
 # [processing_dir]
 # Processing temp director
@@ -58,6 +60,7 @@ workers = 16
 overlap_chars = 2000
 skip_blank_pages = true
 blank_threshold = 1000
+force = 1
 
 [tesseract]
 language = "eng+equ"
@@ -75,9 +78,8 @@ url = "https://integrate.api.nvidia.com/v1/chat/completions"
 # Model for Stage 2: Text correction from OCR output
 text_fix_model = "deepseek-ai/deepseek-r1-0528"
 # Model for Stage 2: Visual concept extraction from images
-concept_model = "mistralai/mistral-medium-3-instruct"
+concept_model = "google/gemma-3-27b-it"
 # Environment variable name for the Nvidia API key
-polish_model = "nvidia/llama-3.3-nemotron-super-49b-v1"
 api_key_variable = "NVIDIA_API_KEY"
 
 max_concurrent_calls = 16
@@ -88,7 +90,7 @@ max_concurrent_calls = 16
 # Google Gemini API settings for final narration polishing.
 # ================================================================================================
 [google_api]
-polish_model = "gemini-2.5-flash-lite-preview-06-17"
+polish_model = "gemini-2.5-flash"
 # Environment variable name for the Google Gemini API key
 api_key_variable = "GEMINI_API_KEY"
 # Maximum number of retry attempts for Google API calls
