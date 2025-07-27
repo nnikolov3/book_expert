@@ -18,57 +18,57 @@ declare OUTPUT_DIR=""
 declare LOG_DIR=""
 declare PROCESSING_DIR=""
 declare LOG_FILE=""
-declare -a NARRATION_TEXT_DIRS_GLOBAL=()
+declare -a FINAL_TEXT_DIRS_GLOBAL=()
 # Export the content to a global variable for use elsewhere
-declare CONCATENATED_CONTENT=""
-declare CONCATENATED_FILE_PATH=""
+declare CONCATENATED_CONTENT_GLOBAL=""
+declare CONCATENATED_FILE_PATH_GLOBAL=""
 
 # ================================================================================================
 # MAIN PROCESSING FUNCTIONS
 # ================================================================================================
 
-is_narration_text_ready()
+is_final_text_ready()
 {
 	local -a pdf_array=("$@")
-	local narration_text_path
-	local concat_path
-	local concat_count
-	local narration_text_count
+	local final_text_path=""
+	local complete_path=""
+	local complete_count=0
+	local final_text_count=0
 
-	NARRATION_TEXT_DIRS_GLOBAL=()
+	FINAL_TEXT_DIRS_GLOBAL=()
 
 	for pdf_name in "${pdf_array[@]}"; do
 		log_info "Checking document: $pdf_name"
-		narration_text_path="$OUTPUT_DIR/$pdf_name/narration_text"
-		concat_path="$OUTPUT_DIR/$pdf_name/concat"
+		final_text_path="$OUTPUT_DIR/$pdf_name/final_text"
+		complete_path="$OUTPUT_DIR/$pdf_name/complete"
 
-		if [[ -d $narration_text_path ]]; then
-			if [[ -d $concat_path ]]; then
-				concat_count=$(find "$concat_path" -type f | wc -l)
-				if [[ $concat_count -eq 1 ]]; then
-					log_warn "$pdf_name has already a concatenated text"
+		if [[ -d $final_text_path ]]; then
+			if [[ -d $complete_path ]]; then
+				complete_count=$(find "$complete_path" -type f | wc -l)
+				if [[ $complete_count -eq 1 ]]; then
+					log_warn "$pdf_name has already a complete text file"
 					log_info "If you want to generate a new file, remove the directory"
 					continue
 				fi
 			fi
 
-			narration_text_count=$(find "$narration_text_path" -type f | wc -l)
+			final_text_count=$(find "$final_text_path" -type f | wc -l)
 
-			if [[ $narration_text_count -gt 0 ]]; then
-				log_info "narration_TEXT: $narration_text_count"
+			if [[ $final_text_count -gt 0 ]]; then
+				log_info "final_TEXT: $final_text_count"
 				log_success "adding directory for processing"
-				NARRATION_TEXT_DIRS_GLOBAL+=("$narration_text_path")
+				FINAL_TEXT_DIRS_GLOBAL+=("$final_text_path")
 			else
-				log_info "narration_TEXT: $narration_text_count"
-				log_warn "Review $narration_text_path"
+				log_info "final_TEXT: $final_text_count"
+				log_warn "Review $final_text_path"
 			fi
 		else
-			log_warn "Confirm path $narration_text_path"
+			log_warn "Confirm path $final_text_path"
 		fi
 	done
 
-	if [[ ${#NARRATION_TEXT_DIRS_GLOBAL[@]} -eq 0 ]]; then
-		log_error "No directories to process with valid narration text files"
+	if [[ ${#FINAL_TEXT_DIRS_GLOBAL[@]} -eq 0 ]]; then
+		log_error "No directories to process with valid final text files"
 		exit 1
 	else
 		log_success "Found directories to process"
@@ -79,9 +79,10 @@ is_narration_text_ready()
 get_last_two_dirs()
 {
 	local full_path="$1"
-	local parent_dir
+	local parent_dir=""
+	local current_dir=""
+
 	parent_dir=$(basename "$(dirname "$full_path")")
-	local current_dir
 	current_dir=$(basename "$full_path")
 	echo "$parent_dir/$current_dir"
 }
@@ -89,31 +90,34 @@ get_last_two_dirs()
 create_single_file()
 {
 	local processing_dir="$1"
-	local concat_file_dir="$2"
-	local narration_text_path="$3"
+	local complete_file_dir="$2"
+	local final_text_path="$3"
 
 	# Input validation
 	if [[ -z $processing_dir ]] || [[ ! -d $processing_dir ]]; then
 		log_error "Invalid directory $processing_dir"
 		return 1
 	fi
-	if [[ -z $narration_text_path ]]; then
-		log_error "Invalid directory for narration text"
+	if [[ -z $final_text_path ]]; then
+		log_error "Invalid directory for final text"
 		return 1
 	fi
-	if [[ -z $concat_file_dir ]] || [[ ! -d $concat_file_dir ]]; then
-		log_error "Invalid directory for the concatenated file"
+	if [[ -z $complete_file_dir ]] || [[ ! -d $complete_file_dir ]]; then
+		log_error "Invalid directory for the complete file"
 		return 1
 	fi
 
 	# Copy files with progress and error handling
-	rsync -a "$narration_text_path/" "$processing_dir/"
+	rsync -a "$final_text_path/" "$processing_dir/"
 
 	# Verify copy integrity
-	local rsync_output
-	rsync_output=$(rsync -a --checksum --dry-run "$narration_text_path/" "$processing_dir/")
-	local exit_status="$?"
-	if [[ exit_status -eq 0 ]]; then
+	local rsync_output=""
+	local exit_status=0
+
+	rsync_output=$(rsync -a --checksum --dry-run "$final_text_path/" "$processing_dir/")
+	exit_status="$?"
+
+	if [[ $exit_status -eq 0 ]]; then
 		if [[ -z $rsync_output ]]; then
 			log_success "STAGING COMPLETE"
 		else
@@ -128,62 +132,72 @@ create_single_file()
 
 	# Look for text files with various extensions
 	declare -a text_array=()
+	local number_files=0
+
 	mapfile -t text_array < <(find "$processing_dir" -type f -name "*.txt" | sort -V)
-	local number_files="${#text_array[@]}"
-	if [[ number_files -eq 0 ]]; then
+	number_files="${#text_array[@]}"
+
+	if [[ $number_files -eq 0 ]]; then
 		log_error "No TEXT files found in $processing_dir"
 		log_info "DEBUG: Directory structure (first 5 files):"
-		find "$processing_dir" -type f | head -5 | while read -r file; do log_info "$file"; done
+		find "$processing_dir" -type f | head -5 | while read -r file; do
+			log_info "$file"
+		done
 		return 1
 	else
 		log_success "Found ${#text_array[@]} text files. Continue Processing ..."
 	fi
 
-	local concat_filename="concatenated.txt"
-	local concat_filepath="$concat_file_dir/$concat_filename"
+	local complete_filename="complete.txt"
+	local complete_filepath="$complete_file_dir/$complete_filename"
 	local concatenated_content=""
+	local status=0
 
 	log_info "Starting file concatenation..."
 
 	# Clear the output file
-	true >"$concat_filepath"
+	true >"$complete_filepath"
 
 	# Process each file in the sorted order
 	for file in "${text_array[@]}"; do
-		local basename_file
+		local basename_file=""
 		basename_file=$(basename "$file")
 		log_info "Processing file: $basename_file"
 
 		# Append file content
-		if cat "$file" >>"$concat_filepath"; then
-			log_success "Added $basename_file to concatenated file"
+		if cat "$file" >>"$complete_filepath"; then
+			log_success "Added $basename_file to complete file"
 		else
 			log_error "Failed to append $basename_file"
 			return 1
 		fi
 
 		# Add spacing between files
-		echo -e "\n" >>"$concat_filepath"
+		echo -e "\n" >>"$complete_filepath"
 	done
 
 	# Read the concatenated content into memory
-	concatenated_content=$(cat "$concat_filepath")
+	concatenated_content=$(cat "$complete_filepath")
 	status="$?"
-	if [[ status -eq 0 ]]; then
-		log_success "Concatenated ${#text_array[@]} files to $concat_filename"
+
+	if [[ $status -eq 0 ]]; then
+		log_success "Concatenated ${#text_array[@]} files to $complete_filename"
 		log_info "Total content length: ${#concatenated_content} characters"
-		log_info "File saved at: $concat_filepath"
-		# Reset
-		CONCATENATED_CONTENT=""
-		CONCATENATED_FILE_PATH=""
-		# Export the content to a global variable for use elsewhere
-		CONCATENATED_CONTENT="$concatenated_content"
-		CONCATENATED_FILE_PATH="$concat_filepath"
-		if [[ -n $CONCATENATED_CONTENT ]]; then
-			log_info "Path $CONCATENATED_FILE_PATH"
+		log_info "File saved at: $complete_filepath"
+
+		# Reset global variables
+		CONCATENATED_CONTENT_GLOBAL=""
+		CONCATENATED_FILE_PATH_GLOBAL=""
+
+		# Export the content to global variables for use elsewhere
+		CONCATENATED_CONTENT_GLOBAL="$concatenated_content"
+		CONCATENATED_FILE_PATH_GLOBAL="$complete_filepath"
+
+		if [[ -n $CONCATENATED_CONTENT_GLOBAL ]]; then
+			log_info "Path $CONCATENATED_FILE_PATH_GLOBAL"
 		fi
 	else
-		log_error "Failed to read concatenated file into memory"
+		log_error "Failed to read complete file into memory"
 		return 1
 	fi
 }
@@ -205,23 +219,23 @@ main()
 	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.narration_text_concat")
 
 	# Reset directories
-
 	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
 	rm -rf "$PROCESSING_DIR" "$LOG_DIR"
 	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
+
 	LOG_FILE="$LOG_DIR/narration_text_concat.log"
 	touch "$LOG_FILE"
+
 	local -r logger="helpers/logging_utils_helper.sh"
 	source "$logger"
 
 	log_info "RESETTING DIRS"
-	# Set log file path
-
-	log_info "$(date +%c) narration text concatenation start"
+	log_info "$(date +%c) final text to complete concatenation start"
 
 	declare -a pdf_array=()
 	# Get all pdf files in INPUT_DIR (directory for pdf raw files)
 	mapfile -t pdf_array < <(find "$INPUT_DIR" -type f -name "*.pdf" -exec basename {} .pdf \;)
+
 	if [[ ${#pdf_array[@]} -eq 0 ]]; then
 		log_error "No pdf files in input directory"
 		exit 1
@@ -229,28 +243,36 @@ main()
 		log_success "Found pdf for processing."
 	fi
 
-	# Confirm there are narration_text directories
-	if is_narration_text_ready "${pdf_array[@]}"; then
-		for narration_text_path in "${NARRATION_TEXT_DIRS_GLOBAL[@]}"; do
-			log_info "PROCESSING $narration_text_path"
-			local safe_name
-			local processing_dir_name
-			processing_dir_name="$(get_last_two_dirs "$narration_text_path")"
+	# Confirm there are final_text directories
+	if is_final_text_ready "${pdf_array[@]}"; then
+		for final_text_path in "${FINAL_TEXT_DIRS_GLOBAL[@]}"; do
+			log_info "PROCESSING $final_text_path"
+
+			local safe_name=""
+			local processing_dir_name=""
+			local processing_dir=""
+			local complete_file_dir=""
+			local temp_dir=""
+			local status=0
+
+			processing_dir_name="$(get_last_two_dirs "$final_text_path")"
 			safe_name=$(echo "$processing_dir_name" | tr '/' '_')
 			processing_dir="${PROCESSING_DIR}/${safe_name}"
-			rm -rf "${processing_dir}"*
-			concat_file_dir="${OUTPUT_DIR}/$(basename "$(dirname "$narration_text_path")")/final_text"
-			mkdir -p "$concat_file_dir"
 
-			local temp_dir
+			rm -rf "${processing_dir}"*
+
+			complete_file_dir="${OUTPUT_DIR}/$(basename "$(dirname "$final_text_path")")/complete"
+			mkdir -p "$complete_file_dir"
+
 			temp_dir=$(mktemp -d "${processing_dir}_XXXX")
 			status="$?"
-			if [[ status -ne 0 ]]; then
+
+			if [[ $status -ne 0 ]]; then
 				log_error "Failed to create temporary directory"
 				return 1
 			fi
 
-			create_single_file "$temp_dir" "$concat_file_dir" "$narration_text_path"
+			create_single_file "$temp_dir" "$complete_file_dir" "$final_text_path"
 		done
 	fi
 

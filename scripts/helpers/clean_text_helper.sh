@@ -33,6 +33,7 @@ cleaned=$(
 		-e 's/\bISA\b/I S A/g' \
 		-e 's/\bALU\b/A L U/g' \
 		-e 's/\bFPU\b/F P U/g' \
+		-e 's/\bCAS\b/Cas/g' \
 		-e 's/\bTLB\b/T L B/g' \
 		-e 's/\bSRAM\b/S Ram/g' \
 		-e 's/\bDRAM\b/D Ram/g' \

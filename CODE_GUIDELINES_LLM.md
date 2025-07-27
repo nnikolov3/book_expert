@@ -32,5 +32,6 @@
 - Quote \"\$?\" 
 - The configuration file variable should be readonly (-r) , the same as API keys
 - Update the comments in the code to ensure clarity of intent.
+- The captured exit $? codes should be read only
 - COMMENTS SHOULD NOT BE REMOVED; INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
 
