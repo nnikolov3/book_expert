@@ -10,57 +10,9 @@ declare OUTPUT_DIR=""
 declare INPUT_DIR=""
 declare DPI=""
 declare -r CONFIG_FILE="$PWD/../project.toml"
+export CONFIG_FILE
 declare LOG_FILE=""
 declare BLANK_PAGE_THRESHOLD_KB=80
-
-# ================================================================================================
-# UTILITY FUNCTIONS
-# ================================================================================================
-
-print_line()
-{
-	echo "======================================================================="
-}
-
-log_info()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] INFO: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-}
-
-log_warn()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] WARN: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_success()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] SUCCESS: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_error()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] ERROR: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-	return 1
-}
 
 check_dependencies()
 {
@@ -282,7 +234,9 @@ main()
 	local log_dir
 	local config_result
 	config_result=$(helpers/get_config_helper.sh "logs_dir.pdf_to_png")
-	if [[ $? -ne 0 || -z $config_result ]]; then
+	local status
+	status="$?"
+	if [[ $status -ne 0 || -z $config_result ]]; then
 		echo "ERROR: Failed to load logs_dir.pdf_to_png"
 		exit 1
 	fi
@@ -292,6 +246,10 @@ main()
 		exit 1
 	fi
 	LOG_FILE="$log_dir/log_$(date +'%Y%m%d_%H%M%S').log"
+	local logger
+	logger="helpers/logging_utils_helper.sh"
+	source "$logger"
+
 	if ! touch "$LOG_FILE"; then
 		echo "ERROR: Failed to create log file: $LOG_FILE"
 		exit 1
@@ -303,7 +261,8 @@ main()
 
 	# Load other configurations
 	config_result=$(helpers/get_config_helper.sh "paths.output_dir")
-	if [[ $? -ne 0 || -z $config_result ]]; then
+	local status="$?"
+	if [[ $status -ne 0 || -z $config_result ]]; then
 		log_error "Failed to load paths.output_dir"
 		cleanup_and_exit 1
 	fi

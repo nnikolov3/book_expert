@@ -8,6 +8,7 @@ set -euo pipefail
 
 # --- Configuration ---
 declare -r CONFIG_FILE="$PWD/../project.toml"
+export CONFIG_FILE
 
 # --- Global Variables ---
 declare OUTPUT_DIR=""
@@ -21,64 +22,6 @@ declare LOG_DIR=""
 # ================================================================================================
 # UTILITY FUNCTIONS
 # ================================================================================================
-
-# Add this near the top of your script
-declare DEBUG=${DEBUG:-0}
-
-debug_log()
-{
-	[[ $DEBUG -eq 1 ]] && echo "[DEBUG] $*" >&2
-}
-
-print_line()
-{
-	echo "======================================================================="
-}
-
-log_info()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] INFO: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-}
-
-log_warn()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] WARN: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_success()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] SUCCESS: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_error()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] ERROR: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-	return 1
-}
-
-log()
-{
-	log_info "$@"
-}
 
 # Usage: create_chunks "$cleaned_text" chunks 200
 # chunks will be an array of semantically meaningful strings for TTS
@@ -376,7 +319,11 @@ main()
 	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.text_to_wav")
 	mkdir -p "$LOG_DIR"
 	touch "$LOG_DIR/log.txt"
-	LOG_FILE="$LOG_DIR/log.txt"
+
+	LOG_FILE="$LOG_DIR/log_$(date +'%Y%m%d_%H%M%S').log"
+
+	local logger="helpers/logging_utils_helper.sh"
+	source "$logger"
 	# Collect PDF names and check polished directories
 	local -a pdf_files=()
 	mapfile -t pdf_files < <(find "$INPUT_DIR" -type f -name "*.pdf" -exec basename {} .pdf \;)

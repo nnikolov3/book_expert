@@ -5,32 +5,6 @@
 
 set -euo pipefail
 
-# Logging helpers (extend to also write to file if desired)
-log()
-{
-	echo "INFO: -> $1"
-	print_line
-}
-error()
-{
-	echo "ERROR: -> $1"
-	print_line
-}
-success()
-{
-	echo "SUCCESS: -> $1"
-	print_line
-}
-warn()
-{
-	echo "WARN: -> $1"
-	print_line
-}
-print_line()
-{
-	echo "================================================================"
-}
-
 # Handle script exits and clean up processing directories on exit or signal.
 cleanup_on_exit()
 {
@@ -612,10 +586,15 @@ main()
 		exit 1
 	}
 	LOG_FILE="$LOG_DIR/log_$(date +'%Y%m%d_%H%M%S').log"
-	touch "$LOG_FILE" || {
+	touch "$LOG_FILE"
+	if [[ $status -ne 0 ]]; then
 		error "Failed to create log file."
 		exit 1
-	}
+	fi
+
+	local -r logger="helpers/logging_utils_helper.sh"
+	source "$logger"
+
 	log "Script started. Log file: $LOG_FILE"
 	log "Checking dependencies"
 	check_dependencies
@@ -628,8 +607,9 @@ main()
 	else
 		log "Found pdf for processing. Checking for valid png .."
 	fi
-
-	if are_png_in_dirs "${pdf_array[@]}"; then
+	local are_png_status
+	are_png_status=$(are_png_in_dirs "${pdf_array[@]}")
+	if [[ $are_png_status -eq 0 ]]; then
 		for png_path in "${PNG_DIRS_GLOBAL[@]}"; do
 			log "PROCESSING: $png_path"
 			staging_dir_name=$(get_last_two_dirs "$png_path")

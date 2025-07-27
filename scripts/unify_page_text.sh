@@ -7,6 +7,7 @@ set -euo pipefail
 
 # --- Configuration ---
 declare CONFIG_FILE="$PWD/../project.toml"
+export CONFIG_FILE
 declare CURL_TIMEOUT=120
 declare RATE_LIMIT_SLEEP=60
 
@@ -27,90 +28,6 @@ declare TEMPERATURE=0.0
 declare TOP_P=0.0
 
 declare -a RESULT_ARRAY=()
-
-print_line()
-{
-	echo "======================================================================="
-}
-
-log_info()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] INFO: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-}
-
-log_warn()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] WARN: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_success()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] SUCCESS: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_error()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] ERROR: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-	return 1
-}
-
-log()
-{
-	log_info "$@"
-}
-
-helpers/get_config_helper.sh()
-{
-	local key="$1"
-	local default_value="${2:-}"
-	local value=""
-	local yq_output=""
-
-	yq_output=$(yq -r ".${key} // \"\"" "$CONFIG_FILE")
-	local yq_exit=$?
-
-	if [[ $yq_exit -ne 0 ]]; then
-		if [[ -n $default_value ]]; then
-			echo "$default_value"
-			return 0
-		fi
-		log_error "Failed to read configuration key '$key' from $CONFIG_FILE"
-		return 1
-	fi
-
-	value="$yq_output"
-
-	if [[ -z $value ]] && [[ -n $default_value ]]; then
-		echo "$default_value"
-		return 0
-	fi
-
-	if [[ -z $value ]]; then
-		log_error "Missing required configuration key '$key' in $CONFIG_FILE"
-		return 1
-	fi
-
-	echo "$value"
-}
 
 check_dependencies()
 {
@@ -288,10 +205,10 @@ process_text_group()
 	# Combine text files
 	combined_text=$(<"$first_file")
 	if [[ -n $second_file ]] && [[ $second_file != "" ]]; then
-		combined_text="$combined_text\n\n$(<"$second_file")"
+		combined_text="$combined_text\n$(<"$second_file")"
 	fi
 	if [[ -n $third_file ]] && [[ $third_file != "" ]]; then
-		combined_text="$combined_text\n\n$(<"$third_file")"
+		combined_text="$combined_text\n$(<"$third_file")"
 	fi
 	system_prompt="You are a PhD-level STEM technical writer and educator. Your task is to polish and refine the provided text for clarity, coherence, technical accuracy, and speech-optimized narration.
 CRITICAL FORMATTING RULES FOR TEXT-TO-SPEECH (TTS) CLARITY:
@@ -319,6 +236,8 @@ STYLE GUIDELINES:
 - Do not 'dumb down' the content; instead, explain and illuminate as for an advanced learner.
 - If any information is outdated or requires context, indicate the update as of today.
 - Do not include any meta-commentary, system tags, or out-of-character remarks.
+- Correct misspelled or incorrect acronyms.
+- The text should not contain 'Finally', 'In Conclusion' , 'Summary', 'In summary'. 
 Begin by polishing and refining the provided text according to all of these instructions. Return only the final, polished, speech-optimized text."
 
 	user_prompt="TEXT: $combined_text"
@@ -656,8 +575,8 @@ main()
 	TEMPERATURE=$(helpers/get_config_helper.sh "cerebras_api.temperature")
 	TOP_P=$(helpers/get_config_helper.sh "cerebras_api.top_p")
 	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.polish_text")
-	MAX_API_RETRIES=$(helpers/get_config_helper.sh "retry.max_retries" "5")
-	RETRY_DELAY_SECONDS=$(helpers/get_config_helper.sh "retry.retry_delay_seconds" "30")
+	MAX_API_RETRIES=$(helpers/get_config_helper.sh "retry.max_retries")
+	RETRY_DELAY_SECONDS=$(helpers/get_config_helper.sh "retry.retry_delay_seconds")
 	FAILED_LOG="$LOG_DIR/failed_pages.log"
 
 	# Reset directories
@@ -667,6 +586,8 @@ main()
 	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
 	LOG_FILE="$LOG_DIR/log_$(date +'%Y%m%d_%H%M%S').log"
 	touch "$LOG_FILE" "$FAILED_LOG"
+	local logger="helpers/logging_utils_helper.sh"
+	source "$logger"
 
 	log_info "RESETTING DIRS"
 	log_info "Script started. Log file: $LOG_FILE"

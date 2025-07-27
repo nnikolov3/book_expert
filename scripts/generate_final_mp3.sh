@@ -21,53 +21,6 @@ declare FAILED_LOG=""
 
 declare -a SORTED_WAVS=()
 
-log_info()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] INFO: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_warn()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] WARN: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_success()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] SUCCESS: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_error()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] ERROR: $*"
-	echo "$message" >&2
-	echo "$message" >>"$LOG_FILE"
-	print_line
-	return 1
-}
-
-# Print line separator
-print_line()
-{
-	echo "========================================================================================"
-}
-
 # Check dependencies
 check_dependencies()
 {
@@ -358,13 +311,16 @@ main()
 
 	LOG_FILE="$LOG_DIR/log_$(date +'%Y%m%d_%H%M%S').log"
 	FAILED_LOG="$LOG_DIR/failed_projects.log"
+	local -r logger="helpers/logging_utils_helper.sh"
+	source "$logger"
 
 	local touch_output=""
 	touch_output=$(touch "$LOG_FILE" "$FAILED_LOG" 2>&1)
-	local touch_exit_code=$?
+	local touch_exit_code
+	touch_exit_code="$?"
 
 	if [[ $touch_exit_code -ne 0 ]]; then
-		echo "ERROR: Failed to create log files: $touch_output" >&2
+		echo "ERROR: Failed to create log files: $touch_output"
 		exit 1
 	fi
 

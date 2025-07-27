@@ -23,60 +23,6 @@ declare CONCATENATED_CONTENT=""
 declare CONCATENATED_FILE_PATH=""
 
 # ================================================================================================
-# UTILITY FUNCTIONS
-# ================================================================================================
-
-log_info()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] INFO: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-}
-
-log_warn()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] WARN: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_success()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] SUCCESS: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-}
-
-log_error()
-{
-	local timestamp=""
-	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-	local message="[$timestamp] ERROR: $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
-	return 1
-}
-
-log()
-{
-	log_info "$@"
-}
-
-print_line()
-{
-	echo "===================================================================="
-}
-
-# ================================================================================================
 # MAIN PROCESSING FUNCTIONS
 # ================================================================================================
 
@@ -264,6 +210,9 @@ main()
 	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
 	LOG_FILE="$LOG_DIR/final_text_concat.log"
 	touch "$LOG_FILE"
+	local -r logger="helpers/logging_utils_helper.sh"
+	source "$logger"
+
 	log_info "RESETTING DIRS"
 	# Set log file path
 
