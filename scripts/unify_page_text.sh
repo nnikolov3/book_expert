@@ -1,41 +1,12 @@
 #!/usr/bin/env bash
-# polish_pdf_text.sh - Serial text polishing system using Cerebras API
 # Combines sequential pages (1+2+3, 4+5+6, etc.) into polished text files
 # Validates text directory by comparing with PNG directory
 # Processes incomplete directories with proper retry logic
 
-# ## Code Guidelines to LLMs
-# - Declare variables before assignment to prevent undefined variable errors.
-# - Use explicit if/then/fi blocks for readability.
-# - Ensure all if/fi blocks are closed correctly.
-# - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
-# - Avoid mixing API calls.
-# - Lint with shellcheck correctness.
-# - Use grep -q for silent checks.
-# - Check for unbound variables with set -u.
-# - Clean up unused variables and maintain detailed comments.
-# - Avoid unreachable code or redundant commands.
-# - Keep code concise, clear, and self-documented.
-# - Avoid 'useless cat' use cmd < file.
-# - If not in a function use declare not local.
-# - Use `rsync` not cp.
-# - Initialize all variables.
-# - Code should be self-documenting.
-# - Flows should have solid retry logic.
-# - Do more with less. Do not add code for the sake of adding code. It should have clear purpose.
-# - No hardcoded values.
-# - DO NOT USE if <cmd>; then. Rather, use output=$(cmd) if $output; then
-# - DO NOT USE 2>>"$LOG_FILE"
-# - DO NOT USE ((i++)) instead use i=$((i + 1))
-# - DO NOT IGNORE the guidelines
-# - AVOID Redirections 2>/dev/null
-# - Declare / assign each variable on its own line
-# COMMENTS SHOULD NOT BE REMOVED, INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
-# ------------------------------------------------------------------------------------
 set -euo pipefail
 
 # --- Configuration ---
-declare CONFIG_FILE="$HOME/Dev/book_expert/project.toml"
+declare CONFIG_FILE="$PWD/project.toml"
 declare CURL_TIMEOUT=120
 declare RATE_LIMIT_SLEEP=60
 
@@ -322,36 +293,35 @@ process_text_group()
 	if [[ -n $third_file ]] && [[ $third_file != "" ]]; then
 		combined_text="$combined_text\n\n$(<"$third_file")"
 	fi
+	system_prompt="You are a PhD-level STEM technical writer and educator. Your task is to polish and refine the provided text for clarity, coherence, technical accuracy, and speech-optimized narration.
+CRITICAL FORMATTING RULES FOR TEXT-TO-SPEECH (TTS) CLARITY:
+- Convert all technical acronyms for speech: For example, RISC-V as 'Risc Five', NVIDIA as 'N Vidia', AMD as 'A M D', I/O as 'I O', and so on.
+- All programming operators and symbols must be spoken: '==' as 'is equal to', '<' as 'less than', '+' as 'plus', and so forth.
+- Measurements and units: '3.2GHz' as 'three point two gigahertz', '100ms' as 'one hundred milliseconds', and similar.
+- Hexadecimal, binary, and IP addresses must be read out fully and spaced appropriately.
+- Write out numbers as words (up to three digits).
+- CamelCase and abbreviations must be expanded and spoken. For example, getElementById as 'get element by id'.
+- Hyphenated phrases must be separated into individual words.
+- Replace all technical symbols with their verbal equivalents, describing them instead of using symbolic form.
+CONTENT HANDLING:
+- All lists, tables, formulas, diagrams, and code must be described narratively in natural language. For code, explain its function in prose, not by reading syntax.
+- For diagrams: Provide spatial and structural descriptions, helping the listener visualize content.
+- For tables: Describe the relationships, values, and comparisons in flowing narrative.
+- For math: Speak out all equations in full sentences, such as 'Energy is equal to mass times the speed of light squared.'
+- Never summarize or reduce technical detail; instead, expand and clarify for educational value.
+- Remove page numbers, footers, or formatting artifacts.
+- When encountering textbook-style problems, narrate both the problem and the solution methodically.
+STYLE GUIDELINES:
+- Output must be natural, readable prose with no special formatting or conversational commentary.
+- Do not use markdown, bullets, lists, headers, or other visual formatting—write in plain, continuous paragraphs.
+- Maintain technical depth and integrity suitable for a PhD audience.
+- Ensure the narration flows smoothly for spoken output, expanding explanations where clarity for TTS requires.
+- Do not 'dumb down' the content; instead, explain and illuminate as for an advanced learner.
+- If any information is outdated or requires context, indicate the update as of today.
+- Do not include any meta-commentary, system tags, or out-of-character remarks.
+Begin by polishing and refining the provided text according to all of these instructions. Return only the final, polished, speech-optimized text."
 
-	system_prompt="You are an expert Ph.D STEM technical editor, educator, researcher, and writing specialist. 
-1. Polish and refine the provided text for clarity, coherence, and professional presentation. 
-2. Maintain all technical accuracy while improving readability and flow. 
-3. Ensure the text flows naturally and is suitable for text-to-speech (TTS) narration. 
-4. Fix any grammatical errors, awkward phrasing, or unclear expressions. 
-5. Enhance transitions between concepts and improve overall narrative structure. 
-6. Maintain the technical depth and educational value of the content. 
-7. This is not an interactive chat; output must be standalone polished text without conversational elements such as confirming the request. 
-8. The text will be part of a larger technical collection, so ensure consistency in style and tone. 
-9. Focus on creating engaging, accessible content for a Ph.D level technical audience. 
-10. Remove any artifacts, redundancies, or formatting issues that would disrupt TTS narration. 
-11. Provide only the polished and refined text, ready for final use.
-12. No page numbers or other invalid artifacts.
-13. Start and focus on the concepts as the main point. 
-14. This is not a summarization task, do not summarize the content.  
-15. This is a educational content. 
-16. You can add analogies, examples, and further the explanation to promote learning.  
-17. Do not dumb down the content. 
-18. Maintain TTS narration flow using diverse vocabulary.  
-19. Write everything in plain text paragraphs, no emphasis, headers, bold, italic, no conversational elements.  
-20. Code, graphs, diagrams and similar, should be described word for word as being explained to someone who can't seem them. 
-21. If anything needs emphasizing, describe it via words.  i.e., 'this is very important to note'
-22. Avoid using directrly technical examples, formulas, assembly instructions, instead describe it in words.
-Example, 'E=mc^2', 'Energy is equal to mass and speed of light squared.', '1 + 1 = 2', one plus one equals two. There should no special characters in the response. For code, if '(a > 0){ printf(\"Hello\")}', 'the C code checks if a is larger than zero, if it is larger, then it prints Hello'
-23. If there are problems (textbook type problems ) solve them, explain the solution.  'Problem 1: Problem description', 'Problem 1 Solution: To solve this problem.'
-24. If you detect information which is outdated, mention the update, and how it is as of today.
-25. Do not include any thinking tags or meta-commentary in your response. /no_think"
-
-	user_prompt="TEXT TO POLISH AND RETURN ONLY THE POLISHED TEXT: $combined_text"
+	user_prompt="TEXT: $combined_text"
 
 	payload_file=$(mktemp -p "$PROCESSING_DIR" "api_payload.XXXXXX")
 

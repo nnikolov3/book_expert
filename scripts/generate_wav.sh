@@ -1,48 +1,13 @@
 #!/usr/bin/env bash
 # ================================================================================================
-# TEXT CHUNKS TO WAV CONVERTER (F5-TTS)
+
 # Design: Niko Nikolov
-# Code: Various LLMs
-#===========
-# ## Code Guidelines:
-# - Declare variables before assignment to prevent undefined variable errors.
-# - Use explicit if/then/fi blocks for readability.
-# - Ensure all if/fi blocks are closed correctly
-# - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
-# - Avoid mixing API calls.
-# - Lint with shellcheck for portability and correctness.
-# - Use grep -q for silent checks.
-# - Check for unbound variables with set -u.
-# - Clean up unused variables and maintain detailed comments.
-# - Avoid unreachable code or redundant commands.
-# - Keep code concise, clear, and self-documented.
-# - Avoid 'useless cat' use cmd < file.
-# - If not in a function use declare not local.
-# - For Ghostscript use `ghostscript <cmd>`
-# - Use `rsync` not cp
-# - Initialize all variables
-# - Code should be self documenting
-# - Flows should have robust retry mechanisms
-# - Prefer mapfile or read -a to split command outputs (or quote to avoid splitting)
-# - Do not expand the code. Do more with less.
-# - Follow bash best practices.
-# - No hard coding values.
-# - See if you can use ${variable//search/replace} instead.
-# - No hardcoded values.
-# - DO NOT USE if <cmd>; then. Rather, use output=$(cmd) if $output; then
-# - DO NOT USE 2>>"$LOG_FILE"
-# - DO NOT USE ((i++)) instead use i=$((i + 1))
-# - DO NOT IGNORE the guidelines
-# - AVOID Redirections 2>/dev/null
-# - Declare / assign each variable on its own line
-# COMMENTS SHOULD NOT BE REMOVED, INCONCISTENCIES SHOULD BE UPDATED WHEN DETECTED
-# USE MARKDOWN WITHIN THE COMMENT BLOCKS FOR COMMENTS
-# ===============================================================================================
+# Code: Niko and Various LLMs
 
 set -euo pipefail
 
 # --- Configuration ---
-declare -r CONFIG_FILE="project.toml"
+declare -r CONFIG_FILE="$PWD/project.toml"
 
 # --- Global Variables ---
 declare OUTPUT_DIR=""
@@ -343,7 +308,7 @@ clean_and_store_text()
 	fi
 
 	# Clean the text using the cleaning script
-	if cleaned_text=$(./clean_text.sh <"$input_file"); then
+	if cleaned_text=$(./clean_text_helper.sh <"$input_file"); then
 		# Check if cleaning resulted in non-empty output
 		if [[ -z $cleaned_text ]]; then
 			log_error "Text cleaning resulted in empty output"

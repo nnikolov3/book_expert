@@ -1,18 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# Update the Readme to reflect the changes and provide me only the final result
-
-Below is your updated README to accurately reflect all scripts, configuration, and directory structure shown in the current project state. The changes include:
-
-- All actual Bash scripts now present in your repo (`clean_text.sh`, `concat_final_text_files.sh`, `convert_final_text_to_wav.sh`, etc.) are described.
-- Old or renamed script names are removed and replaced with those matching the provided files.
-- Stage and script mapping, config key names, and folder structure are corrected to match `project.toml` and your real code.
-- Details for each script’s function, folder inputs/outputs, and prerequisites are harmonized.
-
-Here is the updated README:
-
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # Document Processing Pipeline
 
 **Note:** The `examples` directory contains examples of converting PDF to an audiobook. *PDFs are for reference and educational purposes only and may not be redistributed.*
@@ -56,28 +41,26 @@ API-based functionality requires:
 ```
 book_expert/
 ├── data/
-│   ├── raw/               # PDF input directory
-│   └── <output_dir>/      # Work/output root, matches config
+│   ├── raw/               # PDF input directory / defined in project.toml
+│   └── <output_dir>/      # Work/output root, matches config  / defined in project.toml
 │       └── <pdf_name>/
 │           ├── png/           # PNG images per page
-│           ├── text/          # OCR’d raw page text
-│           ├── polished/      # Polished/narration-ready text, grouped
+│           ├── text/          # OCR’d page text and concepts
+│           ├── polished/      # Polished/narration-ready grouped text
 │           ├── concat/        # Concatenated narration-ready text
-│           ├── final_text/    # Cleaned, finalized narration text (if used)
 │           ├── final_concat/  # Output of text cleaning
 │           ├── wav/           # TTS-generated .wav files
-│           ├── resampled/     # Resampled .wav (for uniformity/FFmpeg)
+│           ├── resampled/     # Resampled .wav for uniformity/FFmpeg
 │           └── mp3/           # Single-file audiobook output
 └── scripts/
-    ├── pdf_to_png.sh
-    ├── convert_png_to_page_text.sh
-    ├── polish_pdf_text.sh
-    ├── concat_final_text_files.sh
-    ├── clean_text.sh
-    ├── convert_final_text_to_wav.sh
-    ├── create_mp3.sh
-    └── ...
-├── project.toml           # Central configuration file
+    ├── generate_pngs.sh
+    ├── generate_page_text.sh
+    ├── unify_page_text.sh
+    ├── generate_narration_text.sh
+    ├── clean_text_helper.sh
+    ├── generate_wav.sh
+    ├── generate_final_mp3.sh
+    └── project.toml
 ├── README.md
 ```
 
@@ -98,7 +81,6 @@ book_expert/
 ## Setup Instructions
 
 1. **Clone repository**
-
 ```bash
 git clone <repository_url>
 cd book_expert
@@ -110,7 +92,6 @@ cd book_expert
 3. **Configure your environment**
     - Edit `project.toml` to adjust all `[paths]`, `[directories]`, `[api]`, and TTS/model settings to your needs.
     - Set your API keys for Google Gemini, NVIDIA, and Cerebras as environment variables:
-
 ```bash
 export GEMINI_API_KEY="..."
 export NVIDIA_API_KEY="..."
@@ -118,7 +99,6 @@ export CEREBRAS_API_KEY="..."
 ```
 
 4. **Make scripts executable**
-
 ```bash
 chmod +x scripts/*.sh
 ```
@@ -142,17 +122,17 @@ Execute stages in order. Each script will read `project.toml` and log to its des
 
 | Script Name | Input Directory | Output Directory | Function |
 | :-- | :-- | :-- | :-- |
-| **pdf_to_png.sh** | data/raw/ | data/<pdf_name>/png/ | Converts PDF pages to PNG images |
-| **convert_png_to_page_text.sh** | data/<pdf_name>/png/ | data/<pdf_name>/text/ | OCR + API: PNG images → raw page text/concepts |
-| **polish_pdf_text.sh** | data/<pdf_name>/text/ | data/<pdf_name>/polished/ | Groups consecutive page text, polishes for narration (via LLM API) |
-| **concat_final_text_files.sh** | data/<pdf_name>/polished/ | data/<pdf_name>/concat/ | Concatenates polished narration-ready files into a single file |
-| **clean_text.sh** | data/<pdf_name>/concat/ | data/<pdf_name>/final_concat/ | Cleans/normalizes full text prior to TTS |
-| **convert_final_text_to_wav.sh** | data/<pdf_name>/final_concat/ | data/<pdf_name>/wav/ | Splits narration text into semantic chunks, generates WAV audio per chunk using TTS engine |
-| **create_mp3.sh** | data/<pdf_name>/wav/ | data/<pdf_name>/mp3/ | Validates, resamples, and merges WAV chunks, outputs single .wav and .mp3 for the book |
+| **generate_pngs.sh** | data/raw/ | data/<pdf_name>/png/ | Converts PDF pages to PNG images per page (handles DPI, blank page skipping) |
+| **generate_page_text.sh** | data/<pdf_name>/png/ | data/<pdf_name>/text/ | OCR + API: PNG images → narration-ready text \& technical concepts per page |
+| **unify_page_text.sh** | data/<pdf_name>/text/ | data/<pdf_name>/polished/ | Groups page text in sets (e.g., 3 at a time), polishes for narration via LLM API |
+| **generate_narration_text.sh** | data/<pdf_name>/polished/ | data/<pdf_name>/concat/ | Concatenates narration-ready, polished files into a single narration text file |
+| **clean_text_helper.sh** | data/<pdf_name>/concat/ | data/<pdf_name>/final_concat/ | Cleans/normalizes full narration text prior to TTS (acronym, code, math normalization, etc.) |
+| **generate_wav.sh** | data/<pdf_name>/final_concat/ | data/<pdf_name>/wav/ | Splits text into semantic chunks, generates WAV per chunk using F5-TTS engine |
+| **generate_final_mp3.sh** | data/<pdf_name>/wav/ | data/<pdf_name>/mp3/ | Validates, resamples, orders and merges WAV chunks, produces single .wav and .mp3 audiobook file |
 
 ## Code Guidelines
 
-All scripts conform to strict guidelines:
+All scripts conform to strict guidelines (see `GUIDELINES_LLM.md`):
 
 - **Declare all variables** prior to assignment
 - Use **explicit `if/then/fi`** for clarity
@@ -168,23 +148,45 @@ All scripts conform to strict guidelines:
 
 <div style="text-align: center">⁂</div>
 
-<div style="text-align: center">⁂</div>
+[^1]: generate_pngs.sh
 
-[^1]: clean_text.sh
+[^2]: generate_page_text.sh
 
-[^2]: concat_final_text_files.sh
+[^3]: unify_page_text.sh
 
-[^3]: convert_final_text_to_wav.sh
+[^4]: generate_narration_text.sh
 
-[^4]: convert_png_to_page_text.sh
+[^5]: clean_text_helper.sh
 
-[^5]: create_mp3.sh
+[^6]: generate_wav.sh
 
-[^6]: pdf_to_png.sh
-
-[^7]: polish_pdf_text.sh
+[^7]: generate_final_mp3.sh
 
 [^8]: project.toml
 
 [^9]: README.md
+
+Let me know if you need a minimal or a more explanatory version!
+
+<div style="text-align: center">⁂</div>
+
+[^1]: clean_text_helper.sh
+
+[^2]: generate_final_mp3.sh
+
+[^3]: generate_narration_text.sh
+
+[^4]: generate_page_text.sh
+
+[^5]: generate_pngs.sh
+
+[^6]: generate_wav.sh
+
+[^7]: GUIDELINES_LLM.md
+
+[^8]: project.toml
+
+[^9]: README.md
+
+[^10]: unify_page_text.sh
 

@@ -1,0 +1,42 @@
+<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
+
+# Clean up this fand Guidelines. Do not remove guidelines. Only cleanup redundant
+
+Certainly! Here’s a cleaned-up version of your guidelines, with redundancy and clutter removed, but without deleting any actual guideline content or comments. The order and content are preserved for clarity.
+
+# Code Guidelines to LLMs
+
+- Declare variables before assignment to prevent undefined variable errors.
+- Use explicit if/then/fi blocks for readability.
+- Ensure all if/fi blocks are closed correctly.
+- Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
+- Avoid mixing API calls.
+- Lint with shellcheck correctness.
+- Use grep -q for silent checks.
+- Check for unbound variables with set -u.
+- Clean up unused variables and maintain detailed comments.
+- Avoid unreachable code or redundant commands.
+- Keep code concise, clear, and self-documented.
+- Avoid 'useless cat'; use cmd < file.
+- If not in a function use declare, not local.
+- Use rsync, not cp.
+- Initialize all variables.
+- Code should be self-documenting.
+- Flows should have solid retry logic.
+- Do more with less. Do not add code for the sake of adding code; it should have clear purpose.
+- No hardcoded values.
+- DO NOT USE: if <cmd>; then. Instead, use output=\$(cmd); if \$output; then
+- DO NOT USE 2>>"\$LOG_FILE"
+- DO NOT USE ((i++)); instead use i=\$((i + 1))
+- DO NOT IGNORE the guidelines
+- AVOID Redirections 2>/dev/null
+- Declare / assign each variable on its own line
+- DO NOT USE "\$?" indirectly. Assign it.
+- COMMENTS SHOULD NOT BE REMOVED; INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
+
+Let me know if you’d like it grouped, reformatted, or focused differently!
+
+<div style="text-align: center">⁂</div>
+
+[^1]: GUIDELINES_LLM.md
+

@@ -23,7 +23,7 @@ cleaned=$(
 		-e 's/\bFP\b/F P/g' \
 		-e 's/\bCPU\b/C P U/g' \
 		-e 's/\bGPU\b/G P U/g' \
-		-e 's/\bRAM\b/R A M/g' \
+		-e 's/\bRAM\b/Ram/g' \
 		-e 's/\bROM\b/R O M/g' \
 		-e 's/\bSSD\b/S S D/g' \
 		-e 's/\bHDD\b/H D D/g' \
@@ -34,7 +34,7 @@ cleaned=$(
 		-e 's/\bALU\b/A L U/g' \
 		-e 's/\bFPU\b/F P U/g' \
 		-e 's/\bTLB\b/T L B/g' \
-		-e 's/\bSRAM\b/S R A M/g' \
+		-e 's/\bSRAM\b/S Ram/g' \
 		-e 's/\bDRAM\b/D Ram/g' \
 		-e 's/\bFPGA\b/F P G A/g' \
 		-e 's/\bASIC\b/A S I C/g' \

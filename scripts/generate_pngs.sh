@@ -1,37 +1,8 @@
 #!/usr/bin/env bash
-# ================================================================================================
-# SIMPLIFIED SERIAL PDF TO PNG CONVERTER
+
 # Design: Niko Nikolov
-# Simplified for serial processing with directory checking
-# ------------------------------------------------------------------------------------
-# ## Code Guidelines to LLMs
-# - Declare (and assign separetly) variables to prevent undefined variable errors.
-# - Use explicit if/then/fi blocks for readability.
-# - Ensure all if/fi blocks are closed correctly.
-# - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
-# - Avoid mixing API calls.
-# - Lint with shellcheck correctness.
-# - Use grep -q for silent checks.
-# - Check for unbound variables with set -u.
-# - Clean up unused variables and maintain detailed comments.
-# - Avoid unreachable code or redundant commands.
-# - Keep code concise, clear, and self-documented.
-# - Avoid 'useless cat' use cmd < file.
-# - If not in a function use declare not local.
-# - Use `rsync` not cp.
-# - Initialize all variables.
-# - Code should be self-documenting.
-# - Flows should have solid retry logic.
-# - Do more with less. Do not add code for the sake of adding code. It should have clear purpose.
-# - No hardcoded values.
-# - DO NOT USE if <cmd>; then. Rather, use output=$(cmd) if $output; then
-# - DO NOT USE 2>>"$LOG_FILE"
-# - DO NOT USE ((i++)) instead use i=$((i + 1))
-# - DO NOT IGNORE the guidelines
-# - AVOID Redirections 2>/dev/null
-# - Declare / assign each variable on its own line
-# COMMENTS SHOULD NOT BE REMOVED, INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
-# ------------------------------------------------------------------------------------
+# Code: Niko and LLMs
+
 set -euo pipefail
 
 # --- Global Variables ---
@@ -40,28 +11,41 @@ declare INPUT_DIR=""
 declare DPI=""
 declare CONFIG_FILE=""
 declare LOG_FILE=""
+declare BLANK_PAGE_THRESHOLD_KB=80
 
 # ================================================================================================
 # UTILITY FUNCTIONS
 # ================================================================================================
 
-get_config()
+print_line()
 {
-	local key="$1"
-	local value
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE" 2>/dev/null)
-	if [[ -z $value ]]; then
-		log_error "Missing or empty configuration key '$key' in $CONFIG_FILE"
-		return 1
-	fi
-	echo "$value"
-	return 0
+	echo "======================================================================="
 }
 
 log_info()
 {
-	local message
-	message="INFO: $(date +%c) $*"
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] INFO: $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+}
+
+log_warn()
+{
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] WARN: $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
+}
+
+log_success()
+{
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] SUCCESS: $*"
 	echo "$message"
 	echo "$message" >>"$LOG_FILE"
 	print_line
@@ -69,20 +53,26 @@ log_info()
 
 log_error()
 {
-	local message
-	message="ERROR: $(date +%c) $*"
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] ERROR: $*"
 	echo "$message"
 	echo "$message" >>"$LOG_FILE"
 	print_line
+	return 1
 }
 
-log_warn()
+get_config()
 {
-	local message
-	message="WARN: $(date +%c) $*"
-	echo "$message"
-	echo "$message" >>"$LOG_FILE"
-	print_line
+	local key="$1"
+	local value
+	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE" 2>/dev/null)
+	if [[ -z $value ]]; then
+		echo "Missing or empty configuration key '$key' in $CONFIG_FILE"
+		return 1
+	fi
+	echo "$value"
+	return 0
 }
 
 check_dependencies()
@@ -95,13 +85,6 @@ check_dependencies()
 		fi
 	done
 	return 0
-}
-
-print_line()
-{
-	local line="========================================================================="
-	echo "$line"
-	echo "$line" >>"$LOG_FILE"
 }
 
 cleanup_and_exit()
@@ -132,6 +115,35 @@ count_files_in_dir()
 	fi
 }
 
+get_file_size_kb()
+{
+	local file_path="$1"
+	if [[ -f $file_path ]]; then
+		local size_bytes
+		size_bytes=$(stat -c%s "$file_path" 2>/dev/null || stat -f%z "$file_path" 2>/dev/null)
+		if [[ -n $size_bytes ]]; then
+			echo $((size_bytes / 1024))
+		else
+			echo "0"
+		fi
+	else
+		echo "0"
+	fi
+}
+
+is_blank_page()
+{
+	local png_path="$1"
+	local file_size_kb
+	file_size_kb=$(get_file_size_kb "$png_path")
+
+	if [[ $file_size_kb -lt $BLANK_PAGE_THRESHOLD_KB ]]; then
+		return 0 # Is blank
+	else
+		return 1 # Not blank
+	fi
+}
+
 should_skip_pdf()
 {
 	local pdf_name="$1"
@@ -149,6 +161,42 @@ should_skip_pdf()
 	fi
 
 	return 1 # Don't skip
+}
+
+remove_blank_pages()
+{
+	local png_dir="$1"
+	local blank_count=0
+	local removed_files=""
+
+	log_info "Checking for blank pages in $png_dir"
+
+	# Find all PNG files and check if they're blank
+	while IFS= read -r -d '' png_path; do
+		if is_blank_page "$png_path"; then
+			local filename
+			filename=$(basename "$png_path")
+			if rm "$png_path"; then
+				blank_count=$((blank_count + 1))
+				if [[ -n $removed_files ]]; then
+					removed_files="$removed_files, $filename"
+				else
+					removed_files="$filename"
+				fi
+				log_info "Removed blank page: $filename (${BLANK_PAGE_THRESHOLD_KB}KB threshold)"
+			else
+				log_warn "Failed to remove blank page: $filename"
+			fi
+		fi
+	done < <(find "$png_dir" -name "*.png" -type f -print0)
+
+	if [[ $blank_count -gt 0 ]]; then
+		log_success "Removed $blank_count blank page(s): $removed_files"
+	else
+		log_info "No blank pages detected"
+	fi
+
+	return 0
 }
 
 convert_pdf()
@@ -213,7 +261,16 @@ convert_pdf()
 	local generated_count
 	generated_count=$(count_files_in_dir "$final_png_dir" "*.png")
 
-	log_info "Successfully converted '$pdf_name': Generated $generated_count PNG files"
+	log_info "Generated $generated_count PNG files before blank page removal"
+
+	# Remove blank pages
+	remove_blank_pages "$final_png_dir"
+
+	# Count remaining files after blank page removal
+	local final_count
+	final_count=$(count_files_in_dir "$final_png_dir" "*.png")
+
+	log_success "Successfully converted '$pdf_name': $final_count PNG files remaining after processing"
 	return 0
 }
 
@@ -224,7 +281,7 @@ convert_pdf()
 main()
 {
 	# Initialize configuration
-	CONFIG_FILE="$HOME/Dev/book_expert/project.toml"
+	CONFIG_FILE="$PWD/project.toml"
 
 	# Validate config file
 	if [[ ! -f $CONFIG_FILE ]]; then
@@ -256,6 +313,7 @@ main()
 	fi
 
 	log_info "PDF to PNG conversion process started at $start_time"
+	print_line
 	log_info "Loading configuration from $CONFIG_FILE"
 
 	# Load other configurations
@@ -297,6 +355,7 @@ main()
 	fi
 
 	log_info "Configuration loaded: INPUT_DIR=$INPUT_DIR, OUTPUT_DIR=$OUTPUT_DIR, DPI=$DPI"
+	log_info "Blank page threshold: ${BLANK_PAGE_THRESHOLD_KB}KB"
 
 	# Check dependencies
 	if ! check_dependencies; then
@@ -316,6 +375,7 @@ main()
 	fi
 
 	log_info "Found ${#pdf_array[@]} PDF file(s) to process"
+	print_line
 
 	# Process PDFs serially
 	local processed_count=0
@@ -328,7 +388,7 @@ main()
 		local pdf_name
 		pdf_name=$(basename "$pdf_path" .pdf)
 
-		local current_file=$((processed_count + 1))
+		local current_file=$((processed_count + skipped_count + failed_count + 1))
 		log_info "Processing '$pdf_name' ($current_file of $total_files)"
 		log_info "Full path: $pdf_path"
 
@@ -340,10 +400,10 @@ main()
 			log_error "Failed to process '$pdf_path'"
 			failed_count=$((failed_count + 1))
 		fi
+		print_line
 	done
 
-	local successful_count=$((total_files - skipped_count - failed_count))
-	log_info "Processing complete: Successful $successful_count, Skipped $skipped_count, Failed $failed_count of $total_files"
+	log_success "Processing complete: Successful $processed_count, Skipped $skipped_count, Failed $failed_count of $total_files"
 	cleanup_and_exit 0
 }
 

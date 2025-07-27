@@ -1,37 +1,7 @@
 #!/bin/bash
 # ================================================================================================
 # Design: Niko Nikolov
-# Code: Various LLMs
-
-# ## Code Guidelines to LLMs
-# - Declare variables before assignment to prevent undefined variable errors.
-# - Use explicit if/then/fi blocks for readability.
-# - Ensure all if/fi blocks are closed correctly.
-# - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
-# - Avoid mixing API calls.
-# - Lint with shellcheck correctness.
-# - Use grep -q for silent checks.
-# - Check for unbound variables with set -u.
-# - Clean up unused variables and maintain detailed comments.
-# - Avoid unreachable code or redundant commands.
-# - Keep code concise, clear, and self-documented.
-# - Avoid 'useless cat' use cmd < file.
-# - If not in a function use declare not local.
-# - Use `rsync` not cp.
-# - Initialize all variables.
-# - Code should be self-documenting.
-# - Flows should have solid retry logic.
-# - Do more with less. Do not add code for the sake of adding code. It should have clear purpose.
-# - No hardcoded values.
-# - DO NOT USE if <cmd>; then. Rather, use output=$(cmd) if $output; then
-# - DO NOT USE 2>>"$LOG_FILE"
-# - DO NOT USE ((i++)) instead use i=$((i + 1))
-# - DO NOT IGNORE the guidelines
-# - AVOID Redirections 2>/dev/null
-# - Declare / assign each variable on its own line
-# - DO NOT USE "$?" indirectly. Assign it.
-# COMMENTS SHOULD NOT BE REMOVED, INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
-# ------------------------------------------------------------------------------------
+# Code: Niko and LLMs
 
 # Enable strict error handling
 set -euo pipefail
@@ -39,7 +9,7 @@ set -euo pipefail
 # ================================================================================================
 # CONFIGURATION AND GLOBAL VARIABLES
 # ================================================================================================
-declare -r CONFIG_FILE="project.toml"
+declare -r CONFIG_FILE="$PWD/project.toml"
 
 # Global variables loaded from config
 declare INPUT_DIR=""
