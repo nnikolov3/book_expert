@@ -1,4 +1,4 @@
-# Code Guidelines to LLMs
+# BASH Code Guidelines to LLMs
 
 - Declare variables before assignment to prevent undefined variable errors.
 - Use explicit if/then/fi blocks for readability.
