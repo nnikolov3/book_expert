@@ -1,9 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# Clean up this fand Guidelines. Do not remove guidelines. Only cleanup redundant
-
-Certainly! Here’s a cleaned-up version of your guidelines, with redundancy and clutter removed, but without deleting any actual guideline content or comments. The order and content are preserved for clarity.
-
 # Code Guidelines to LLMs
 
 - Declare variables before assignment to prevent undefined variable errors.
