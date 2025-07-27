@@ -10,6 +10,7 @@ set -euo pipefail
 # CONFIGURATION AND GLOBAL VARIABLES
 # ================================================================================================
 declare -r CONFIG_FILE="$PWD/../project.toml"
+export CONFIG_FILE
 
 # Global variables loaded from config
 declare INPUT_DIR=""
@@ -17,7 +18,7 @@ declare OUTPUT_DIR=""
 declare LOG_DIR=""
 declare PROCESSING_DIR=""
 declare LOG_FILE=""
-declare -a FINAL_TEXT_DIRS_GLOBAL=()
+declare -a NARRATION_TEXT_DIRS_GLOBAL=()
 # Export the content to a global variable for use elsewhere
 declare CONCATENATED_CONTENT=""
 declare CONCATENATED_FILE_PATH=""
@@ -26,22 +27,22 @@ declare CONCATENATED_FILE_PATH=""
 # MAIN PROCESSING FUNCTIONS
 # ================================================================================================
 
-is_final_text_ready()
+is_narration_text_ready()
 {
 	local -a pdf_array=("$@")
-	local final_text_path
+	local narration_text_path
 	local concat_path
 	local concat_count
-	local final_text_count
+	local narration_text_count
 
-	FINAL_TEXT_DIRS_GLOBAL=()
+	NARRATION_TEXT_DIRS_GLOBAL=()
 
 	for pdf_name in "${pdf_array[@]}"; do
 		log_info "Checking document: $pdf_name"
-		final_text_path="$OUTPUT_DIR/$pdf_name/final_text"
+		narration_text_path="$OUTPUT_DIR/$pdf_name/narration_text"
 		concat_path="$OUTPUT_DIR/$pdf_name/concat"
 
-		if [[ -d $final_text_path ]]; then
+		if [[ -d $narration_text_path ]]; then
 			if [[ -d $concat_path ]]; then
 				concat_count=$(find "$concat_path" -type f | wc -l)
 				if [[ $concat_count -eq 1 ]]; then
@@ -51,23 +52,23 @@ is_final_text_ready()
 				fi
 			fi
 
-			final_text_count=$(find "$final_text_path" -type f | wc -l)
+			narration_text_count=$(find "$narration_text_path" -type f | wc -l)
 
-			if [[ $final_text_count -gt 0 ]]; then
-				log_info "FINAL_TEXT: $final_text_count"
+			if [[ $narration_text_count -gt 0 ]]; then
+				log_info "narration_TEXT: $narration_text_count"
 				log_success "adding directory for processing"
-				FINAL_TEXT_DIRS_GLOBAL+=("$final_text_path")
+				NARRATION_TEXT_DIRS_GLOBAL+=("$narration_text_path")
 			else
-				log_info "FINAL_TEXT: $final_text_count"
-				log_warn "Review $final_text_path"
+				log_info "narration_TEXT: $narration_text_count"
+				log_warn "Review $narration_text_path"
 			fi
 		else
-			log_warn "Confirm path $final_text_path"
+			log_warn "Confirm path $narration_text_path"
 		fi
 	done
 
-	if [[ ${#FINAL_TEXT_DIRS_GLOBAL[@]} -eq 0 ]]; then
-		log_error "No directories to process with valid final text files"
+	if [[ ${#NARRATION_TEXT_DIRS_GLOBAL[@]} -eq 0 ]]; then
+		log_error "No directories to process with valid narration text files"
 		exit 1
 	else
 		log_success "Found directories to process"
@@ -89,15 +90,15 @@ create_single_file()
 {
 	local processing_dir="$1"
 	local concat_file_dir="$2"
-	local final_text_path="$3"
+	local narration_text_path="$3"
 
 	# Input validation
 	if [[ -z $processing_dir ]] || [[ ! -d $processing_dir ]]; then
 		log_error "Invalid directory $processing_dir"
 		return 1
 	fi
-	if [[ -z $final_text_path ]]; then
-		log_error "Invalid directory for final text"
+	if [[ -z $narration_text_path ]]; then
+		log_error "Invalid directory for narration text"
 		return 1
 	fi
 	if [[ -z $concat_file_dir ]] || [[ ! -d $concat_file_dir ]]; then
@@ -106,11 +107,11 @@ create_single_file()
 	fi
 
 	# Copy files with progress and error handling
-	rsync -a "$final_text_path/" "$processing_dir/"
+	rsync -a "$narration_text_path/" "$processing_dir/"
 
 	# Verify copy integrity
 	local rsync_output
-	rsync_output=$(rsync -a --checksum --dry-run "$final_text_path/" "$processing_dir/")
+	rsync_output=$(rsync -a --checksum --dry-run "$narration_text_path/" "$processing_dir/")
 	local exit_status="$?"
 	if [[ exit_status -eq 0 ]]; then
 		if [[ -z $rsync_output ]]; then
@@ -200,15 +201,15 @@ main()
 	# Load configuration
 	INPUT_DIR=$(helpers/get_config_helper.sh "paths.input_dir")
 	OUTPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
-	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.final_text_concat")
-	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.final_text_concat")
+	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.narration_text_concat")
+	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.narration_text_concat")
 
 	# Reset directories
 
 	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
 	rm -rf "$PROCESSING_DIR" "$LOG_DIR"
 	mkdir -p "$LOG_DIR" "$PROCESSING_DIR"
-	LOG_FILE="$LOG_DIR/final_text_concat.log"
+	LOG_FILE="$LOG_DIR/narration_text_concat.log"
 	touch "$LOG_FILE"
 	local -r logger="helpers/logging_utils_helper.sh"
 	source "$logger"
@@ -216,7 +217,7 @@ main()
 	log_info "RESETTING DIRS"
 	# Set log file path
 
-	log_info "$(date +%c) Final text concatenation start"
+	log_info "$(date +%c) narration text concatenation start"
 
 	declare -a pdf_array=()
 	# Get all pdf files in INPUT_DIR (directory for pdf raw files)
@@ -228,17 +229,17 @@ main()
 		log_success "Found pdf for processing."
 	fi
 
-	# Confirm there are final_text directories
-	if is_final_text_ready "${pdf_array[@]}"; then
-		for final_text_path in "${FINAL_TEXT_DIRS_GLOBAL[@]}"; do
-			log_info "PROCESSING $final_text_path"
+	# Confirm there are narration_text directories
+	if is_narration_text_ready "${pdf_array[@]}"; then
+		for narration_text_path in "${NARRATION_TEXT_DIRS_GLOBAL[@]}"; do
+			log_info "PROCESSING $narration_text_path"
 			local safe_name
 			local processing_dir_name
-			processing_dir_name="$(get_last_two_dirs "$final_text_path")"
+			processing_dir_name="$(get_last_two_dirs "$narration_text_path")"
 			safe_name=$(echo "$processing_dir_name" | tr '/' '_')
 			processing_dir="${PROCESSING_DIR}/${safe_name}"
 			rm -rf "${processing_dir}"*
-			concat_file_dir="${OUTPUT_DIR}/$(basename "$(dirname "$final_text_path")")/concat"
+			concat_file_dir="${OUTPUT_DIR}/$(basename "$(dirname "$narration_text_path")")/final_text"
 			mkdir -p "$concat_file_dir"
 
 			local temp_dir
@@ -249,7 +250,7 @@ main()
 				return 1
 			fi
 
-			create_single_file "$temp_dir" "$concat_file_dir" "$final_text_path"
+			create_single_file "$temp_dir" "$concat_file_dir" "$narration_text_path"
 		done
 	fi
 

@@ -33,11 +33,11 @@ provider = "google"
 [processing_dir]
 pdf_to_png = "/tmp/pdf_to_png"
 png_to_text= "/tmp/png_to_text"
-polish_text = "/tmp/polished"
+final_text = "/tmp/final_text"
 text_to_chunks = "/tmp/text_to_chunks"
 chunks_to_wav = "/tmp/chunks_to_wav"
 combine_chunks = "/tmp/combine_chunks"
-final_text_concat = "/tmp/final_text_concat"
+narration_text_concat = "/tmp/final_text_concat"
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -49,7 +49,7 @@ text_to_chunks = "/tmp/logs/text_to_chunks"
 text_to_wav = "/tmp/logs/chunks_to_wav"
 combine_chunks = "/tmp/logs/combine_chunks"
 final_text = "/tmp/logs/final_text"
-final_text_concat = "/tmp/logs/final_text"
+narration_text_concat = "/tmp/logs/final_text"
 # ================================================================================================
 # [settings]
 # General settings for preprocessing and generation.
@@ -107,7 +107,7 @@ api_key_variable ="CEREBRAS_API_KEY"
 max_tokens = 4096
 temperature = 0.5
 top_p = 0.6
-final_model = "qwen-3-32b"
+final_model = "qwen-3-235b-a22b"
 #final_model = "qwen-3-235b-a22b"
 polish_model = "llama-3.3-70b"
 # ================================================================================================

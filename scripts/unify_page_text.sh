@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Combines sequential pages (1+2+3, 4+5+6, etc.) into polished text files
+# Combines sequential pages (1+2+3, 4+5+6, etc.) into unified_text text files
 # Validates text directory by comparing with PNG directory
 # Processes incomplete directories with proper retry logic
 
@@ -146,7 +146,7 @@ get_next_start_index()
 {
 	local storage_dir="$1"
 	local max_index=-1
-	local polished_file=""
+	local unified_text_file=""
 	local index=""
 
 	if [[ ! -d $storage_dir ]]; then
@@ -154,14 +154,14 @@ get_next_start_index()
 		return 0
 	fi
 
-	while IFS= read -r -d '' polished_file; do
-		if [[ $polished_file =~ polished_([0-9]+)\.txt$ ]]; then
+	while IFS= read -r -d '' unified_text_file; do
+		if [[ $unified_text_file =~ unified_text_([0-9]+)\.txt$ ]]; then
 			index="${BASH_REMATCH[1]}"
 			if [[ $index -gt $max_index ]]; then
 				max_index=$index
 			fi
 		fi
-	done < <(find "$storage_dir" -name "polished_*.txt" -print0)
+	done < <(find "$storage_dir" -name "unified_text_*.txt" -print0)
 
 	if [[ $max_index -eq -1 ]]; then
 		echo "0"
@@ -180,17 +180,17 @@ process_text_group()
 
 	# Build file description
 	local desc="$first_file"
-	local polished_file=""
+	local unified_text_file=""
 	local combined_text=""
 	local system_prompt=""
 	local user_prompt=""
 	local payload_file=""
 	local retry_count=0
 	local api_response_file=""
-	local polished_text=""
+	local unified_text_text=""
 	local output_file_path=""
 
-	polished_file="polished_${output_index}.txt"
+	unified_text_file="unified_text_${output_index}.txt"
 
 	if [[ -n $second_file ]] && [[ $second_file != "" ]]; then
 		desc="$desc + $(basename "$second_file")"
@@ -200,7 +200,7 @@ process_text_group()
 		desc="$desc + $(basename "$third_file")"
 	fi
 
-	log_info "Processing: $desc -> $polished_file"
+	log_info "Processing: $desc -> $unified_text_file"
 
 	# Combine text files
 	combined_text=$(<"$first_file")
@@ -238,7 +238,7 @@ STYLE GUIDELINES:
 - Do not include any meta-commentary, system tags, or out-of-character remarks.
 - Correct misspelled or incorrect acronyms.
 - The text should not contain 'Finally', 'In Conclusion' , 'Summary', 'In summary'. 
-Begin by polishing and refining the provided text according to all of these instructions. Return only the final, polished, speech-optimized text."
+Begin by polishing and refining the provided text according to all of these instructions. Return only the final, unified_text, speech-optimized text."
 
 	user_prompt="TEXT: $combined_text"
 
@@ -282,7 +282,7 @@ Begin by polishing and refining the provided text according to all of these inst
 		fi
 		retry_count=$((retry_count + 1))
 		if [[ $retry_count -lt $MAX_API_RETRIES ]]; then
-			log_warn "API retry $retry_count/$MAX_API_RETRIES for $polished_file"
+			log_warn "API retry $retry_count/$MAX_API_RETRIES for $unified_text_file"
 			sleep "$RETRY_DELAY_SECONDS"
 		fi
 	done
@@ -290,22 +290,22 @@ Begin by polishing and refining the provided text according to all of these inst
 	rm -f "$payload_file"
 
 	if [[ -z $api_response_file ]]; then
-		log_error "API call failed after $MAX_API_RETRIES retries for $polished_file"
+		log_error "API call failed after $MAX_API_RETRIES retries for $unified_text_file"
 		return 1
 	fi
 
-	# Read the polished content from the API response file
-	polished_text=$(<"$api_response_file")
+	# Read the unified_text content from the API response file
+	unified_text_text=$(<"$api_response_file")
 	rm -f "$api_response_file"
 
-	if [[ -z $polished_text ]]; then
-		log_error "Empty polished text received for $polished_file"
+	if [[ -z $unified_text_text ]]; then
+		log_error "Empty unified_text text received for $unified_text_file"
 		return 1
 	fi
 
-	# Save the polished text to the output file
-	output_file_path="${storage_dir}/${polished_file}"
-	echo "$polished_text" >"$output_file_path"
+	# Save the unified_text text to the output file
+	output_file_path="${storage_dir}/${unified_text_file}"
+	echo "$unified_text_text" >"$output_file_path"
 	local write_exit
 	write_exit="$?"
 
@@ -313,7 +313,7 @@ Begin by polishing and refining the provided text according to all of these inst
 		log_success "Saved $output_file_path"
 		return 0
 	else
-		log_error "Failed to save polished text to $output_file_path"
+		log_error "Failed to save unified_text text to $output_file_path"
 		return 1
 	fi
 }
@@ -340,7 +340,7 @@ polish_text()
 	start_index=$(get_next_start_index "$storage_dir")
 
 	if [[ $start_index -gt 0 ]]; then
-		log_info "Resuming from polished index $start_index"
+		log_info "Resuming from unified_text index $start_index"
 	fi
 
 	log_info "Processing $total_files text files in groups of 3"
@@ -392,7 +392,7 @@ polish_text()
 		group_result=$?
 
 		if [[ $group_result -eq 0 ]]; then
-			log_success "Processed polished_$output_index"
+			log_success "Processed unified_text_$output_index"
 		else
 			log_warn "Failed to process group $output_index"
 		fi
@@ -614,7 +614,7 @@ main()
 		for text_path in "${TEXT_DIRS_GLOBAL[@]}"; do
 			log_info "PROCESSING: $text_path"
 			staging_dir_name=$(get_last_two_dirs "$text_path")
-			storage_dir="${OUTPUT_DIR}/$(basename "$(dirname "$text_path")")/polished"
+			storage_dir="${OUTPUT_DIR}/$(basename "$(dirname "$text_path")")/unified_text"
 			mkdir -p "$storage_dir"
 
 			pre_process_text "$text_path" "$staging_dir_name" "$storage_dir"

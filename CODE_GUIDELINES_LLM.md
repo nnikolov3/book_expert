@@ -1,6 +1,8 @@
 # BASH Code Guidelines to LLMs
 
 - Declare variables before assignment to prevent undefined variable errors.
+- Use 'declare' outside functions and 'local' inside functions.
+- Ensure global variables have "GLOBAL" in the name.
 - Use explicit if/then/fi blocks for readability.
 - Ensure all if/fi blocks are closed correctly.
 - Use atomic file operations (mv, flock) to prevent race conditions in parallel processing.
@@ -16,7 +18,7 @@
 - Use rsync, not cp.
 - Initialize all variables.
 - Code should be self-documenting.
-- Flows should have solid retry logic.
+- Flows should have solid but efficient retry logic.
 - Do more with less. Do not add code for the sake of adding code; it should have clear purpose.
 - No hardcoded values.
 - DO NOT USE: if <cmd>; then. Instead, use output=\$(cmd); if \$output; then
@@ -26,5 +28,9 @@
 - AVOID Redirections 2>/dev/null
 - Declare / assign each variable on its own line
 - DO NOT USE "\$?" indirectly. Assign it.
+- Sort variable assignments, try to put everything at the top
+- Quote \"\$?\" 
+- The configuration file variable should be readonly (-r) , the same as API keys
+- Update the comments in the code to ensure clarity of intent.
 - COMMENTS SHOULD NOT BE REMOVED; INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
 
