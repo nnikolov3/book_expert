@@ -28,9 +28,3 @@
 - DO NOT USE "\$?" indirectly. Assign it.
 - COMMENTS SHOULD NOT BE REMOVED; INCONSISTENCIES SHOULD BE UPDATED WHEN DETECTED
 
-Let me know if you’d like it grouped, reformatted, or focused differently!
-
-<div style="text-align: center">⁂</div>
-
-[^1]: GUIDELINES_LLM.md
-
