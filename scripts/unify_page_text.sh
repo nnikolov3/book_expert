@@ -6,7 +6,7 @@
 set -euo pipefail
 
 # --- Configuration ---
-declare CONFIG_FILE="$PWD/project.toml"
+declare CONFIG_FILE="$PWD/../project.toml"
 declare CURL_TIMEOUT=120
 declare RATE_LIMIT_SLEEP=60
 
@@ -78,7 +78,7 @@ log()
 	log_info "$@"
 }
 
-get_config()
+helpers/get_config_helper.sh()
 {
 	local key="$1"
 	local default_value="${2:-}"
@@ -647,17 +647,17 @@ main()
 	local pre_process_exit=0
 
 	# Load configuration
-	INPUT_DIR=$(get_config "paths.input_dir")
-	OUTPUT_DIR=$(get_config "paths.output_dir")
-	PROCESSING_DIR=$(get_config "processing_dir.polish_text")
-	CEREBRAS_API_KEY_VAR=$(get_config "cerebras_api.api_key_variable")
-	POLISH_MODEL=$(get_config "cerebras_api.polish_model")
-	MAX_TOKENS=$(get_config "cerebras_api.max_tokens")
-	TEMPERATURE=$(get_config "cerebras_api.temperature")
-	TOP_P=$(get_config "cerebras_api.top_p")
-	LOG_DIR=$(get_config "logs_dir.polish_text")
-	MAX_API_RETRIES=$(get_config "retry.max_retries" "5")
-	RETRY_DELAY_SECONDS=$(get_config "retry.retry_delay_seconds" "30")
+	INPUT_DIR=$(helpers/get_config_helper.sh "paths.input_dir")
+	OUTPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
+	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.polish_text")
+	CEREBRAS_API_KEY_VAR=$(helpers/get_config_helper.sh "cerebras_api.api_key_variable")
+	POLISH_MODEL=$(helpers/get_config_helper.sh "cerebras_api.polish_model")
+	MAX_TOKENS=$(helpers/get_config_helper.sh "cerebras_api.max_tokens")
+	TEMPERATURE=$(helpers/get_config_helper.sh "cerebras_api.temperature")
+	TOP_P=$(helpers/get_config_helper.sh "cerebras_api.top_p")
+	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.polish_text")
+	MAX_API_RETRIES=$(helpers/get_config_helper.sh "retry.max_retries" "5")
+	RETRY_DELAY_SECONDS=$(helpers/get_config_helper.sh "retry.retry_delay_seconds" "30")
 	FAILED_LOG="$LOG_DIR/failed_pages.log"
 
 	# Reset directories

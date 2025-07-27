@@ -9,7 +9,7 @@ set -euo pipefail
 # ================================================================================================
 # CONFIGURATION AND GLOBAL VARIABLES
 # ================================================================================================
-declare -r CONFIG_FILE="$PWD/project.toml"
+declare -r CONFIG_FILE="$PWD/../project.toml"
 
 # Global variables loaded from config
 declare INPUT_DIR=""
@@ -69,18 +69,6 @@ log_error()
 log()
 {
 	log_info "$@"
-}
-
-get_config()
-{
-	local key="$1"
-	local value
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE")
-	if [[ -z $value ]]; then
-		log_error "Missing required configuration key '$key' in $CONFIG_FILE"
-		exit 1
-	fi
-	echo "$value"
 }
 
 print_line()
@@ -264,10 +252,10 @@ main()
 	fi
 
 	# Load configuration
-	INPUT_DIR=$(get_config "paths.input_dir")
-	OUTPUT_DIR=$(get_config "paths.output_dir")
-	LOG_DIR=$(get_config "logs_dir.final_text_concat")
-	PROCESSING_DIR=$(get_config "processing_dir.final_text_concat")
+	INPUT_DIR=$(helpers/get_config_helper.sh "paths.input_dir")
+	OUTPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
+	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.final_text_concat")
+	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.final_text_concat")
 
 	# Reset directories
 

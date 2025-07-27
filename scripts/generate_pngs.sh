@@ -9,7 +9,7 @@ set -euo pipefail
 declare OUTPUT_DIR=""
 declare INPUT_DIR=""
 declare DPI=""
-declare CONFIG_FILE=""
+declare -r CONFIG_FILE="$PWD/../project.toml"
 declare LOG_FILE=""
 declare BLANK_PAGE_THRESHOLD_KB=80
 
@@ -60,19 +60,6 @@ log_error()
 	echo "$message" >>"$LOG_FILE"
 	print_line
 	return 1
-}
-
-get_config()
-{
-	local key="$1"
-	local value
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE" 2>/dev/null)
-	if [[ -z $value ]]; then
-		echo "Missing or empty configuration key '$key' in $CONFIG_FILE"
-		return 1
-	fi
-	echo "$value"
-	return 0
 }
 
 check_dependencies()
@@ -280,8 +267,6 @@ convert_pdf()
 
 main()
 {
-	# Initialize configuration
-	CONFIG_FILE="$PWD/project.toml"
 
 	# Validate config file
 	if [[ ! -f $CONFIG_FILE ]]; then
@@ -296,7 +281,7 @@ main()
 	# Load log directory and create log file
 	local log_dir
 	local config_result
-	config_result=$(get_config "logs_dir.pdf_to_png" 2>/dev/null)
+	config_result=$(helpers/get_config_helper.sh "logs_dir.pdf_to_png")
 	if [[ $? -ne 0 || -z $config_result ]]; then
 		echo "ERROR: Failed to load logs_dir.pdf_to_png"
 		exit 1
@@ -307,7 +292,7 @@ main()
 		exit 1
 	fi
 	LOG_FILE="$log_dir/log_$(date +'%Y%m%d_%H%M%S').log"
-	if ! touch "$LOG_FILE" 2>/dev/null; then
+	if ! touch "$LOG_FILE"; then
 		echo "ERROR: Failed to create log file: $LOG_FILE"
 		exit 1
 	fi
@@ -317,21 +302,21 @@ main()
 	log_info "Loading configuration from $CONFIG_FILE"
 
 	# Load other configurations
-	config_result=$(get_config "paths.output_dir" 2>/dev/null)
+	config_result=$(helpers/get_config_helper.sh "paths.output_dir")
 	if [[ $? -ne 0 || -z $config_result ]]; then
 		log_error "Failed to load paths.output_dir"
 		cleanup_and_exit 1
 	fi
 	OUTPUT_DIR="$config_result"
 
-	config_result=$(get_config "paths.input_dir" 2>/dev/null)
+	config_result=$(helpers/get_config_helper.sh "paths.input_dir")
 	if [[ $? -ne 0 || -z $config_result ]]; then
 		log_error "Failed to load paths.input_dir"
 		cleanup_and_exit 1
 	fi
 	INPUT_DIR="$config_result"
 
-	config_result=$(get_config "settings.dpi" 2>/dev/null)
+	config_result=$(helpers/get_config_helper.sh "settings.dpi")
 	if [[ $? -ne 0 || -z $config_result ]]; then
 		log_error "Failed to load settings.dpi"
 		cleanup_and_exit 1

@@ -68,20 +68,6 @@ declare EXTRACTED_TEXT=""
 declare EXTRACTED_CONCEPTS=""
 declare GEMINI_RESPONSE=""
 
-# Load values from config file using yq (fail the script if missing)
-get_config()
-{
-	local key="$1"
-	local value
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE")
-	if [[ -z $value ]]; then
-		error "Missing or empty configuration key $key in $CONFIG_FILE"
-		return 1
-	fi
-	echo "$value"
-	return 0
-}
-
 # System dependencies check for reliable automation
 check_dependencies()
 {
@@ -596,15 +582,15 @@ main()
 	date_time=$(date +%c)
 	log "START CONVERSION: $date_time"
 	log "Loading configurations"
-	INPUT_DIR=$(get_config "paths.input_dir")
-	OUTPUT_DIR=$(get_config "paths.output_dir")
-	CONCEPT_MODEL=$(get_config "nvidia_api.concept_model")
-	LOG_DIR=$(get_config "logs_dir.png_to_text")
-	PROCESSING_DIR=$(get_config "processing_dir.png_to_text")
-	MAX_RETRIES=$(get_config "retry.max_retries")
-	API_RETRY_DELAY=$(get_config "retry.retry_delay_seconds")
-	GOOGLE_API_KEY_VAR=$(get_config "google_api.api_key_variable")
-	FORCE=$(get_config "settings.force")
+	INPUT_DIR=$(helpers/get_config_helper.sh "paths.input_dir")
+	OUTPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
+	CONCEPT_MODEL=$(helpers/get_config_helper.sh "nvidia_api.concept_model")
+	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.png_to_text")
+	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.png_to_text")
+	MAX_RETRIES=$(helpers/get_config_helper.sh "retry.max_retries")
+	API_RETRY_DELAY=$(helpers/get_config_helper.sh "retry.retry_delay_seconds")
+	GOOGLE_API_KEY_VAR=$(helpers/get_config_helper.sh "google_api.api_key_variable")
+	FORCE=$(helpers/get_config_helper.sh "settings.force")
 	mkdir -p "$PROCESSING_DIR"
 	mkdir -p "$LOG_DIR" || {
 		error "Failed to create log directory: $LOG_DIR"

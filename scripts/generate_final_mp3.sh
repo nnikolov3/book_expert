@@ -7,7 +7,8 @@ set -euo pipefail
 
 # --- Configuration ---
 # Path to project configuration file
-declare CONFIG_FILE="$PWD/project.toml"
+declare CONFIG_FILE="$PWD/../project.toml"
+export CONFIG_FILE
 
 # --- Global Variables ---
 # Initialize all variables with defaults
@@ -20,38 +21,6 @@ declare FAILED_LOG=""
 
 declare -a SORTED_WAVS=()
 
-# Get configuration value from TOML file
-get_config()
-{
-	local key="$1"
-	local default_value="${2:-}"
-	local value=""
-
-	value=$(yq -r ".${key} // \"\"" "$CONFIG_FILE")
-	local yq_exit_code=$?
-
-	if [[ $yq_exit_code -ne 0 ]]; then
-		if [[ -n $default_value ]]; then
-			echo "$default_value"
-			return 0
-		fi
-		log_error "Failed to read configuration key '$key' from $CONFIG_FILE"
-		exit 1
-	fi
-
-	if [[ -z $value ]]; then
-		if [[ -n $default_value ]]; then
-			echo "$default_value"
-			return 0
-		fi
-		log_error "Missing required configuration key '$key' in $CONFIG_FILE"
-		exit 1
-	fi
-
-	echo "$value"
-}
-
-# Enhanced logging functions with timestamp, stdout output, and file output
 log_info()
 {
 	local timestamp=""
@@ -372,10 +341,10 @@ cleanup_and_exit()
 main()
 {
 	# Load configuration with validation
-	OUTPUT_DIR=$(get_config "paths.output_dir")
-	INPUT_DIR=$(get_config "paths.output_dir")
-	PROCESSING_DIR=$(get_config "processing_dir.combine_chunks")
-	LOG_DIR=$(get_config "logs_dir.combine_chunks")
+	OUTPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
+	INPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
+	PROCESSING_DIR=$(helpers/get_config_helper.sh "processing_dir.combine_chunks")
+	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.combine_chunks")
 
 	# Setup logging
 	local mkdir_log_output=""

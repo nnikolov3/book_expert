@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # --- Configuration ---
-declare -r CONFIG_FILE="$PWD/project.toml"
+declare -r CONFIG_FILE="$PWD/../project.toml"
 
 # --- Global Variables ---
 declare OUTPUT_DIR=""
@@ -21,13 +21,6 @@ declare LOG_DIR=""
 # ================================================================================================
 # UTILITY FUNCTIONS
 # ================================================================================================
-
-# ## get_config()
-# Loads configuration from `project.toml`.
-get_config()
-{
-	yq -r ".${1}" "$CONFIG_FILE"
-}
 
 # Add this near the top of your script
 declare DEBUG=${DEBUG:-0}
@@ -308,7 +301,7 @@ clean_and_store_text()
 	fi
 
 	# Clean the text using the cleaning script
-	if cleaned_text=$(./clean_text_helper.sh <"$input_file"); then
+	if cleaned_text=$(./helpers/clean_text_helper.sh <"$input_file"); then
 		# Check if cleaning resulted in non-empty output
 		if [[ -z $cleaned_text ]]; then
 			log_error "Text cleaning resulted in empty output"
@@ -376,11 +369,11 @@ main()
 	fi
 
 	# Load configuration from project.toml
-	OUTPUT_DIR=$(get_config "paths.output_dir")
-	INPUT_DIR=$(get_config "paths.input_dir")
-	F5_TTS_MODEL=$(get_config "f5_tts_settings.model")
-	CUR_PYTHON_PATH=$(get_config "paths.python_path")
-	LOG_DIR=$(get_config "logs_dir.text_to_wav")
+	OUTPUT_DIR=$(helpers/get_config_helper.sh "paths.output_dir")
+	INPUT_DIR=$(helpers/get_config_helper.sh "paths.input_dir")
+	F5_TTS_MODEL=$(helpers/get_config_helper.sh "f5_tts_settings.model")
+	CUR_PYTHON_PATH=$(helpers/get_config_helper.sh "paths.python_path")
+	LOG_DIR=$(helpers/get_config_helper.sh "logs_dir.text_to_wav")
 	mkdir -p "$LOG_DIR"
 	touch "$LOG_DIR/log.txt"
 	LOG_FILE="$LOG_DIR/log.txt"
