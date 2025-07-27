@@ -51,7 +51,8 @@ trap 'log "Received SIGINT (Ctrl+C), cleaning up..."; exit 130' INT
 trap 'log "Received SIGTERM, cleaning up..."; exit 143' TERM
 
 # --- Configuration: These should be defined in project.toml for flexibility ---
-declare CONFIG_FILE="$PWD/project.toml"
+declare CONFIG_FILE="$PWD/../project.toml"
+export CONFIG_FILE
 declare -a GEMINI_MODELS=("gemini-2.5-flash" "gemini-2.5-flash-lite" "gemini-2.5-pro")
 declare OUTPUT_DIR=""
 declare MAX_RETRIES=5
@@ -163,18 +164,24 @@ try_gemini_models()
 {
 	local prompt="$1"
 	local b64_content="$2"
-	local -a models=("${GEMINI_MODELS[@]}")
+	local fail="$3"
+	local model="${GEMINI_MODELS[$fail]}"
 	GEMINI_RESPONSE=""
-	for model in "${models[@]}"; do
-		log "Trying model $model..."
+	local status
+	log "Trying model $model..."
+	if [[ $fail -lt 3 ]]; then
 		call_google_api "$model" "$prompt" "$b64_content"
-		if [[ $GEMINI_RESPONSE ]]; then
-			success "Model $model responded successfully"
-			return 0
-		else
-			warn "Trying a different model"
-		fi
-	done
+		status="$?"
+	fi
+	if [[ $GEMINI_RESPONSE && $status -eq 0 ]]; then
+		success "Model $model responded successfully"
+		return 0
+	else
+		warn "Trying a different model"
+		fail=$((fail + 1))
+		warn "Fail count is $fail"
+		try_gemini_models "$prompt" "$b64_content" "$fail"
+	fi
 	error "All Gemini models failed"
 	return 1
 }
@@ -242,17 +249,23 @@ CONTENT RULES:
 - When describing complex tables or traces, maintain logical flow from one state or time step to the next
 Output only the extracted text as continuous paragraphs, formatted for natural speech synthesis."
 
+	local fail=0
 	for ((attempts = 0; attempts < MAX_RETRIES; attempts++)); do
 		EXTRACTED_TEXT=""
 		GEMINI_RESPONSE=""
-		try_gemini_models "$prompt" "$b64_content"
-		if [[ $GEMINI_RESPONSE ]]; then
+		local status
+		try_gemini_models "$prompt" "$b64_content" "$fail"
+		status="$?"
+
+		if [[ $GEMINI_RESPONSE && status -eq 0 ]]; then
 			EXTRACTED_TEXT=$(timeout 10s jq -r '.candidates[0].content.parts[0].text // empty' <<<"$GEMINI_RESPONSE")
 			if [[ $EXTRACTED_TEXT ]]; then
 				success "Enhanced text extracted successfully"
 				return 0
 			else
 				warn "Empty or null response from API (attempt $((attempts + 1))/$MAX_RETRIES)"
+				fail=$((fail + 1))
+				continue
 			fi
 		else
 			warn "API call failed or invalid response format (attempt $((attempts + 1))/$MAX_RETRIES)"
@@ -275,6 +288,8 @@ extract_concepts()
 		error "Empty base64 content provided to extract_concepts"
 		return 1
 	fi
+	local fail=0
+	local status=0
 
 	local prompt="You are a Nobel laureate scientist with expertise across all STEM fields. Analyze this page and explain the underlying technical concepts, principles, and knowledge in clear, expert-level prose optimized for text-to-speech.
 CRITICAL FORMATTING RULES - Convert technical terms to speech-friendly format:
@@ -342,16 +357,16 @@ Write as continuous, flowing paragraphs that explain the technical concepts pres
 	for ((attempts = 0; attempts < MAX_RETRIES; attempts++)); do
 		GEMINI_RESPONSE=""
 		EXTRACTED_CONCEPTS=""
-		try_gemini_models "$prompt" "$b64_content"
-		if [[ $GEMINI_RESPONSE ]]; then
+		try_gemini_models "$prompt" "$b64_content" "$fail"
+		status="$?"
+		if [[ $GEMINI_RESPONSE && $status -eq 0 ]]; then
 			EXTRACTED_CONCEPTS=$(timeout 10s jq -r '.candidates[0].content.parts[0].text // empty' <<<"$GEMINI_RESPONSE")
 			if [[ $EXTRACTED_CONCEPTS ]]; then
 				success "Concepts extracted successfully"
 				return 0
 			else
 				warn "Empty or null response from API (attempt $((attempts + 1))/$MAX_RETRIES)"
-				log "Waiting ${API_RETRY_DELAY}s before retry..."
-				sleep "$API_RETRY_DELAY"
+				fail=$((fail + 1))
 				continue
 			fi
 		fi
