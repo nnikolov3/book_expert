@@ -593,7 +593,7 @@ pre_process_text()
 	fi
 
 	# Look for text files with various extensions
-	mapfile -t text_array < <(find "$temp_dir" -type f -name "*.txt" | sort -h)
+	mapfile -t text_array < <(find "$temp_dir" -type f -name "*.txt" | sort -V)
 
 	if [[ ${#text_array[@]} -eq 0 ]]; then
 		log_error "No TEXT files found in $temp_dir"

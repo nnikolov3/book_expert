@@ -28,6 +28,13 @@
 # - Follow bash best practices.
 # - No hard coding values.
 # - See if you can use ${variable//search/replace} instead.
+# - No hardcoded values.
+# - DO NOT USE if <cmd>; then. Rather, use output=$(cmd) if $output; then
+# - DO NOT USE 2>>"$LOG_FILE"
+# - DO NOT USE ((i++)) instead use i=$((i + 1))
+# - DO NOT IGNORE the guidelines
+# - AVOID Redirections 2>/dev/null
+# - Declare / assign each variable on its own line
 # COMMENTS SHOULD NOT BE REMOVED, INCONCISTENCIES SHOULD BE UPDATED WHEN DETECTED
 # USE MARKDOWN WITHIN THE COMMENT BLOCKS FOR COMMENTS
 # ===============================================================================================
@@ -43,6 +50,8 @@ declare INPUT_DIR=""
 declare F5_TTS_MODEL="E2TTS_Base"
 declare -a CONCAT_DIRS_GLOBAL=()
 declare CUR_PYTHON_PATH=""
+declare LOG_FILE=""
+declare LOG_DIR=""
 
 # ================================================================================================
 # UTILITY FUNCTIONS
@@ -54,6 +63,7 @@ get_config()
 {
 	yq -r ".${1}" "$CONFIG_FILE"
 }
+
 # Add this near the top of your script
 declare DEBUG=${DEBUG:-0}
 
@@ -61,66 +71,101 @@ debug_log()
 {
 	[[ $DEBUG -eq 1 ]] && echo "[DEBUG] $*" >&2
 }
-# ## log_info(), log_error()
-# Log messages with timestamps.
+
+print_line()
+{
+	echo "======================================================================="
+}
+
 log_info()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $*"
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] INFO: $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+}
+
+log_warn()
+{
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] WARN: $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
+}
+
+log_success()
+{
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] SUCCESS: $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
 }
 
 log_error()
 {
-	echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $*" >&2
+	local timestamp=""
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	local message="[$timestamp] ERROR: $*"
+	echo "$message"
+	echo "$message" >>"$LOG_FILE"
+	print_line
+	return 1
 }
 
-print_line()
+log()
 {
-	echo "======================================================================"
+	log_info "$@"
 }
 
-# Alternative simpler approach focusing on semantic boundaries
+# Usage: create_chunks "$cleaned_text" chunks 200
+# chunks will be an array of semantically meaningful strings for TTS
 create_chunks()
 {
 	local text="$1"
 	local -n chunks_ref="$2"
-	local target_size="${3:-200}" # Target chunk size
+	local target_size="${3:-200}" # Target chunk size (characters)
 	local current_chunk=""
+	local IFS=$'\n'
+	local sentences=()
 
-	echo "INFO: Creating semantic chunks (target size: $target_size)"
+	log_info "Creating semantic chunks (target size: $target_size)"
 	chunks_ref=()
 
-	# Split on sentence boundaries and logical breaks
-	local IFS=$'\n'
-	local paragraphs=($(echo "$text" | sed 's/\. /.\n/g; s/\.\([A-Z]\)/.\n\1/g'))
+	# 1. Split text on . ? ! followed by space (robust "sentence" split)
+	while IFS= read -r line; do
+		# Remove leading/trailing whitespace
+		line="$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+		[[ -z $line ]] && continue
+		sentences+=("$line")
+	done < <(echo "$text" | sed -E 's/([.?!]) /\1\n/g')
 
-	for paragraph in "${paragraphs[@]}"; do
-		paragraph=$(echo "$paragraph" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
-		[[ -z $paragraph ]] && continue
-
-		if [[ -z $current_chunk ]]; then
-			current_chunk="$paragraph"
-		else
-			local combined="$current_chunk $paragraph"
-			if [[ ${#combined} -le $target_size ]]; then
-				current_chunk="$combined"
-			else
-				# Current chunk is complete
-				if [[ ${#current_chunk} -ge 30 ]]; then
-					chunks_ref+=("$current_chunk")
-				fi
-				current_chunk="$paragraph"
+	# 2. Aggregate sentences into size-limited chunks
+	for sentence in "${sentences[@]}"; do
+		[[ -z $sentence ]] && continue
+		# Next chunk would be too big? Flush.
+		if ((${#current_chunk} + ${#sentence} + 1 > target_size)); then
+			if [[ -n $current_chunk ]]; then
+				# Avoid tiny chunks if possible
+				chunks_ref+=("$current_chunk")
 			fi
+			current_chunk="$sentence"
+		else
+			# Add with space for natural flow
+			current_chunk="${current_chunk:+$current_chunk }$sentence"
 		fi
 	done
 
-	# Add final chunk
-	if [[ -n $current_chunk && ${#current_chunk} -ge 30 ]]; then
+	# 3. Add final partial chunk
+	if [[ -n $current_chunk ]]; then
 		chunks_ref+=("$current_chunk")
-	elif [[ ${#chunks_ref[@]} -gt 0 && -n $current_chunk ]]; then
-		chunks_ref[-1]+=" $current_chunk"
 	fi
 
-	echo "INFO: Created ${#chunks_ref[@]} semantic chunks"
+	log_info "Created ${#chunks_ref[@]} semantic chunks"
 	return 0
 }
 
@@ -135,28 +180,24 @@ text_chunks_to_wav()
 	local failed_chunks=0
 	local temp_output
 
-	echo "Starting the creation of text chunks"
-	print_line
+	log_info "Starting the creation of text chunks"
 
 	# Validate inputs
 	if [[ -z $text ]]; then
-		echo "ERROR: NO TEXT!"
-		print_line
+		log_error "NO TEXT!"
 		return 1
 	else
-		echo "SUCCESS: Text found. Chunk now."
-		print_line
+		log_success "Text found. Chunk now."
 	fi
 
 	if [[ -z $output_dir ]]; then
-		echo "ERROR: No output directory specified"
+		log_error "No output directory specified"
 		return 1
 	fi
 
 	# Call create_chunks with array reference
 	if ! create_chunks "$text" text_chunks; then
-		echo "ERROR: Failed to create text chunks"
-		print_line
+		log_error "Failed to create text chunks"
 		return 1
 	fi
 
@@ -164,13 +205,11 @@ text_chunks_to_wav()
 
 	# Check if we have any chunks
 	if [[ $total_chunks -eq 0 ]]; then
-		echo "ERROR: No text chunks were created - check input text"
-		print_line
+		log_error "No text chunks were created - check input text"
 		return 1
 	fi
 
-	echo "INFO: Processing $total_chunks chunks"
-	print_line
+	log_info "Processing $total_chunks chunks"
 
 	for chunk in "${text_chunks[@]}"; do
 		local chunk_filename
@@ -180,9 +219,8 @@ text_chunks_to_wav()
 
 		# Skip empty chunks (safety check)
 		if [[ -z $chunk ]]; then
-			echo "Skipping empty chunk $chunk_num"
+			log_warn "Skipping empty chunk $chunk_num"
 			chunk_num=$((chunk_num + 1))
-			print_line
 			continue
 		fi
 
@@ -247,10 +285,10 @@ text_chunks_to_wav()
 	local successful_chunks=$((total_chunks - failed_chunks))
 
 	if [[ $failed_chunks -gt 0 ]]; then
-		log_error "⚠️  Completed with $failed_chunks failed chunks out of $total_chunks" >&2
+		log_warn "⚠️  Completed with $failed_chunks failed chunks out of $total_chunks" >&2
 	fi
 
-	log_info "✅ Generated $successful_chunks audio chunks in $output_dir" >&2
+	log_success "✅ Generated $successful_chunks audio chunks in $output_dir" >&2
 
 	# List generated files for verification
 	if [[ $successful_chunks -gt 0 ]]; then
@@ -261,7 +299,6 @@ text_chunks_to_wav()
 		fi
 	fi
 
-	print_line
 	return "$([[ $successful_chunks -gt 0 ]] && echo 0 || echo 1)"
 }
 
@@ -271,88 +308,93 @@ activate_venv()
 	local activate_script="$venv_path/activate"
 
 	if [[ ! -f $activate_script ]]; then
-		echo "Error: Virtual environment not found at $venv_path"
-		print_line
+		log_error "Virtual environment not found at $venv_path"
 		return 1
 	fi
 
 	# shellcheck disable=SC1091
 	source "$activate_script"
-	echo "SUCCESS: Virtual environment activated"
-	print_line
-
+	log_success "Virtual environment activated"
 }
 
-clean_text()
+# ## clean_and_store_text()
+# Cleans text from input file and stores in final_concat directory
+clean_and_store_text()
 {
-	local input="$1"
-	local cleaned
+	local input_file="$1"
+	local output_file="$2"
+	local cleaned_text
 
-	log_info "Cleaning text (input length: ${#input} chars)"
+	log_info "Cleaning text from: $input_file"
+	log_info "Output file: $output_file"
 
-	# Check if input is empty
-	if [[ -z $input ]]; then
-		log_error "Empty input provided to clean_text"
+	# Check if input file exists
+	if [[ ! -f $input_file ]]; then
+		log_error "Input file not found: $input_file"
 		return 1
 	fi
 
-	cleaned=$(echo "$input" |
-		sed 's/`//g' |
-		sed 's/_/ /g' |
-		sed 's/(/,/g' |
-		sed 's/)//g' |
-		sed 's/\bEFI /EFI /g' |
-		sed 's/\bI\/O\b/input output/g' |
-		sed 's/\bPCI\b/P C I/g' |
-		sed 's/\bUSB\b/U S B/g' |
-		sed 's/\bUEFI\b/U E F I/g' |
-		sed 's/  */ /g' |
-		sed 's/*//g' |
-		sed 's/#//g' |
-		sed 's/^[[:space:]]*//' |
-		sed 's/[[:space:]]*$//')
-
-	log_info "Text cleaned (output length: ${#cleaned} chars)"
-
-	if [[ -z $cleaned ]]; then
-		log_error "Text cleaning resulted in empty output"
-		return 1
+	# Create output directory if it doesn't exist
+	local output_dir
+	output_dir=$(dirname "$output_file")
+	if [[ ! -d $output_dir ]]; then
+		mkdir -p "$output_dir"
+		log_info "Created directory: $output_dir"
 	fi
 
-	echo "$cleaned"
+	# Clean the text using the cleaning script
+	if cleaned_text=$(./clean_text.sh <"$input_file"); then
+		# Check if cleaning resulted in non-empty output
+		if [[ -z $cleaned_text ]]; then
+			log_error "Text cleaning resulted in empty output"
+			return 1
+		fi
+
+		# Write cleaned text to output file
+		echo "$cleaned_text" >"$output_file"
+
+		# Verify the file was written successfully
+		if [[ -f $output_file ]] && [[ -s $output_file ]]; then
+			local file_size
+			file_size=$(stat -c%s "$output_file" 2>/dev/null || echo 0)
+			log_success "✅ Cleaned text stored successfully (${file_size} bytes): $output_file"
+			return 0
+		else
+			log_error "Failed to write cleaned text to: $output_file"
+			return 1
+		fi
+	else
+		log_error "Text cleaning failed for: $input_file"
+		return 1
+	fi
 }
 
 is_concat()
 {
-
 	local -a pdf_array=("$@")
 	CONCAT_DIRS_GLOBAL=()
+
 	for pdf_name in "${pdf_array[@]}"; do
-		echo "Checking document: $pdf_name"
+		log_info "Checking document: $pdf_name"
 		concat_path="${OUTPUT_DIR}/${pdf_name}/concat"
 		if [[ -d $concat_path ]]; then
 			concat_count=$(find "$concat_path" -type f | wc -l)
 			if [[ $concat_count -eq 1 ]]; then
-				echo "SUCCESS: Found $concat_count file to process"
-				print_line
+				log_success "Found $concat_count file to process"
 				CONCAT_DIRS_GLOBAL+=("$concat_path")
 			else
-				echo "WARN: Review $concat_path , no file found"
-				print_line
+				log_warn "Review $concat_path , no file found"
 			fi
 		else
-			echo "WARN: Confirm $concat_path"
-			print_line
+			log_warn "Confirm $concat_path"
 		fi
 	done
 
 	if [ ${#CONCAT_DIRS_GLOBAL[@]} -eq 0 ]; then
-		echo "ERROR: No directories with concat text file."
-		print_line
+		log_error "No directories with concat text file."
 		exit 1
 	else
-		echo "SUCCESS: Found directories to process"
-		print_line
+		log_success "Found directories to process"
 		return 0
 	fi
 }
@@ -362,10 +404,9 @@ is_concat()
 # ================================================================================================
 main()
 {
-
 	# Check configuration file
 	if [[ ! -f $CONFIG_FILE ]]; then
-		log_error "Config file not found: $CONFIG_FILE"
+		echo "Config file not found: $CONFIG_FILE"
 		exit 1
 	fi
 
@@ -374,7 +415,10 @@ main()
 	INPUT_DIR=$(get_config "paths.input_dir")
 	F5_TTS_MODEL=$(get_config "f5_tts_settings.model")
 	CUR_PYTHON_PATH=$(get_config "paths.python_path")
-
+	LOG_DIR=$(get_config "logs_dir.text_to_wav")
+	mkdir -p "$LOG_DIR"
+	touch "$LOG_DIR/log.txt"
+	LOG_FILE="$LOG_DIR/log.txt"
 	# Collect PDF names and check polished directories
 	local -a pdf_files=()
 	mapfile -t pdf_files < <(find "$INPUT_DIR" -type f -name "*.pdf" -exec basename {} .pdf \;)
@@ -383,30 +427,49 @@ main()
 		log_error "No PDF files found in $INPUT_DIR"
 		exit 1
 	fi
-	local concat_path=""
+
 	activate_venv "$CUR_PYTHON_PATH"
+
 	if is_concat "${pdf_files[@]}"; then
 		for concat_file_path in "${CONCAT_DIRS_GLOBAL[@]}"; do
-			local cleaned_text
-			cleaned_text=$(clean_text "$(cat "$concat_file_path/concatenated.txt")")
-			if [[ $cleaned_text ]]; then
-				echo "SUCCESS: Text has been cleaned up. Ready to chunk"
-				print_line
+			local pdf_name
+			local input_concat_file
+			local final_concat_dir
+			local final_concat_file
+			local wav_file_dir
+
+			# Extract PDF name from path (parent of concat directory)
+			pdf_name=$(basename "$(dirname "$concat_file_path")")
+			input_concat_file="$concat_file_path/concatenated.txt"
+			final_concat_dir="${OUTPUT_DIR}/${pdf_name}/final_concat"
+			final_concat_file="$final_concat_dir/cleaned_text.txt"
+			wav_file_dir="${OUTPUT_DIR}/${pdf_name}/wav"
+
+			log_info "Processing PDF: $pdf_name"
+
+			# Step 1: Clean text and store in final_concat directory
+			if clean_and_store_text "$input_concat_file" "$final_concat_file"; then
+				log_success "✅ Text cleaned and stored in: $final_concat_file"
 			else
-				echo "ERROR: Failed to clean text"
-				print_line
+				log_error "❌ Failed to clean and store text for: $pdf_name"
 				continue
 			fi
 
-			wav_file_dir="${OUTPUT_DIR}/$(basename "$(dirname "$concat_file_path")")/wav"
+			# Step 2: Create wav directory and convert to audio chunks
 			mkdir -p "$wav_file_dir"
-			echo "INFO: Converting text -> chunking -> wav"
-			text_chunks_to_wav "$cleaned_text" "$wav_file_dir"
+			log_info "Converting cleaned text -> chunking -> wav files"
 
-			echo "GOOD"
+			# Read the cleaned text from the stored file
+			local cleaned_text
+			if cleaned_text=$(cat "$final_concat_file"); then
+				text_chunks_to_wav "$cleaned_text" "$wav_file_dir"
+				log_success "✅ Audio conversion completed for: $pdf_name"
+			else
+				log_error "❌ Failed to read cleaned text from: $final_concat_file"
+				continue
+			fi
 		done
 	fi
-
 }
 
 main "$@"

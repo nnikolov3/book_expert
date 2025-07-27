@@ -393,7 +393,7 @@ pre_process_png()
 
 	# List all PNGs to process in order
 	declare -a png_array=()
-	mapfile -t png_array < <(find "$temp_dir" -type f -name "*.png" | sort -h)
+	mapfile -t png_array < <(find "$temp_dir" -type f -name "*.png" | sort -V)
 	if [ ${#png_array[@]} -eq 0 ]; then
 		error "No png files? This is odd."
 		return 1

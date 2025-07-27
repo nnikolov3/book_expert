@@ -37,6 +37,7 @@ polish_text = "/tmp/polished"
 text_to_chunks = "/tmp/text_to_chunks"
 chunks_to_wav = "/tmp/chunks_to_wav"
 combine_chunks = "/tmp/combine_chunks"
+final_text_concat = "/tmp/final_text_concat"
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -45,8 +46,10 @@ pdf_to_png = "/tmp/logs/pdf_to_png"
 png_to_text= "/tmp/logs/png_to_text"
 polish_text = "/tmp/logs/polished"
 text_to_chunks = "/tmp/logs/text_to_chunks"
-chunks_to_wav = "/tmp/logs/chunks_to_wav"
+text_to_wav = "/tmp/logs/chunks_to_wav"
 combine_chunks = "/tmp/logs/combine_chunks"
+final_text = "/tmp/logs/final_text"
+final_text_concat = "/tmp/logs/final_text"
 # ================================================================================================
 # [settings]
 # General settings for preprocessing and generation.
@@ -99,7 +102,14 @@ max_retries = 5
 retry_delay_seconds = 60
 # url
 
-
+[cerebras_api]
+api_key_variable ="CEREBRAS_API_KEY"
+max_tokens = 4096
+temperature = 0.5
+top_p = 0.6
+final_model = "qwen-3-32b"
+#final_model = "qwen-3-235b-a22b"
+polish_model = "llama-3.3-70b"
 # ================================================================================================
 # [f5_tts_settings]
 # Settings for the F5-TTS engine used in Stage 4 (Chunks to WAV).
