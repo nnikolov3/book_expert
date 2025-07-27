@@ -60,7 +60,7 @@ book_expert/
     ├── clean_text_helper.sh
     ├── generate_wav.sh
     ├── generate_final_mp3.sh
-    └── project.toml
+├── project.toml
 ├── README.md
 ```
 
