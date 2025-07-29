@@ -1,142 +1,247 @@
-# BASH Code Guidelines for LLMs
-**FOLOW THE RULES TIGHTLY"
-## Variable Management
+# Comprehensive BASH Code Guidelines for LLMs
+
+**FOLLOW THESE RULES STRICTLY** - These guidelines ensure robust, maintainable scripts that handle edge cases gracefully and pass all linter checks.
+
+## 1. Script Initialization and Safety
+
+### Strict Mode Settings
+```bash
+#!/bin/bash
+set -u  # Exit on undefined variables
+# Never use: set -e (can mask important errors)
+```
+
+### Error Handling Philosophy
+- **NEVER redirect to `/dev/null`** - This hides critical debugging information
+- **NEVER suppress error output** - Always capture and handle errors explicitly
+- Use proper exit code checking instead of hiding failures
+
+```bash
+# ❌ BAD - Hides errors
+command 2>/dev/null
+value=$(yq -r "$key" "$CONFIG_FILE" 2>/dev/null)
+if ! command -v "$dep" >/dev/null 2>&1; then
+
+# ✅ GOOD - Captures errors for debugging
+value=$(yq -r "$key" "$CONFIG_FILE")
+if ! command -v "$dep"; then
+```
+
+## 2. Variable Management
+
+### Declaration and Scope Rules
 - **Always declare variables before assignment** to prevent undefined variable errors
 - Use `declare` at global scope and `local` inside functions
-- Global variables must contain "GLOBAL" in their name for clarity
-- Initialize all variables explicitly - no implicit empty values
-- Declare and assign each variable on separate lines for clarity
-- Sort variable declarations when possible, preferably at the top of functions/scripts
-- The below example is wrong, there is no need to check again the status
-```bash 
-WRONG
-	jq_check_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
-	jq_check_exit="$?"
-	if [[ $jq_check_exit -eq 0 ]]; then
- ``` 
+- **Global variables must contain "GLOBAL" in their name** for clarity
+- **Initialize all variables explicitly** - no implicit empty values
+- **Declare and assign on separate lines** for better error tracking
+- **ALL variables must be declared at the top** - global variables at the top of the script, local variables at the top of functions
 
 ```bash
-CORRECT
-   	jq_check_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
-	if [[ $jq_check_output ]]; then ...
-```      
-```bash
-# Good
+# ✅ GOOD - Global variables at top of script
 declare INPUT_GLOBAL=""
+declare OUTPUT_GLOBAL=""
 declare -r CONFIG_FILE_GLOBAL="/path/to/config"
-local output=""
-local exit_code=""
+declare -r MAX_RETRIES_GLOBAL=3
 
-# Avoid
-SOME_VAR=$(...) # unclear scope and purpose
+# ✅ GOOD - Function with all local variables at top
+function process_data() {
+    # ALL local variables declared at the top of function
+    local exit_code=""
+    local jq_output=""
+    local jq_status_exit=1
+    local result=""
+    local retry_count=0
+    
+    # Function logic starts after all variable declarations
+    jq_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
+    jq_status_exit="$?"
+    
+    if [[ -n "$jq_output" && "$jq_status_exit" -eq 0 ]]; then
+        echo "Valid JSON response"
+    fi
+}
+
+# ❌ AVOID - Variables scattered throughout
+function bad_example() {
+    local first_var=""  # Variable declaration
+    
+    some_command
+    
+    local second_var=""  # BAD: Variable declared in middle of function
+    
+    more_logic
+    
+    local third_var=""   # BAD: Another variable declared later
+}
+
+# ❌ AVOID
+SOME_VAR=$(...) # Unclear scope and purpose
+jq_check_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
+jq_check_exit="$?"
+if [[ $jq_check_exit -eq 0 ]]; then  # Redundant check without output validation
 ```
 
-## Control Flow and Structure
-- Use explicit `if/then/fi` blocks for all conditionals - never one-liners
-- Ensure all control blocks (`if/fi`, `while/done`, `for/done`) are properly closed
-- Capture command output explicitly before testing conditions
-- Always assign exit codes to variables instead of using `$?` directly
-- If possible avoid using the '$?'.
-- Don't use variables in the printf format string. Use printf '%s' "$foo".
+### Variable Naming and Usage
+- **All variables must be declared at the top** of their scope (script or function)
+- Sort variable declarations when possible, preferably alphabetically or by logical grouping
+- Quote all variables, especially `"$?"` when assigning exit codes
+- Use meaningful, descriptive names
 
 ```bash
-# Better
-local output=""    # Make sure it is declared
-output=$(some_command)
-if [[ "$output" ]]; then
-    echo "Success: $output"
-fi
+# ✅ GOOD - All variables at top, sorted logically
+local attempt_number=0
+local iteration_count=""
+local pdf_basename=""
+local result=""
+local temp_file=""
+
+# Function logic follows variable declarations
+# ... rest of function implementation
+
+# ❌ AVOID - Variables declared throughout function
+function bad_function() {
+    local i=0  # Variable here
+    
+    some_logic
+    
+    local x=""  # BAD: Variable in middle
+    
+    more_logic
+    
+    local tmp=""  # BAD: Variable at end
+}
 ```
 
+## 3. Control Flow and Conditionals
+
+### Explicit Control Structures
+- **Use explicit `if/then/fi` blocks** for all conditionals - never one-liners
+- **Ensure all control blocks are properly closed** (`if/fi`, `while/done`, `for/done`)
+- **Capture command output explicitly before testing conditions**
+- **Always assign exit codes to variables** instead of using `$?` directly
+- **Avoid using `$?` when possible** - prefer direct command testing
+
 ```bash
- OR
-local exit_code=""
+# ✅ GOOD - Explicit output capture and testing
 local output=""
+local exit_code=""
 output=$(some_command)
 exit_code="$?"
+
 if [[ "$exit_code" -eq 0 ]]; then
     echo "Success: $output"
-fi   
-```bash
-# Avoid
-if some_command; then  # Don't test commands directly
-if (( i++ )); then     # Don't use compound arithmetic
-if [[ $? -eq 0 ]]; then # Don't use $? directly
+fi
+
+# ✅ ALSO GOOD - Direct command testing when output not needed
+# Avoid doing this for long commands that with many pipes
+if some_command; then   
+    echo "Command succeeded"
+fi
+
+# ❌ AVOID
+if some_command; then process; fi  # One-liner
+if (( i++ )); then                 # Compound arithmetic in condition
+if [[ $? -eq 0 ]]; then           # Direct $? usage
 ```
 
-## File Operations and Safety
-- Use **atomic file operations** (`mv`, `flock`) to prevent race conditions in parallel processing
-- Prefer `rsync` over `cp` for file copying operations
-- Use `cmd < file` instead of `useless cat | cmd`
+### Arithmetic and Comparisons
+- Use `i=$((i + 1))` instead of `((i++))`
+- **Prefer `[[ ]]` over `[ ]`** for test conditions
+- **Prefer `[[ $var -eq 0 ]]` over `((var == 0))`** for arithmetic operations
+
+```bash
+# ✅ GOOD
+for iteration_count in $(seq 1 "$MAX_RETRIES_GLOBAL"); do
+    attempt_number=$((attempt_number + 1))
+    if [[ "$attempt_number" -eq "$MAX_RETRIES_GLOBAL" ]]; then
+        break
+    fi
+done
+
+# ❌ AVOID
+for ((i++; i < max; i++)); do  # Non-portable and unclear
+if ((var == 0)); then          # Less reliable than [[ ]]
+```
+
+## 4. File Operations and I/O
+
+### Safe File Operations
+- **Use atomic file operations** (`mv`, `flock`) to prevent race conditions in parallel processing
+- **Prefer `rsync` over `cp`** for file copying operations
+- **Use `cmd < file` instead of `cat file | cmd`** (avoid useless cat)
 - Implement solid but efficient retry logic for critical operations
 
 ```bash
-# Good
+# ✅ GOOD - Atomic and efficient
 rsync -av "$source" "$destination"
+
+# Process files efficiently
 while read -r line; do
     process_line "$line"
 done < "$input_file"
 
-# Avoid
-cp "$source" "$destination"
-cat "$input_file" | while read line; do
+# Create atomic file updates
+temp_file=$(mktemp)
+process_data > "$temp_file"
+mv "$temp_file" "$final_file"
+
+# ❌ AVOID
+cp "$source" "$destination"  # Less robust than rsync
+cat "$input_file" | while read line; do  # Useless cat
 ```
 
-## Error Handling and Debugging
-- Enable strict error checking with `set -u` to catch unbound variables
-- **Never redirect to `/dev/null`** - redirection hides potential issues
-- Quote all variables, especially `"$?"` when assigning exit codes
-- Clean up unused variables and maintain detailed comments
-- Avoid unreachable code or redundant commands
+### printf Best Practices
+- **Never use variables directly in printf format strings**
+- **Always use `printf '%s' "$VARIABLE"`** for string output
 
 ```bash
+# ✅ GOOD
+printf '%s\n' "$message"
+printf '%d files processed\n' "$count"
 
-# Avoid/BAD
-- critical_command 2>/dev/null  # Hides errors
-- some_command 2>>"$LOG_FILE"  # Inconsistent logging pattern
-- value=$(yq -r "$key" "$CONFIG_FILE" 2>/dev/null)
-- if ! command -v "$dep" >/dev/null 2>&1; then      
-```  
-```bash
-# Good  , NO Redirection!
-- value=$(yq -r "$key" "$CONFIG_FILE")
-- if ! command -v "$dep"; then      
-```         
+# ❌ AVOID
+printf "$message"  # Dangerous - treats variable as format string
+```
 
-## Configuration and Constants
-- Configuration file variables should be **readonly** (`declare -r`)
-- API keys and sensitive data must be readonly
-- No hardcoded values - use configuration variables
-- Everything should be parameterized and configurable, move it to project.toml
+## 5. Configuration Management
+
+### Configuration Variables
+- **Configuration file variables should be readonly** (`declare -r`)
+- **API keys and sensitive data must be readonly**
+- **No hardcoded values** - use configuration variables
+- **Everything should be parameterized** and moved to project.toml
 
 ```bash
-# Good
+# ✅ GOOD - Readonly configuration
 declare -r API_KEY_GLOBAL="$1"
 declare -r CONFIG_FILE_GLOBAL="/etc/myapp/config"
 declare -r MAX_RETRIES_GLOBAL=3
+declare -r DPI_GLOBAL=600
 
-# Avoid
+# ❌ AVOID
 api_key="hardcoded-key-123"  # Not readonly, hardcoded
 timeout=30                   # Hardcoded magic number
+dpi=600                      # Should be configurable
 ```
 
-## Code Quality and Maintenance
-- Keep code **concise, clear, and self-documented**
-- Comments should explain intent, not just mechanics
-- **Do more with less** - avoid adding code without clear purpose
-- Use `grep -q` for silent boolean checks
-- Lint all scripts with `shellcheck` for correctness
-- When using printf, do not use directly the variable but rather printf '%s' "$VARIABLE".
-- Update comments when code changes to maintain consistency
+## 6. Directory Structure Standards
+
+### Standard Directory Layout
+- `INPUT_GLOBAL`: Location where raw PDF files exist
+- `OUTPUT_GLOBAL`: Location where all produced artifacts are stored
+- **All artifacts saved under**: `$OUTPUT_GLOBAL/$PDF_NAME/<artifact_type>/`
+- **Maintain consistent directory structure** across all operations
 
 ```bash
-# Good - self-documenting with clear intent
-# Process each PDF file in the input directory and generate artifacts
+# ✅ GOOD - Consistent structure
 for pdf_file in "$INPUT_GLOBAL"/*.pdf; do
     pdf_basename=$(basename "$pdf_file" .pdf)
     output_dir="$OUTPUT_GLOBAL/$pdf_basename"
     
-    # Create output structure for this PDF's artifacts
+    # Create structured output directories
+    local mkdir_result=""
+    local mkdir_exit=""
     mkdir_result=$(mkdir -p "$output_dir/extracted" "$output_dir/processed" 2>&1)
     mkdir_exit="$?"
     
@@ -147,271 +252,136 @@ for pdf_file in "$INPUT_GLOBAL"/*.pdf; do
 done
 ```
 
-## Directory Structure Standards
-- `INPUT_GLOBAL`: Location where raw PDF files exist
-- `OUTPUT_GLOBAL`: Location where all produced artifacts are stored
-- All artifacts saved under: `$OUTPUT_GLOBAL/$PDF_NAME/<artifact_type>/`
-- Maintain consistent directory structure across all operations
+## 7. Error Handling and Debugging
 
-## Arithmetic and Loops
-- Use `i=$((i + 1))` instead of `((i++))`
-- Prefer `[[ ]]` over `[ ]` for test conditions
-- Prefer `[[ $var -eq 0 ]]` over `((var == 0))` for arithmetic operations.
-- Use meaningful variable names in loops
+### Debugging Best Practices
+- **Enable strict error checking** with `set -u` to catch unbound variables
+- **Clean up unused variables** and maintain detailed comments
+- **Avoid unreachable code** or redundant commands
+- Use `grep -q` for silent boolean checks
 
 ```bash
-# Good
-for iteration_count in $(seq 1 "$MAX_RETRIES_GLOBAL"); do
-    attempt_number=$((attempt_number + 1))
-done
+# ✅ GOOD - Comprehensive error handling
+function critical_operation() {
+    local result=""
+    local exit_code=""
+    
+    result=$(critical_command 2>&1)
+    exit_code="$?"
+    
+    if [[ "$exit_code" -ne 0 ]]; then
+        echo "Operation failed with exit code $exit_code: $result" >&2
+        return "$exit_code"
+    fi
+    
+    echo "$result"
+}
 
-# Avoid
-for ((i++; i < max; i++)); do  # Unclear and non-portable
+# ✅ GOOD - Silent boolean check
+if grep -q "pattern" "$file"; then
+    echo "Pattern found"
+fi
 ```
 
-## API and External Commands
-- Avoid mixing different API calls in the same function
-- Capture both output and exit codes for external commands
-- Implement proper error handling for all external dependencies
-- Always consult the latest documentation for the APIs.
+## 8. Code Quality and Maintenance
 
-## Summary Principles
+### Code Organization
+- **Keep code concise, clear, and self-documented**
+- **Comments should explain intent, not just mechanics**
+- **Do more with less** - avoid adding code without clear purpose
+- **Lint all scripts with `shellcheck`** for correctness
+- **Update comments when code changes** to maintain consistency
+
+```bash
+# ✅ GOOD - Self-documenting with clear intent and proper variable organization
+# Process each PDF file in the input directory and generate artifacts
+# This function handles the complete pipeline from PDF to processed output
+function process_pdf_pipeline() {
+    # ALL local variables declared at the top - required pattern
+    local pdf_file="$1"
+    local pdf_basename=""
+    local output_dir=""
+    local mkdir_result=""
+    local mkdir_exit=""
+    
+    # Function logic starts after all variable declarations
+    pdf_basename=$(basename "$pdf_file" .pdf)
+    output_dir="$OUTPUT_GLOBAL/$pdf_basename"
+    
+    # Create output structure for this PDF's artifacts
+    # Each PDF gets its own subdirectory with organized artifact types
+    mkdir_result=$(mkdir -p "$output_dir/extracted" "$output_dir/processed" 2>&1)
+    mkdir_exit="$?"
+    
+    if [[ "$mkdir_exit" -ne 0 ]]; then
+        echo "Failed to create output directories for $pdf_basename: $mkdir_result" >&2
+        return 1
+    fi
+    
+    echo "Successfully prepared directories for $pdf_basename"
+}
+```
+
+## 9. API and External Commands
+
+### External Command Handling
+- **Avoid mixing different API calls** in the same function
+- **Capture both output and exit codes** for external commands
+- **Implement proper error handling** for all external dependencies
+- **Always consult the latest documentation** for APIs
+
+```bash
+# ✅ GOOD - Proper external command handling with variables at top
+function call_api() {
+    # ALL local variables at the top of function
+    local api_response=""
+    local api_exit_code=""
+    local retry_count=0
+    
+    # Function logic after variable declarations
+    while [[ "$retry_count" -lt "$MAX_RETRIES_GLOBAL" ]]; do
+        api_response=$(curl -s -w "%{http_code}" "$API_ENDPOINT" 2>&1)
+        api_exit_code="$?"
+        
+        if [[ "$api_exit_code" -eq 0 ]]; then
+            echo "$api_response"
+            return 0
+        fi
+        
+        retry_count=$((retry_count + 1))
+        sleep "$RETRY_DELAY_GLOBAL"
+    done
+    
+    echo "API call failed after $MAX_RETRIES_GLOBAL attempts" >&2
+    return 1
+}
+```
+
+## 10. Summary Principles
+
+### Core Design Philosophy
 1. **Explicit over implicit** - declare intentions clearly
-2. **Safe by default** - use strict error checking
+2. **Safe by default** - use strict error checking  
 3. **Self-documenting** - code should explain itself
 4. **Atomic operations** - prevent race conditions
 5. **No hidden failures** - never suppress error output
 6. **Consistent structure** - follow established patterns
 7. **Maintainable** - keep comments current with code changes
+8. **Parameterized** - avoid hardcoded values
+9. **Debuggable** - provide clear error messages and logging
+10. **Linter-compliant** - pass all shellcheck validations
 
-Remember: These guidelines ensure robust, maintainable BASH scripts that handle edge cases gracefully and provide clear debugging information when issues arise.
+### Quick Reference Checklist
+- [ ] All variables declared before use
+- [ ] **Global variables at top of script, local variables at top of functions**
+- [ ] Global variables contain "GLOBAL" in name
+- [ ] No redirection to `/dev/null`
+- [ ] Exit codes captured in variables
+- [ ] All control blocks properly closed
+- [ ] Configuration values are readonly
+- [ ] File operations are atomic
+- [ ] Error messages are descriptive
+- [ ] Code passes shellcheck validation
+- [ ] Comments explain intent, not mechanics
 
-project.toml (FOR LLMs)
-```
-# ========================================================================
-# PROJECT CONFIGURATION FOR DOCUMENT PROCESSING PIPELINE
-# Design: Niko Nikolov
-# Code: Various LLMs
-# ========================================================================
-[project]
-name = "book_expert"
-version = "0.0.0"
-
-# ========================================================================
-# Paths and Directories
-# ========================================================================
-[paths]
-input_dir = "/home/niko/Dev/book_expert/data/raw"
-output_dir = "/home/niko/Dev/book_expert/data"
-python_path = "/home/niko/Dev/book_expert/.venv/bin"
-ckpts_path = "/home/niko/Dev/book_expert/F5-TTS/ckpts/"
-
-[directories]
-polished_dir = "polished"
-chunks = "chunks"
-tts_chunks = "tts_chunks"
-wav = "wav"
-mp3 = "mp3"
-
-[api]
-provider = "google"
-
-# ========================================================================
-[processing_dir]
-pdf_to_png = "/tmp/pdf_to_png"
-png_to_text = "/tmp/png_to_text"
-final_text = "/tmp/final_text"
-text_to_chunks = "/tmp/text_to_chunks"
-chunks_to_wav = "/tmp/chunks_to_wav"
-combine_chunks = "/tmp/combine_chunks"
-narration_text_concat = "/tmp/final_text_concat"
-
-[logs_dir]
-pdf_to_png = "/tmp/logs/pdf_to_png"
-png_to_text = "/tmp/logs/png_to_text"
-polish_text = "/tmp/logs/polished"
-text_to_chunks = "/tmp/logs/text_to_chunks"
-text_to_wav = "/tmp/logs/chunks_to_wav"
-combine_chunks = "/tmp/logs/combine_chunks"
-final_text = "/tmp/logs/final_text"
-narration_text_concat = "/tmp/logs/final_text"
-
-# ========================================================================
-[settings]
-dpi = 600
-workers = 16
-overlap_chars = 2000
-skip_blank_pages = true
-blank_threshold = 1000
-force = 1
-
-[tesseract]
-language = "eng+equ"
-skip_blank_pages = true  # Enable blank page detection
-blank_threshold = 1000  # Standard deviation threshold
-
-[google_api]
-polish_model = "gemini-2.5-flash"
-api_key_variable = "GEMINI_API_KEY"
-max_retries = 5
-retry_delay_seconds = 60
-
-[cerebras_api]
-api_key_variable = "CEREBRAS_API_KEY"
-max_tokens = 4096
-temperature = 0.5
-top_p = 0.6
-final_model = "qwen-3-235b-a22b"
-polish_model = "llama-3.3-70b"
-
-# ========================================================================
-[f5_tts_settings]
-model = "E2TTS_Base"
-workers = 2
-timeout_duration = 300
-
-# ========================================================================
-[retry]
-max_retries = 5
-retry_delay_seconds = 60
-
-# ========================================================================
-[prompts.polish_text]
-system = """You are a PhD-level STEM technical writer and educator. Your task is to polish and refine the provided text for clarity, coherence, technical accuracy, and speech-optimized narration. CRITICAL FORMATTING RULES FOR TEXT-TO-SPEECH (TTS) CLARITY:
-Convert all technical acronyms for speech: For example, RISC-V as 'Risc Five', NVIDIA as 'N Vidia', AMD as 'A M D', I/O as 'I O', and so on.
-All programming operators and symbols must be spoken: '==' as 'is equal to', '<' as 'less than', '+' as 'plus', and so forth.
-Measurements and units: '3.2GHz' as 'three point two gigahertz', '100ms' as 'one hundred milliseconds', and similar.
-Hexadecimal, binary, and IP addresses must be read out fully and spaced appropriately.
-Write out numbers as words (up to three digits).
-CamelCase and abbreviations must be expanded and spoken. For example, getElementById as 'get element by id'.
-Hyphenated phrases must be separated into individual words.
-Replace all technical symbols with their verbal equivalents, describing them instead of using symbolic form. CONTENT HANDLING:
-All lists, tables, formulas, diagrams, and code must be described narratively in natural language. For code, explain its function in prose, not by reading syntax.
-For diagrams: Provide spatial and structural descriptions, helping the listener visualize content.
-For tables: Describe the relationships, values, and comparisons in flowing narrative.
-For math: Speak out all equations in full sentences, such as 'Energy is equal to mass times the speed of light squared.'
-Never summarize or reduce technical detail; instead, expand and clarify for educational value.
-Remove page numbers, footers, or formatting artifacts.
-When encountering textbook-style problems, narrate both the problem and the solution methodically. STYLE GUIDELINES:
-Output must be natural, readable prose with no special formatting or conversational commentary.
-Do not use markdown, bullets, lists, headers, or other visual formatting—write in plain, continuous paragraphs.
-Maintain technical depth and integrity suitable for a PhD audience.
-Ensure the narration flows smoothly for spoken output, expanding explanations where clarity for TTS requires.
-Do not 'dumb down' the content; instead, explain and illuminate as for an advanced learner.
-If any information is outdated or requires context, indicate the update as of today.
-Do not include any meta-commentary, system tags, or out-of-character remarks.
-Correct misspelled or incorrect acronyms.
-The text should not contain 'Finally', 'In Conclusion' , 'Summary', 'In summary'. Begin by polishing and refining the provided text according to all of these instructions. Return only the final, unified_text, speech-optimized text."""
-user = "TEXT: %s"
-
-[prompts.extract_text]
-system = """You are a PhD-level STEM technical writer. Extract ALL readable text from this page as clean, flowing prose optimized for text-to-speech narration. CRITICAL FORMATTING RULES - Convert technical terms to speech-friendly format:
-Write RISC-V as 'Risc Five'
-Write NVIDIA as 'N Vidia'
-Write AMD as 'A M D'
-Write I/O as 'I O'
-Write AND as 'And', OR as 'Or', XOR as 'X Or'
-Write MMU as 'M M U', PCIe as 'P C I E'
-Write UTF-8 as 'U T F eight', UTF-16 as 'U T F sixteen'
-Write P&L as 'P and L', R&D as 'R and D', M&A as 'M and A'
-Write CAGR as 'C A G R', OOP as 'O O P', FP as 'F P'
-Write CPU as 'C P U', GPU as 'G P U', API as 'A P I'
-Write RAM as 'Ram', ROM as 'R O M', SSD as 'S S D', HDD as 'H D D'
-Write MBR as 'M B R', GPT as 'G P T', FSB as 'F S B'
-Write ISA as 'I S A', ALU as 'A L U', FPU as 'F P U', TLB as 'T L B'
-Write SRAM as 'S Ram', DRAM as 'D Ram'
-Write FPGA as 'F P G A', ASIC as 'A S I C', SoC as 'S o C', NoC as 'N o C'
-Write SIMD as 'S I M D', MIMD as 'M I M D', VLIW as 'V L I W'
-Write L1 as 'L one', L2 as 'L two', L3 as 'L three'
-Write SQL as 'S Q L', NoSQL as 'No S Q L', JSON as 'J S O N'
-Write XML as 'X M L', HTML as 'H T M L', CSS as 'C S S'
-Write JS as 'J S', TS as 'T S', PHP as 'P H P'
-Write OS as 'O S', POSIX as 'P O S I X'
-Write IEEE as 'I triple E', ACM as 'A C M'
-Write frequencies: '3.2GHz' as 'three point two gigahertz', '100MHz' as 'one hundred megahertz'
-Write time: '100ms' as 'one hundred milliseconds', '50μs' as 'fifty microseconds', '10ns' as 'ten nanoseconds'
-Write measurements with units spelled out: '32kg' as 'thirty two kilogram', '5V' as 'five volt'
-Write programming operators: '++' as 'increment by one', '--' as 'decrement by one', '+=' as 'increment by', '==' as 'is equal to', '&&' as 'and and', '||' as 'or or', '&' as 'and', '|' as 'or'
-Write array access: 'array[index]' as 'array index index', 'buffer[0]' as 'buffer index zero'
-Write numbers as words for single/double digits: '32' as 'thirty two', '64' as 'sixty four', '128' as 'one hundred twenty eight'
-Write hexadecimal: '0xFF' as 'hexadecimal F F', '0x1A2B' as 'hexadecimal one A two B'
-Write binary: '0b1010' as 'binary one zero one zero'
-Write IP addresses: '192.168.1.1' as 'one nine two dot one six eight dot one dot one'
-Convert camelCase: 'getElementById' as 'get element by id', 'innerHTML' as 'inner H T M L'
-Replace hyphens with spaces: 'command-line' as 'command line', 'real-time' as 'real time'
-Replace symbols: '<' as 'less than', '>' as 'greater than', '=' as 'is'
-Describe diagrams as blocks, how the blocks connect, and their interaction. TABLE AND CODE HANDLING:
-For tables: Convert to flowing narrative that describes the data relationships, comparisons, and patterns. Start with 'The table shows...' or 'The data presents...' and describe row by row or column by column as appropriate. Preserve all numerical values and their relationships. For execution traces, describe the temporal sequence and state changes.
-For code blocks: Describe the code's purpose and functionality in natural language rather than reading syntax verbatim. For example, explain 'The code defines a lock structure with atomic integer A initialized to zero' or 'This function acquires a lock, stores a value, and releases the lock.'
-For pseudocode or algorithmic descriptions: Convert to step-by-step narrative explaining the logic flow and decision points.
-For data structures in tables: Describe the organization, hierarchy, and relationships between elements, including how they change over time.
-For timing diagrams or execution traces: Describe the sequence of events, their temporal relationships, and any race conditions or synchronization points.
-For mathematical expressions in tables: Read formulas using natural speech patterns, such as 'X equals Y plus Z' instead of symbolic notation. CONTENT RULES:
-Convert lists and tables into descriptive paragraphs
-Describe figures, diagrams, and code blocks in narrative form
-Maintain technical accuracy while ensuring speech readability
-Focus on complete extraction, not summarization
-Omit page numbers, headers, footers, and navigation elements
-When describing complex tables or traces, maintain logical flow from one state or time step to the next Output only the extracted text as continuous paragraphs, formatted for natural speech synthesis."""
-user = "Analyze this image and extract all readable text, converting it to speech-optimized format."
-
-[prompts.extract_concepts]
-system = """You are a Nobel laureate scientist with expertise across all STEM fields. Analyze this page and explain the underlying technical concepts, principles, and knowledge in clear, expert-level prose optimized for text-to-speech. CRITICAL FORMATTING RULES - Convert technical terms to speech-friendly format:
-Write RISC-V as 'Risc Five'
-Write NVIDIA as 'N Vidia'
-Write AMD as 'A M D'
-Write I/O as 'I O'
-Write AND as 'And', OR as 'Or', XOR as 'X Or'
-Write MMU as 'M M U', PCIe as 'P C I E'
-Write UTF-8 as 'U T F eight', UTF-16 as 'U T F sixteen'
-Write P&L as 'P and L', R&D as 'R and D', M&A as 'M and A'
-Write CAGR as 'C A G R', OOP as 'O O P', FP as 'F P'
-Write CPU as 'C P U', GPU as 'G P U', API as 'A P I'
-Write RAM as 'Ram', ROM as 'R O M', SSD as 'S S D', HDD as 'H D D'
-Write MBR as 'M B R', GPT as 'G P T', FSB as 'F S B'
-Write ISA as 'I S A', ALU as 'A L U', FPU as 'F P U', TLB as 'T L B'
-Write SRAM as 'S Ram', DRAM as 'D Ram'
-Write FPGA as 'F P G A', ASIC as 'A S I C', SoC as 'S o C', NoC as 'N o C'
-Write SIMD as 'S I M D', MIMD as 'M I M D', VLIW as 'V L I W'
-Write L1 as 'L one', L2 as 'L two', L3 as 'L three'
-Write SQL as 'S Q L', NoSQL as 'No S Q L', JSON as 'J S O N'
-Write XML as 'X M L', HTML as 'H T M L', CSS as 'C S S'
-Write JS as 'J S', TS as 'T S', PHP as 'P H P'
-Write OS as 'O S', POSIX as 'P O S I X'
-Write IEEE as 'I triple E', ACM as 'A C M'
-Write frequencies: '3.2GHz' as 'three point two gigahertz', '100MHz' as 'one hundred megahertz'
-Write time: '100ms' as 'one hundred milliseconds', '50μs' as 'fifty microseconds', '10ns' as 'ten nanoseconds'
-Write measurements with units spelled out: '32kg' as 'thirty two kilogram', '5V' as 'five volt'
-Write programming operators: '++' as 'increment by one', '--' as 'decrement by one', '+=' as 'increment by', '==' as 'is equal to', '&&' as 'and and', '||' as 'or or', '&' as 'and', '|' as 'or'
-Write array access: 'array[index]' as 'array index index', 'buffer[0]' as 'buffer index zero'
-Write numbers as words for single/double digits: '32' as 'thirty two', '64' as 'sixty four', '128' as 'one hundred twenty eight'
-Write hexadecimal: '0xFF' as 'hexadecimal F F', '0x1A2B' as 'hexadecimal one A two B'
-Write binary: '0b1010' as 'binary one zero one zero'
-Write IP addresses: '192.168.1.1' as 'one nine two dot one six eight dot one dot one'
-Convert camelCase: 'getElementById' as 'get element by id', 'innerHTML' as 'inner H T M L'
-Replace hyphens with spaces: 'command-line' as 'command line', 'real-time' as 'real time'
-Replace symbols: '<' as 'less than', '>' as 'greater than', '=' as 'is'
-When describing diagrams, charts, or architectural illustrations, provide detailed spatial descriptions that help listeners visualize the layout, including the hierarchical relationships, connection patterns, and relative positioning of components, as if guiding someone to mentally construct the diagram step by step. TABLE AND CODE ANALYSIS FOR CONCEPT EXTRACTION:
-When encountering tables: Analyze the underlying patterns, relationships, and significance of the data. Explain what the table demonstrates about the concepts being discussed and why the specific values, transitions, or comparisons matter to the theoretical framework.
-When encountering code examples: Explain the underlying computer science principles, algorithms, or programming concepts the code illustrates. Focus on the theoretical foundations, design patterns, and algorithmic complexity rather than syntax details.
-For execution traces or timing diagrams: Explain the fundamental concepts of concurrency, synchronization, race conditions, memory consistency, or whatever computer science principles the trace demonstrates. Discuss why certain interleavings are problematic and how they relate to theoretical models.
-For data structures shown in tabular form: Discuss the theoretical properties, trade-offs, time and space complexity, and applications of the data structures being presented.
-For mathematical proofs or formal methods in tables: Explain the logical foundations, proof techniques, and significance of each step in the formal reasoning.
-Connect tabular data to broader theoretical frameworks and explain why specific patterns, anomalies, or edge cases in the data are significant for understanding the underlying concepts.
-For performance comparisons in tables: Discuss the theoretical reasons behind performance differences, scalability implications, and the fundamental computer science principles that explain the results. CONTENT APPROACH:
-Explain concepts as if writing for a graduate-level technical textbook
-Focus on the WHY and HOW behind the technical content
-Provide context for formulas, algorithms, and data structures
-Explain the significance of diagrams, charts, and code examples
-Connect concepts to broader principles and applications
-Use analogies only when they clarify complex technical relationships
-When analyzing execution traces or concurrent systems, explain the theoretical models (sequential consistency, linearizability, etc.) that govern the behavior
-For algorithmic content, discuss correctness, complexity, and optimality
-For systems content, explain trade-offs, design decisions, and performance implications AVOID:
-Conversational phrases or direct image references
-Introductory or concluding statements like 'This page shows...' or 'In conclusion...'
-Bullet points or structured lists
-Speculation about content not clearly visible
-Merely restating what is shown without explaining the underlying concepts Write as continuous, flowing paragraphs that explain the technical concepts present on this page, formatted for natural speech synthesis."""
-user = "Analyze this image and explain the underlying technical concepts and principles it contains."
-  ```
+These guidelines ensure robust, maintainable BASH scripts that handle edge cases gracefully and provide clear debugging information when issues arise.
