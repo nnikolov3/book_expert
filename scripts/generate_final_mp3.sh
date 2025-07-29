@@ -109,7 +109,7 @@ find_and_sort_wav_files()
 		log_error "No WAV files found in: $search_dir"
 		return 1
 	fi
-
+	log_info "$sorted_array_ref"
 	mapfile -t sorted_array_ref <<<"$find_output"
 	return 0
 }
