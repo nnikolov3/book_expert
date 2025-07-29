@@ -3,7 +3,7 @@
 # Script: generate_wav.sh
 # Purpose: Converts PDF text to audio chunks using F5-TTS
 # Design: Niko Nikolov
-# Code: Niko and Various LLMs
+# Code: Niko and LLMs
 # ================================================================================================
 
 set -euo pipefail
@@ -20,7 +20,7 @@ declare -a COMPLETE_DIRS_GLOBAL=()
 declare CUR_PYTHON_PATH_GLOBAL=""
 declare LOG_FILE_GLOBAL=""
 declare LOG_DIR_GLOBAL=""
-
+declare CHECK_POINT_PATH=""
 # ================================================================================================
 # UTILITY FUNCTIONS
 # ================================================================================================
@@ -184,15 +184,15 @@ text_chunks_to_wav()
 			-w "$chunk_filename" \
 			--speed 0.9 \
 			--remove_silence \
-			--ref_text "" \
 			--load_vocoder_from_local \
+			--ref_text "" \
 			--no_legacy_text)
-		local -r tts_exit_code="$?"
+		local tts_exit_code="$?"
 
 		if [[ $tts_exit_code -eq 0 ]]; then
 			# Verify output file was created and has reasonable size
 			if [[ -f $full_output_path ]] && [[ -s $full_output_path ]]; then
-				file_size=$(stat -c%s "$full_output_path" 2>/dev/null || echo 0)
+				file_size=$(stat -c%s "$full_output_path" || echo 0)
 				log_info "✅ Created $chunk_filename (${file_size} bytes)"
 			else
 				log_error "❌ Output file not created or empty for chunk $chunk_num: $chunk_filename"
@@ -231,26 +231,6 @@ text_chunks_to_wav()
 	else
 		return 1
 	fi
-}
-
-# Function: activate_venv
-# Purpose: Activates Python virtual environment
-# Parameters:
-#   $1 - venv_path: Path to virtual environment
-activate_venv()
-{
-	local venv_path="$1"
-	local activate_script="$venv_path/activate"
-
-	if [[ ! -f $activate_script ]]; then
-		log_error "Virtual environment not found at $venv_path"
-		return 1
-	fi
-
-	# shellcheck disable=SC1091
-	source "$activate_script"
-	log_success "Virtual environment activated"
-	return 0
 }
 
 # Function: clean_and_store_text
@@ -298,7 +278,7 @@ clean_and_store_text()
 
 		# Verify file was written successfully
 		if [[ -f $output_file ]] && [[ -s $output_file ]]; then
-			file_size=$(stat -c%s "$output_file" 2>/dev/null || echo 0)
+			file_size=$(stat -c%s "$output_file" || echo 0)
 			log_success "✅ Cleaned text stored successfully (${file_size} bytes): $output_file"
 			return 0
 		else
@@ -385,6 +365,13 @@ main()
 	mkdir -p "$LOG_DIR_GLOBAL"
 	LOG_FILE_GLOBAL="$LOG_DIR_GLOBAL/log_$(date +'%Y%m%d_%H%M%S').log"
 	touch "$LOG_FILE_GLOBAL"
+	local activate_status
+	activate_status=$(source "${CUR_PYTHON_PATH_GLOBAL}/activate")
+	# Activate Python virtual environment
+	if [[ $activate_status -ne 0 ]]; then
+		log_error "Failed to activate virtual environment"
+		exit 1
+	fi
 
 	# Source logging utilities
 	local -r logger="helpers/logging_utils_helper.sh"
@@ -395,13 +382,6 @@ main()
 
 	if [[ ${#pdf_files[@]} -eq 0 ]]; then
 		log_error "No PDF files found in $INPUT_DIR_GLOBAL"
-		exit 1
-	fi
-
-	local -r activate_status=$(activate_venv "$CUR_PYTHON_PATH_GLOBAL")
-	# Activate Python virtual environment
-	if [[ $activate_status -ne 0 ]]; then
-		log_error "Failed to activate virtual environment"
 		exit 1
 	fi
 

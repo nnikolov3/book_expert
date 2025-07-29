@@ -17,6 +17,7 @@ version = "0.0.0"
 input_dir = "/home/niko/Dev/book_expert/data/raw"
 output_dir = "/home/niko/Dev/book_expert/data"
 python_path ="/home/niko/Dev/book_expert/.venv/bin"
+ckpts_path="/home/niko/Dev/book_expert/F5-TTS/ckpts/"
 [directories]
 polished_dir= "polished"
 chunks= "chunks"
