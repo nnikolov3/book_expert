@@ -1,0 +1,63 @@
+216 9 Transactional Memory
+
+tasks. Properly supported, however, debugging of transactional programs may actually be
+easier than conventional debugging.
+
+Herlihy and Lev (2009, 2010) propose a standard API for communication between a
+transactional debugger and the underlying STM system. Their work can be seen as focusing
+on the second of the TM debugging tasks. It requires that transactions execute in software,
+even if production runs employ an HTM. It also requires that the debugger differentiate,
+explicitly, between the state of the transaction and that of the rest of the program: if focus
+shifts from the transaction to that of some other thread, memory should appear to be con-
+sistent.
+
+Unlike a lock-based critical section, a transaction never sees changes caused by other
+threads. A programmer who single-steps a thread through a transaction can therefore be sure
+that all observed changes were caused by the active thread. The STM system, moreover,
+can be expected to maintain extensive information of use to the debugging task, including
+read and write sets, both speculative and prior (consistent) versions of modified data, and
+conflicts between threads. In particular, if a conflict forces a thread to wait or to abort, a
+transactional debugger can see and report the cause.
+
+Similar information can be expected to be of use to performance analysis tools. Conven-
+tional tools, again, are unlikely to be adequate: aborted transactions can be expected to have
+a major impact on performance, but isolation, if naively implemented, will leave no trace of
+their activity (Porter and Witchel 2010). Clearly some sort of information needs to “leak”
+out of aborted transactions. HTM designers (e.g., for Power and x86) have devoted con-
+siderable attention to the interaction of transactions with hardware performance counters.
+Systems software can, to a large extent, control which counters track events of committed
+instructions only, and which include (or also include) events performed and then elided by
+aborted speculation.
+
+With traditional lock-based critical sections, performance analysis tools typically focus
+on acquire operations with long wait times. These identify conflicts between critical sec-
+tions, which then prompt the programmer to explore more fine-grain locking alternatives.
+With transactions, programmers may begin, analogously, with large atomic blocks. When
+a performance analysis tool discovers that these often abort, it can identify the conflicts
+among them, prompting the programmer to search for ways to express the algorithm with
+smaller, more fine-grain transactions. Extensions to the programming model, such as the
+early release of Herlihy et al. (2003b) or the elastic transactions of Felber et al. (2009)
+may also allow the programmer to reduce conflicts among large transactions by explicitly
+evicting certain locations from the read set (e.g., if they were used only during a search
+phase, which can be independently verified).
+
+The need to break transactions into smaller atomic pieces, in order to minimize conflicts,
+raises correctness issues: the programmer must somehow verify that decomposed operations
+still serialize and that the individual transactions maintain (now presumably somewhat more
+complex) program invariants. By continuing to use transactions instead of locks, however,
+the programmer can be sure (at least in the absence of condition synchronization) that the
+216
+9 Transactional Memory
+tasks. Properly supported, however, debugging of transactional programs may actually be easier than conventional debugging.
+Herlihy and Lev (two thousand nine, two thousand ten) propose a standard A P I for communication between a transactional debugger and the underlying S T M system. Their work can be seen as focusing on the second of the T M debugging tasks. It requires that transactions execute in software, even if production runs employ an H T M. It also requires that the debugger differentiate, explicitly, between the state of the transaction and that of the rest of the program: if focus shifts from the transaction to that of some other thread, memory should appear to be consistent.
+Unlike a lock based critical section, a transaction never sees changes caused by other threads. A programmer who single steps a thread through a transaction can therefore be sure that all observed changes were caused by the active thread. The S T M system, moreover, can be expected to maintain extensive information of use to the debugging task, including read and write sets, both speculative and prior (consistent) versions of modified data, and conflicts between threads. In particular, if a conflict forces a thread to wait or to abort, a transactional debugger can see and report the cause.
+Similar information can be expected to be of use to performance analysis tools. Conventional tools, again, are unlikely to be adequate; aborted transactions can be expected to have a major impact on performance, but isolation, if naively implemented, will leave no trace of their activity (Porter and Witchel two thousand ten). Clearly some sort of information needs to "leak" out of aborted transactions. H T M designers (e.g., for Power and x86) have devoted considerable attention to the interaction of transactions with hardware performance counters. Systems software can, to a large extent, control which counters track events of committed instructions only, and which include (or also include) events performed and then elided by aborted speculation.
+With traditional lock based critical sections, performance analysis tools typically focus on acquire operations with long wait times. These identify conflicts between critical sections, which then prompt the programmer to explore more fine grain locking alternatives. With transactions, programmers may begin, analogously, with large atomic blocks. When a performance analysis tool discovers that these often abort, it can identify the conflicts among them, prompting the programmer to search for ways to express the algorithm with smaller, more fine grain transactions. Extensions to the programming model, such as the early release of Herlihy et al. (two thousand three b) or the elastic transactions of Felber et al. (two thousand nine) may also allow the programmer to reduce conflicts among large transactions by explicitly evacuating certain locations from the read set (e.g., if they were used only during a search phase, which can be independently verified).
+The need to break transactions into smaller atomic pieces, in order to minimize conflicts, raises correctness issues: the programmer must somehow verify that decomposed operations still serialize and that the individual transactions maintain (now presumably somewhat more complex) program invariants. By continuing to use transactions instead of locks, however, the programmer can be sure (at least in the absence of condition synchronization) that the
+The text delves into the complexities of debugging transactional memory systems, highlighting how it can be made more manageable than traditional debugging approaches. A key contribution, as referenced by Herlihy and Lev in two thousand nine and two thousand ten, is a standardized A P I designed for facilitating communication between a transactional debugger and the underlying transactional memory system. This A P I aims to enable debuggers to differentiate the state of a transaction from the state of the rest of the program, specifically when the execution focus shifts between threads or when memory operations are involved, thereby presenting a consistent view.
+
+A fundamental distinction is drawn between lock-based critical sections and transactional critical sections. In lock-based systems, a programmer single-stepping through a thread within a critical section can observe changes as they occur. However, in transactional systems, a transaction does not observe intermediate states; it only sees the final, committed state. This implies that a transactional debugger requires access to a more extensive set of information, including speculative versions of data, to reconstruct the execution flow and identify the causes of transaction conflicts, such as those between differing read and write sets.
+
+Performance analysis tools are also discussed in the context of transactional memory. While conventional tools often focus on performance metrics related to lock contention and wait times in lock-based concurrency, transactional debugging tools need to provide insights into transaction aborts and the reasons behind them. The text mentions that some transaction processing systems, such as those found in Power and xeighty six architectures, have invested considerable effort into enabling performance analysis. This includes systems software that can, to a significant extent, control which events are counted, potentially tracking committed transactions and providing data on aborted speculation.
+
+Furthermore, the analysis of performance in transactional systems is contrasted with that of lock-based critical sections. Performance analysis tools for lock-based systems typically identify conflicts related to long wait times for acquiring locks, prompting exploration of finer-grained locking strategies. In contrast, transactional performance analysis tools are expected to detect conflicts between transactions, allowing programmers to explore alternatives to coarse-grained locking, such as atomic blocks. When a performance analysis tool identifies frequent transaction aborts, it signals the need for the programmer to investigate ways to reduce these conflicts, potentially through algorithmic adjustments or by restructuring transactions into smaller, atomic units. This decomposition, while aiming to minimize conflicts, introduces new challenges related to maintaining program invariants and ensuring that individual transactions, even when decomposed, can still be serialized correctly. The programmer must verify that these smaller transactions maintain consistency, especially in the absence of traditional synchronization primitives like locks.

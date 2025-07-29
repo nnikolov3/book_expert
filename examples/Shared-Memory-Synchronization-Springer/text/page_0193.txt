@@ -1,0 +1,71 @@
+198 9 Transactional Memory
+
+implementations have been designed for plug-compatibility with traditional cross-chip cache
+coherence protocols. In the IBM Blue Gene/Q (Wang et al. 2012), designers chose to use an
+unmodified processor core, and to implement HTM entirely within the memory system.
+
+To accommodate hardware limitations, most HTM systems require software backup. In
+the simple case, one can always fall back to a global lock. More ambitiously, one can consider
+hybrid TM systems in which compatible STM and HTM implementations coexist.
+
+In the first subsection below we discuss aspects of the TM design space of particular
+significance for HTM. In Sec.9.2.2 we consider speculative lock elision, an alternative
+programming strategy (possibly supported by a separate ABI) that uses TM-style speculation
+to execute traditional lock-based critical sections. In 9.2.3 we consider alternative ways in
+which to mix hardware and software support for TM.
+
+HTM work to date includes a large number of academic designs and several commer-
+cial implementations. The latter include the Azul Systems Vega 2 and 3 (Click 2019); the
+experimental Sun/Oracle Rock processor (Dice et al. 2009); three independently developed
+systems—for the Blue Gene/Q (Wang et al. 2012), zEC12 mainframe (Jacobi et al. 2012),
+and Power 8 (IBM 2012; Le et al. 2015)—from IBM; the Transactional Synchronization
+Extensions (TSX) of Intel’s x86 processors starting with the “Haswell” generation (Intel
+2021a); and the Transactional Memory Extension (TME) of Arm’s v9-A instruction set
+(Mann 2019).
+
+Unfortunately, as of early 2023, the future of commercial HTM appears unclear. The
+Azul, Sun, and Blue Gene implementations are of historical interest only. IBM has retained
+TM support in z15 but discontinued it in Power 10 (IBM 2020). AMD published an early
+HTM proposal (AMD 2009) but never implemented it, nor did they pick up Intel’s TSX.
+Intel, for its part, has disabled TSX by default on recent x86 processors to forestall side-
+channel information leaks (Intel 2021b; Mott 2021). And Arm’s TME design is too new to
+have acquired any real-world experience.
+
+9.2.1 Dimensions of the HTM Design Space
+
+ABI
+
+Most HTM implementations include instructions to start a transaction, explicitly abort the
+current transaction, and (attempt to) commit the current transaction. (In this chapter, we
+refer to these, generically, as tx_start, tx_abort, and tx_commit.) Some implementations
+include additional instructions, e.g., to suspend and resume transactions, or to inspect their
+status.
+
+While a transaction is active, load and store instructions are considered speculative: the
+hardware automatically buffers updates and performs access tracking and conflict detection.
+Some systems provide special instructions to access memory nonspeculatively inside of a
+transaction—e.g., to spin on a condition or to save information of use to a debugger or
+One hundred ninety eight. Nine Transactional Memory. Implementations have been designed for plug compatibility with traditional cross chip cache coherence protocols. In the IBM Blue Gene Q, Wang et al. two thousand twelve, designers chose to use an unmodified processor core and to implement H T M entirely within the memory system. To accommodate hardware limitations, most H T M systems require software backup. In the simple case, one can always fall back to a global lock. More ambitiously, one can consider hybrid T M systems in which compatible S T M and H T M implementations coexist.
+
+In the first subsection below, we discuss aspects of the T M design space of particular significance for H T M. In Section nine point two point two, we consider speculative lock elision, an alternative programming strategy possibly supported by a separate A B I, that uses T M style speculation to execute traditional lock based critical sections. In nine point two point three, we consider alternative ways in which to mix hardware and software support for T M.
+
+H T M work to date includes a large number of academic designs and several commercial implementations. The latter include the Azul Systems Vega two and three, Click two thousand nineteen, the experimental Sun Oracle Rock processor, Dice et al. two thousand nine, three independently developed systems for the Blue Gene Q, Wang et al. two thousand twelve, z E C twelve mainframe, Jacobi et al. two thousand twelve, and Power eight, IBM two thousand twelve, Le et al. two thousand fifteen from IBM. The Transactional Synchronization Extensions T S X of Intel's x eight six processors, starting with the Haswell generation, Intel two thousand twenty one a, and the Transactional Memory Extension T M E of Arm's v nine A instruction set, Mann two thousand nineteen.
+
+Unfortunately, as of early two thousand twenty three, the future of commercial H T M appears unclear. The Azul, Sun, and Blue Gene implementations are of historical interest only. IBM has retained T M support in z fifteen but discontinued it in Power ten, IBM two thousand twenty, A M D published an early H T M proposal, A M D two thousand nine, but never implemented it, nor did they pick up Intel's T S X. Intel, for its part, has disabled T S X by default on recent x eight six processors to forestall side channel information leaks, Intel two thousand twenty one b, Mott two thousand twenty one. And Arm's T M E design is too new to have acquired any real world experience.
+
+Nine point two point one Dimensions of the H T M Design Space.
+
+A B I. Most H T M implementations include instructions to start a transaction, explicitly abort the current transaction, and attempt to commit the current transaction. In this chapter, we refer to these, generically, as tx start, tx abort, and tx commit. Some implementations include additional instructions, for example, to suspend and resume transactions, or to inspect their status.
+
+While a transaction is active, load and store instructions are considered speculative. The hardware automatically buffers updates and performs access tracking and conflict detection. Some systems provide special instructions to access memory non speculatively inside of a transaction for example, to spin on a condition or to save information or use to a debugger or.
+The implementations of transactional memory, or T M, have been developed with plug compatibility in mind, targeting cross chip cache coherence protocols. This approach allows designers to utilize an unmodified processor core and implement T M entirely within the memory system. However, hardware limitations often necessitate software backup. In simpler scenarios, a fallback to a global lock mechanism might be employed. More ambitious designs consider hybrid T M systems, enabling compatible transactional synchronization memory, or T S M, and transactional memory, or T M, implementations to coexist.
+
+The document proceeds to discuss aspects of the T M design space, specifically focusing on speculative lock elision as an alternative programming strategy. This strategy, potentially supported by a separate A B I, is designed to execute traditional lock based critical sections. The text indicates that alternative approaches for mixing hardware and software support for T M will be explored in section nine point two point three.
+
+Current T M research encompasses a broad spectrum of academic designs and commercial implementations. Notable academic projects include the Azul Systems Vega two and three, and the Rock processor developed by Dice and colleagues in two thousand nine. Three independently developed systems are also highlighted: the Blue Gene Q, discussed by Wang and colleagues in two thousand twelve; the z E C twelve mainframe, from I B M, as detailed by Jacobi and colleagues in two thousand twelve; and Power eight, also from I B M, with work by Le and colleagues in two thousand fifteen. Additionally, the text mentions Intel's Trans actional Synchronization Extensions, or T S X, for its x eight six processors, originating with the "Haswell" generation, and Arm's v nine instruction set, specifically its Trans actional Memory Extension, or T M E, from Mann in two thousand nineteen.
+
+The landscape of commercial T M appears to be in flux. As of early two thousand twenty three, the future of widespread commercial T M implementations is uncertain. While IBM has maintained T M support in its z fifteen architecture, it has discontinued T M support in Power ten, as noted by I B M in two thousand twenty. A M D has also published an early proposal, with subsequent adoption of Intel's T S X. Intel, for its part, has disabled T S X by default on recent x eight six processors, citing concerns about side channel information leaks, as reported by Intel in two thousand twenty one b and Mott in two thousand twenty one. Arm's T M E design is considered too nascent to have gathered significant real world operational experience.
+
+Section nine point two point one delves into the dimensions of the H T M design space. It begins by defining the Application Binary Interface, or A B I, in the context of T M. Most H T M implementations include specialized instructions to initiate a transaction, and, by extension, to commit or abort the current transaction. These instructions are generically referred to as t x start, t x abort, and t x commit. Some implementations also incorporate mechanisms for suspending and resuming transactions, or for querying their status.
+
+When a transaction is active, load and store instructions are treated speculatively. The hardware implicitly buffers these updates and meticulously performs access tracking and conflict detection. To facilitate this, some systems provide specialized instructions for memory access, such as spinning on a condition or saving information for use by a debugger or other system utilities. These operations are considered speculative because their outcome is dependent on the successful completion of the ongoing transaction.

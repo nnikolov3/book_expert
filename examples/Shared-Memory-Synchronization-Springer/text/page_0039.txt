@@ -1,0 +1,64 @@
+40 3 Essential Theory
+
+value into a local queue and continues execution. Periodically, a helper thread drains the
+queue and applies the updates to the master copy of X, which resides in some global location.
+To perform a get, T inspects the local queue (synchronizing with the helper as necessary)
+and returns any pending update; otherwise it returns the global value of X. From the point
+of view of every thread other than 7, the update occurs when it 1s applied to the global value
+of X. From T’s perspective, however, it happens early, and, in a system with more than
+one object, we can easily obtain the “bow tie” causality loop of Figure 2.3. This scenario
+suggests that we require updates to appear to other threads at the same time they appear to
+the updater—or at least before the updater continues execution.
+
+Linearizability
+
+To address the problem of composability, Herlihy and Wing introduced the notion of /in-
+earizability (1987, 1990). For 35 years it has served as the standard ordering criterion for
+high-level concurrent objects. The implementation of object O is said to be linearizable if,
+in every possible execution, the operations on O appear to occur in some total order that 1s
+consistent not only with program order in each thread but also with any ordering that threads
+are able to observe by other means.
+
+More specifically, linearizability requires that each operation appear to occur instanta-
+neously at some point in time between its call and return. The “instantaneously” part of this
+requirement precludes the shared counter scenario above, in which 73 and 7'4 have different
+views of partial updates. The “between its call and return” part of the requirement precludes
+the software write buffer scenario, in which a put by thread T' may not be visible to other
+threads until after it has returned.
+
+For the sake of precision, it should be noted that there is no absolute notion of objective
+time in a parallel system, any more than there is in Einsteinian physics. (For more on the
+notion of time in parallel systems, see the classic paper by Lamport (1978).) What really
+matters 1s observable orderings. When we say that an event must occur at a single instant in
+time, what we mean is that it must be impossible for thread A to observe that an event has
+occurred, for A to subsequently communicate with thread B (e.g., by writing a variable that
+B reads), and then for B to observe that the event has not yet occurred.
+
+To help us reason about the linearizability of a concurrent object, we typically identify
+a linearization point within each method at which a call to that method can be said to
+have occurred. If we choose these points properly, then whenever the linearization point of
+operation A precedes the linearization point of operation B, we shall know that operation
+A, as a whole, linearizes before operation B.
+
+In the trivial case in which every method is bracketed by the acquisition and release
+of a common object lock, the linearization point can be anywhere inside the method—we
+might arbitrarily place it at the lock release. In an algorithm based on fine-grain locks, the
+linearization point might correspond to the release of some particular one of the locks.
+Value into a local queue and continues execution. Periodically, a helper thread drains the queue and applies the updates to the master copy of X, which resides in some global location. To perform a get, T inspects the local queue, synchronizing with the helper as necessary, and returns any pending update; otherwise it returns the global value of X. From the point of view of every thread other than T, the update occurs when it is applied to the global value of X. From T's perspective, however, it happens early, and, in a system with more than one object, we can easily obtain the “bow tie” causality loop of Figure two point three. This scenario suggests that we require updates to appear to other threads at the same time they appear to the updater—or at least before the updater continues execution.
+
+Linearizability. To address the problem of composability, Herlihy and Wing introduced the notion of linearizability, in nineteen eighty seven, nineteen ninety. For thirty five years it has served as the standard ordering criterion for high level concurrent objects. The implementation of object O is said to be linearizable if, in every possible execution, the operations on O appear to occur in some total order that is consistent not only with program order in each thread but also with any ordering that threads are able to observe by other means.
+
+More specifically, linearizability requires that each operation appear to occur instantaneously at some point in time between its call and return. The “instantaneously” part of this requirement precludes the shared counter scenario above, in which T three and T four have different views of partial updates. The “between its call and return” part of the requirement precludes the software write buffer scenario, in which a put by thread T may not be visible to other threads until after it has returned.
+
+For the sake of precision, it should be noted that there is no absolute notion of objective time in a parallel system, any more than there is in Einsteinian physics. For more on the notion of time in parallel systems, see the classic paper by Lamport, nineteen seventy eight. What really matters is observable orderings. When we say that an event must occur at a single instant in time, what we mean is that it must be impossible for thread A to observe that an event has occurred, for A to subsequently communicate with thread B, for example, by writing a variable that B reads, and then for B to observe that the event has not yet occurred.
+
+To help us reason about the linearizability of a concurrent object, we typically identify a linearization point within each method at which a call to that method can be said to have occurred. If we choose these points properly, then whenever operation A precedes operation B, we shall know that operation A, as a whole, linearizes before operation B.
+
+In the trivial case in which every method is bracketed by the acquisition and release of a common object lock, the linearization point can be anywhere inside the method. We might arbitrarily place it at the lock release. In an algorithm based on fine grain locks, the linearization point might correspond to the release of some particular one of the locks.
+In systems operating with distributed or concurrent components, maintaining a consistent global state poses a significant challenge. Consider a scenario where an operation places a value into a local queue, allowing the initiating process to continue execution immediately. A separate, asynchronous helper thread periodically processes this local queue, applying accumulated updates to a master copy of a shared variable, denoted as 'X', residing in a global location. When another thread, say 'T', performs a `get` operation on 'X', it first inspects its local queue for any pending updates. If such updates exist, it processes and returns them; otherwise, it retrieves the current value from the global master copy. This architecture introduces a temporal disparity: from the perspective of other threads not directly involved with the updater, an update to 'X' is only observed when it is applied to the global value. However, from thread T's perspective, due to its interaction with the local queue, it might perceive updates to 'X' as happening earlier. This divergence in observable state across different threads, particularly the "bow tie" causality loop it can create, underscores the fundamental problem of how and when updates become universally visible, suggesting a requirement for updates to appear to all threads as if they occurred simultaneously with their application by the updater, or at least before the updater itself completes.
+
+To address these complexities of observable ordering and state consistency in high level concurrent objects, the notion of linearizability was introduced by Herlihy and Wing in the late nineteen eighties. Linearizability establishes a stringent standard for consistency, requiring that an operation on a concurrent object appear to occur instantaneously at some unique point in time between its invocation and its return. This means that despite the actual interleaving of concurrent operations, the system must behave as if all operations executed atomically, one after another, in a global total order. Critically, this total order must be consistent with the real time ordering of non overlapping operations and also preserve the program order of operations within each individual thread. The "instantaneously" clause of linearizability is crucial, as it precludes the visibility of partial updates. For example, in a shared counter scenario, if threads T three and T four observe different views of an update, it signifies a violation of linearizability. Similarly, if a `put` operation by a thread buffers data in software such that it is not immediately visible to other threads until much later, this also fails the linearizability criterion.
+
+It is important to recognize that in parallel and distributed systems, there is no absolute, objective notion of global physical time, a concept elegantly explored by Lamport in nineteen seventy eight. What truly matters for consistency models, therefore, is the observable ordering of events. For an event to be said to occur at a single instant in time, it implies an impossibility for any other thread, say thread 'A', to observe that event has *not* yet occurred, while another thread, say thread 'B', simultaneously observes that the event *has* occurred. This is often exemplified by writing to a shared variable: if thread 'A' writes a value, and thread 'B' reads it, then thread 'B' observing the new value means the write *must* have logically completed before B's read, from a system wide perspective.
+
+To facilitate reasoning about the linearizability of a concurrent object, a conceptual construct known as the linearization point is typically identified within each method's execution. This linearization point marks the precise instant within the operation's call and return interval at which the operation logically takes effect and becomes atomic and globally visible. If we correctly assign these points, then whenever the linearization point of operation 'A' precedes that of operation 'B', we can definitively state that operation 'A', as a whole, linearizes before operation 'B'. In the most straightforward case, where a method's entire execution is bracketed by the acquisition and subsequent release of a common object lock, the linearization point can conceptually be placed anywhere within that critical section. However, in more complex algorithms employing fine grain locks, the determination of the linearization point becomes more nuanced, often corresponding to the specific moment of release of the particular lock that protects the critical part of the operation's state change.

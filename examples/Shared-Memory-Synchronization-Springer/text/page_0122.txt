@@ -1,0 +1,87 @@
+126 7 Synchronization and Scheduling
+
+urgent me AN
+
+entry queue Monitor methods
+
+— | | | | (run in mutual exclusion;
+
+can access protected data) exit
+
+condition queues
+
+Figure 7.2 A Hoare monitor. Only one thread is permitted “inside the box’ at any given time.
+
+monitor buffer
+const int SIZE =...
+data buf[SIZE]
+int next_full, next.empty :=0, 0
+int full_slots := 0
+condition full_slot, empty_slot
+
+entry insert(data d): entry remove():
+
+if full_slots = SIZE if full_slots = 0
+
+empty_slot.wait() full_slot.wait()
+buf[next_empty] := d data d := buf[next_full]
+next_empty := (next_empty + 1) mod SIZE next_full := (next_full + 1) mod SIZE
+++full _slots ——full_slots
+full_slot.signal() empty_slot.signal()
+
+return d
+
+Figure 7.3 Implementation of a bounded buffer as a Hoare monitor. Threads wait on condition
+variables full_slot and empty _slot only when the associated condition does not currently hold.
+
+Some implementations of monitors dispense with the urgent queue, and move signalers
+back to the entry queue instead. Some implementations also relax the ordering constraints
+on the various queues, and unblock, when appropriate, an arbitrary, random, or high-priority
+thread instead of the first in line.
+
+We can use Hoare monitors to implement a bounded buffer as shown in Figure 7.3. It can
+be instructive to compare it to the semaphore version in Figure 7.1. Where Figure 7.1 uses
+a binary semaphore for mutual exclusion, Figure 7.3 relies on the implicit mutual exclusion
+of the monitor lock. More significantly, where Figure 7.1 uses a pair of general semaphores
+for condition synchronization, and performs a P operation at the beginning of every call to
+insert or remove, Figure 7.3 inspects integer variable full_slots, and waits only when its
+value indicates that the desired condition does not hold. This difference reflects the fact that
+semaphores “remember” an excess of V operations, but monitor condition variables do not
+remember an excess of signals.
+Seven Synchronization and Scheduling.
+
+Figure seven point two shows a Hoare monitor. Only one thread is permitted "inside the box" at any given time. The diagram illustrates a Hoare monitor as a central block labeled "Monitor methods", which are stated to run in mutual exclusion and can access protected data. An "entry queue" leads into this monitor. There is also an "urgent queue" that allows a thread to re-enter the monitor, and "condition queues" which lead out from the monitor. An "exit" path also leads out of the monitor. Arrows indicate the flow of threads into and out of these components.
+
+The monitor buffer is defined with the following elements:
+First, a constant integer `SIZE` is declared.
+Then, a data array named `buff` of `SIZE` elements is declared.
+Two integer variables, `next_full` and `next_empty`, are declared and both are initialized to zero.
+An integer variable `full_slots` is declared and initialized to zero.
+Finally, two condition variables, `full_slot` and `empty_slot`, are declared.
+
+The `entry insert` function takes `data d` as an argument. Inside this function, if `full_slots` is equal to `SIZE`, it calls `empty_slot.wait()` to pause execution until an empty slot is available. Then, it stores the input data `d` into `buff index next_empty`. The `next_empty` variable is updated to `next_empty increment by one modulo SIZE`. The `full_slots` variable is incremented by one. Finally, it calls `full_slot.signal()` to notify any waiting threads that a slot has been filled.
+
+The `entry remove` function is defined without arguments. Inside this function, if `full_slots` is equal to zero, it calls `full_slot.wait()` to pause execution until a full slot is available. Then, it retrieves data `d` from `buff index next_full`. The `next_full` variable is updated to `next_full increment by one modulo SIZE`. The `full_slots` variable is decremented by one. Finally, it calls `empty_slot.signal()` to notify any waiting threads that a slot has become empty. The function then returns the retrieved data `d`.
+
+Figure seven point three describes the implementation of a bounded buffer as a Hoare monitor. Threads wait on condition variables `full_slot` and `empty_slot` only when the associated condition does not currently hold.
+
+Some implementations of monitors dispense with the urgent queue, and move signalers back to the entry queue instead. Some implementations also relax the ordering constraints on the various queues, and unblock, when appropriate, an arbitrary, random, or high priority thread instead of the first in line.
+
+We can use Hoare monitors to implement a bounded buffer as shown in Figure seven point three. It can be instructive to compare it to the semaphore version in Figure seven point one. Where Figure seven point one uses a binary semaphore for mutual exclusion, Figure seven point three relies on the implicit mutual exclusion of the monitor lock. More significantly, where Figure seven point one uses a pair of general semaphores for condition synchronization, and performs a P operation at the beginning of every call to insert Or remove, Figure seven point three inspects integer variable `full_slots`, and waits only when its value indicates that the desired condition does not hold. This difference reflects the fact that semaphores "remember" an excess of V operations, but monitor condition variables do not remember an excess of signals.
+The conceptual framework for concurrent programming often relies on mechanisms that ensure controlled access to shared resources and coordinated execution among multiple threads. One such foundational construct is the monitor, originally proposed by C. A. R. Hoare.
+
+The architecture of a Hoare monitor can be visualized as a central protected region, conceptually a rectangular box, where shared data resides and monitor methods operate. This central region, labeled "Monitor methods," enforces mutual exclusion, meaning only one thread is permitted to execute within its boundaries at any given time. This exclusivity is crucial for maintaining data integrity in a multithreaded environment. Threads seeking to enter this protected region first queue up in an "entry queue," positioned to the left of the monitor methods box, represented by a series of horizontal slots leading into the central area.
+
+Upon completion of their execution within a monitor method, threads exit the monitor, as indicated by an arrow moving outwards from the right side of the monitor methods box. A unique characteristic of Hoare monitors lies in their precise handling of thread signaling and suspension. When a thread inside the monitor performs a `wait` operation on a condition variable, it atomically releases the monitor's implicit lock and moves to a corresponding "condition queue." These condition queues are depicted below the main monitor methods box, as semi-circular queues, each associated with a specific condition variable. Arrows from these queues point back into the central monitor methods, signifying that threads resume execution within the monitor when signaled.
+
+Conversely, when a thread inside the monitor performs a `signal` operation on a condition variable, it typically causes a thread waiting on that condition queue to be activated. Under strict Hoare semantics, the signaling thread immediately yields control to the newly awakened thread. To facilitate this, the signaling thread moves to an "urgent queue," shown above the monitor methods box as a semi-circular queue. From this urgent queue, the signaling thread will eventually re-enter the monitor, typically after the signaled thread has finished its critical section. This strict transfer of control ensures that the condition that was just signaled remains true when the awakened thread resumes.
+
+Consider the classic producer consumer problem, addressed here through a bounded buffer implemented using a Hoare monitor. The monitor encapsulates the shared buffer and its manipulation logic. The buffer's state is defined by several shared variables: `const int SIZE` determines the maximum capacity of the buffer; `data buf index SIZE` is the array that stores the actual data; `int next full` and `int next empty` are integer indices, both initialized to zero, used to track the positions for reading and writing in the circular buffer; `int full slots`, also initialized to zero, counts the number of occupied slots in the buffer. Two condition variables, `full slot` and `empty slot`, are essential for coordinating producer and consumer threads. The `full slot` condition is used by consumers to wait when the buffer is empty, and by producers to signal when data becomes available. Conversely, the `empty slot` condition is used by producers to wait when the buffer is full, and by consumers to signal when space becomes available.
+
+The `insert` method, typically called by a producer thread, first checks if `full slots is equal to SIZE`. If the buffer is full, the producer must pause; it invokes `empty slot dot wait`, causing the thread to suspend and release the monitor lock, joining the `empty slot` condition queue. Once space is available, or if the buffer was not full initially, the data `d` is placed into the buffer at `buf index next empty`. The `next empty` pointer is then updated using modulo arithmetic: `next empty is (next empty increment by one) mod SIZE`, ensuring it wraps around to the beginning of the buffer when the end is reached. The `full slots` counter is then incremented by one. Finally, `full slot dot signal` is called to alert any consumer threads waiting on the `full slot` condition that new data is available.
+
+Conversely, the `remove` method, typically called by a consumer thread, first checks if `full slots is equal to zero`. If the buffer is empty, the consumer must pause; it invokes `full slot dot wait`, suspending the thread and releasing the monitor lock, joining the `full slot` condition queue. Once data is available, or if the buffer was not empty initially, the data `d` is retrieved from `buf index next full`. The `next full` pointer is then updated using modulo arithmetic: `next full is (next full increment by one) mod SIZE`, again for circular buffer management. The `full slots` counter is then decremented by one. Finally, `empty slot dot signal` is called to alert any producer threads waiting on the `empty slot` condition that space has become available. The retrieved data `d` is then returned.
+
+It is important to note that while strict Hoare monitor implementations adhere to the urgent queue mechanism for immediate control transfer upon signaling, many practical monitor implementations, sometimes referred to as Mesa style monitors, relax these strict ordering constraints. These relaxed versions often dispense with the urgent queue entirely, allowing the signaler to continue executing within the monitor, and merely awakening a waiting thread which then contends for the monitor lock. This design choice implies that a signaled thread, upon resuming, must re check its condition, as the condition may no longer be true due to the signaler or another thread executing before it. This contrasts with the Hoare model where the invariant holds immediately after the signal is received by the waiting thread. Furthermore, the scheduling of threads from condition queues can vary, ranging from arbitrary selection to policies based on priority.
+
+Comparing Hoare monitors to general semaphores for synchronization highlights a fundamental distinction in how condition synchronization is managed. Monitors, through their implicit mutual exclusion, abstract away the explicit `P` and `V` operations required by semaphores to protect critical sections. For condition synchronization, Hoare monitors utilize condition variables with `wait` and `signal` primitives. A critical difference is that monitor condition variables do not "remember" signals. If a `signal` operation occurs when no thread is currently waiting on that specific condition variable, the signal is simply lost. This means a subsequent `wait` operation on that condition variable will still block, even though a `signal` occurred moments before. In contrast, semaphores *do* remember signals; a `V` operation increments the semaphore's internal counter, and this increment persists, allowing a future `P` operation to succeed immediately without blocking, effectively recalling the availability of a resource or permission. In the bounded buffer example using the Hoare monitor, the `full slots` integer variable serves as an explicit counter that is directly inspected to determine if a `wait` is necessary. This explicit check `if full slots is equal to SIZE` or `if full slots is equal to zero` before a `wait` is crucial because the `signal` operations on `full slot` or `empty slot` do not inherently modify a persistent count that would preempt a subsequent `wait`.

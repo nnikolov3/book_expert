@@ -1,0 +1,68 @@
+4.3 Queued Spin Locks 69
+
+Both Anderson et al. and Graunke and Thakkar implement the queue as an array of
+n flag words, where n is the maximum number of threads in the system. Both arrange
+for every thread to spin on a different element of the array, and to know the index of the
+element on which its successor is spinning. In Anderson et al.’s lock, array elements are
+allocated dynamically using fetch_and_increment; a thread releases the lock by updating
+the next element (in circular order) after the one on which it originally spun. In Graunke
+and Thakkar’s lock, array elements are statically allocated. A thread releases the lock by
+writing its own element; it finds the element on which to spin by performing a swap on an
+extra tail element.
+
+Inspired by the QOLB hardware primitive of the Wisconsin Multicube (Goodman et al.
+1989) and the IEEE SCI standard (Aboulenein et al. 1994) (Sec. 2.3.3), Mellor-Crummey
+and Scott (1991b) devised a queue-based spin lock that employs a linked list instead of
+an array. Craig and, independently, Magnussen et al. devised an alternative version that,
+in essence, links the list in the opposite direction. Unlike the locks of Anderson et al. and
+Graunke and Thakkar, these list-based locks do not require a static bound on the maximum
+number of threads; equally important, they require only O(n + j) space for n threads and
+J locks, rather than O (nj). They are generally considered the methods of choice for FIFO
+locks on large-scale systems. (Note, however, that strict FIFO ordering may be inadvisable
+on a system with preemption; see Sec. 7.5.2.)
+
+4.3.1 The MCS Lock
+
+Pseudocode for the MCS lock appears in Figure 4.8. Every thread using the lock allocates a
+gnode record containing a queue link and a Boolean flag. Typically, this record lies in the
+stack frame of the code that calls acquire and release; it must be passed as an argument to
+both (but see the discussion under “Modifications for a Standard Interface” below).
+
+Threads holding or waiting for the lock are chained together, with the link in the gnode
+of thread ¢ pointing to the gnode of the thread to which ¢ should pass the lock when done
+with its critical section. The lock itself is simply a pointer to the gnode of the thread at the
+tail of the queue, or null if the lock is free.
+
+Operation of the lock is illustrated in Figure 4.9. The acquire method takes as parameter
+an otherwise unused gnode, most likely allocated in the stack frame of the caller. It initializes
+the next pointer of this gnode to null and swaps it into the tail of the queue. If the value
+returned by the swap is null, then the calling thread has acquired the lock (line 2). If the
+value returned by the swap is non-null, it refers to the gnode of the caller’s predecessor in
+the queue (indicated by the dashed arrow in line 3). Here thread B must set A’s next pointer
+to refer to its own gnode. Meanwhile, some other thread C may join the queue (line 4).
+
+When thread A has completed its critical section, the release method reads the next
+pointer of A’s gnode to find the gnode of its successor B. It changes B’s waiting flag to
+false, thereby granting it the lock (line 5).
+Four point three, Queued Spin Locks.
+
+Both Anderson et al. and Graunke and Thakkar implement the queue as an array of n flag words, where n is the maximum number of threads in the system. Both arrange for every thread to spin on a different element of the array, and to know the index of the element on which its successor is spinning. In Anderson et al.'s lock, array elements are allocated dynamically using fetch and increment; a thread releases the lock by updating the next element in circular order, after the one on which it originally spun. In Graunke and Thakkar's lock, array elements are statically allocated. A thread releases the lock by writing its own element; it finds the element on which to spin by performing a swap on an extra tail element.
+
+Inspired by the Q O L B hardware primitive of the Wisconsin Multicube, Goodman et al. in one thousand nine hundred eighty nine, and the I triple E S C I standard, Aboulenein et al. in one thousand nine hundred ninety four, section two point three point three, Mellor Crummey and Scott in one thousand nine hundred ninety one b devised a queue based spin lock that employs a linked list instead of an array. Craig and, independently, Magnussen et al. devised an an alternative version that, in essence, links the list in the opposite direction. Unlike the locks of Anderson et al. and Graunke and Thakkar, these list based locks do not require a static bound on the maximum number of threads; equally important, they require only Order of n plus j space for n threads and j locks, rather than Order of n j. They are generally considered the methods of choice for F I F O locks on large scale systems. Note, however, that strict F I F O ordering may be inadvisable on a system with preemption; see section seven point five point two.
+
+Four point three point one, The M C S Lock.
+
+Pseudocode for the M C S lock appears in Figure four point eight. Every thread using the lock allocates a qnode record containing a queue link and a Boolean flag. Typically, this record lies in the stack frame of the code that calls acquire and release; it must be passed as an argument to both, but see the discussion under “Modifications for a Standard Interface” below. Threads holding or waiting for the lock are chained together, with the link in the qnode of thread t pointing to the qnode of the thread to which t should pass the lock when done with its critical section. The lock itself is simply a pointer to the qnode of the thread at the tail of the queue, or null if the lock is free.
+
+Operation of the lock is illustrated in Figure four point nine. The acquire method takes as parameter an otherwise unused qnode, most likely allocated in the stack frame of the caller. It initializes the next pointer of this qnode to null and swaps it into the tail of the queue. If the value returned by the swap is null, then the calling thread has acquired the lock, line two. If the value returned by the swap is non null, it refers to the qnode of the caller's predecessor in the queue, indicated by the dashed arrow in line three. Here thread B must set A's next pointer to refer to its own qnode. Meanwhile, some other thread C may join the queue, line four. When thread A has completed its critical section, the release method reads the next pointer of A's qnode to find the qnode of its successor B. It changes B's waiting flag to false, thereby granting it the lock, line five.
+Queued spin locks represent a class of synchronization primitives crucial for managing access to shared resources in multi processor systems, aiming to reduce contention and ensure fairness. The fundamental challenge they address is the high cache invalidation traffic inherent in simple test and set spin locks, where all waiting processors contend for the same cache line.
+
+Early designs, such as those proposed by Anderson, and by Graunke and Thakkar, conceptually implement the queue as an array of `n` flag words, where `n` represents the maximum number of threads in the system. Each thread is assigned a distinct element in this array to spin upon, effectively distributing the contention. In Anderson's scheme, a thread acquires its lock by knowing its assigned index. The release mechanism involves using an atomic `fetch_and_increment` operation on a shared counter, which then dictates the next element in a circular order to be released. The releasing thread updates the element corresponding to its original spin location. Conversely, Graunke and Thakkar's approach uses an atomic `swap` operation on an extra tail element to manage the queue, where array elements are statically allocated. This design allows a thread to identify its designated spin element by performing a swap that effectively enqueues it.
+
+Inspired by the Q O L B hardware primitive and the I triple E S C I standard, the Mellor-Crummey and Scott, or M C S, lock offers a significant advancement by employing a linked list rather than a statically sized array. This design was independently conceived by Craig and Magnusson and others. A key theoretical advantage of the M C S lock is its superior space complexity: it requires only `O` of `n` increment by `j` space for `n` threads and `j` locks, as opposed to `O` of `n` multiplied by `j` for array-based methods. This linear scaling with the number of active threads and locks makes it particularly suitable for large scale systems. The M C S lock is widely considered a preferred method for achieving F I F O fairness, although it is important to note that strict F I F O ordering may be less advisable in systems with aggressive preemption, as excessive context switching can introduce overhead.
+
+The M C S lock's operational mechanics revolve around a `qnode` record, which each thread requesting the lock allocates, typically within its own stack frame. This `qnode` contains both a queue link and a Boolean flag. This stack based allocation is critical, as it ensures spatial locality for the spinning process, minimizing cache coherence traffic by allowing each thread to spin on a distinct memory location that is often local to its processor's cache. Threads waiting for the lock are chained together through these `qnode` links, forming an explicit queue. The lock itself is abstractly represented by a pointer to the `qnode` of the thread currently at the tail of this conceptual queue, or a `null` value if the lock is free.
+
+The `acquire` method of the M C S lock involves several sophisticated steps. A calling thread first prepares its `qnode`, setting its `next` pointer to `null`, indicating that it currently has no successor. It then atomically `swaps` its `qnode` into the tail of the lock's queue. If the value returned by this `swap` operation is `null`, it signifies that the lock was previously free, and the calling thread has successfully acquired the lock. However, if the returned value is non-`null`, it means a predecessor `qnode` was at the tail, and the current thread has successfully enqueued itself. In this scenario, the current thread must update its predecessor's `qnode`'s `next` pointer to point to its own `qnode`, thus linking itself into the queue. Following this, the thread enters a distributed spin loop, waiting for its own `qnode`'s Boolean flag to be set to `false` by its predecessor. This distributed spinning on a local memory location is a hallmark of the M C S design, significantly reducing global cache contention.
+
+Upon completion of its critical section, the lock-holding thread executes the `release` method. This process involves reading the `next` pointer of its own `qnode` to identify its immediate successor in the queue. It then modifies the Boolean waiting flag within this successor's `qnode`, setting it to `false`. This action signals the successor thread to cease spinning and proceed with its own critical section, effectively handing off the lock in a F I F O manner. If the lock-holding thread's `qnode`'s `next` pointer is `null` when it attempts to release the lock, it implies there are no pending successors, and the lock simply becomes free. This elegant hand-off mechanism, combined with distributed spinning, makes the M C S lock a highly efficient and fair synchronization primitive for multi processor architectures.

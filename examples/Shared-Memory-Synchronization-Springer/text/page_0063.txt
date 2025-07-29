@@ -1,0 +1,90 @@
+4.1 Classical Load/Store-Only Algorithms 65
+
+class lock
+atomic<7 > x
+atomic<T>y = L
+atomic<bool> trying[7T] := {false...}
+
+lock.acquire():
+loop
+trying[self].store(true)
+x.store(self)
+
+if y.load(]|) #£ L
+trying[self].store(false, ||)
+fence()
+while y.load(||) # L; // spin
+continue // go back to top of loop
+
+y.store(self)
+if x.load(||) # self
+trying[self].store(false,
+
+)
+
+fence()
+forie T
+while trying[i].load(]|); // spin
+fence() // read recent y to avoid starvation
+
+if y.load(]|) # self
+while y.load(]|) # L; // spin
+continue // go back to top of loop
+break
+fence(R||RW)
+
+lock.release():
+y.store(L, RW||)
+trying[self].store(false, W||)
+
+Figure 4.3 Lamport’s fast algorithm.
+
+If y is not 1 when checked, some other thread must be 1n the critical section; ¢ waits for it
+to finish and retries. If x is not still # when checked, some other thread may have entered
+the critical section (¢ cannot be sure); in this case, + must wait until the competing thread(s)
+have either noticed the conflict or left the critical section.
+
+To implement its “notice the conflict” mechanism, the fast lock employs an array of
+trying flags, one per thread. Each thread sets its flag while competing for the lock (it also
+leaves it set while executing a critical section for which it encountered no contention). If a
+thread ¢ does detect contention, it unsets its trying flag, waits for each thread’s entry in the
+array to be cleared (ensuring that any competing threads have backed off), and then checks
+to see if 1t was the last thread to set y. If so, it enters the critical section (after first executing
+a ||[RW fence to order upcoming ordinary accesses with respect to previous synchronizing
+instructions). If not, it retries the acquisition protocol.
+
+A disadvantage of the fast lock as presented (both here and in the original paper) is that
+it requires $2 (n) time (where n is the total number of threads in the system) even when only
+two threads are competing for the lock. Building on the work of Moir and Anderson (1995),
+Section four point one, Classical Load Slash Store Only Algorithms.
+
+The following code block defines a lock class. Inside the lock class, there are three atomic variables: `x` of type `T` initialized to bottom, `y` of type `T` initialized to bottom, and an array named `trying` of atomic booleans, indexed by `T`, initialized with all values as false.
+
+The `lock dot acquire` function performs the following steps: It enters an infinite loop. First, the current thread sets its `trying` flag to true. Then, the current thread stores its own identifier, `self`, into the atomic variable `x`. An important step follows: if `y` is not equal to bottom, meaning another thread might be contending for the lock, the current thread sets its `trying` flag back to false, inserts a memory fence, and then spins in a loop as long as `y` is not equal to bottom. After this spin, it continues to the next iteration of the outer loop, retrying the acquisition. If `y` was initially bottom, the thread then stores its own identifier, `self`, into `y`. A check follows: if `x` is not equal to `self`, indicating that `x` might have been updated by another thread, the current thread sets its `trying` flag to false. It then inserts a memory fence and iterates through all possible thread identifiers `i`. For each `i`, it spins in a loop as long as `trying index i` is true. After this inner loop, another memory fence is inserted to ensure a recent read of `y` to avoid starvation. If `y` is still not equal to `self`, it means another thread might have successfully acquired the lock; in this case, the thread spins in a loop as long as `y` is not equal to bottom, then continues to the next iteration of the outer loop to retry. If `x` was equal to `self` or if the thread successfully passed the `y` checks, it breaks out of the main loop. Finally, a memory fence with read or read and write semantics is applied.
+
+The `lock dot release` function performs two main steps: It sets the atomic variable `y` to bottom with a read and write memory fence, and then sets the current thread's `trying` flag to false with a write memory fence.
+
+Figure four point three illustrates Lamport's fast algorithm.
+
+If the variable `y` is not bottom when checked, it implies that some other thread must currently be in the critical section; the current thread `t` waits for that thread to finish and for its `y` value to be cleared. If `x` is not still `t` when checked, it indicates that some other thread may have entered the critical section (though `t` cannot be entirely sure); in this case, `t` must wait until the competing thread or threads have either noticed the conflict or exited the critical section.
+
+To implement its "notice the conflict" mechanism, the fast lock algorithm employs an array of `trying` flags, with one flag per thread. Each thread sets its flag to true while competing for the lock, and it also leaves the flag set while executing a critical section for which it encountered no contention. If a thread `t` detects contention, it unsets its `trying` flag, then waits for each competing thread's entry in the array to be cleared, ensuring that any competing threads have backed off. Subsequently, it checks to see if it was the last thread to set `y`. If it was, the thread enters the critical section, after first executing a read and write memory fence to order upcoming ordinary accesses with respect to previous synchronizing instructions. If not, the thread retries the acquisition protocol.
+
+A disadvantage of the fast lock as presented, both in this context and in the original paper, is that it requires Omega of `n` time, where `n` is the total number of threads in the system, even when only two threads are actively competing for the lock. This algorithm builds upon the work of Moir and Anderson, published in nineteen ninety five.
+This document details Lamport's fast lock algorithm, a seminal contribution to the field of concurrent programming, specifically addressing the problem of mutual exclusion among multiple threads or processes in a shared memory environment. The core challenge is to ensure that only one thread can execute a critical section of code at any given time, thereby preventing race conditions and maintaining data integrity.
+
+The algorithm defines a `lock` class with several shared atomic variables: `x` and `y`, both of type `T`, which likely represents a thread I D, and a boolean array `trying` of size `T`, indexed by thread I D. `x` and `y` serve as flag variables to establish a precedence order among competing threads. The `trying` array indicates which threads are actively attempting to acquire the lock. The use of `atomic` types is fundamental; it guarantees that operations like `load` and `store` on these variables are indivisible and visible to all threads in a globally consistent manner, which is crucial for the correctness of any concurrent algorithm. The `null` symbol represents an uninitialized or empty state for `x` and `y`.
+
+The `lock dot acquire` method outlines the protocol a thread must follow to enter the critical section. Upon entering the `acquire` loop, a thread, referred to as `self`, first sets its corresponding `trying index self` flag to `true` using a `store` operation with a sequential consistency memory order. This declares its intention to acquire the lock. Immediately following, it attempts to claim the `x` variable by storing its own I D into `x`, also with sequential consistency.
+
+The algorithm then checks for contention by examining the `y` variable. If `y dot load` with sequential consistency returns a value that is not `null`, it signifies that another thread has either already entered or is actively attempting to enter the critical section. In this case, `self` retreats by setting `trying index self` back to `false`. A `fence` operation is then executed. This `fence` acts as a memory barrier, ensuring that all memory operations before it, specifically the prior `store` to `trying index self`, are completed and made globally visible before any subsequent memory operations are initiated by `self`. After this, `self` enters a spin loop, repeatedly loading `y` until it becomes `null`. This busy-waiting mechanism, labeled as "spin," ensures `self` waits for the other thread to clear `y`, indicating it has either exited the critical section or abandoned its attempt. Once `y` is `null`, `self` `continues` to the beginning of the `acquire` loop to re-attempt the acquisition.
+
+If the initial check of `y` indicated `null`, meaning no immediate contention was detected, `self` then attempts to claim `y` by storing its I D into it with sequential consistency. A subsequent check compares `x dot load` with `self`. If `x` is not equal to `self`, it means another thread successfully updated `x` *after* `self` had written to it but *before* `self` wrote to `y`. This is the core "notice the conflict" mechanism. In this contention scenario, `self` resets its `trying index self` flag to `false` and inserts another `fence` to guarantee visibility. It then enters a `for` loop, iterating through all other threads `i` in the set `T`. For each `i`, it executes a spin loop, waiting `while trying index i dot load` returns `true`. This ensures that if another thread was also attempting to acquire the lock and set its `trying` flag, `self` waits for that thread to complete its internal logic or back off. This step is critical for preventing starvation and ensuring progress under contention.
+
+Following this loop, another `fence` is executed, explicitly labeled "read recent `y` to avoid starvation." This memory barrier ensures that the subsequent read of `y` observes the most up-to-date value, preventing stale data from causing incorrect decisions. If `y dot load` (sequential consistency) is still not equal to `self`, it means `self` lost the race to claim `y` to another thread. In this situation, `self` must again wait `while y dot load` is not `null`, effectively spinning until the successful claimant of `y` has cleared it, and then `continues` to restart the acquisition process from the beginning.
+
+Only if `self` successfully passes all these checks—meaning it was able to claim `y` and `x` remained its own I D throughout the critical phases, and no other `trying` threads block its progress—does it `break` out of the loop. Before entering the critical section, a final `fence` with `R double vertical bar R W` semantics is executed. This is a read-write memory barrier, ensuring that all prior memory operations, including those related to the lock acquisition, are completed and made globally visible before any operations within the critical section can begin. It establishes a strong happens-before relationship, guaranteeing that critical section reads and writes occur after lock acquisition writes are visible.
+
+The `lock dot release` method is simpler. The thread first sets `y` to `null` with an `R double vertical bar W` fence. This read-write memory barrier ensures that all memory operations performed *within* the critical section by the releasing thread are completed and made globally visible *before* `y` is cleared. This is essential for ensuring that other threads observing `y` as `null` will also see the effects of the critical section. Finally, the thread sets its `trying index self` flag to `false` with a `W double vertical bar` fence, ensuring this write is globally visible.
+
+The accompanying text clarifies key aspects: if `y` is not `null` during checks, it implies another thread is in the critical section or currently trying. If `x` is not `self`, it signals a conflict where another thread has successfully written its I D to `x`, causing the current thread to retry. The "notice the conflict" mechanism is implemented by the `trying` flags, allowing threads to announce their intent. The fast path, when there is no contention, allows a thread to acquire the lock with minimal overhead. However, a significant theoretical drawback, as noted, is the worst-case time complexity of `Omega of n` for acquiring the lock, where `n` is the total number of threads. This linear scaling in contention scenarios arises from the `for i in T` loop within the `acquire` protocol, where a thread might have to check and wait for every other thread's `trying` flag to clear. This makes the algorithm less scalable for systems with a very large number of contending threads compared to some other mutual exclusion primitives that might offer `O of log n` or `O of one` contention costs. The reference to Moir and Anderson's work in one thousand nine hundred ninety five contextualizes this algorithm within a broader lineage of research on robust and efficient concurrent data structures.

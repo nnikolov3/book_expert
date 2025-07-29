@@ -1,0 +1,67 @@
+174 8 Nonblocking Algorithms
+
+8.7.2 Epoch-Based Reclamation
+
+One practical approach compatible with the EFRB tree is epoch-based reclamation (EBR).
+The key to the approach is the assumption that a thread becomes quiescent between its
+data structure operations, meaning it forgets any pointers in its local memory that point to
+nodes in the data structure. With this assumption, if a thread removes a node from the data
+structure, and every thread subsequently finishes any operation that was active at the time
+of the removal, then all threads will have forgotten any pointers to the removed node, and
+it can safely be freed. We call an interval during which each thread has been quiescent at
+least once a grace period. Threads do not all have to be quiescent at the same time—it does
+not matter whether they forget their pointers at the same time, or at different times. What
+matters 1s that each thread has forgotten any pointer it holds to the node being freed.
+
+Our description of EBR focuses mainly on how the technique can be used, rather than
+on how grace periods are identified. Some implementations use a global array, indexed
+by thread, that indicates movement through quiescent intervals. Other implementations are
+possible. One might even think of RCU (Sec. 6.3) as a variant of EBR.
+
+In the original incarnation of the global-array approach (Fraser 2003), a shared global
+counter indicates the current epoch. Each thread, when it begins a data structure operation,
+announces the current value of the counter in its slot of the global array. When all values are
+equal to the counter, the counter can be incremented (via CAS) and nodes retired two epochs
+in the past can safely be reclaimed. To accommodate situations in which a thread performs
+no operation for an extended period of time (and thus fails to update its array slot, though it
+may continue to run, doing other work), we can also require each thread to write a zero to
+its slot at the end of each data structure operation. (The announcement at the beginning of
+the operation requires expensive acquire ordering; the announcement at the end 1s a cheaper
+release.) A thread that verifies that all array entries are equal to the epoch counter or to zero
+knows that a grace period has elapsed and that old nodes can be freed. Of course, a thread
+that stalls during a data structure operation can still block reclamation indefinitely.
+
+Using EBR in the EFRB Tree Different implementations of EBR have slightly different
+interfaces. DEBRA (Brown 2015), one of the fastest implementations of EBR, requires
+a thread to call functions startOp and endOp at the start and end of each data structure
+operation, respectively, and retire whenever a node is removed from the data structure.
+We use this interface in our discussion. (In a pattern reminiscent of the lock_guard class
+described in Sec. 7.3, one could, in a language like C++, use destructors to call endOp
+implicitly at the end of an operation’s scope.)
+
+To use DEBRA in EFRB (Figures 8.14 and 8.15). in the code for insert, delete, and
+lookup, we call startOp at the beginning of the operation and endOp just before each
+return statement. To facilitate node reclamation, in help_insert, after the call to cas_child,
+we call retire on desc—target, and in help_marked, after the call to cas_child, we call
+retire on desc— p and desc— target. To facilitate InsertFlag descriptor reclamation, at the
+end of help_insert we check if the unflagging CAS has succeeded, and if so call retire(desc).
+One practical approach compatible with the EFR B tree is epoch based reclamation, also known as E B R. The key to the approach is the assumption that a thread becomes quiescent between its data structure operations, meaning it forgets any pointers in its local memory that point to nodes in the data structure. With this assumption, if a thread removes a node from the data structure, and every thread subsequently finishes any operation that was active at the time of the removal, then all threads will have forgotten any pointers to the removed node, and it can safely be freed. We call an interval during which each thread has been quiescent at least once a grace period. Threads do not all have to be quiescent at the same time; it does not matter whether they forget their pointers at the same time, or at different times. What matters is that each thread has forgotten any pointer it holds to the node being freed.
+
+Our description of E B R focuses mainly on how the technique can be used, rather than on how grace periods are identified. Some implementations use a global array, indexed by thread, that indicates movement through quiescent intervals. Other implementations are possible. One might even think of R C U, section six point three, as a variant of E B R.
+
+In the original incarnation of the global array approach, also known as Frase two thousand three, a shared global counter indicates the current epoch. Each thread, when it begins a data structure operation, announces the current value of the counter in its slot of the global array. When all values are equal to the counter, the counter can be incremented, using compare and swap, and nodes retired two epochs in the past can safely be reclaimed. To accommodate situations in which a thread performs no operation for an extended period of time, and thus fails to update its array slot, though it may continue to run, doing other work, we can also require each thread to write a zero to its slot at the end of each data structure operation. The announcement at the beginning of the operation requires expensive acquire ordering; the announcement at the end is a cheaper release. A thread that verifies that all array entries are equal to the epoch counter, or to zero, knows that a grace period has elapsed and that old nodes can be freed. Of course, a thread that stalls during a data structure operation can still block reclamation indefinitely.
+
+Using E B R in the E F R B Tree: Different implementations of E B R have slightly different interfaces. D E B R A, Brown two thousand fifteen, one of the fastest implementations of E B R, requires a thread to call functions start Op and end Op at the start and end of each data structure operation, respectively, and retire whenever a node is removed from the data structure. We use this interface in our discussion. In a pattern reminiscent of the lock guard class described in Section seven point three, one could, in a language like C++, use destructors to call end Op implicitly at the end of an operation's scope.
+
+To use D E B R A in E F R B, referring to Figures eight point fourteen and eight point fifteen, in the code for insert, delete, and lookup, we call start Op at the beginning of the operation and end Op just before each return statement. To facilitate node reclamation, in help insert, after the call to cas child, we call retire on desc target, and in help marked, after the call to cas child, we call retire on desc p and desc target. To facilitate insert flag descriptor reclamation, at the end of help insert we check if the unflagging C A S has succeeded, and if so call retire desc.
+This section delves into epoch-based reclamation, a technique for managing memory in concurrent data structures, particularly in the context of nonblocking algorithms. The fundamental principle of epoch-based reclamation (EBR) hinges on the assumption that threads periodically enter a "quiescent" state, during which they do not hold any pointers to nodes within the data structure. This quiescent period is referred to as a "grace period."
+
+The core idea is that a memory object can be safely deallocated only after all threads that might have held a pointer to it have passed through at least one grace period since the object was logically removed from the data structure. If a thread removes a node and then subsequently finishes its current operation, and all other active threads have also entered a quiescent state at some point, then the removed node can be safely freed. The critical aspect is that threads don't need to be quiescent simultaneously; rather, each thread must simply experience at least one grace period.
+
+Implementations of EBR often employ a global array, indexed by thread. Each thread maintains an entry in this array, typically holding its current epoch number. When a thread begins a data structure operation, it announces its current epoch by updating its entry in the global array. This announcement involves incrementing its epoch counter, often using a compare-and-swap (CAS) operation to ensure atomicity. A global epoch counter is also maintained, and when all threads have retired their previous epoch (meaning they have updated their array slot to reflect their current epoch), the global epoch can be advanced. An object can be considered safe for reclamation if it was removed before the current global epoch, and all threads that could have accessed it have passed through that epoch.
+
+One common implementation strategy involves a "global-array approach" where each thread has an entry in a shared array. When a thread starts an operation, it records its current epoch. It then updates its slot in the global array to this new epoch. To reclaim memory, the system needs to know when all threads have retired their previous epoch. This can be achieved by having each thread write a sentinel value, like zero, to its array slot at the end of each data structure operation. When all entries in the global array are zero, it signifies that all threads have completed their current epoch and are ready to advance. This synchronization mechanism ensures that no thread is still holding a pointer to a node that is being reclaimed.
+
+The text specifically mentions DEBRA, an implementation of epoch-based reclamation designed for the EFRB tree, characterized as one of the fastest implementations. DEBRA utilizes `startOp` and `endOp` functions to manage thread epochs at the beginning and end of data structure operations. It allows threads to retire nodes whenever they are removed from the data structure. In a pattern reminiscent of C++'s `lock_guard` class, DEBRA's approach ensures that `endOp` is implicitly called at the end of an operation's scope, facilitating automatic epoch management.
+
+The section then details how DEBRA is used for operations like insertion, deletion, and lookup. For lookup operations, `startOp` is called at the beginning of the operation, and `endOp` is called just before returning. For insertion and deletion, specific memory management actions are described. In a `help_insert` function, a node is retired on `desc->target`, and in `help_marked`, retirement occurs after a call to `cas_child`. To support this, the `InsertFlag` descriptor employs epoch-based reclamation. At the end of a `help_insert` operation, if the unflagging CAS succeeds, a `retire(desc)` call is made. This mechanism ensures that memory is reclaimed only after it's safe to do so, adhering to the principles of concurrent garbage collection. The reference to Section 7.3 suggests further details on the `lock_guard` pattern in memory management. The mention of Figures 8.14 and 8.15 implies visual representations of this process, likely illustrating the data structures and the flow of operations across epochs.

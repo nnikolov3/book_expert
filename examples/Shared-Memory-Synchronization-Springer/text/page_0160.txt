@@ -1,0 +1,76 @@
+164 8 Nonblocking Algorithms
+
+To build some intuitive understanding of why this lookup algorithm is linearizable,
+consider the following. Suppose a lookup(key) finds a leaf containing key and returns
+true. If that leaf is in the tree when lookup reads its key, then the lookup can be linearized
+at that read. However, the leaf might have been deleted by the time lookup reads its key.
+In this case, note that the leaf was in the tree at some point during the lookup (otherwise it
+could not have been found). Since a node’s key is never changed, the key read by lookup is
+the same key that was in the leaf when the leaf was last in the tree, and the lookup can be
+linearized at that time.
+
+On the other hand, if the lookup does not find key, we need to argue that it is correct
+to return false. This is where the difference between internal and external BSTs becomes
+clear. In an internal BST, a lookup could miss the key it is looking for, even though that key
+is present in the tree throughout the entire lookup, because that key is swapped to a higher
+location in the tree. In an external BST, no such swap can occur. If a key is present in the
+tree throughout an entire lookup, then the lookup will find the leaf that contains it. On the
+other hand, if a key is present for part of a lookup, and is deleted during the lookup, we
+can linearize a return value of false just after the key is deleted.
+
+Insert Operation To perform an insert(key) operation, a thread first searches the tree for
+key to determine the leaf, target, where the key should be inserted, as well as the parent
+of that leaf. This search is similar to lookup(key), but before reading a node’s child pointer,
+its update field is read. Let parentUpdate be the value read from the update field of the
+parent during the search. This value will be used as the expected value of a CAS if/when
+the insert attempts to “lock” the parent. By remembering parentUpdate, we will be able to
+detect any changes to parent between the search and a subsequent “lock’ attempt.
+
+If the search finds key in the tree already, insert returns false, and is linearized as a
+lookup(key). Suppose, then, that the search does nor find key. In this case, the thread
+would like to “lock™ parent so it can insert key. “Locking” parent involves creating a
+new descriptor and storing it in parent.update, and we would like to avoid the overhead
+of allocating that object if parent is already “locked.” So, if parent is already “locked” by
+another operation O, then the thread helps O to complete, by using the information encoded
+in O’s descriptor, and then restarts its own operation from the beginning.
+
+If parent is not already locked (either initially or after helping and restarting), insert uses
+CAS totry to “lock” parent by changing parent.update from parentUpdate to (IFlag, desc).
+If the CAS fails (insert is unable to “lock” parent), then the insert operation restarts from
+the beginning.” If the CAS succeeds, successfully “locking” parent, then parent has not
+changed since its contents were read during the search. Briefly, this is because modifying
+parent would have required “locking” it, changing the contents of parent.update to point
+to a different descriptor and ensuring that the CAS would fail.
+
+* When the insert restarts, it can either free or reuse the InsertFlag descriptor that it allocated, since
+the CAS failure means no other thread can have a pointer to that descriptor.
+one hundred sixty four
+
+eight Nonblocking Algorithms
+
+To build some intuitive understanding of why this lookup algorithm is linearizable, consider the following. Suppose a lookup(key) finds a leaf containing key and returns true. If that leaf is in the tree when lookup reads its key, then the lookup can be linearized at that read. However, the leaf might have been deleted by the time lookup reads its key. In this case, note that the leaf was in the tree at some point during the lookup (otherwise it could not have been found). Since a node's key is never changed, the key read by lookup is the same key that was in the leaf when the leaf was last in the tree, and the lookup can be linearized at that time.
+
+On the other hand, if the lookup does not find key, we need to argue that it is correct to return false. This is where the difference between internal and external B S Ts becomes clear. In an internal B S T, a lookup could miss the key it is looking for, even though that key is present in the tree throughout the entire lookup, because that key is swapped to a higher location in the tree. In an external B S T, no such swap can occur. If a key is present in the tree throughout an entire lookup, then the lookup will find the leaf that contains it. On the other hand, if a key is present for part of a lookup, and is deleted during the lookup, we can linearize a return value of false just after the key is deleted.
+
+Insert Operation To perform an insert(key) operation, a thread first searches the tree for key to determine the leaf, target, where the key should be inserted, as well as the parent of that leaf. This search is similar to lookup(key), but before reading a node's child pointer, its update field is read. Let parentUpdate be the value read from the update field of the parent during the search. This value will be used as the expected value of a C A S if when the insert attempts to "lock" the parent. By remembering parentUpdate, we will be able to detect any changes to parent between the search and a subsequent "lock" attempt.
+
+If the search finds key in the tree already, insert returns false, and is linearized as a lookup(key). Suppose, then, that the search does not find key. In this case, the thread would like to "lock" parent so it can insert key. "Locking" parent involves creating a new descriptor and storing it in parent.update, and we would like to avoid the overhead of allocating that object if parent is already "locked." So, if parent is already "locked" by another operation O, then the thread helps O to complete, by using the information encoded in O's descriptor, and then restarts its own operation from the beginning.
+
+If parent is not already locked (either initially or after helping and restarting), insert uses C A S to try to "lock" parent by changing parent.update from parentUpdate to I F,desc. If the C A S fails (insert is unable to "lock" parent), then the insert operation restarts from the beginning. If the C A S succeeds, successfully "locking" parent, then parent has not changed since its contents were read during the search. Briefly, this is because modifying parent.update to point to a different descriptor and ensuring that the C A S would fail.
+
+4 When the insert restarts, it can either free or reuse the Insert F lag descriptor that it allocated, since the C A S failure means no other thread can have a pointer to that descriptor.
+The text discusses the nuances of linearizable nonblocking algorithms, specifically focusing on the behavior of lookup and insert operations within a data structure, likely a binary search tree or a similar ordered structure. Linearizability is a strong correctness condition for concurrent objects, requiring that each operation appears to execute atomically at some point between its invocation and its response.
+
+Consider a lookup operation on a data structure. If a lookup operation successfully finds a key, and that key is contained within a leaf node, then the lookup operation can be linearized to the point in time when it reads the key. However, if the leaf containing the key is deleted by another thread *after* the lookup has read the key but *before* the lookup operation completes its linearization, a potential issue arises. In such a scenario, the lookup would still return true, which is consistent with the key having been present at some point. The critical aspect here is the timing of the read relative to the deletion. If the lookup reads the key from a node that is then modified or removed, and the lookup is linearized to the time of the read, this maintains consistency with the state of the data structure at that linearized instant.
+
+The discussion then contrasts this with a situation where a lookup fails to find a key. In the context of an internal binary search tree node, if the node's key is swapped to a higher position in the tree—a common optimization in certain tree implementations—a lookup might miss the key. This is because the key’s logical position relative to its descendants might change. However, if the data structure is an external binary search tree, meaning leaves represent the actual data values and internal nodes guide the search, such key swaps do not occur. In an external binary search tree, if a key is present for part of the lookup operation but is deleted during that operation, the lookup may incorrectly return false if the deletion happens before the lookup reaches the relevant leaf. Alternatively, if the key is present and the lookup completes successfully, but the key is deleted immediately after, the lookup can still be linearized to a point where the key was present.
+
+The text then delves into the "Insert Operation." To perform an insert, a thread first searches for the key’s position. This search is similar to a lookup. The crucial aspect for linearization is often an "update field" associated with nodes, potentially storing version information or a pointer to a descriptor. Before reading this update field, the thread needs to capture its current value, referred to as `parentUpdate`. This captured value serves as the expected value for a compare-and-swap (CAS) operation. The insert operation then attempts to "lock" the parent node. This "locking" typically involves creating a new descriptor and attempting to atomically update the parent's `update` field to point to this new descriptor, using a CAS operation. This CAS operation effectively reserves the insertion spot and marks the parent as being in the process of modification.
+
+If the parent node has not been modified since the `parentUpdate` was read, meaning its `update` field still holds the `parentUpdate` value, the CAS operation succeeds, signifying that the parent has been successfully "locked." The thread then proceeds with the insertion, often by creating a new node and linking it appropriately, and then updates the parent's `update` field to point to this new node, effectively completing the insertion and committing the change.
+
+However, if the parent node has been modified by another thread between the reading of `parentUpdate` and the CAS attempt, the CAS operation will fail. This failure indicates a conflict. The `parent.update` field would likely have been modified by another operation, perhaps an `O` operation (which could be a delete or another insert). In such a failure scenario, the thread must restart its operation. The reason for this restart is that the state of the data structure has changed in a way that invalidates the assumptions made during the initial search and the `parentUpdate` read. The thread would re-read the parent's `update` field and retry the locking process.
+
+The text highlights a specific scenario: if the parent is already "locked," perhaps by another concurrent operation, and the current thread's CAS to lock it fails, it means another operation has already claimed responsibility for modifying this parent node. If the thread that is attempting to insert finds that the parent is already "locked" and it cannot acquire the lock, it might assist the ongoing operation. This assistance could involve completing the operation that is currently holding the lock, thereby helping to maintain progress and eventual consistency. After assisting, the thread would then restart its own operation.
+
+A critical detail is what happens if a parent is not already "locked" but the thread attempting to insert needs to lock it. The insert operation uses a CAS to attempt to change `parent.update` from `parentUpdate` to a value representing the new state. If this CAS succeeds, it means the parent has been successfully locked. If the CAS fails, it implies that the parent’s state changed since `parentUpdate` was read, meaning another operation modified it. The thread then restarts its operation. The footnote explains that when an insert restarts due to a CAS failure, the CAS failure implies that the parent's state has changed. This change could be due to a deletion or another modification. The insert operation would then need to re-evaluate its position and potential actions. It is noted that a CAS failure means no other thread can have a pointer to the descriptor that the failed CAS attempted to allocate. This is because if the CAS failed, the `parent.update` field was not updated to point to this new descriptor, and thus, this descriptor was not incorporated into the data structure's linearization. It can either be freed or potentially reused in a subsequent attempt.

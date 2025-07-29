@@ -1,0 +1,70 @@
+178 8 Nonblocking Algorithms
+
+can cause deadlock by neutralizing a thread that holds a lock). At a high level, instead
+of requiring neutralized threads to stop in the middle of modifying the data structure and
+execute recovery node, NBR allows threads that have begun modifying the data structure
+to continue. NBR assumes data structure operations can be partitioned into a read phase, in
+which the thread visits nodes, a reservation phase, in which the thread reserves a subset of
+the visited nodes, and a write phase, in which the thread can access only reserved nodes. If a
+thread is neutralized in the read or reservation phases, it will restart its operation. However,
+in the write phase, a thread will continue executing, even if it is neutralized, safe in the
+knowledge that its reserved nodes will not be concurrently freed.
+
+NBR can easily be applied to data structures in which all nodes are first visited, then
+a subset of them are locked (possibly using lock-free “locks”) and modified. However, it
+cannot be applied directly to data structure operations that first visit nodes, then perform
+modifications, then visit even more nodes. Such data structures must be rewritten so that
+all required nodes are visited before modifications begin. In the EFRB tree, this makes the
+help(result) call in the help_delete method problematic, since a delete can first perform a
+flagging CAS and then call help on its own DeleteFlag descriptor. The help routine, in turn,
+may call help_delete, fail the marking CAS, and then read result from desc— p— update,
+in which case result will point to a node that has not been reserved. Calling help(result)
+will entail accesses to fields of an unreserved node, which is not allowed. A data structure-
+specific modification is thus required. In the EFRB tree, it turns out we can simply eliminate
+the help(result) call, but this requires reproving the lock-free progress guarantee.
+
+Like DEBRA+, NBR offers a known bound on unreclaimed garbage, and the bound can
+be tuned.
+
+8.7.3 Other Approaches
+
+The Free Access algorithm of Cohen (2018) applies to arbitrary lock-free data structures
+implemented from loads, stores, and CAS, and provides lock-free memory reclamation with
+bounded garbage.
+
+At a very high level, a technique similar to HPs is used when writing to nodes, and a
+technique somewhat similar to EBR with neutralizing 1s used when reading from nodes.
+Instead of using POSIX signals, each thread has a dirty bit that can be set by other threads,
+invalidating the thread’s recent reads. More specifically, each thread regularly polls its dirty
+bit (for example, after reads) and discards previously read values if it is set. However, there
+can be a delay between when a node is reclaimed and when a thread polls its dirty bit. If the
+thread were to access the node between these two times, a segmentation fault could occur. To
+avoid this problem, Free Access assumes that nodes are never freed to the operating system
+(they can only be reused).
+
+Free access requires significant programmer effort (although compilers could in principle
+be modified to perform the modifications automatically) and is likely to be slower than epoch-
+One hundred seventy eight, eight Nonblocking Algorithms
+
+can cause deadlock by neutralizing a thread that holds a lock). At a high level, instead of requiring neutralized threads to stop in the middle of modifying the data structure and execute recovery node, N B R allows threads that have begun modifying the data structure operations can be partitioned into a read phase, in which the thread visits nodes, a reservation phase, in which the thread reserves a subset of the visited nodes, and a write phase, in which the thread can access only reserved nodes. If a thread is neutralized in the read or reservation phases, it will restart its operation. However, in the write phase, a thread will continue executing, even if it is neutralized, safe in the knowledge that its reserved nodes will not be concurrently freed.
+
+N B R can easily be applied to data structures in which all nodes are first visited, then a subset of them are locked (possibly using lock free "locks") and modified. However, it cannot be applied directly to data structure operations that first visit nodes, then perform modifications, then visit even more nodes. Such data structures must be rewritten so that all required nodes are visited before modifications begin. In the E F R B tree, this makes the help(result) call in the help delete method problematic, since a delete can first perform a flagging C A S and then call help on its own DeleteFlag descriptor. The help routine, in turn, may call help_delete, failing the marking C A S, and then read result from desc-p-update, in which case result will point to a node that has not been reserved. Calling help(result) will entail accesses to fields of an unreserved node, which is not allowed. A data structure specific modification is thus required. In the E F R B tree, it turns out we can simply eliminate the help(result) call, but this requires reproving the lock free progress guarantee.
+
+Like D E B R A plus, N B R offers a known bound on unreclaimed garbage, and the bound can be tuned.
+
+8.7.3 Other Approaches
+
+The Free Access algorithm of Cohen (2018) applies to arbitrary lock free data structures implemented from loads, stores, and C A S, and provides lock free memory reclamation with bounded garbage.
+
+At a very high level, a technique similar to H P s is used when writing to nodes, and a technique somewhat similar to E B R with neutralizing is used when reading from nodes. Instead of using P O S I X signals, each thread has a dirty bit that can be set by other threads, invalidating the thread's recent reads. More specifically, each thread regularly polls its dirty bit (for example, after reads) and discards previously read values if it is set. However, there can be a delay between when a node is reclaimed and when a thread polls its dirty bit. If the thread were to access the node between these two times, a segmentation fault could occur. To avoid this problem, Free Access assumes that nodes are never freed to the operating system (they can only be reused).
+
+Free access requires significant programmer effort (although compilers could in principle be modified to perform the modifications automatically) and is likely to be slower than epoch based reclamation because of the overhead of polling the dirty bit.
+The text discusses techniques for building nonblocking data structures, focusing on the challenges of concurrency and memory management. A key concept is the use of a "neutralizing" mechanism to handle threads that might block or become inactive during data structure operations. This neutralization process is designed to prevent deadlocks, which can occur if a thread holding a lock is unexpectedly halted while other threads are waiting for that lock.
+
+The approach described, referred to as N B R, allows threads to proceed with data structure modifications even if other threads are not fully responsive. N B R partitions operations into a "read phase" and a "reservation phase." In the reservation phase, a thread acquires exclusive access to a subset of nodes. If a thread is neutralized during either the read or reservation phase, it is designed to restart its operation without causing issues for other concurrent threads. Crucially, a thread that has successfully reserved its nodes can continue executing, assured that its reserved nodes will not be concurrently freed by another thread. This is a critical guarantee for maintaining data structure integrity in a concurrent environment.
+
+N B R can be applied to data structures where all nodes are initially visited and then modified, or where nodes are first visited and then locked before modification. For data structures requiring nodes to be visited before modifications, a mechanism similar to "lock free locks" might be employed. In scenarios where modifications must be applied to a larger set of nodes, a technique is used that involves rewriting data structures to first visit nodes and then perform modifications. This requires careful handling of nodes that have been visited but not yet modified.
+
+The text highlights a specific challenge with a "help delete" method in the context of an E F R B tree. If a thread attempts to delete a node that is not yet reserved, and another thread is in the process of marking that node for deletion, this can lead to a problem. Specifically, a "help delete" call that attempts to perform a compare and swap operation on a node that has not been reserved by the calling thread can result in the thread pointing to an unreserved node. This situation is problematic because it implies that the thread is operating on data that it cannot guarantee the state of. The E F R B tree requires that the "help delete" call be able to recover from such states, possibly by relying on a "DeleteFlag" descriptor. If the "help" routine needs to perform a "desc arrow p arrow update" operation, and the result of a marking compare and swap operation is returned, it could indicate a node that has not been reserved. This situation necessitates careful state management to ensure the modification is valid. The text suggests that in certain contexts, like with the E F R B tree, one can eliminate the need for such complex recovery by simply reproving the lock free progress guarantee. This implies that the underlying data structure design might be adjusted to avoid such ambiguous states altogether. Like D E B R A plus, N B R offers a known bound on reclaimed garbage, indicating efficient memory management.
+
+Section 8.7.3, "Other Approaches," introduces the "Free Access" algorithm, developed by Cohen in 2018. This algorithm is designed for arbitrary lock free data structures and uses loads, stores, and compare and swap operations to achieve lock free memory reclamation, even with bounded garbage. At a high level, the technique resembles previous approaches, but instead of relying on POSIX signaling mechanisms for thread neutralization, it uses a "dirty bit" associated with each thread. This dirty bit indicates whether a thread has recently read data. If a thread reads data and then another thread modifies it, the dirty bit signals this change. When a node is reclaimed, or when a thread attempts to access a node between two such events, a "segmentation fault" could occur. To mitigate this, Free Access assumes that nodes are never freed from the operating system's perspective; rather, they are only reused. This assumption simplifies the design but requires significant programmer effort to manage modifications automatically, potentially leading to slower performance compared to epoch-based reclamation schemes. The core idea is to avoid the complexities of explicit signaling by using a state bit to track recent memory accesses and ensure consistency.

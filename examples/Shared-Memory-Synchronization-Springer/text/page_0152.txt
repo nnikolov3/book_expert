@@ -1,0 +1,71 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+156 8 Nonblocking Algorithms
+
+> > > > i > ON
+SE Si Si $ S St
+@ | ∎ ∎
+∣⊘∣↕∣⊋∣∍∣⊋↿⊙↥⋔∂∋⊾
+© N N N > N S
+& & & & & & &
+®) [| ∎ ∎
+∣⊘∣↕∣⊋∣∍∣⊋↿⊜↥⋔∂≘⊾
+S$ D> S$ D> Q > 0d Q
+& & & & & oS ~
+
+∎∎⊡∎
+
+⇘⇘ NY S NY oN SS QS \ S
+& & & & & & o> 3
+@ | | [ 9 | [
+lo{1|2]3|[4]5]6]7]| 3bithash
+\ NY \ \ S NY ON \X Ni > >
+& S & S & S 3S o>
+
+SO S SN S
+N N N N
+© |] ∎∎∎ Ell
+
+lo{1|2]3|[4]5]6]7]| 3bithash
+
+Figure 8.11 The nonblocking, extensible S&S hash table. Dummy nodes are shaded. Data nodes
+are labeled (for illustration purposes) with the hash of their key; order numbers are shown above.
+Starting from the configuration shown in (a), we have inserted a data node with hash value 9 (b),
+doubled the number of buckets (¢), inserted a node with hash value 21 (d), and searched for a node
+with hash value 30 (e).
+
+(up to a limit of n) to accommodate increases in the length of the list. Each initialized bucket
+contains a pointer to a so-called dummy node, linked into the list immediately before the
+data nodes whose top j order number bits, when reversed, give the index of the bucket. To
+ensure that it appears in the proper location, the dummy node for bucket b is given an order
+number obtained by reversing the j bits of b, padding on the right with n — j zeros, and
+adding an extra least-significant O bit.
+
+The point of all this bit manipulation is to ensure, when we decide to increment j (and
+thus double the number of buckets), that all of the old buckets will still point to the right
+places in the list, and the new buckets, once they are initialized, will point to new dummy
+156 8 Nonblocking Algorithms
+
+Figure 8.11 The nonblocking, extensible S&S hash table. Dummy nodes are shaded. Data nodes are labeled (for illustration purposes) with the hash of their key; order numbers are shown above. Starting from the configuration shown in (a), we have inserted a data node with hash value 9 (b), doubled the number of buckets (c), inserted a node with hash value 21 (d), and searched for a node with hash value 30 (e).
+
+(up to a limit of n) to accommodate increases in the length of the list. Each initialized bucket contains a pointer to a so-called dummy node, linked into the list immediately before the data nodes whose top j order number bits, when reversed, give the index of the bucket. To ensure that it appears in the proper location, the dummy node for bucket b is given an order number obtained by reversing the j bits of b, padding on the right with n minus j zeros, and adding an extra least significant 0 bit. The point of all this bit manipulation is to ensure, when we decide to increment j (and thus double the number of buckets), that all of the old buckets will still point to the right places in the list, and the new buckets, once they are initialized, will point to new dummy
+This illustration demonstrates a nonblocking, extensible Sieve and Search (S&S) hash table. The core concept here is how to manage dynamic resizing and concurrent access without traditional locking mechanisms, which can lead to performance bottlenecks. Shaded nodes represent dummy nodes, which serve as markers or placeholders in the linked lists that form the buckets of the hash table. Data nodes, depicted as white boxes, contain actual keys, which are associated with hash values shown above them.
+
+The diagrams illustrate the progression of operations on this data structure. Diagram (a) shows an initial state, likely representing a hash table with a certain number of bits used for hashing, thereby determining the number of buckets. The buckets are indexed from zero to three. The linked list within each bucket is ordered based on the hash values of the keys.
+
+Diagram (b) depicts the insertion of a data node with a hash value of nine. The hash value is represented by the binary string "00011," which, when interpreted according to the current hashing scheme (indicated as "2 bit hash"), maps to a specific bucket. The new node is inserted into its correct ordered position within that bucket's linked list.
+
+Diagram (c) shows an expansion of the hash table's addressing capability, indicated by a "3 bit hash." This implies that more bits of the hash values are now being used to determine the bucket index, effectively doubling the number of conceptual buckets. Crucially, the diagram shows that existing nodes are rehashed or re-addressed based on this new hashing scheme. The insertion of a node with hash value twenty-one is also shown, demonstrating how it finds its place in the expanded table.
+
+Diagram (d) illustrates a scenario where a node with hash value twenty-one is inserted. The illustration points out the hash value of this new node as "10101." This insertion appears to occur within the context of the 3-bit hash scheme. The key aspect here is how the data structure accommodates growth and maintains order.
+
+Diagram (e) illustrates the search for a node with hash value thirty. The binary representation of this hash value is "11100." The diagram shows the traversal through the linked lists in the appropriate buckets to locate the target node. The presence of dummy nodes, particularly the one preceding the node with hash value fifteen, is critical for enabling nonblocking operations. These dummy nodes help manage race conditions during resizing and concurrent access by providing stable points for linking and unlinking operations.
+
+The accompanying text provides further technical details. It explains that when the number of elements grows beyond a certain limit, the hash table can dynamically increase its capacity. This is often achieved by doubling the number of buckets. The process involves re-distributing existing elements into the newly created buckets. The text mentions the concept of a "dummy node" linked into the list immediately before the data nodes whose top $j$ bits, when reversed, determine the bucket index. This dummy node's value is derived by reversing the $j$ bits of the bucket's hash, padding with zeros to match the total number of bits, and then adding an extra least-significant zero bit. This bit manipulation is a key technique for ensuring that during a resize operation, all old buckets continue to point to the correct locations, and new buckets are properly initialized. This approach is central to building robust concurrent data structures that can scale efficiently.

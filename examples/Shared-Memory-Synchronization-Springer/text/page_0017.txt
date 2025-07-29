@@ -1,0 +1,76 @@
+18 2 Architectural Background
+
+// initially x =y = 0
+
+thread 1: thread 2: thread 3: thread 4:
+1. x=1—> 1: x2 =x | k y3 i=y « 1. y:==1
+x3 = Xx
+
+// finally y2 =x3=0 and xX2=y3 =1
+
+Figure 2.4 Independent reads of independent writes (IRIW). If the writes of threads 1 and 4 propagate
+to different places at different speeds, we can see a ordering loop even if instructions from the same
+thread never bypass one another.
+
+other cores. On NUMA or topologically complex machines, it may also be possible for reads
+to bypass reads, writes to bypass reads, or writes to bypass writes. Worse, circularity may
+arise even without bypassing—i.e., even when every thread executes its own instructions
+in strict program order. Consider the “independent reads of independent writes” (IRIW)
+example shown in Figure 2.4. If thread 1 1s close to thread 2 but far from thread 3, and
+thread 4 is close to thread 3 but far from thread 2, the reads on line 1 in threads 2 and 3 may
+see the new values of x and y, while the reads on line 2 see the old. Here the problem is
+not bypassing, but a lack of write atomicity—one thread sees the value written by a store
+and another thread subsequently sees the value prior to the store. Many other examples of
+unintuitive behavior permitted by modern hardware can be found in the literature (Adve and
+Gharachorloo 1996; Adve et al. 1999; Manson et al. 2005; Boehm and Adve 2008).
+
+2.2.2 Special Instructions to Order Memory Access
+
+If left unaddressed, memory inconsistency can easily derail attempts at synchronization.
+Consider the flag-based programming idiom illustrated in Figure 2.5. If foo can never return
+
+Compilers Also Reorder Instructions
+
+While this chapter focuses on architectural issues, it should be noted that compilers also routinely
+reorder instructions. In any program not written in machine code, compilers perform a variety of opti-
+mizations in an attempt to improve performance. Simple examples include reordering computations to
+expose and eliminate redundancies, hoisting invariants out of loops, and “scheduling” instructions to
+minimize processor pipeline bubbles. Such optimizations are legal so long as they respect control and
+data dependences within a single thread. Like the hardware optimizations discussed in this section,
+compiler optimizations can lead to inconsistent behavior when more than one thread is involved. As
+we shall see in Sec. 3.3, a language designed for concurrent programming must provide a memory
+model that explains allowable behavior, and some set of primitives—typically special synchroniza-
+tion operations or reads and writes of special atomic variables—that serve to order accesses at the
+language level.
+Architectural Background
+
+Initially, x is equal to y is equal to zero.
+
+The diagram illustrates four threads and their memory operations. Thread one performs one operation: x is assigned one. Thread two performs two operations: x two is assigned x, and y two is assigned y. Thread three performs two operations: y three is assigned y, and x three is assigned x. Thread four performs one operation: y is assigned one.
+
+There is a dependency indicated by an arrow from thread one's operation, x is assigned one, to thread two's first operation, x two is assigned x. Similarly, an arrow from thread four's operation, y is assigned one, points to thread three's first operation, y three is assigned y. A question mark symbol is positioned between thread two and thread three, indicating an unknown or problematic interaction. Curved arrows show additional dependencies: one from thread two's second operation, y two is assigned y, pointing back to thread four's y is assigned one; and another from thread three's second operation, x three is assigned x, pointing back to thread one's x is assigned one.
+
+Finally, a possible outcome is y two is equal to x three is equal to zero and x two is equal to y three is equal to one.
+
+Figure two point four describes independent reads of independent writes (I R I W). If the writes of threads one and four propagate to different places at different speeds, we can see an ordering loop even if instructions from the same thread never bypass one another.
+
+Other cores. On N U M A or topologically complex machines, it may also be possible for reads to bypass reads, writes to bypass reads, or writes to bypass writes. Worse, circularity may arise even without bypassing, that is, even when every thread executes its own instructions in strict program order. Consider the independent reads of independent writes (I R I W) example shown in Figure two point four. If thread one is close to thread two but far from thread three, and thread four is close to thread three but far from thread two, the reads on line one in threads two and three may see the new values of x and y, while the reads on line two see the old. Here the problem is not bypassing, but a lack of write atomicity—one thread sees the value written by a store and another thread subsequently sees the value prior to the store. Many other examples of unintuitive behavior permitted by modern hardware can be found in the literature (Adve and Gharachorloo nineteen ninety six; Adve et al. nineteen ninety nine; Manson et al. two thousand five; Boehm and Adve two thousand eight).
+
+Two point two point two Special Instructions to Order Memory Access
+
+If left unaddressed, memory inconsistency can easily derail attempts at synchronization. Consider the flag based programming idiom illustrated in Figure two point five. If foo can never return.
+
+Compilers Also Reorder Instructions
+
+While this chapter focuses on architectural issues, it should be noted that compilers also routinely reorder instructions. In any program not written in machine code, compilers perform a variety of optimizations in an attempt to improve performance. Simple examples include reordering computations to expose and eliminate redundancies, hoisting invariants out of loops, and scheduling instructions to minimize processor pipeline bubbles. Such optimizations are legal so long as they respect control and data dependencies within a single thread. Like the hardware optimizations discussed in this section, compiler optimizations can lead to inconsistent behavior when more than one thread is involved. As we shall see in Section three point three, a language designed for concurrent programming must provide a memory model that explains allowable behavior, and some set of primitives—typically special synchronization operations or reads and writes of special atomic variables—that serve to order accesses at the language level.
+The page delves into the complexities of memory consistency models and the non-intuitive behaviors that can arise in concurrent computing environments due to hardware and compiler optimizations. It highlights the fundamental tension between performance enhancement and predictable program execution.
+
+Central to this discussion is the concept of memory ordering, specifically illustrated by the independent reads of independent writes, or I R I W, litmus test shown in Figure two point four. In this scenario, we commence with two shared variables, `x` and `y`, both initialized to a value of zero. The diagram presents four concurrent threads. Spatially, thread one is on the far left, performing a single write operation: `x becomes one`. On the far right, thread four performs its own independent write: `y becomes one`. In the middle, thread two, situated to the left of thread three, executes two reads: `x two becomes x`, followed by `y two becomes y`. Adjacent to it, thread three executes `y three becomes y`, followed by `x three becomes x`.
+
+Horizontal arrows depict a causal flow: thread one's write to `x` potentially affects thread two's read of `x`, and thread four's write to `y` potentially affects thread three's read of `y`. The critical aspect of this test is the possibility of an outcome where, finally, `y two is equal to x three is equal to zero` simultaneously with `x two is equal to y three is equal to one`. This paradoxical result, indicated by the curved arrows forming a loop and the question mark between threads two and three, demonstrates that thread two observed the write to `x` but not the write to `y`, while thread three observed the write to `y` but not the write to `x`. This circular dependency in observed writes is strictly forbidden under a sequentially consistent memory model, where all operations appear to execute in some global, total order. Such an outcome reveals that the visibility of the independent writes to `x` and `y` has been reordered differently for thread two and thread three, implying a weak memory model where writes are not immediately and atomically visible to all other processors.
+
+The problem of such reordering is exacerbated in complex, topologically diverse machine architectures, such as Non Uniform Memory Access, or N U M A, systems. These systems inherently possess varying latencies for memory access, making it impractical to maintain strict global ordering. Hardware optimizations, including out of order execution and write buffering, allow reads to bypass writes, or writes to bypass other writes, even if each individual thread maintains its own program order. The core issue articulated here is not a complete bypass of instructions within a thread, but rather a lack of system wide write atomicity. This means that a write operation by one thread may become visible to another thread, while still appearing to be an older value to a third thread, or even to the same thread later if not properly synchronized. This leads to the unintuitive behaviors observed in the I R I W example and necessitates a deeper understanding of memory models beyond simple instruction reordering.
+
+To address these memory inconsistencies and enable reliable synchronization, specialized instructions are crucial. These instructions, often termed memory barriers or fences, enforce an explicit ordering on memory operations, preventing the hardware from reordering them across the barrier. For instance, in a flag based programming idiom, such barriers ensure that updates to shared data are fully visible before a flag indicating readiness is set, and that the flag is observed before the data is accessed. Without these explicit ordering mechanisms, synchronization primitives built on simple read and write operations can fail catastrophically.
+
+Beyond hardware, compilers also play a significant role in reordering instructions. Optimizations such as exposing and eliminating redundancies, hoisting loop invariant code, and scheduling instructions to minimize processor pipeline bubbles are performed to enhance performance. While these transformations are generally valid for single threaded execution, preserving control and data dependencies, they can introduce severe issues in multithreaded contexts. Compiler optimizations, like hardware reordering, can lead to inconsistent behavior by altering the visible order of memory operations from the perspective of other threads. Therefore, a robust concurrent programming environment requires not only carefully designed hardware that exposes its memory model, but also programming language memory models that precisely define allowable behaviors for concurrent programs. These language level memory models, typically specified in a dedicated section such as Section three point three, provide the necessary framework and primitives, like special atomic variables or explicit synchronization operations, to ensure that memory accesses are ordered correctly, preventing the problematic scenarios illustrated by the I R I W test.

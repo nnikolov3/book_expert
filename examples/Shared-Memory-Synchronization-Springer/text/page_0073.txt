@@ -1,0 +1,79 @@
+4.3 Queued Spin Locks 75
+
+type qnode = record
+
+gnode* prev /l read and written only by owner thread
+atomic<bool> succ_must_wait
+class lock
+atomic<gnode*> tail := new gnode(null, false)
+~lock(): /l destructor
+delete tail
+
+lock.acquire(gnode* p):
+p—succ_must_wait.store(true, ||)
+qnode* pred := p—prev := tail.swap(p, W||)
+while pred—succ_must_wait.load(||); Il spin
+fence(R||RW)
+
+lock.release(gnode** pp):
+gnode* pred := (*pp)—prev
+(*pp)—succ_must_wait.store(false, RW||)
+“pp := pred // take pred’s gnode
+
+Figure 4.12 The CLH queued lock.
+
+−−−−−−−−−−−−−−−−
+
+⋮⋅−−⋅⋅∣−−−−∣ ↴
+
+Figure 4.13 Operation of the CLH lock. An ‘R’ indicates that a thread spinning on this gnode (i.e.,
+the successor of the thread that provided it) is free to run its critical section; a ‘W’ indicates that
+it must wait. Dashed boxes indicate qnodes that are no longer needed by successors, and may be
+reused by the thread releasing the lock. Note the change in label on such nodes, indicating that they
+now “belong” to a different thread.
+Four point three Queued Spin Locks.
+
+The `qnode` data type is defined as a record. It contains a pointer to a `qnode` called `prev`, and an atomic boolean variable named `successor must wait`. This variable is read and written only by the owner thread.
+
+The `lock` class is defined. It contains an atomic pointer to a `qnode` called `tail`, which is initialized as a new `qnode` with a null `prev` and a `successor must wait` value of false. The destructor for the `lock` class deletes the `tail` `qnode`.
+
+The `lock` class defines an `acquire` method that takes a pointer to a `qnode`, named `p`. Inside `acquire`, the `successor must wait` field of the `qnode` pointed to by `p` is atomically stored to true with sequential consistency. A `qnode` pointer named `pred` is declared and assigned. `p`'s `prev` pointer is first assigned the result of an atomic swap operation on the `tail` pointer. This swap exchanges `p` with the current `tail` and uses release consistency. The result of this swap (the old `tail` value) is then assigned to `pred`. A `while` loop then continuously loads the `successor must wait` field of the `qnode` pointed to by `pred`. The loop continues as long as this value is true, using sequential consistency. This causes the thread to spin until its predecessor allows it to proceed. After the loop, a memory fence operation is performed with acquire or release acquire semantics, ensuring proper memory ordering.
+
+The `lock` class also defines a `release` method that takes a double pointer to a `qnode`, named `pp`. Inside `release`, a `qnode` pointer named `pred` is declared and assigned the `prev` pointer of the `qnode` that `pp` points to. The `successor must wait` field of the `qnode` pointed to by `pp` is atomically stored to false with release acquire consistency. This signals to the next waiting thread that it can proceed. Finally, `pp` is updated to point to `pred`. This operation transfers ownership of the predecessor's `qnode`.
+
+Figure four point twelve depicts the C L H queued lock.
+
+Figure four point thirteen illustrates the operation of the C L H lock. An `R` indicates that a thread spinning on this `qnode`, that is, the successor of the thread that provided it, is free to run its critical section. A `W` indicates that it must wait. Dashed boxes indicate `qnodes` that are no longer needed by successors and may be reused by the thread releasing the lock. Note the change in label on such nodes, indicating that they now belong to a different thread.
+
+The figure demonstrates the state changes of the C L H lock queue across five steps.
+
+In step one, the lock object, labeled L, points to a single `qnode` labeled X. The X `qnode` contains an `R`, indicating that the thread associated with it is currently in its critical section. The X `qnode` points to itself, forming a self-loop, as it is the only node in the queue.
+
+In step two, the queue has expanded. The lock object L still points to the head of the queue, X. X points to `qnode` R. R points to `qnode` A. A points to `qnode` W. The W `qnode` contains a `W`, signifying that its associated thread is waiting. A dashed line from `qnode` A to a circular node implies that A is waiting for R to complete its operation. The arrows between `qnodes` represent previous pointers, forming a reverse linked list from the tail (W) back to the head (X).
+
+Step three shows a more extensive queue structure. Lock L points to X, which points to R. R contains an `R`, indicating it is in the critical section. R points to A, A points to B, and B points to W, which contains a `W` (waiting). Dashed lines from A and B to circular nodes denote that their respective threads are waiting for their predecessors. This diagram illustrates a typical queue with one running thread and multiple threads in a waiting state.
+
+In step four, the queue has progressed. The original `qnode` R, which was running in the previous step, is now depicted with a dashed outline and labeled X, indicating it has been freed or reused. The thread associated with `qnode` A (from the previous step) is now running its critical section; therefore, `qnode` A is now labeled R and is not dashed. The lock object L now points to this new `qnode` R (the former A). The queue's pointer structure shows B pointing to X (the reused original R node), and X pointing to the (now dashed and reused) original X node. The W node remains, still in a waiting state. This progression demonstrates the queue advancing and nodes being marked for reuse after a thread completes its critical section.
+
+Finally, in step five, further progression is shown. The `qnodes` A and R from step four are now both dashed and reused. The lock object L now points to `qnode` B. `qnode` B is labeled R, signifying that its associated thread is currently in the critical section. B points to X, which is now one of the dashed and reused `qnodes`. X, in turn, points to another dashed and reused `qnode` R. The W node continues to be in a waiting state for X. This step illustrates the continuous handover of the lock and the recycling of `qnodes` as threads exit their critical sections, maintaining an efficient queue-based lock mechanism.
+The content presents a sophisticated approach to managing concurrent access to shared resources in multi-threaded environments, specifically detailing a type of queued spin lock known as the C L H lock. Unlike basic spin locks where multiple threads contend for a single global lock variable, leading to significant cache contention and reduced scalability, queued spin locks improve performance by having each waiting thread spin on a distinct, local memory location. This distributes the contention and leverages cache coherence protocols more efficiently.
+
+The fundamental data structure employed here is a `qnode` record. Each `qnode` represents a waiting or running thread and contains two critical fields: `qnode pointer prev`, which points to the preceding `qnode` in the queue, and `atomic boolean succ must wait`. The `atomic boolean` variable is the key to decoupling the spinning. A thread, upon acquiring the lock, sets its own `succ must wait` flag to `false` to signal its successor to proceed. Conversely, a thread waiting for the lock will spin by repeatedly loading the `succ must wait` flag of its *predecessor*. The use of `atomic` types for `succ must wait` and the `lock` class's `tail` pointer is paramount. This guarantees that memory operations on these variables are synchronized across multiple C P U cores, ensuring correct visibility and ordering as per the chosen memory consistency model, typically sequential consistency or weaker models like acquire-release.
+
+The `lock` class itself manages the queue. Its central component is an `atomic qnode pointer tail`, which always points to the last `qnode` added to the queue. When a new `lock` object is instantiated, the `tail` is initialized to a new `qnode` with its `prev` pointer set to `null` and `succ must wait` set to `false`. This initial `qnode` acts as a sentinel or dummy node, simplifying queue management. The destructor ensures that this initial `tail` node is properly deallocated.
+
+Let us examine the `acquire` method, which a thread invokes to gain ownership of the lock. A thread `p` first ensures that its `succ must wait` flag is set to `true` using `p arrow succ must wait dot store open parenthesis true comma sequential consistency close parenthesis`. This prepares `p`'s node to make its future successor wait. The crucial step follows: `qnode pointer pred is p arrow prev is tail dot swap open parenthesis p comma release memory order close parenthesis`. This atomic `swap` operation simultaneously performs two actions: it sets the global `tail` pointer to the current thread's `qnode` (`p`), thereby enqueuing `p`, and it returns the *previous* value of `tail`, which effectively becomes `p`'s predecessor (`pred`). The `release memory order` ensures that all memory writes performed by the acquiring thread *before* this `swap` operation are made visible to any thread that subsequently acquires the lock. After enqueuing, the thread enters a spin loop: `while open parenthesis pred arrow succ must wait dot load open parenthesis sequential consistency close parenthesis close parenthesis`. The thread `p` now spins, not on a global lock variable, but on the `succ must wait` flag of its direct predecessor (`pred`). This is the essence of reduced cache contention, as only two threads (the predecessor and the successor) interact with this specific cache line. Once `pred` sets its `succ must wait` flag to `false`, `p` exits the spin loop. Immediately after, a `fence open parenthesis acquire memory order close parenthesis` is executed. This memory barrier, acting as an acquire fence, guarantees that all memory operations performed by the predecessor *before* it released the lock are now visible to the current thread `p`. This establishes the necessary `happens-before` relationship for correct program execution within the critical section.
+
+The `release` method is equally critical. It takes a double pointer to the current `qnode` (`pp`) because it might modify the caller's `qnode` pointer for reuse. The method first retrieves the `qnode pointer pred is star pp arrow prev`. A special case exists if `pred` is `null`, indicating that the current thread `star pp` is the only node in the queue. In this scenario, the system attempts to atomically set the global `tail` to `null` using a `compare exchange weak` operation: `tail dot compare exchange weak open parenthesis star pp comma null comma release memory order comma acquire memory order close parenthesis`. If successful, the lock is truly free, and the method returns. If `pred` is not `null`, implying a successor exists, the current thread `star pp` sets its own `succ must wait` flag to `false`: `open parenthesis star pp close parenthesis arrow succ must wait dot store open parenthesis false comma release memory order close parenthesis`. This action signals to its successor, which has been spinning on this flag, that it can now proceed into the critical section. Crucially, instead of deallocating the current `qnode`, the `release` method performs an optimization known as `node hand off` or `node reuse`. The line `star pp is pred` assigns the predecessor's `qnode` to the caller's `qnode` pointer. This means the `qnode` that the releasing thread used for *its* acquisition is now effectively passed to the caller's pointer for use in its *next* acquisition, reducing memory allocation and deallocation overhead and improving cache locality. The predecessor node essentially `belongs` to the current thread for its subsequent lock acquisition.
+
+Figure 4.13, titled "Operation of the C L H lock," visually depicts this dynamic process across five sequential steps, demonstrating the enqueueing and dequeueing mechanism. In this illustration, `L` represents the global lock object, which, as per the code, holds the `tail` pointer. The rectangular boxes symbolize `qnode`s, with an internal vertical bar representing the `succ must wait` boolean flag and internal labels indicating thread states. An `R` denotes a thread `running` in its critical section, while a `W` signifies a thread `waiting` by spinning. Dashed boxes indicate `qnode`s that are no longer actively used by their original threads and have been `handed off` for reuse.
+
+Initially, in step one, we observe the lock `L` pointing to `X`, meaning thread `X` is the current `tail` and holds the lock, indicated by `R`. Implicitly, `X`'s `succ must wait` flag is set such that any potential successor would wait.
+
+In step two, thread `A` attempts to acquire the lock. Following the `acquire` logic, `A` enqueues itself. The diagram shows `L` now pointing to `A` (the new `tail`), and `A`'s `prev` pointer points back to `X`. Since `X` is still running (`R`), `A` is in a `waiting` state (`W`), spinning on `X`'s `succ must wait` flag.
+
+Step three introduces thread `B` attempting acquisition. Similar to `A`, `B` enqueues itself, resulting in `L` pointing to `B` (the new `tail`). `B`'s `prev` points to `A`. `B` is in a `waiting` state (`W`), spinning on `A`'s `succ must wait` flag. At this point, `X` is running, `A` is waiting on `X`, and `B` is waiting on `A`. This clearly illustrates the chained dependency.
+
+Step four depicts `X` releasing the lock. As per the `release` method, `X` sets its `succ must wait` flag to `false`. Thread `A`, which was spinning on `X`'s flag, now observes this change and transitions to the `running` state (`R`), entering the critical section. Concurrently, `X`'s `qnode` becomes a dashed box labeled `A`. This signifies that `X`'s `qnode` has been `handed off` to `A` for `A`'s subsequent use when `A` next attempts to acquire the lock. The global `L` (tail) still points to `B`. `B` remains in the `waiting` state (`W`), spinning on `A`'s `succ must wait` flag.
+
+Finally, step five shows `A` releasing the lock. Similar to `X`'s release, `A` sets its `succ must wait` flag to `false`. Thread `B`, spinning on `A`'s flag, now observes this and transitions to the `running` state (`R`). `A`'s `qnode` then becomes a dashed box labeled `B`, indicating its `hand off` to `B` for `B`'s future acquisition. `X`'s node remains a dashed box from the previous step. `L` continues to point to `B`. This sequence demonstrates the efficient F I F O fairness and the cache-friendly nature of the C L H lock, where spinning is localized and `qnode`s are reused to minimize overhead.

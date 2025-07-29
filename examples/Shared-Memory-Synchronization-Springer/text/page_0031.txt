@@ -1,0 +1,79 @@
+32 2 Architectural Background
+
+class stack { atomic<(node*, int)> top }
+
+class node { atomic<node*> next, ... } node” stack.pop():
+repeat
+void stack.push(node* n): (0, c) := top.load(||)
+repeat if o = null return null
+(0, c) := top.load(||) n := o—next—load(||)
+n—next—store(o, ||) until top.CAS(({o, c), (n, c+1), R]))
+until top.CAS((o, c), (n, c), W|)) return o
+
+Figure 2.7 The lock-free “Treiber stack,” with a counted top-of-stack pointer to solve the ABA
+problem. It suffices to modify the count in pop only; if CAS is available in multiple widths, it may
+be applied to only the pointer in push.
+
+technique is to devote part of each to-be-CASed word to a sequence number that 1s updated
+in pop on a successful CAS. Using this counted pointer technique, we can convert our stack
+code to the (now safe) version shown in Figure 2.7.
+
+The sequence number solution to the ABA problem requires that there be enough bits
+available for the number that wrap-around cannot occur in any reasonable program execution.
+Some machines (in particular, the x86/64 via cmpxchg8b and cmpxchgl 6b for 32-bit
+and 64-bit processors, respectively) provide a double-width CAS that is ideal for this purpose.
+If the maximum word width is required for “real” data, however, another approach may be
+required.
+
+In many programs, the programmer can reason that a given pointer will reappear in a given
+data structure only as a result of memory deallocation and reallocation. Note that this 1s not
+the case in the Treiber stack as presented here. It would be the case if we re-wrote the code
+to pass push a value, and had the method allocate a new node to hold it. Symmetrically,
+pop would deallocate the node and return the value it contained. In a garbage-collected
+language, deallocation will not occur so long as any thread retains a reference, so all 1s
+well. In a language with manual storage management, various safe memory reclamation
+(SMR) strategies can be used to delay deallocation until all concurrent uses of a datum have
+completed. In the general case (where a pointer can recur without its memory having been
+recycled), safe CASing may require an extra level of pointer indirection (Michael 2004c;
+Jayanti and Petrovic 2003). Further discussion of SMR—including safe versions of the
+Treiber stack—appears in Sec. 8.7.
+
+> While Treiber’s technical report (Treiber 1986) is the standard reference for the nonblocking stack
+algorithm, the ABA problem is mentioned as early as the 1975 edition of the System 370 manual
+(IBM 1975, p. 125), and a version of the stack appears in the 1983 edition (IBM 1983, App. A).
+Treiber’s personal contribution was to observe that counted pointers are required only in the pop
+operation; push can safely perform a single-width CAS on the pointer alone (Michael 2013).
+The technical content describes architectural background elements, starting with code for a lock free stack.
+
+The code defines a `class stack` with an atomic top pointer of type `node star, integer`. It also defines a `class node` with an atomic `node star` next pointer.
+
+For the `void stack.push(node star n)` function:
+It enters a `repeat` loop. In each iteration, it loads the current value of `top` into the pair `o comma c`. It then sets the `next` pointer of the new node `n` to the old node `o`. The loop continues `until` the `Compare And Swap` operation on `top` succeeds. This operation attempts to change `top` from the value `o comma c` to `n comma c`, using a `W` memory ordering.
+
+For the `node star stack.pop()` function:
+It also enters a `repeat` loop. In each iteration, it loads the current value of `top` into the pair `o comma c`. It checks if `o` is `null`. If it is, the stack is empty, and the function returns `null`. Otherwise, it loads the `next` node from `o` into `n`. The loop continues `until` the `Compare And Swap` operation on `top` succeeds. This operation attempts to change `top` from the value `o comma c` to `n comma c increment by one`, using an `R` memory ordering. Finally, the function returns `o`.
+
+Figure two point seven illustrates the lock free Treiber stack with a counted top of stack pointer used to solve the `A B A` problem. It is sufficient to modify the count in `pop` only; if `C A S` is available in multiple widths, it may be applied to only the pointer in `push`.
+
+This technique involves dedicating part of each word targeted by a `Compare And Swap` operation to a sequence number that is updated in the `pop` function upon a successful `C A S`. By utilizing this counted pointer technique, the stack code can be converted to the now safe version as presented in Figure two point seven.
+
+The sequence number solution to the `A B A` problem necessitates having a sufficient number of bits available for the sequence number to prevent wrap around from occurring within any reasonable program execution time. Certain machines, such as those with `x eighty six slash sixty four` architectures via `cmp x chg eight b` and `cmp x chg sixteen b` instructions for thirty two bit and sixty four bit processors, respectively, offer a double width `C A S` operation, which is ideal for this purpose. However, if the maximum word width is required for storing actual data, an alternative approach might be necessary.
+
+In many programs, a programmer can reasonably assume that a given pointer will reappear in a data structure only due to memory deallocation and subsequent reallocation. This is notably not the situation in the Treiber stack as presented here. It would, however, be the case if the code were rewritten such that the `push` function accepted a value, and the method allocated a new node to hold it. Symmetrically, the `pop` function would deallocate the node and return the value it contained. In a garbage collected language, deallocation would not occur as long as any thread maintains a reference to an object, so the approach would be sound. In a language that requires manual storage management, various safe memory reclamation (`S M R`) strategies can be employed to defer deallocation until all concurrent uses of a data item have ceased. In the more general scenario, where a pointer can recur without its memory having been recycled, a safe `C A Sing` operation may necessitate an additional layer of pointer indirection, as discussed by Michael in two thousand four c and Jayanti and Petrovic in two thousand three. Further details regarding `S M R`, including safe versions of the Treiber stack, are provided in Section eight point seven.
+
+Footnote five clarifies that while Treiber's technical report from one thousand nine hundred eighty six is the definitive reference for the nonblocking stack algorithm, the `A B A` problem was documented as early as the one thousand nine hundred seventy five edition of the System three hundred seventy manual, specifically on page one hundred twenty five. A version of the stack also appears in the one thousand nine hundred eighty three edition of the `I B M` manual, in Appendix A. Treiber's specific contribution was the insight that counted pointers are only necessary for the `pop` operation; the `push` operation can safely execute a single width `C A S` on the pointer alone, a point further elaborated by Michael in two thousand thirteen.
+The provided excerpt delves into the intricacies of designing lock free data structures, specifically a concurrent stack, and addresses the critical A B A problem in distributed and parallel computing. The core of this solution lies in the innovative use of the `Compare And Swap` primitive, augmented with a versioning mechanism.
+
+At the highest level, the code snippet illustrates a `stack` class and a `node` class. The `stack` class holds an `atomic` variable named `top`, which is a composite type containing both a pointer to a `node` and an integer counter. Similarly, the `node` class contains an `atomic` `next` pointer. The `atomic` keyword is fundamental here, indicating that operations on these variables are guaranteed to be indivisible, meaning they either complete entirely or do not occur at all, even in the presence of concurrent accesses from multiple threads. This atomicity is achieved through low level hardware support, often involving cache coherence protocols and memory barriers, which enforce strict ordering on memory operations across different processor cores.
+
+Consider the `stack dot push` operation. It begins with a `repeat` loop, characteristic of optimistic concurrency control. Within this loop, a thread first atomically loads the current `top` pointer and its associated counter, designated as `o` and `c` respectively. This read operation effectively captures the state of the stack's head at that instant. Next, the new node `n`, intended to be pushed onto the stack, has its `next` pointer set to the previously loaded `o`. This effectively links the new node to the current top of the stack, preparing it to become the new head. The critical step is the `until top dot C A S` operation. This `C A S` attempts to atomically update the `top` variable. It succeeds only if the current value of `top` is still `(o, c)`—that is, the pointer and the counter both match the values observed at the beginning of the loop. If they match, `top` is updated to `(n, c)`. The important point here is that the counter `c` itself is not incremented in the `push` operation. If another thread modified the `top` in any way between the `load` and the `C A S`, the `C A S` will fail, and the `repeat` loop will cause the current thread to retry the entire operation, loading the new `top` and attempting the `C A S` again.
+
+The `stack dot pop` operation mirrors the `push` in its optimistic `repeat` loop structure. It also begins by atomically loading the current `top` and its counter `(o, c)`. A base case check immediately returns null if the stack is empty. If not empty, the `next` pointer of the current top node `o` is loaded into `n`. This `n` is the node that would become the new top if the `pop` operation succeeds. The crucial difference from `push` lies in the `C A S` operation: `until top dot C A S((o, c), (n, c+1), R or or)`. Here, the `C A S` attempts to replace `(o, c)` with `(n, c+1)`. Notice the `c+1`. This increment of the counter `c` upon a successful `pop` is the cornerstone of how this lock free algorithm addresses the A B A problem.
+
+The A B A problem arises in concurrent systems when a shared memory location, often a pointer, is observed to have a value `A` by one thread, then another thread modifies it to `B`, and subsequently changes it back to `A` before the first thread completes its operation. If the first thread then performs a `Compare And Swap` that only checks the value of the pointer, it will incorrectly succeed because the pointer value is `A` again, even though the underlying state of the data structure has changed. For instance, in a lock free stack, a thread might read a pointer to `node A`. Before it can perform a `pop`, `node A` could be popped by another thread, then `node A`'s memory deallocated and immediately reallocated for a new `node C`, which is then pushed onto the stack, coincidentally occupying the same memory address as the original `node A`. If the first thread then attempts to `pop` assuming `node A` is still the top, it would succeed with its `C A S` on the address, but operating on a logically different node.
+
+The "counted pointer" or "tagged pointer" technique, as employed here, solves the A B A problem by pairing the pointer with a monotonically increasing sequence number or counter. By requiring the `C A S` operation to match *both* the pointer and its associated counter, any intermediate modification that causes the pointer to change, even if it later reverts to its original value, will also cause the counter to increment. Thus, the `C A S` will fail because the counter component of the pair will no longer match the initially observed value, forcing a retry and ensuring correctness. The text explicitly states that `pop` increments the count, meaning the sequence number specifically tracks modifications that remove items from the stack, which are typically the source of A B A issues in stack structures.
+
+The implementation of such counted pointers often necessitates architectural support for "double width C A S" instructions. A standard `C A S` operates on a single machine word, typically thirty two bit or sixty four bit. To atomically update both a pointer (e.g., sixty four bit) and a counter (e.g., sixty four bit), the processor must be capable of atomically comparing and swapping a one hundred twenty eight bit value. The text mentions `x86/64` instructions like `cmpxchg8b` and `cmpxchg16b`. `cmpxchg8b` is used for atomically comparing and exchanging sixty four bit values, while `cmpxchg16b` is designed for one hundred twenty eight bit values, often employed for these very `C A S` on pointer-counter pairs, known as `double word compare and exchange`. The number of bits allocated for the sequence number is crucial; it must be large enough to prevent wrap around during any reasonable program execution, ensuring the counter does not cycle back to a previous value too quickly, which would reintroduce the A B A problem.
+
+Beyond the `C A S` mechanics, the discussion extends to the broader topic of memory reclamation in concurrent environments. In manually managed languages like C plus plus, when a node is popped, its memory needs to be deallocated. However, if another thread still holds a reference to that popped node, deallocating it prematurely can lead to use after free errors or memory corruption. The challenge is that a programmer cannot simply reason about when a pointer will "reappear" without a robust system. This is where `safe memory reclamation` (S M R) strategies become indispensable. Unlike garbage collected languages where memory is automatically managed and objects are not deallocated as long as reachable, S M R in C plus plus requires explicit mechanisms to delay deallocation until all concurrent uses of a datum have completed. Examples of S M R include `hazard pointers`, `read copy update` (R C U), or `epoch based reclamation`. These techniques ensure that memory is not freed while any thread might still be accessing it, thus preventing invalid memory accesses and making the lock free data structure truly safe, even when pointer values are reused. The passage emphasizes that the presented stack relies on the assumption that a pointer will not reappear, which would only hold true in the presence of a strong S M R mechanism or a garbage collector that prevents immediate address reuse. Without it, even with the counted pointer, issues can arise if a node's memory is prematurely recycled and reused for a new node with a new counter value, but the old pointer could still be mistakenly held by a different thread, leading to potential data corruption.

@@ -1,0 +1,58 @@
+=
+
+Check for
+updates
+
+Read-Mostly Atomicity
+
+In Chapter 4 we considered the topic of busy-wait mutual exclusion, which achieves atomic-
+ity by allowing only one thread at a time to execute a critical section. While mutual exclusion
+1s sufficient to ensure atomicity, it is by no means necessary. Any mechanism that satisfies
+the ordering constraints of Sec. 3.1.2 will also suffice. In particular, read-mostly optimiza-
+tions exploit the fact that operations can safely execute concurrently, while still maintaining
+atomicity, if they read shared data without writing it.
+
+Section 6.1 considers the simplest read-mostly optimization: the reader-writer lock, which
+allows multiple readers to occupy their critical section concurrently, but requires writers (that
+1s, threads that may update shared data, in addition to reading it) to exclude both readers
+and other writers. To use the “reader path” of a reader-writer lock, a thread must know, at
+the beginning of the critical section, that it will never attempt to write. Sequence locks, the
+subject of Sec. 6.2, relax this restriction by allowing a reader to “upgrade” to writer status
+if it forces all concurrent readers to back out and retry their critical sections. (Transactional
+memory, which we will consider in Chapter 9, can be considered a generalization of sequence
+locks. TM systems typically automate the back-out-and-retry mechanism; sequence locks
+require the programmer to implement it by hand.) Finally read-copy update (RCU), the
+subject of Sec. 6.3, explores an extreme position in which the overhead of synchronization
+1s shifted almost entirely off of readers and onto writers, which are assumed to be quite rare.
+
+6.1 Reader-Writer Locks
+
+Reader-writer locks, first suggested by Courtois et al. (1971), relax the constraints of mutual
+exclusion to permit more than one thread to inspect a shared data structure simultaneously,
+so long as none of them modifies it. Critical sections are separated into two classes: writes,
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 103
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_6
+Check for updates.
+
+Chapter six, Read Mostly Atomicity.
+
+In Chapter four, we considered the topic of busy wait mutual exclusion, which achieves atomicity by allowing only one thread at a time to execute a critical section. While mutual exclusion is sufficient to ensure atomicity, it is by no means necessary. Any mechanism that satisfies the ordering constraints of Section three point one point two will also suffice. In particular, read mostly optimizations exploit the fact that operations can safely execute concurrently, while still maintaining atomicity, if they read shared data without writing it.
+
+Section six point one considers the simplest read mostly optimization: the reader writer lock, which allows multiple readers to occupy their critical section concurrently, but requires writers, that is, threads that may update shared data, in addition to reading it, to exclude both readers and other writers. To use the “reader path” of a reader writer lock, a thread must know, at the beginning of the critical section, that it will never attempt to write. Sequence locks, the subject of Section six point two, relax this restriction by allowing a reader to “upgrade” to writer status if it forces all concurrent readers to back out and retry their critical sections. Transactional Memory systems typically automate the back out and retry mechanism. Sequence locks require the programmer to implement it by hand. Finally, Read Copy Update, R C U, the subject of Section six point three, explores an extreme position in which the overhead of synchronization is shifted almost entirely off of readers and onto writers, which are assumed to be quite rare.
+
+Six point one, Reader Writer Locks.
+
+Reader writer locks, first suggested by Courtois et al., nineteen seventy one, relax the constraints of mutual exclusion to permit more than one thread to inspect a shared data structure simultaneously, so long as none of them modifies it. Critical sections are separated into two classes: writes.
+
+The Authors, under exclusive license to Springer Nature Switzerland A G two thousand twenty four. M L Scott and T Brown, Shared Memory Synchronization, Synthesis Lectures on Computer Architecture, H T T P S colon slash slash D O I dot org slash ten dot one zero zero seven slash nine seven eight hyphen three hyphen zero three one hyphen three eight six eight four hyphen eight underscore six.
+In the realm of concurrent systems, the fundamental challenge lies in ensuring that operations on shared data maintain integrity, a property known as atomicity. An operation is atomic if it appears to execute as a single, indivisible unit, either completing entirely or having no effect whatsoever, even in the presence of other concurrent operations. Traditionally, achieving atomicity for critical sections, which are code regions accessing shared resources, has often relied on mutual exclusion. This mechanism ensures that only one thread can execute within a critical section at any given moment, thereby preventing race conditions and ensuring data consistency. However, while mutual exclusion guarantees atomicity, it is not universally necessary for all types of concurrent operations and can introduce significant performance bottlenecks, particularly in scenarios where data is predominantly read rather than written.
+
+This insight leads to the exploration of read mostly optimizations, which are designed to enhance concurrency by relaxing the strict mutual exclusion requirement for read operations, while still upholding atomicity. A primary example of such an optimization is the reader writer lock. This synchronization primitive is structured to allow multiple threads to concurrently read shared data, thereby increasing parallelism. However, it enforces exclusive access for write operations, meaning only one writer can modify the data at a time, and any active writer prevents both other writers and all readers from accessing the data. The design differentiates between the "reader path", which is intended to be fast and non blocking for concurrent reads, and the "writer path", which necessitates strict exclusion. A key challenge arises when a thread initially holding a reader lock attempts to "upgrade" to writer status. This operation can be complex to implement correctly without introducing deadlocks or livelocks, as it requires the reader to transition from shared access to exclusive ownership.
+
+Beyond the classic reader writer lock, more advanced mechanisms have been developed to manage concurrency in read mostly environments, often shifting the burden of synchronization away from the reader path. One such approach is Transactional Memory, or T M. This paradigm allows threads to speculatively execute critical sections without explicit locks. Each operation is part of a transaction that logically executes atomically. If conflicts are detected during concurrent execution, the system automatically triggers a "back out and retry" mechanism, rolling back the conflicting transaction and re attempting it. T M systems aim to automate the complex, error prone manual synchronization found in traditional lock based programming, abstracting away much of the underlying coordination.
+
+Another sophisticated read mostly technique is the sequence lock. This mechanism provides a way for readers to access shared data without acquiring any locks. Instead, writers increment a sequence counter before and after modifying the shared data. Readers, before and after reading, check this sequence counter. If the counter value is odd or changes between the initial and final checks, it indicates that a write operation occurred during the read, and the reader must retry its operation. This design effectively shifts the synchronization overhead almost entirely from readers, who perform simple checks and retries, to writers, who are responsible for updating the sequence number and ensuring atomicity of their modifications.
+
+A further evolution in read mostly synchronization is Read Copy Update, or R C U. The fundamental principle of R C U is that writers create a new, modified copy of the data structure. Once the modifications are complete, the writer atomically updates a pointer to point to this new version. Readers continue to access the old version of the data structure until they are all finished. The old version is only reclaimed and deallocated once all outstanding readers who might still be referencing it have completed their operations. This mechanism excels in scenarios where reads are frequent and fast, making the reader side nearly lock free, while the overhead, including memory allocation and deferred reclamation, is concentrated on the less frequent writer operations. This represents a strategic trade off, optimizing for the common case of reads by making writes more complex, yet infrequent.

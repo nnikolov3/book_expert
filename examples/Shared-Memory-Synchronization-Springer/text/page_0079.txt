@@ -1,0 +1,66 @@
+4.5 Special-Case Optimizations 81
+
+processor. More significantly, since locks are typically used to protect shared data structures,
+we can expect the cache lines of the protected structure to migrate to the acquiring core, and
+this migration will be cheaper if the core 1s nearby rather than remote.
+
+Radovi¢ and Hagersten (2002) were the first to observe the importance of locality in
+locking, and to suggest passing locks to nearby cores when possible. Their “RH lock,”
+developed for a machine with two NUMA “clusters,” is essentially a pair of test_and_set
+locks, one on each cluster, with one initialized to FREE and the other to REMOTE. A thread
+attempts to acquire the lock by swapping its id into its own cluster’s lock. If it gets back
+FREE or L_FREE (locally free), it has succeeded. If it gets back a thread id, it backs off and
+tries again. If it gets back REMOTE, it has become the local representative of its cluster, in
+which case it spins (with a different set of backoff parameters) on the other cluster’s lock,
+attempting to CAS it from FREE to REMOTE. To release the lock, a thread usually attempts to
+CAS it from its own id to FREE. If this fails, a nearby thread must be spinning, in which case
+the releasing thread stores L_FREE to the lock. Occasionally (subject to a tuning parameter),
+a releasing thread immediately writes FREE to the lock, allowing it to be grabbed by a remote
+contender, even if there are nearby ones as well.
+
+While the RH lock could easily be adapted to larger numbers of clusters, space consump-
+tion would be linear in the number of such clusters—a property Radovi¢ and Hagersten
+considered undesirable. Their subsequent “hierarchical backoff” (HBO) lock (Radovic and
+Hagersten 2003) relies on statistics instead. In effect, they implement a test_and_set lock
+with CAS, in such a way that the lock variable indicates the cluster in which the lock currently
+resides. Nearby and remote threads then use different backoff parameters, so that nearby
+threads are more likely than remote threads to acquire the lock when it 1s released.
+
+While a test_and_set lock is naturally unfair (and subject to the theoretical possibility
+of starvation), the RH and HBO locks are likely to be even less fair in practice. Ideally, one
+should like to be able to explicitly balance fairness against locality. Toward that end, Dice
+et al. (2012) present a general NUMA-aware design pattern that can be used with (almost)
+any underlying locks, including (FIFO) queued locks. Their cohort locking mechanism
+employs a global lock that indicates which cluster currently owns the lock, and a local lock
+for each cluster that indicates the owning thread. The global lock needs to allow release
+to be called by a different thread from the one that called acquire; the local lock needs to
+be able to tell, at release time, whether any other local thread is waiting. Apart from these
+requirements, cohort locking can be used with any known form of lock. Experimental results
+indicate particularly high throughput (and excellent fairness, subject to locality) using MCS
+locks at both the global and cluster level.
+
+While the techniques discussed here improve locality only by controlling the order in
+which threads acquire a lock, it 1s also possible to control which threads perform the oper-
+ations protected by the lock, and to assign operations that access similar data to the same
+thread, to minimize cache misses. Such locality-conscious allocation of work can yield
+major performance benefits in systems that assign fine-grain computational tasks to worker
+Four point five Special Case Optimizations
+
+processor. More significantly, since locks are typically used to protect shared data structures, we can expect the cache lines of the protected structure to migrate to the acquiring core, and this migration will be cheaper if the core is nearby rather than remote.
+
+Radović and Hagersten two thousand two were the first to observe the importance of locality in locking, and to suggest passing locks to nearby cores when possible. Their R H lock, developed for a machine with two N U M A clusters, is essentially a pair of test and set locks, one on each cluster, with one initialized to free and the other to remote. A thread attempts to acquire the lock by swapping its id into its own cluster’s lock. If it gets back free or L free, locally free, it has succeeded. If it gets back a thread id, it backs off and tries again. If it gets back remote, it has become the local representative of its cluster, in which case it spins with a different set of backoff parameters on the other cluster’s lock, attempting to C A S it from free to remote. To release the lock, a thread usually attempts to C A S it from its own id to free. If this fails, a nearby thread must be spinning, in which case the releasing thread stores L free to the lock. Occasionally, subject to a tuning parameter, a releasing thread immediately writes free to the lock, allowing it to be grabbed by a remote contender, even if there are nearby ones as well.
+
+While the R H lock could easily be adapted to larger numbers of clusters, space consumption would be linear in the number of such clusters, a property Radović and Hagersten considered undesirable. Their subsequent hierarchical backoff H B O lock, Radović and Hagersten two thousand three, relies on statistics instead. In effect, they implement a test and set lock with C A S, in such a way that the lock variable indicates the cluster in which the lock currently resides. Nearby and remote threads then use different backoff parameters, so that nearby threads are more likely than remote threads to acquire the lock when it is released.
+
+While a test and set lock is naturally unfair, and subject to the theoretical possibility of starvation, the R H and H B O locks are likely to be even less fair in practice. Ideally, one should like to be able to explicitly balance fairness against locality. Toward that end, Dice et al two thousand twelve present a general N U M A aware design pattern that can be used with almost any underlying locks, including F I F O queued locks. Their cohort locking mechanism employs a global lock that indicates which cluster currently owns the lock, and a local lock for each cluster that indicates the owning thread. The global lock needs to allow release to be called by a different thread from the one that called acquire; the local lock needs to be able to tell, at release time, whether any other local thread is waiting. Apart from these requirements, cohort locking can be used with any known form of lock. Experimental results indicate particularly high throughput, and excellent fairness, subject to locality, using M C S locks at both the global and cluster level.
+
+While the techniques discussed here improve locality only by controlling the order in which threads acquire a lock, it is also possible to control which threads perform the operations protected by the lock, and to assign operations that access similar data to the same thread, to minimize cache misses. Such locality conscious allocation of work can yield major performance benefits in systems that assign fine grain computational tasks to worker.
+The fundamental challenge addressed in this discussion pertains to the efficient management of shared data structures within a multi processor environment, particularly in systems exhibiting Non Uniform Memory Access, or N U M A, characteristics. In such architectures, the time taken for a processor core to access memory varies significantly based on whether the memory is local to its N U M A cluster or located in a remote cluster. When a thread accesses a shared data structure, the relevant cache lines, which are granular units of data transfer between main memory and the processor's cache, must be brought into the acquiring core's cache. This cache line migration incurs a performance cost that is substantially lower if the destination core is within the same N U M A cluster as the data's current owner, demonstrating the critical importance of data locality.
+
+Early observations by Radovic and Hagersten in two thousand two highlighted the significance of maintaining locality when dealing with locks, which are synchronization primitives used to protect shared data from concurrent access. They proposed the R H lock, designed for a two cluster N U M A machine. This lock conceptually consists of a pair of 'test and set' operations, one for each N U M A cluster. A 'test and set' is an atomic instruction that reads the current value of a memory location and simultaneously writes a new value to it, ensuring that this read modify write sequence appears as a single, indivisible operation to other concurrent processors. In the R H lock, one lock is initialized to 'F R E E' and the other to 'R E M O T E'. When a thread attempts to acquire the lock, it performs an atomic swap operation, replacing the lock's current identifier with its own thread I D. If the swap returns 'F R E E' or 'L underbar F R E E' — indicating that the lock was locally available — the acquisition is successful. Conversely, if it returns a thread I D, the acquiring thread must back off and retry. If the lock returns 'R E M O T E', it signifies that another cluster's representative owns the lock, and the local thread must then attempt to acquire the other cluster's lock. This often involves a 'spin wait' loop, where the thread repeatedly checks the lock status, potentially with an exponential backoff strategy to reduce contention. The release of an R H lock involves attempting to atomically change its state from 'R E M O T E' to 'F R E E' using a 'compare and swap', or C A S, instruction. If this operation fails, it implies that a nearby thread is already spinning on the lock, and the releasing thread must then store 'L underbar F R E E' to the lock, allowing a potentially remote contender to acquire it. The inherent design of the R H lock, particularly its use of 'test and set' and reliance on spinning, can lead to unfairness, where some threads might repeatedly lose out in contention for the lock, leading to a theoretical possibility of starvation.
+
+To mitigate some of the fairness and scalability issues, a subsequent development, the Hierarchical Backoff, or H B O, lock, proposed by Radovic and Hagersten in two thousand three, focuses on statistical properties rather than a strict linear scaling with the number of clusters. The H B O lock also uses 'compare and swap' operations, where the lock variable itself indicates which N U M A cluster currently holds the lock. This allows nearby threads to employ different backoff parameters than remote threads when attempting to acquire the lock, aiming to optimize for common access patterns. While an improvement, both R H and H B O locks tend to exhibit less fairness in practice due to their preference for locality.
+
+A more generalized approach to N U M A aware locking, the cohort locking mechanism, was presented by Dice and colleagues in two thousand twelve. This design pattern is highly versatile, capable of being implemented on top of various underlying locking primitives, including F I F O, or First In First Out, queued locks. The core principle of cohort locking involves a two tier hierarchy: a global lock and multiple local locks, one for each N U M A cluster. The global lock serves to identify which N U M A cluster currently owns the shared resource protected by the lock. Concurrently, within that owning cluster, a local lock indicates the specific thread that possesses the lock. This separation of concerns allows for efficient arbitration at the cluster level and precise thread level control. A crucial design requirement for cohort locks is that the local lock must permit a thread other than the acquiring thread to release it, and it must also provide a mechanism to determine if any other local threads are currently waiting to acquire the lock. Experimental evaluations, particularly when combined with M C S, or Mellor Crummey Scott, locks at both global and cluster levels, demonstrate that cohort locking achieves notably high throughput and excellent fairness, primarily due to its strategic exploitation of locality.
+
+The overarching principle demonstrated by these lock optimizations is the profound impact of locality on parallel system performance. By intelligently controlling the order in which threads attempt to acquire locks and by orchestrating the assignment of operations that access similar data to the same worker threads, it is possible to significantly reduce costly cache misses. Such locality conscious allocation of both computational tasks and their associated data provides substantial performance benefits in complex, modern processor architectures, where memory access patterns are a dominant factor in overall system throughput.

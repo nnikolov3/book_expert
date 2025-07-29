@@ -1,0 +1,92 @@
+2.2 Memory Consistency 21
+
+Table 2.1 Understanding the pseudocode.
+
+Throughout the remainder of this monograph, pseudocode will be set in sans serif font
+(code in real programming languages will be set in typewriter font). We will use the
+term synchronizing access to refer to explicit loads and stores, fences, and atomic read-
+modify-write (fetch_and_®) operations (listed in Table 2.4). Other memory accesses will
+be referred to as “ordinary.” We will assume the following:
+
+coherence (per-location)
+
+For any given location, all accesses (ordinary and synchronizing) to that location
+appear in some global total order.
+
+global order (for synchronizing accesses)
+
+There is a global, total order on synchronizing accesses (to all locations, by all
+threads).
+
+program order (per-thread)
+
+All accesses by a given thread occur (from that thread’s perspective) in the order
+specified by programming language semantics. Note that this order does not
+necessarily correspond to physical reality in the implementation: both the com-
+piler and the hardware may reorder assembly-level instructions if they are able
+to prove that a sequential program cannot tell the difference. Moreover, since
+ordinary accesses of different threads are ordered only transitively via local order
+(below), a thread is generally unable to observe the program order of its peers.
+
+local order
+
+Within a given thread, each synchronizing access is ordered with respect to pre-
+vious and subsequent accesses (both ordinary and synchronizing) as specified
+by (implicit or explicit) {R,W}||{R,W} annotations. For fully ordered (RW|[RW)
+synchronizing instructions, global and program order are consistent.
+
+values read
+
+A read instruction may return the value written by the most recent write (to the
+same location) that is ordered before the read. It may also, in some cases, return
+the value written by an unordered write. More detail on memory models can be
+found in Sec. 3.3.
+
+read-modify-write instructions, such as those described below in Sec.2.3, count as both
+reads and writes in such annotations. So, for example, f.store(1, W||) might be used in Figure
+2.5 at line 2 of thread 1 to order the (synchronizing) store to f after the (ordinary) write
+to x, and f.load(|[RW) might be used at line 1 of thread 2 to order the (synchronizing)
+load of f before both the (ordinary) read of x and any other subsequent reads and writes.
+Similarly, fence(RW||RW) would indicate a full fence, ordered globally with respect to all
+other synchronizing instructions and locally with respect to all preceding and subsequent
+ordinary accesses in its thread. For simplicity, we will assume that synchronizing stores and
+fetch_and_® operations are always write atomic.
+
+As a general rule, we will use an explicit load or store instruction for any access that may
+race with a conflicting access in another thread (more on the notion of races in Sec. 3.4.2). In
+Two point two Memory Consistency.
+
+Table two point one Understanding the pseudocode.
+
+Throughout the remainder of this monograph, pseudocode will be set in sans serif font. Code in real programming languages will be set in typewriter font. We will use the term synchronizing access to refer to explicit loads and stores, fences, and atomic read modify write, or fetch and Phi operations, listed in Table two point four. Other memory accesses will be referred to as "ordinary." We will assume the following:
+
+Coherence, per location: For any given location, all accesses, both ordinary and synchronizing, to that location appear in some global total order.
+
+Global order, for synchronizing accesses: There is a global, total order on synchronizing accesses, to all locations, by all threads.
+
+Program order, per thread: All accesses by a given thread occur, from that thread's perspective, in the order specified by programming language semantics. Note that this order does not necessarily correspond to physical reality in the implementation, as both the compiler and the hardware may reorder assembly level instructions if they are able to prove that a sequential program cannot tell the difference. Moreover, since ordinary accesses of different threads are ordered only transitively via local order, described below, a thread is generally unable to observe the program order of its peers.
+
+Local order: Within a given thread, each synchronizing access is ordered with respect to previous and subsequent accesses, both ordinary and synchronizing, as specified by implicit or explicit R W or R W annotations. For fully ordered R W or R W synchronizing instructions, global and program order are consistent.
+
+Values read: A read instruction may return the value written by the most recent write to the same location that is ordered before the read. It may also, in some cases, return the value written by an unordered write. More detail on memory models can be found in Sec. three point three.
+
+Read modify write instructions, such as those described below in Sec. two point three, count as both reads and writes in such annotations. So, for example, f dot store parenthesis one comma W parenthesis might be used in Figure two point five at line two of thread one to order the synchronizing store to f after the ordinary write to x, and f dot load parenthesis R W parenthesis might be used at line one of thread two to order the synchronizing load of f before both the ordinary read of x and any other subsequent reads and writes. Similarly, fence parenthesis R W or R W parenthesis would indicate a full fence, ordered globally with respect to all other synchronizing instructions and locally with respect to all preceding and subsequent ordinary accesses in its thread. For simplicity, we will assume that synchronizing stores and fetch and Phi operations are always write atomic. As a general rule, we will use an explicit load or store instruction for any access that may race with a conflicting access in another thread. More on the notion of races can be found in Sec. three point four point two.
+The document elaborates on fundamental concepts within the domain of memory consistency models, a critical aspect of computer architecture and concurrent programming that governs how multiple processors or threads perceive the order and values of shared memory operations. The text establishes a formal framework for understanding pseudocode representations of memory accesses.
+
+Central to this framework is the concept of **coherence, specifically per-location coherence**. This principle dictates that for any single memory address, all memory accesses, whether they are ordinary reads or writes, or explicit synchronizing operations, must appear to occur in a single, consistent total order to all observing entities. This ensures that every processor, or thread, observes writes to a particular memory location in the same sequence, thereby preventing conflicting views of the same data item and maintaining data integrity at the granular level of a single memory word.
+
+Extending beyond per-location coherence, the document introduces a **global order for synchronizing accesses**. This establishes an even stronger guarantee, asserting that all synchronizing operations, across all memory locations and involving every thread in the system, can be arranged into a single, universally agreed upon, total sequence. This global ordering is a powerful abstraction that simplifies reasoning about inter-thread communication and critical sections, as it implies that any thread observing one synchronizing operation can infer the relative ordering of all other synchronizing operations performed by other threads. Such a stringent ordering constraint typically comes with performance implications but is essential for upholding strong memory models, such as sequential consistency for synchronization.
+
+The concept of **program order per-thread** describes the sequence of operations as specified by the programming language semantics within the context of a single thread. It represents the intuitive execution order that a programmer expects. However, the text critically highlights a divergence between this logical program order and the physical reality of execution. Both optimizing compilers and modern hardware microarchitectures frequently reorder assembly-level instructions to enhance performance. This reordering is permissible, provided it does not alter the observable behavior of a single-threaded program, a property often referred to as the "as if sequential" rule. Nevertheless, in a multi-threaded environment, this reordering can lead to unexpected behaviors if not properly managed, as one thread is generally unable to observe the precise internal program order of another thread without explicit synchronization.
+
+This leads to the notion of **local order**, which precisely defines how synchronizing accesses impose ordering constraints within a single thread. Each synchronizing operation, whether implicit or explicit, is ordered with respect to both its preceding and subsequent memory accesses. This ordering is often specified through annotations like `R W or R W`, which denote memory barriers or fences. For instance, an `R W or R W` annotation signifies a full memory barrier, ensuring that all prior operations complete before any subsequent operations begin, from the perspective of that thread. When fully ordered synchronizing instructions are employed, the local order within a thread aligns seamlessly with the global order of synchronizing accesses, establishing a strong, predictable happens before relationship.
+
+The explanation of **values read** clarifies what a read instruction can legitimately return. Ideally, a read should return the value written by the most recent write to that same memory location that is ordered before the read according to the memory model. However, in more relaxed memory models, a read might, in certain cases, observe a value written by an "unordered" write. This means that without sufficient synchronization, a read operation might see a value from a write that has not yet been globally committed or has not yet propagated through the memory hierarchy in a fully ordered fashion. This ambiguity underscores the complexities introduced by relaxed memory models and the need for robust synchronization mechanisms.
+
+The document further delves into **read-modify-write instructions**, such as `fetch_and_Phi` operations, which are foundational atomic primitives in concurrent programming. These operations encapsulate a read, a modification, and a write as a single, indivisible unit, preventing other threads from observing any intermediate state. Such atomicity is crucial for correctly implementing locks, semaphores, and other synchronization constructs. The text notes that these operations count as both a read and a write for memory annotation purposes, meaning they participate in both read and write ordering rules.
+
+An illustrative example demonstrates the application of these ordering principles: A store operation, such as `f dot store paren one comma W or W paren`, performed at line two of thread one, is equipped with a `W or W` annotation. This ensures that the synchronizing store to `f` is ordered *after* an ordinary write to `x`. Consequently, any processor observing the store to `f` is guaranteed to also see the prior write to `x`. Conversely, a load operation, such as `f dot load paren R or R W paren`, at line one of thread two, carries an `R or R W` annotation. This synchronizing load of `f` is ordered *before* subsequent ordinary reads, such as the read of `x`, and any other later operations within thread two. This pattern establishes a critical "happens before" relationship across threads, ensuring that the write to `x` in thread one becomes visible to thread two before thread two attempts to read `x`, thereby preventing a data race.
+
+The concept of a **full fence**, denoted as `fence paren R W or R W paren`, is introduced as a particularly strong synchronization primitive. A full fence ensures that all memory operations initiated *before* the fence complete and become visible to other processors before any memory operations initiated *after* the fence begin. This creates a powerful ordering point, aligning both local program order and the global order of synchronizing accesses, making it indispensable for ensuring memory consistency in complex multi-threaded scenarios.
+
+Finally, the document assumes that **synchronizing stores and `fetch_and_Phi` operations are always write atomic**. This property guarantees that a store operation either completes entirely or not at all, and its effect becomes visible to other processors as a single, indivisible update. This prevents situations where a processor might observe a partial write, which is critical for maintaining data integrity, especially for multi-byte writes or when multiple threads concurrently modify the same memory location. The general rule is to use explicit load or store instructions for any access that might engage in a race with a conflicting access in another thread, underscoring the necessity of deliberate synchronization to manage the inherent complexities of concurrent access to shared memory.

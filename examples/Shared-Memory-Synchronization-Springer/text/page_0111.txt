@@ -1,0 +1,72 @@
+114 6 Read-Mostly Atomicity
+
+Single-pointer updates. Writers synchronize with one another explicitly. They make their
+updates visible to readers by performing a single atomic memory update—typically by
+“swinging” a pointer (under protection of a lock, or using CAS) to refer to the new version
+of (some part of) a data structure, rather than to the old version. Readers serialize before
+or after the writer depending on whether they see this update. (In either case, they see
+data that was valid at some point after they began their operation.)
+
+Unidirectional data traversal. To ensure consistency, readers must never inspect a pointer
+more than once. To ensure serializability (when it is desired), users must additionally
+ensure (via program logic) that if writers A and B modify different pointers, and A
+serializes before B, it 1s impossible for any reader to see B’s update but not A’s. The
+most straightforward way to ensure this is to require all structures to be trees, traversed
+from the root toward the leaves, and to arrange for writers to replace entire subtrees.
+
+Delayed reclamation of deallocated data. When a writer updates a pointer, readers that
+have already dereferenced the old version—but have not yet finished their operations—
+may continue to read old data for some time. Implementations of RCU must therefore
+provide a (potentially conservative) way for writers to tell that all readers that could still
+access old data have finished their operations and returned. Only then can the old data’s
+space be reclaimed.
+
+Implementations and applications of RCU vary in many details, and may diverge from the
+description above if the programmer is able to prove that (application-specific) semantics will
+not be compromised. We consider relaxations of the single-pointer update and unidirectional
+traversal properties below. First, though, we consider ways to implement relaxed reclamation
+and to accommodate, at minimal cost, machines with relaxed memory order.
+
+Grace Periods and Relaxed Reclamation. In alanguage and system with automatic garbage
+collection, the delayed reclamation property is trivial: the normal collector will reclaim old
+data versions when—and only when—no readers can see them any more. In the more
+common case of manual memory management, a writer may wait until all readers of old
+data have completed, and then reclaim space itself. Alternatively, it may append old data to
+a list for eventual reclamation by some other, bookkeeping thread. The latter option reduces
+latency for writers, potentially improving performance, but may also increase maximum
+space usage.
+
+Arguably the biggest differences among RCU implementations concern the “grace
+period” mechanism used (in the absence of a general-purpose garbage collector) to deter-
+mine when all old readers have completed. In a nonpreemptive OS kernel (where RCU was
+first employed), the writer can simply wait until a (voluntary) context switch has occurred
+in every hardware thread. Perhaps the simplest way to do this is to request migration to each
+hardware thread in turn: such a request will be honored only after any active reader on the
+target thread has completed.
+
+More elaborate grace period implementations can be used in more general contexts.
+Desnoyers et al. (2012, App. D) describe several implementations suitable for user-level
+Six, Read Mostly Atomicity.
+
+Single pointer updates. Writers synchronize with one another explicitly. They make their updates visible to readers by performing a single atomic memory update, typically by "swinging" a pointer, under protection of a lock, or using C A S, to refer to the new version of some part of a data structure, rather than to the old version. Readers serialize before or after the writer depending on whether they see this update. In either case, they see data that was valid at some point after they began their operation.
+
+Unidirectional data traversal. To ensure consistency, readers must never inspect a pointer more than once. To ensure serializability, when it is desired, users must additionally ensure via program logic that if writers A and B modify different pointers, and A serializes before B, it is impossible for any reader to see B's update but not A's. The most straightforward way to ensure this is to require all structures to be trees, traversed from the root toward the leaves, and to arrange for writers to replace entire subtrees.
+
+Delayed reclamation of deallocated data. When a writer updates a pointer, readers that have already dereferenced the old version, but have not yet finished their operations, may continue to read old data for some time. Implementations of R C U must therefore provide a potentially conservative way for writers to tell that all readers that could still access old data have finished their operations and returned. Only then can the old data's space be reclaimed.
+
+Implementations and applications of R C U vary in many details, and may diverge from the description above if the programmer is able to prove that application specific semantics will not be compromised. We consider relaxations of the single pointer update and unidirectional traversal properties below. First, though, we consider ways to implement relaxed reclamation and to accommodate, at minimal cost, machines with relaxed memory order.
+
+Grace Periods and Relaxed Reclamation. In a language and system with automatic garbage collection, the delayed reclamation property is trivial: the normal collector will reclaim old data versions when, and only when, no readers can see them any more. In the more common case of manual memory management, a writer may wait until all readers of old data have completed, and then reclaim space itself. Alternatively, it may append old data to a list for eventual reclamation by some other, bookkeeping thread. The latter option reduces latency for writers, potentially improving performance, but may also increase maximum space usage.
+
+Arguably the biggest differences among R C U implementations concern the "grace period" mechanism used, in the absence of a general purpose garbage collector, to determine when all old readers have completed. In a non preemptive O S kernel, where R C U was first employed, the writer can simply wait until a voluntary context switch has occurred in every hardware thread. Perhaps the simplest way to do this is to request migration to each hardware thread in turn: such a request will be honored only after any active reader on the target thread has completed.
+
+More elaborate grace period implementations can be used in more general contexts. Desnoyers et al. two thousand twelve, App D, describe several implementations suitable for user level.
+The foundational principles elucidated on this page pertain to Read Copy Update, or R C U, a highly efficient synchronization mechanism employed in concurrent programming, particularly within operating systems kernels and other read heavy environments. The core tenet of R C U is to facilitate concurrent reading of shared data structures without requiring readers to acquire locks, thereby minimizing overhead and improving scalability, especially under high read contention.
+
+One critical aspect discussed is **single pointer updates**. In the R C U paradigm, writers, aiming to modify a data structure, do so by creating a new version of the data, applying their changes to this new, private copy. Once modifications are complete, the writer atomically "swings" a pointer from referencing the old version of the data to referencing the newly updated version. This atomic update is typically achieved using hardware primitives like Compare And Swap, or C A S, operations, or through the protection of a brief, minimal critical section protected by a lock. The key here is that the pointer update itself is indivisible, ensuring that any subsequent reader will either see the entirely old version or the entirely new version, but never a partially updated state. Readers, conversely, operate without acquiring any locks, thereby avoiding the contention and performance penalties associated with traditional lock based synchronization. The visibility of updates to readers depends on the timing of their access relative to the writer's atomic pointer swing. A reader might observe the old version if it commenced its operation before the pointer was updated, or it might observe the new version if it began after. To achieve serializability, which means ensuring that the concurrent operations appear to execute in some sequential order, readers must serialize with writers. This implies that readers initiating their traversal after the writer's update will always see the new data, thus ensuring a consistent view from that point onwards.
+
+The concept of **unidirectional data traversal** is presented as a crucial constraint for maintaining consistency and simplifying reasoning in R C U based systems. This principle mandates that data structures, such as trees, must be traversed in a predictable, single direction, for instance, always from the root towards the leaves. If writers A and B independently modify different pointers within such a structure, and writer A's update is completed before writer B's, the unidirectional traversal property ensures that a reader traversing the structure cannot inadvertently observe a state where B's update is visible but A's is not. By requiring all structural changes to be propagated from the root towards the leaves, and by demanding that writers replace entire subtrees rather than piecemeal modifications, it becomes impossible for any reader to see an inconsistent state arising from the interleaving of concurrent writes. This strict traversal rule simplifies the complexity of concurrency control, making it easier to guarantee that readers encounter a consistent snapshot of the data.
+
+Perhaps the most defining feature of R C U is **delayed reclamation of deallocated data**. When a writer updates a pointer to point to a new version of a data structure, the old version is not immediately deallocated. Instead, it remains in memory for a period. This mechanism ensures that any readers that began their operations before the pointer was swung, and might still be referencing the old data, can continue to do so without encountering invalid memory accesses, or what is known as a use after free error. The old data is only reclaimed and its memory space deallocated once all readers that could potentially still be accessing it have completed their operations. The challenge then becomes determining when this condition is met. R C U implementations must provide a mechanism to identify when all readers that might have dereferenced the old version have finished their critical sections, at which point the memory can be safely recycled. This strategy fundamentally optimizes for read performance by deferring the memory reclamation burden to a later, non critical path, but it necessitates mechanisms to track reader activity.
+
+The concept of **grace periods and relaxed reclamation** delves into the practical implementation of delayed reclamation. A grace period is defined as a duration during which the old data must be preserved. It concludes only when all readers that were active when the update occurred have completed their read side critical sections. The simplest implementation of a grace period in a non preemptive O S kernel, where R C U was first employed, involves the writer simply waiting for a voluntary context switch to occur on every active hardware thread. This ensures that each thread has had an opportunity to complete any ongoing R C U read operations. More generally, determining the end of a grace period involves mechanisms such as waiting for all threads to pass a specific synchronization point or observing the completion of all outstanding read side critical sections. The alternative approach involves appending the old data to a list for eventual reclamation by a separate bookkeeping thread, akin to a garbage collector. This method typically reduces the latency for writers, as they do not directly wait for readers, but it can potentially increase the maximum memory usage because old data might persist in memory for longer periods. The choice of grace period mechanism involves a trade off between writer latency, memory footprint, and implementation complexity, underscoring fundamental design considerations in concurrent system engineering. These mechanisms allow R C U to provide a robust framework for managing shared data in highly concurrent environments where reads vastly outnumber writes.

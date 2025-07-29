@@ -1,0 +1,63 @@
+136 7 Synchronization and Scheduling
+
+To accommodate fast user-level synchronization across address spaces, Franke and Rus-
+sell (2002) introduced the notion of a futex—a fast userspace mutex. Now widely used in
+Linux and other operating systems, futexes require at least one page of memory to be mapped
+into the address spaces of all processes sharing a lock. The futex syscalls are intended for use
+only by user-space thread libraries, and are not ordinarily exported to application program-
+mers.” They manipulate data structures in shared memory, and call into the kernel only when
+required. In any thread that does need to block, the kernel-level context block 1s modified to
+indicate the location on which the thread is waiting; this allows the OS to recover cleanly if a
+process misuses the interface, or terminates unexpectedly. In a similar vein, Oracle’s Solaris
+operating system provides lwp_park and lwp_unpark syscalls that allow a thread to
+be descheduled and rescheduled explicitly. Oracle’s adaptive mutex library uses these calls
+to build an enhanced analog of futex. Johnson et al. (2010) discuss the behavior of these
+mechanisms under a variety of workloads, and present adaptive techniques to control not
+only the duration of spinning, but also the number of threads that are permitted to spin at
+any given time.
+
+7.5.2 Preemption and Convoys
+
+Authors of parallel programs have known for decades that performance can suffer badly if
+a thread is preempted while holding a lock; this is sometimes referred to as inopportune
+preemption. If other threads attempt to acquire the lock, they will need to wait until the lock
+holder is rescheduled and can complete its critical section. If threads block while waiting,
+there 1s reason to hope that the preempted thread will acquire one of the freed-up kernel
+threads or cores, but if threads spin while waiting instead, an entire scheduling quantum (or
+more) may expire before the lock holder gets to run again.
+
+Inopportune preemption can generate contention even in otherwise well-balanced pro-
+grams. Blasgen et al. (1979) describe what they call the convoy phenomenon. Suppose that
+every thread in an application attempts to execute a brief critical section on lock L on a
+regular but infrequent basis—say once per millisecond. Normally we would not expect the
+lock to be a bottleneck. But if lock holder T is preempted for more than a millisecond, every
+other thread may be waiting for L by the time 7 runs again, and the lock may become a
+bottleneck. Worse, if threads tend to follow similar code paths, their actions coming out
+of back-to-back critical sections may generate a storm of cache coherence traffic, and they
+may end up contending for whatever lock is accessed next in program order. Over time
+the contention may abate, as execution histories drift apart, but as soon as a lock holder 1s
+preempted again, the pattern may repeat.
+
+To address the convoy phenomenon, Edler etal. (1988) introduced the notion of temporary
+non-preemption. In aregion of memory shared between them, the user thread and the kernel
+maintain a pair of flags. The first flag 1s written by the user thread and read by the kernel: it
+
+2 Drepper (2011) discusses some of the surprisingly subtle aspects of using futexes correctly.
+one hundred thirty six. Seven Synchronization and Scheduling. To accommodate fast user level synchronization across address spaces, Franke and Russell two thousand introduced the notion of a futex, a fast userspace mutex. Now widely used in Linux and other operating systems, futexes require at least one page of memory to be mapped into the address spaces of all processes sharing a lock. The futex syscalls are intended for use only by user space thread libraries, and are not ordinarily exported to application programmers. They manipulate data structures in shared memory, and call into the kernel only when required. In any thread that does need to block, the kernel level context block is modified to indicate the location on which the thread is waiting. This allows the O S to recover cleanly if a process misuses the interface, or terminates unexpectedly. In a similar vein, Oracle's Solaris operating system provides l w p park and l w p unpark syscalls that allow a thread to be descheduled and rescheduled explicitly. Oracle's adaptive mutex library uses these calls to build an enhanced analog of futex. Johnson et al. two thousand ten discuss the behavior of these mechanisms under a variety of workloads, and present adaptive techniques to control not only the duration of spinning, but also the number of threads that are permitted to spin at any given time.
+
+seven point five point two Preemption and Convoys. Authors of parallel programs have known for decades that performance can suffer badly if a thread is preempted while holding a lock. This is sometimes referred to as inopportune preemption. If other threads attempt to acquire the lock, they will need to wait until the lock holder is rescheduled and can complete its critical section. If threads block while waiting, there is reason to hope that the preempted thread will acquire one of the freed up kernel threads or cores, but if threads spin while waiting instead, an entire scheduling quantum or more may expire before the lock holder gets to run again.
+
+Inopportune preemption can generate contention even in otherwise well balanced programs. Blasgen et al. nineteen seventy nine describe what they call the convoy phenomenon. Suppose that every thread in an application attempts to execute a brief critical section on lock L on a regular but infrequent basis, say once per millisecond. Normally we would not expect the lock to be a bottleneck. But if lock holder T is preempted for more than a millisecond, every other thread may be waiting for L by the time T runs again, and the lock may become a bottleneck. Worse, if threads tend to follow similar code paths, their actions coming out of back to back critical sections may generate a storm of cache coherence traffic, and they may end up contending for whatever lock is accessed next in program order. Over time the contention may abate, as execution histories drift apart, but as soon as a lock holder is preempted again, the pattern may repeat.
+
+To address the convoy phenomenon, Edler et al. nineteen eighty eight introduced the notion of temporary non preemption. In a region of memory shared between them, the user thread and the kernel maintain a pair of flags. The first flag is written by the user thread and read by the kernel. It
+
+two Drepper two thousand eleven discusses some of the surprisingly subtle aspects of using futexes correctly.
+The page discusses advanced synchronization mechanisms and their implications in concurrent programming, focusing on the concept of futexes and the problem of convoy phenomena.
+
+Firstly, it introduces futexes, which are user level synchronization primitives designed for fast user level synchronization across address spaces. Franke and Russell, in two thousand two, proposed futexes as a fast userspace mutex. These primitives are now widely adopted in operating systems like Linux. Futexes require at least one page of memory to be mapped into the address spaces of all processes sharing a lock. The futex synchronization libraries are intended for use with application program interfaces and are not typically exported directly to user space. They operate by manipulating data structures in shared memory, and kernel level calls are invoked only when a thread needs to block. This kernel intervention allows the operating system to recover cleanly if a process misuses the interface or terminates unexpectedly. In a similar vein, Oracle's Solaris operating system provides system calls like 'lwp_park' and 'lwp_unpark' that allow a thread to be descheduled and rescheduled explicitly. Oracle's adaptive mutex library leverages these system calls to construct an enhanced analog of futexes. Johnson and colleagues, in two thousand ten, analyzed the behavior of these mechanisms across various workloads, presenting adaptive techniques that control not only the duration of spinning but also the number of threads permitted to spin at any given time. This adaptive spinning is a crucial optimization, balancing the overhead of context switching against the potential for contention.
+
+The text then delves into section seven point five point two, titled "Preemption and Convoys". It highlights a long-standing issue in parallel programming: performance degradation when a thread holding a lock is preempted. This situation, termed "inopportune preemption," occurs when a thread is interrupted while executing a critical section. If the preempted thread is subsequently rescheduled and is still holding the lock, it might be forced to yield the CPU again to a different thread. If the preempted thread's scheduling quantum expires, and it's waiting for a lock, it will block. However, if it is not blocked and has to wait for another thread to release the lock, and is then preempted, the lock will remain unavailable until the thread is rescheduled. This can lead to a situation where freed up kernel resources are not immediately utilized, and the waiting thread cannot proceed.
+
+This problem is exacerbated by the convoy phenomenon, described by Blasen and colleagues in nineteen seventy nine. This phenomenon arises when multiple threads attempt to acquire a lock. Suppose a thread, let's call it thread T, holds a lock L and is preempted for more than a millisecond. During this time, other threads waiting for lock L may also experience preemption, and their execution histories may diverge. When thread T eventually resumes and releases the lock, the waiting threads may try to acquire it simultaneously. If these threads tend to follow similar code paths, their attempts to access the lock and subsequent operations can generate a "storm" of cache coherency traffic, leading to further contention. This can result in a cascade of preemption and blocking events, creating a convoy where threads effectively get stuck behind each other.
+
+To address the convoy phenomenon, the concept of temporary non preemption is introduced. In a system where memory is shared between the user thread and the kernel, and the kernel needs to maintain synchronization state, a mechanism involving flags can be employed. Edler and colleagues, in nineteen eighty eight, proposed a method using a pair of flags. The first flag is written by the user thread, indicating its intent or state, and the second flag is read by the kernel. This allows the kernel to gain insight into user thread operations and potentially adjust scheduling decisions to mitigate convoy effects, ensuring that futexes are used correctly and efficiently. The footnote references Drepper's work from two thousand eleven, which provides a deeper dive into the subtleties of using futexes correctly.

@@ -1,0 +1,78 @@
+108 6 Read-Mostly Atomicity
+
+type role_t = (reader, active_reader, writer)
+type gnode = record
+atomic<role_t> role
+spin_lock mutex
+atomic<bool> waiting
+atomic<gnode*> next
+atomic<gnode*> prev
+class rw_lock
+atomic<gnode*> tail := null
+
+rw_lock.writer_acquire(qgnode® |):
+| —role := writer
+| —waiting := true
+
+| —next := null
+
+gnode* pred := tail.swap(l, W/||)
+
+if pred =£ null // lock is not free
+pred—next.store(l)
+while |—waiting.load(||); // spin
+
+fence(R||RW)
+
+rw_lock.writer_release(qgnode™ |):
+fence(RW/||W)
+gnode* succ := |—next.load(]|)
+if succ = null and tail. CAS(l, null, ||R)
+return // no successor; lock is now free
+repeat succ := |—next.load(||) until succ # null
+succ—prev.store(null, ||)
+succ—waiting.store(false, W||)
+
+Figure 6.4 A fair queued reader-writer lock (declarations and writer routines).
+
+6.1.2 Queued Reader-Writer Locks
+
+Just as centralized mutual exclusion locks—even with backoff—can induce unacceptable
+contention under heavy load on large machines, so too can centralized reader-writer locks.
+To reduce the contention problem, Mellor-Crummey and Scott (1991a) showed how to adapt
+queued spin locks to the reader-writer case. Specifically, they presented reader-preference,
+writer-preference, and fair reader-writer locks based on the MCS lock (Sec. 4.3.1). All three
+variants employed a global counter, which, while never the target of a spin, was nonetheless
+a source of possible contention.
+
+Krieger et al. (1993) showed how to eliminate the global counter in the fair queued reader-
+writer lock. A subtle bug in this algorithm was found by Dice et al. (2013), who observed
+that hardware transactional memory (HTM—Chapter 9) could be used both to fix the bug
+and to significantly simply the code. Dice et al. also provided a pair of software-only fixes;
+Chapter six: Read Mostly Atomicity.
+
+The following code block describes the structure and operations for a fair queued reader-writer lock.
+First, a type called `role_t` is defined, which can take values of `reader`, `active_reader`, or `writer`.
+Next, a `qnode` record (or structure) is defined. It contains several members: an atomic `role_t` called `role`, a `spin_lock` called `mutex`, an atomic boolean called `waiting`, an atomic pointer to a `qnode` called `next`, and an atomic pointer to a `qnode` called `prev`.
+Finally, a class named `rw_lock` is defined, which has one member: an atomic pointer to a `qnode` called `tail`, initialized to `null`.
+
+The `rw_lock dot writer_acquire` function takes a pointer to a `qnode` named `I`. Inside this function, `I`'s `role` is set to `writer`. `I`'s `waiting` flag is set to `true`, and `I`'s `next` pointer is set to `null`. A `qnode` pointer named `pred` is declared and assigned the result of an atomic swap operation on the `tail` member, exchanging `tail` with `I` using a `W or or` memory order. A comment indicates that if the returned `pred` is not `null`, the lock is not free. If `pred` is indeed not `null`, `pred`'s `next` field is atomically stored with `I`. Following this, there is a `while` loop that spins as long as `I`'s `waiting` flag is loaded as `true` using an `or or` memory order. This loop is described as a spin. The function concludes with a memory fence operation using `R or or R W` semantics.
+
+The `rw_lock dot writer_release` function also takes a pointer to a `qnode` named `I`. It begins with a memory fence operation using `R W or or W` semantics. A `qnode` pointer named `succ` is declared and assigned the value loaded atomically from `I`'s `next` field using an `or or` memory order. An `if` condition then checks two things: first, if `succ` is equal to `null`, and second, if an atomic Compare And Swap operation on `tail` succeeds, comparing it with `I` and swapping it with `null` using an `or or R` memory order. If both conditions are met, a comment indicates there is no successor and the lock is now free, and the function returns. Otherwise, a `repeat-until` loop is entered: `succ` is repeatedly assigned the value loaded atomically from `I`'s `next` field using an `or or` memory order, until `succ` is not equal to `null`. Finally, `succ`'s `prev` field is atomically stored with `null` using an `or or` memory order, and `succ`'s `waiting` field is atomically stored with `false` using a `W or or` memory order.
+
+Figure six point four shows a fair queued reader-writer lock, including its declarations and writer routines.
+
+Six point one point two: Queued Reader-Writer Locks.
+
+Just as centralized mutual exclusion locks—even with backoff—can induce unacceptable contention under heavy load on large machines, so too can centralized reader-writer locks. To reduce the contention problem, Mellor-Crummey and Scott, in nineteen ninety one A, showed how to adapt queued spin locks to the reader-writer case. Specifically, they presented reader-preference, writer-preference, and fair reader-writer locks based on the M C S lock, described in section four point three point one. All three variants employed a global counter, which, while never the target of a spin, was nonetheless a source of possible contention. Krieger et al. in nineteen ninety three showed how to eliminate the global counter in the fair queued reader-writer lock. A subtle bug in this algorithm was found by Dice et al. in two thousand thirteen, who observed that hardware transactional memory, or H T M, detailed in Chapter nine, could be used both to fix the bug and to significantly simplify the code. Dice et al. also provided a pair of software-only fixes.
+The principles of concurrent systems design are exquisitely illustrated through the paradigm of reader writer locks, which address the challenge of shared data access in multi threaded environments. While conventional mutual exclusion locks, such as spin locks, enforce strict serial access to a critical section, they often become a bottleneck under heavy contention, particularly on multi core architectures. Reader writer locks offer a more nuanced approach, permitting multiple threads to read shared data concurrently while ensuring exclusive access for a single writer. This design optimizes for workloads that exhibit a high read to write ratio, significantly enhancing parallelism.
+
+The text points to a common issue with centralized mutual exclusion locks, even those incorporating backoff mechanisms to reduce busy waiting. The fundamental problem is that a single global variable, or a small set of such variables, becomes the focal point for all contending threads, leading to severe cache line contention and invalidations. This phenomenon, known as false sharing or cache bouncing, drastically degrades performance as the number of threads increases. Queued spin locks, such as the M C S lock proposed by Mellor Crummey and Scott, were developed precisely to mitigate this issue. Instead of threads spinning on a shared global variable, each thread spins on a flag located within its *own* unique queue node. This local spinning eliminates cache contention among waiting threads, thereby improving scalability. The reader writer lock described here adapts these queued spin lock principles.
+
+The code defines the fundamental data structures for such a queued reader writer lock. Central to this is the `qnode` record, representing a node in a linked list of waiting threads. Each `qnode` contains an `atomic<role_t> role` indicating whether the associated thread intends to be a `reader`, an `active_reader`, or a `writer`. The `atomic<bool> waiting` field serves as a per node flag on which a thread can spin, allowing localized waiting without global contention. The `atomic<qnode*> next` and `atomic<qnode*> prev` pointers facilitate the construction of a doubly linked list, enabling efficient traversal and manipulation of the queue. The main lock object, `rw_lock`, manages access via an `atomic<qnode*> tail` pointer, which always points to the last thread that enqueued itself. The use of atomic types for critical pointers and flags is paramount; these leverage hardware atomic instructions (like `C A S` or `swap`) to ensure indivisible operations on shared memory locations, thereby guaranteeing memory consistency and preventing data races.
+
+The `writer_acquire` routine demonstrates the queuing mechanism. A new `qnode`, designated by `l`, is prepared with its `role` set to `writer` and `waiting` to `true`. The core of the enqueue operation is the `tail.swap(l, W||)` instruction. This atomic operation replaces the global `tail` pointer with `l`, effectively appending `l` to the logical end of the queue, and returns the *old* `tail` value into `pred`. This `pred` then represents the thread that was immediately before the current one in the queue. If `pred` is not null, its `next` pointer is atomically updated to point to `l`, physically linking `l` into the list. This two step enqueue process requires careful memory ordering, where `W` (write) ensures that the new `tail` value is globally visible, and the subsequent linking is ordered correctly. After enqueuing, the writer enters a `while l->waiting.load(||)` loop, spinning locally on its own `waiting` flag until it is released by the previous lock holder. A `fence(R||RW)` then establishes a strong memory barrier, guaranteeing that all memory operations performed *before* this point are committed and visible globally before the critical section is entered, enforcing strict ordering and preventing compiler or processor reordering.
+
+The `writer_release` routine is equally critical for correct lock handoff and ensuring fairness. It begins with a `fence(RW||W)`, which is a release barrier. This guarantees that all memory writes performed *within* the critical section by the releasing writer are globally visible before the lock is relinquished. The writer then attempts to find its successor in the queue by loading its `next` pointer. If no successor is immediately found and the current thread can atomically `C A S` the `tail` pointer from itself to `null`, it signifies that this was the last thread in the queue, and the lock is now free. Otherwise, the releasing writer may need to spin (`repeat succ := l->next.load(||) until succ != null`) if a successor is still in the process of linking itself. Once a successor `succ` is identified, the `succ->prev.store(null, ||)` operation detaches it from the queue, effectively making it the new head. Finally, the critical `succ->waiting.store(false, W||)` operation sets the successor's waiting flag to false, signaling to the spinning successor thread that it can now proceed to acquire the lock. This explicit handoff mechanism ensures fairness, as threads acquire the lock in the precise order they enqueued.
+
+The discussion references historical challenges, such as the use of a global counter that, despite not being the target of a spin, could still become a source of contention due to cache effects. This underscores the subtle complexities of concurrent algorithm design. The mention of a bug in a prior version of this algorithm, fixed using hardware transactional memory (H T M), highlights the evolution of concurrency mechanisms. H T M offers a declarative approach to atomicity, allowing a sequence of operations to be marked as a transaction. If the hardware detects no conflicts, the changes are committed atomically; otherwise, they are rolled back. This simplifies the development of complex concurrent data structures by offloading much of the synchronization burden to the hardware, often providing superior performance and correctness guarantees compared to purely software based approaches, particularly for intricate critical sections where traditional locking can be prone to deadlocks or livelocks. The alternative of software only fixes indicates the continuous interplay between hardware capabilities and software design in optimizing concurrent systems.

@@ -1,0 +1,115 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+8.7 Safe Memory Reclamation (SMR) 173
+
+class hp_stack value hp_stack.pop():
+atomic<node*> top loop
+atomic<node*> announce|] o := top.load(||)
+
+if o = null return L
+
+announce[self].store(o, |R)
+
+if o = top.load(||R) // verify
+n := o—next.load(]|)
+
+void hp_stack.push(value v):
+n := new node
+n—value :=v
+
+loop ⋅
+f top.CA R
+o := top.load(||) ∣ ∘⇂⊃⋁⊂⋅∶⋮ ≣≺∶⋅⋁⊑⋮∐⊖∣∣⋟
+↕∶∶ ⋅
+
+⊑⋂−⊺≻↿⊺≟≣⋟⋤∁⊖↾≣⊖∣∏⋅⊖↕⊖↾⊖≺⊖ I announce[self].store(null, RW)
+if top.CAS(0, n, W||W) // also verifies delayed-free(o) /[ after storing null
+
+announce[self].store(null, ||) return v
+
+return
+
+Figure 8.19 Hazard pointer-based variant of the lock-free Treiber stack. The || RW and RW/|| orderings
+on hazard pointer announcements may not be required in all cases, but are needed in the general case to
+ensure that intervening ordinary accesses are safe. In general, one announces a HP with a ||[RW store,
+then verifies it with a load and a branch. In this case, in push, the W||W on the following CAS suffices,
+since verification is done by that CAS. A similar argument applies to clearing the announcement in
+push, and to analogous operations in pop.
+
+first remove it from the data structure, then scan the announcements of 73 and see that 7}
+does not have a hazard pointer to o. Clearly, if 7), actually performs its hazardous access to
+o, 1t must announce its HP to o before Tr does its scan. So, Tr will see that Tj, has a HP to
+0, and will not free o.
+
+In practice, the principal source of overhead when using hazard pointers is the need to
+ensure that a store to the announcement array 1s visible to all threads before performing
+a hazardous access. Even on a machine with a TSO memory model, the compiler must
+typically issue a store-load fence instruction, which may take tens of cycles to complete.
+
+Hazard Pointers and the EFRB Tree Hazard pointers satisfy the SMR assumption when
+used correctly, but correct use turns out to be surprisingly difficult in certain algorithms,
+including the EFRB tree (Brown 2015). Briefly, this is because the EFRB tree allows searches
+to traverse marked nodes, which might already have been removed from the data structure,
+whereas hazard pointers require one to verify that a node has not been removed from the
+data structure before one can access it. These conflicting rules make it difficult to guarantee
+progress, as a marked node forces the operation to restart, and if the thread that marked the
+node stalled before unlinking it, then to avoid restarting forever one must help the marking
+operation to complete. Helping in turn requires that one acquire several hazard pointers,
+which may be difficult or impossible if one or more nodes are marked! Similar issues arise
+with various descendants of hazard pointers, including hazard eras (Ramalhete and Correia
+2017) and wait-free eras (Nikolaev and Ravindran 2020).
+eight point seven Safe Memory Reclamation S M R 173
+
+class hp_stack
+atomic<node*> top
+atomic<node*> announce[]
+void hp_stack.push(value v)
+n := new node
+n->value := v
+loop
+o := top.load(||)
+n->next := o
+announce[self].store(o, ||)
+if top.CAS(o, n) == success
+return
+else
+loop
+o := top.load(||)
+n->next := o
+announce[self].store(o, ||)
+if top.CAS(o, n) == success
+return
+value hp_stack.pop():
+loop
+o := top.load(||)
+if o = null return null
+announce[self].store(o, || R) // verify
+if o = top.load(|| R) // verify
+n := o->next
+if top.CAS(o, n) == success
+return v // value
+else
+announce[self].store(null, R||W) // after storing null
+return null
+
+Figure eight point one nine Hazard pointer based variant of the lock free Treiber stack. The R W and R W orderings may not be required in all cases, but are needed in the general case to ensure that intervening ordinary accesses are safe. In general, oneannounce.s a H P with a R W store, then verifies it with a load and a branch. In this case, in push, the W||W on the following C A S suffices, since verification is done by C A S. A similar argument applies to clear.ing the announcement in push, and to analogous operations in pop.
+
+First, remove it from the data structure, then scan the announcements of T h and see that T h does not have a hazard pointer to o. Clearly, if T h actually performs its hazardous access to o, it must announce its H P to o before T f does its scan. So, T f will see that T h has a H P to o, and will not free o.
+
+In practice, the principal source of overhead when using hazard pointers is the need to ensure that a store to the announcement array is visible to all threads before performing a hazardous access. Even on a machine with a T S O memory model, the compiler must typically issue a store load fence instruction, which may take tens of cycles to complete.
+
+Hazard Pointers and the E F R B Tree Hazard pointers satisfy the S M R assumption when used correctly, but correct use turns out to be surprisingly difficult in certain algorithms, including the E F R B tree Brown 2015. Briefly, this is because the E F R B tree allows searches to traverse marked nodes, which might already have been removed from the data structure, whereas hazard pointers require one to verify that a node has no hazard pointer before one can access it. These conflicting rules make it difficult to guarantee progress, as a marked node forces the operation to restart, and if the thread that marked the node stalled before unlinking it, then to avoid restarting forever one must help the marking operation to complete. Helping in turn requires that one acquire several hazard pointers, which may be difficult or impossible if one or more nodes are marked. Similar issues arise with various descendants of hazard pointers, including hazard eras Ramalhete and Correia 2017 and wait free eras Nikolaev and Ravindran 2020.
+The provided text delves into the intricacies of safe memory reclamation, specifically focusing on a hazard pointer based variant of the lock-free Treiber stack, as depicted in Figure 8.19. The core principle illustrated is ensuring that memory that has been logically removed from a data structure is not prematurely reclaimed while other threads might still hold pointers to it, a scenario known as a hazard.
+
+The `hp_stack` class defines two atomic members: `top`, representing the current top of the stack, and `announce`, which is an array of atomic nodes. The `push` operation initializes a new node `n` with a given value `v`. It then enters a loop where it reads the current `top` value into `o`. It sets the `next` pointer of the new node `n` to `o`, effectively linking it to the existing stack. Subsequently, it attempts to update the `top` pointer using a compare-and-swap (CAS) operation. If the CAS succeeds, meaning `top` has not changed since the initial read, the operation is complete, and the new node `n` is now the top. The `announce` operation is called with `[self].store(n, ||)`, which signals that `n` is now a potential hazard for the current thread. The `||` likely denotes a memory ordering constraint, perhaps relaxed ordering. The loop continues until the CAS is successful. If the CAS fails, it indicates that another thread has modified the stack, and the operation retries.
+
+The `pop` operation retrieves a value from the stack. It also enters a loop. It attempts to load the current `top` into `o`. If `o` is null, the stack is empty, and it returns immediately. If `o` is not null, it calls `announce[self].store(o, ||)`, marking `o` as a hazard. The critical step here is the comparison. It re-reads the `top` value. If the current `top` is still `o`, it means the stack has not been modified in a way that invalidates `o` being the top. Then, it attempts to update `top` to `o`'s successor, which is `o`'s `next` pointer. If this CAS is successful, the node `o` is logically removed. The `announce[self].store(null, ||)` then signals that `o` is no longer a hazard, and `delayed_free(o)` is called, which is a mechanism for safe memory reclamation, often involving a deferred deallocation. The operation then returns the value. The code also includes a check: `if top.CAS(o, n, R||W)`. This specific CAS in the pop operation, `top.CAS(o, n, R||W)`, likely attempts to swap the current `top` value `o` with a new node `n` (though in the context of pop, `n` seems to be `o->next`), and the `R||W` would represent memory ordering constraints. The text mentions that `announce[self].store(null, ||)` is done "after storing null," implying a successful pop where the stack might become empty, and the node `o` is freed. The `|| also verifies` comments suggest that the memory ordering operations are crucial for ensuring the correctness of the hazard pointer mechanism and the underlying CAS operations.
+
+The text explains that hazard pointers are used to prevent the premature reclamation of nodes. A thread that intends to access a node `o` that might be removed by another thread first stores a pointer to `o` into one of its hazard pointers. This "announcement" signals to the memory reclamation system that `o` is currently in use. Before reclaiming a node, the system scans all hazard pointers. If a node is pointed to by any hazard pointer, it is not reclaimed. The `hp_stack.push` operation, in particular, emphasizes that if a thread `Th` announces `hp` to `o` (meaning it stores `o` in a hazard pointer) and then another thread `Tf` removes `o` from the data structure using CAS, `Tf` must ensure that `o` is not reclaimed if `Th` still holds `o` as a hazard pointer. The code's use of `announce[self].store(n, ||)` in `push` and `announce[self].store(o, ||)` in `pop` establishes this linkage. The example snippet shows that if `Th` performs a hazardous access to `o` and then `Tf` performs a CAS to update the `top` pointer, `Tf` must see `o` as the `top` before the CAS succeeds for `Tf` to be able to update `top` to `o`'s successor. This is crucial to prevent a race condition where `Tf` removes `o` after `Th` has begun its operation but before `Th` can register `o` as a hazard. The `W||W` ordering in the CAS operation `top.CAS(o, n, W||W)` ensures that the write to `top` is performed before subsequent operations in the CASing thread, and the read operation in the CAS is visible to other threads before the write.
+
+The text further discusses the "Hazard Pointers and the EFRB Tree" scenario, highlighting that while hazard pointers are generally effective, their application can be surprisingly difficult in certain algorithms, such as the EFRB tree. The challenge arises because the EFRB tree allows searches to traverse "marked nodes." A marked node signifies that it has been logically removed from the tree. When a thread encounters a marked node during a search, it might infer that the node has been reclaimed. However, if a hazard pointer is involved, this inference can be incorrect. Specifically, if a thread `Th` removes a node `o` from the tree and marks it, and another thread `Tf` has `o` registered as a hazard pointer, `Tf` might still need to access `o`. If `Th` proceeds to reclaim `o` without considering `Tf`'s hazard pointer, a problem arises. The text notes that conflicting rules make it difficult to guarantee that a node has no hazard pointers before its reclamation. If a marked node stalls before unlinking, it could lead to a deadlock or a situation where a thread indefinitely retries. To avoid this, a thread that marks a node for deletion might also be required to help the thread that holds the hazard pointer on that node complete its operation. This often involves acquiring its own hazard pointers to nodes that might be affected and ensuring the safe completion of all operations. The challenge is amplified when dealing with multiple hazard pointers, as seen in the context of hazard eras, which are techniques to manage the lifecycle of reclaimed memory across multiple threads. The complexity of ensuring safe memory reclamation in such concurrent scenarios underscores the importance of carefully considering memory ordering and synchronization primitives.

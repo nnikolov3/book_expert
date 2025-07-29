@@ -1,0 +1,66 @@
+2.2 Memory Consistency 23
+
+Fortunately for most programmers, memory ordering details are generally of concern only
+to the authors of synchronization algorithms and low-level concurrent data structures, which
+may need to be re-written (or at least re-tuned) for each target architecture. Programmers who
+use these algorithms correctly are then typically assured that their programs will behave as if
+the hardware were sequentially consistent (more on this in Sec. 3.3), and will port correctly
+across machines.
+
+Identifying a minimal set of ordering instructions to ensure the correctness of a given
+algorithm on a given machine is a difficult and error-prone task.” In fact, the minimal fencing
+problem has been shown to be NP hard even for straightline programs when there are only
+two types of fences (Taheri et al. 2019). Fencing has traditionally been performed by hand,
+though there has been promising recent work aimed at verifying the correctness of a given
+set of fences or even inferring them directly (Burckhardt et al. 2007; Kuperstein et al. 2010;
+Oberhauser et al. 2021). We have made a good-faith effort—especially in Chapters 4 through
+6—to explicitly specify near-minimal ordering constraints. For more complex algorithms—
+including most of those presented in Chapter 8—we revert to unlabeled load and store
+instructions, which are fully ordered by default.
+
+To clarify the memory model further, we give several examples in Table 2.2 that illustrate
+when instruction reordering can and cannot occur. In Table 2.3, we demonstrate the interplay
+between ordering constraints on synchronizing instructions and communication between
+threads.
+
+2.2.3 Example Architectures
+
+A few multiprocessors (notably, those built around the c. 1996 MIPS R10000 processor
+(Yeager 1996)) have been defined to be sequentially consistent. A few others (notably, the HP
+PA-RISC and some IBM z machines) have been implemented with sequential consistency,
+even though the documentation permitted something more relaxed. Hill (1998) has argued
+that the overhead of sequential consistency need not be onerous, particularly in comparison
+to its conceptual benefits. Most machines today, however, fall into two broad classes of
+more relaxed alternatives. On the SPARC, x86 (both 32- and 64-bit), and IBM z Series,
+reads are allowed to bypass writes, but R||R, R||W, and W||W orderings are all guaranteed to
+be respected by the hardware, and writes are always globally ordered (write atomic). Special
+instructions—synchronizing accesses or fences—are required only when the programmer
+must ensure that a write and a subsequent read complete in program order. On Arm, Power,
+and IA-64 (Itanium) machines, all four combinations of local bypassing are possible: special
+instructions must be used whenever ordering is required. Moreover, on Arm v8 and Power,
+ordinary writes are not guaranteed to be write atomic.
+
+* The first edition of this monograph contained numerous such errors, and some almost certainly
+remain.
+Section two point two, Memory Consistency.
+
+Fortunately for most programmers, memory ordering details are generally of concern only to the authors of synchronization algorithms and low level concurrent data structures, which may need to be rewritten, or at least retuned, for each target architecture. Programmers who use these algorithms correctly are then typically assured that their programs will behave as if the hardware were sequentially consistent, more on this in Section three point three, and will port correctly across machines.
+
+Identifying a minimal set of ordering instructions to ensure the correctness of a given algorithm on a given machine is a difficult and error prone task. The minimal fencing problem has been shown to be N P hard even for straightline programs when there are only two types of fences, Taheri et al. two thousand nineteen. Fencing has traditionally been performed by hand, though there has been promising recent work aimed at verifying the correctness of a given set of fences or even inferring them directly, Burckhardt et al. two thousand seven; Kuperstein et al. two thousand ten; Oberhauser et al. two thousand twenty one. We have made a good faith effort, especially in Chapters four through six, to explicitly specify near minimal ordering constraints. For more complex algorithms, including most of those presented in Chapter eight, we revert to unlabeled load and store instructions, which are fully ordered by default.
+
+To clarify the memory model further, we give several examples in Table two point two that illustrate when instruction reordering can and cannot occur. In Table two point three, we demonstrate the interplay between ordering constraints on synchronizing instructions and communication between threads.
+
+Section two point two point three, Example Architectures.
+
+A few multiprocessors, notably, those built around the circa nineteen ninety six M I P S R one zero zero zero zero processor, Yeager nineteen ninety six, have been defined to be sequentially consistent. A few others, notably the H P P A R I S C and some I B M z machines, have been implemented with sequential consistency, even though the documentation permitted something more relaxed. Hill nineteen ninety eight has argued that the overhead of sequential consistency need not be onerous, particularly in comparison to its conceptual benefits. Most machines today, however, fall into two broad classes of more relaxed alternatives. On the S P A R C, x eighty six, both thirty two and sixty four bit, and I B M z Series, reads are allowed to bypass writes, but read followed by read, read followed by write, and write followed by write orderings are all guaranteed to be respected by the hardware, and writes are always globally ordered, write atomic. Special instructions, synchronizing accesses or fences, are required only when the programmer must ensure that a write and a subsequent read complete in program order. On Arm, Power, and I A sixty four Itanium machines, all four combinations of local bypassing are possible: special instructions must be used whenever ordering is required. Moreover, on Arm v eight and Power, ordinary writes are not guaranteed to be write atomic.
+
+Footnote four. The first edition of this monograph contained numerous such errors, and some almost certainly remain.
+The fundamental challenge of memory consistency in modern computing systems arises from the divergence between the sequential execution model assumed by programmers and the optimized, potentially reordered, execution performed by parallel hardware. In multiprocessor and multicore architectures, processors independently reorder memory operations, such as loads and stores, to maximize performance by hiding latencies and exploiting instruction level parallelism. While beneficial for single threaded performance, this reordering introduces complexities for concurrent programs that rely on specific orders of memory access to maintain correctness, particularly for synchronization algorithms and low level concurrent data structures. For most programmers, these intricate memory ordering details are abstracted away, especially when working with high level programming constructs. However, for those developing core synchronization primitives or operating system kernels, a deep understanding of the underlying memory model is critical.
+
+Ensuring the correctness of an algorithm in the face of hardware induced instruction reordering, especially for memory operations, necessitates the careful placement of memory fences, also known as memory barriers. These are special instructions that enforce ordering constraints, preventing the processor from reordering memory operations across the fence. Determining the minimal set of such fences required for a given algorithm to guarantee correctness is a non trivial task. In fact, for straight line programs, finding this minimal set has been formally proven to be an N P hard problem, highlighting its computational complexity. Historically, this fencing has often been performed by manual insertion, a process prone to errors. More recent research, however, explores automated verification techniques and methods to infer these ordering constraints programmatically. For simple programs, minimal ordering constraints can often be explicitly specified. Yet, for more complex algorithms, where the interactions between threads are intricate, reverting to a model where all load and store instructions are fully ordered by default might be necessary to avoid intractable verification challenges. The specific examples provided in Table two point two and Table two point three, though not visible here, would further illustrate the precise scenarios where instruction reordering can and cannot occur, clarifying the interplay between ordering constraints, synchronizing instructions, and inter thread communication.
+
+Historically, some multiprocessor architectures were designed to strictly adhere to sequential consistency, a strong memory model where the outcome of any execution appears as if all operations from all processors were executed in a single, global sequential order, and operations from each individual processor appear in that sequence in the order specified by its program. An example of such an architecture is the M I P S R one zero zero zero zero processor from approximately nineteen ninety six, along with certain H P P A Risc and I B M z machines. While sequential consistency simplifies programming by providing a predictable execution environment, it often imposes significant performance overheads due to its restrictive ordering requirements. There has been a long standing debate within the computer architecture community regarding the necessity and cost of sequential consistency. It has been argued that the overhead associated with strict sequential consistency might not always be justified, especially when compared to the conceptual benefits of more relaxed alternatives.
+
+Consequently, most contemporary architectures implement relaxed memory models. These models allow for various types of memory operation reordering to improve performance, shifting the burden of ensuring correctness onto the programmer, who must explicitly use synchronization instructions or fences. For instance, on S P A R C and x eight six architectures, which encompass both thirty two bit and sixty four bit variants, and on I B M z Series machines, reads are permitted to bypass writes. This means a load operation might complete before an earlier store operation from the same processor, if there is no dependency between them. However, on these architectures, memory writes are generally guaranteed to be globally ordered and atomic, meaning that all processors observe writes in the same order, and a write operation either fully completes or does not at all, preventing partial updates from being visible.
+
+The text references four combinations of local bypassing: read before read, read before write, write before read, and write before write. In relaxed models, such as those found in Arm, Power, and I A sixty four Itanium architectures, special synchronization instructions or memory fences are required to enforce specific ordering when a program depends on it. For example, on Arm version eight and Power architectures, while certain reorderings might be allowed by default for performance, ensuring that a write operation completes before a subsequent read operation, when the read depends on the write, explicitly requires these special instructions. Conversely, on these more relaxed architectures, ordinary, unsynchronized writes are not inherently guaranteed to be globally atomic or ordered across all processors, necessitating explicit synchronization mechanisms like atomic operations or fences to achieve such guarantees when needed for correctness.

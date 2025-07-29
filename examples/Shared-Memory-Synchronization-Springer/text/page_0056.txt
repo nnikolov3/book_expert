@@ -1,0 +1,66 @@
+3.4 Memory Models 57
+
+3.4.3 Real-World Models
+
+As of this writing, Java and C/C++ are the only widely used parallel programming lan-
+guages whose definitions attempt to precisely specify a memory model. (Separately, the
+Linux kernel community is developing a memory model distinct from that of mainstream
+C (Alglave et al. 2018).) The Java memory model is inherited by Scala and Kotlin. A care-
+fully crafted model is also being developed for Go (GoLang 2014; Cox 2021). Ada (Ichbiah
+et al. 1991) was the first language to introduce an explicitly relaxed (if informally specified)
+memory model. It was designed to facilitate implementation on both shared-memory and
+distributed hardware: variables shared between threads were required to be consistent only
+in the wake of explicit message passing (rendezvous). The reference implementations of
+several scripting languages (notably Ruby and Python) are sequentially consistent, though
+other implementations (Jython 2023; JRuby 2023) are not.
+
+In Java, most programmers rely on monitors (Sec. 7.3.4) to synchronize access to shared
+data. These provide a combination of mutual exclusion and condition synchronization. In C
+and C++, most programmers likewise rely on mutex variables (locks) and related mecha-
+nisms. If we wish to allow programmers to create new synchronization mechanisms, how-
+ever, or to build optimized (e.g., nonblocking) concurrent data structures—and indeed if any
+of the built-in synchronization mechanisms are to be written in high-level code, rather than
+assembler—then the memory model must define synchronizing steps that are more primitive
+than lock acquisition and release.
+
+Java allows a variable to be declared volatile, in which case reads and writes that
+access it are included in the global synchronization order—they never induce a data race.
+Each read 1s a load-acquire in the sense of Sec. 2.2.3: it happens before all subsequent
+reads and writes in its thread. Each write 1s a (write-atomic) store-release: all previous reads
+and writes 1n its thread happen before it does, and it becomes visible to all threads before
+any thread that sees it can write anything else. Moreover each volatile read induces a
+synchronizes-with arc (and thus a happens-before arc) from the (unique) preceding write to
+the same location. In a similar vein, C and C++ allow a variable to be declared as atomic;
+accesses to such variables behave, by default, much as they do in J ava.’
+
+Variables declared as volatile or atomic allow the programmer to give intuitive
+behavior to accesses that would otherwise be data races. Unfortunately, there is no known
+way to determine, at reasonable expense, whether all such races have been eliminated.
+Moreover, design goals for Java require that no program—including one with data races—
+
+3 The volatile keyword also appears in C and C++, but it is used for interaction with I/O devices,
+not for interactions among threads. Some legacy programs (prior to C/C++’11) used volatile as
+a stand-in for atomic; this usage is incorrect in modern programs.
+Three point four Memory Models
+Three point four point three Real World Models
+
+As of this writing, Java and C slash C++ are the only widely used parallel programming languages whose definitions attempt to precisely specify a memory model. Separately, the Linux kernel community is developing a memory model distinct from that of mainstream C, Alglave et al. two thousand eighteen. The Java memory model is inherited by Scala and Kotlin. A carefully crafted model is also being developed for Go, Go Lang two thousand fourteen, Cox two thousand twenty one. Ada, Ichbiah et al. one thousand nine hundred ninety one, was the first language to introduce an explicitly relaxed, if informally specified, memory model. It was designed to facilitate implementation on both shared memory and distributed hardware. Variables shared between threads were required to be consistent only in the wake of explicit message passing, rendezvous. The reference implementations of several scripting languages, notably Ruby and Python, are sequentially consistent, though other implementations, Jython two thousand twenty three, J Ruby two thousand twenty three, are not.
+
+In Java, most programmers rely on monitors, Section seven point three point four, to synchronize access to shared data. These provide a combination of mutual exclusion and condition synchronization. In C and C++, most programmers likewise rely on mutex variables, locks, and related mechanisms. If we wish to allow programmers to create new synchronization mechanisms, however, or to build optimized, for example, nonblocking, concurrent data structures, and indeed if any of the built in synchronization mechanisms are to be written in high level code, rather than assembler, then the memory model must define synchronizing steps that are more primitive than lock acquisition and release.
+
+Java allows a variable to be declared volatile, in which case reads and writes that access it are included in the global synchronization order. They never induce a data race. Each read is a load acquire in the sense of Section two point two point three. It happens before all subsequent reads and writes in its thread. Each write is a write atomic store release. All previous reads and writes in its thread happen before it does, and it becomes visible to all threads before any thread that sees it can write anything else. Moreover, each volatile read induces a synchronizes with arc, and thus a happens before arc, from the unique preceding write to the same location. In a similar vein, C and C++ allow a variable to be declared as atomic. Accesses to such variables behave, by default, much as they do in Java.
+
+Variables declared as volatile or atomic allow the programmer to give intuitive behavior to accesses that would otherwise be data races. Unfortunately, there is no known way to determine, at reasonable expense, whether all such races have been eliminated. Moreover, design goals for Java require that no program, including one with data races,
+
+The volatile keyword also appears in C and C++, but it is used for interaction with I O devices, not for interactions among threads. Some legacy programs, prior to C slash C++ eleven, used volatile as a stand in for atomic. This usage is incorrect in modern programs.
+The foundational concept underpinning reliable concurrent programming is the memory model, which formally defines how threads interact with memory. This abstraction dictates the permissible reorderings of memory operations by compilers and hardware, thereby establishing the visibility and ordering guarantees across different threads of execution. Notably, Java and C and C++ are among the few widely adopted parallel programming languages that possess a rigorously defined memory model, a critical distinction that ensures predictable behavior in multi-threaded contexts. While other languages like Scala and Kotlin largely inherit the Java memory model, and Go is actively developing its own, the Linux kernel community is evolving a distinct memory model tailored to its specific requirements. Historically, Ada provided an early, though informally specified, relaxed memory model, demonstrating an early recognition of the complexities of memory ordering in concurrent systems.
+
+The design of a memory model must account for diverse hardware architectures, ranging from shared memory systems where multiple processors access a common memory space, to distributed systems that often rely on message passing paradigms, such as rendezvous. The consistency requirements for shared variables differ significantly between these architectures. For instance, some language implementations, particularly of scripting languages like Ruby and Python, may internally enforce sequential consistency by default, simplifying programming but potentially limiting optimization opportunities. In contrast, languages like Java and C and C++ provide explicit mechanisms for synchronization.
+
+In Java, the common approach for synchronizing access to shared data involves monitors, which encapsulate a combination of mutual exclusion and condition synchronization. This high-level construct simplifies the management of critical sections and thread coordination. Similarly, C and C++ programmers typically rely on mutex variables, or locks, which are more primitive mechanisms ensuring that only one thread can access a shared resource at a given time. These high-level synchronization constructs are built upon a foundation of more primitive operations like lock acquisition and release, which fundamentally interact with the memory model to ensure atomicity and visibility. Moreover, the evolution of concurrent programming has led to the development of non-blocking concurrent data structures, which aim to achieve concurrency without relying on traditional locks, often leveraging atomic operations that are intrinsically defined by the memory model. For any built in synchronization mechanism, or custom high level concurrent code, to function correctly, the underlying memory model must specify how these primitive steps interact with memory to guarantee desired behavior.
+
+A crucial aspect of Java's memory model is the `volatile` keyword. When a variable is declared `volatile`, its reads and writes are guaranteed to be atomic with respect to other `volatile` accesses and cannot be reordered in ways that would introduce data races. Specifically, a `volatile` read is treated as a `load-acquire` operation. This implies that the read operation happens before all subsequent operations within the reading thread, and it also establishes a 'synchronizes with' relationship with the most recent `store-release` write to that same `volatile` variable by any other thread. This ensures that all memory operations that happened before the `store-release` write in the writing thread become visible to the reading thread *before* the `load-acquire` read completes. Conversely, a `volatile` write is treated as a `store-release` operation. This means that all memory operations that happened before the `volatile` write in the writing thread are guaranteed to be flushed and become visible to other threads *before* the `volatile` write itself is made visible. This pair of semantics, `load-acquire` and `store-release`, ensures that all reads and writes to `volatile` variables in Java are correctly ordered and visible across threads, effectively preventing data races on these variables.
+
+While C and C++ also possess a `volatile` keyword, its semantics are distinct and more limited than in Java. In C and C++, `volatile` primarily prevents the compiler from optimizing away or reordering reads and writes to memory locations that might be modified by external factors, such as I O devices or signal handlers. It does not provide the inter-thread synchronization and memory visibility guarantees found in Java's `volatile`. For cross-thread synchronization and atomic operations in modern C and C++, the `atomic` keyword and its associated operations should be utilized. Using C and C++ `volatile` for multi-threaded synchronization, as seen in some legacy programs prior to C and C++ eleven, is considered incorrect practice today due to its lack of necessary memory ordering guarantees for inter-thread communication.
+
+The fundamental design goal of robust memory models, particularly in Java, is to eliminate data races from correctly synchronized programs. A data race occurs when multiple threads concurrently access the same memory location, at least one of the accesses is a write, and no synchronization mechanism is used to order these accesses. Such races lead to undefined and unpredictable program behavior. While achieving this guarantee for all programs at a reasonable performance cost remains a significant challenge, the explicit specification of memory models aims to provide programmers with the necessary tools and guarantees to write correct and efficient concurrent software. The intricate interplay between compiler optimizations, hardware memory hierarchies, and the explicit synchronization primitives provided by languages defines the true 'real world' behavior of multi-threaded applications.

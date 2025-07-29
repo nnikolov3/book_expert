@@ -1,0 +1,85 @@
+7.4 Other Language Mechanisms 131
+
+class buffer
+const int SIZE =...
+data buf[SIZE]
+int next_full, next_empty :=0, 0
+
+buffer.insert(data d): buffer.remove():
+region when full_slots < SIZE data d
+buf[next_empty] := d region when full_slots > 0
+next_empty := (next_empty + 1) mod SIZE d := buf[next_full]
+next_full := (next_full + 1) mod SIZE
+return d
+
+Figure 7.4 Implementation of a bounded buffer using conditional critical regions. Here we have
+assumed that regions are with respect to the current object (this) unless otherwise specified.
+
+With no restrictions on the conditions tested by guards, we are faced with the prospect,
+when one thread leaves a region, of context switching into every other thread that 1s waiting
+to enter a region on the same object, so that each can evaluate its own condition in its own
+referencing environment. With a bit more sophistication, we may be able to determine—
+statically or at run time—the set of variables on which a condition depends, and only switch
+into a thread when one of these has changed value (raising the possibility that the condition
+may now be true). This optimization turns out to be natural in the context of transactional
+memory; we will return to it in Sec. 9.3.2. Depending on the cost of tracking writes, it may be
+cheaper in practice than resuming every thread on every region exit, but worst-case overhead
+remains significant.
+
+Another cost-reduction strategy, originally proposed by Kessels (1977) and adopted (in
+essence) by Ada, is to require conditions to depend only on the state of the lockable object
+(never on the parameters passed to methods), and to list these conditions explicitly in the
+object’s declaration. These rules allow the implementation to associate each condition with
+an implicit queue of waiting threads, and to evaluate it in a generic context, without restoring
+the referencing environment of any particular thread. When one thread leaves a region, each
+condition can be evaluated exactly once, and a corresponding thread resumed if the condition
+1s true.
+
+As noted in Sec. 5.1, it 1s important that tests of a condition not race with updates to the
+variables on which the condition depends. This property, too, can be ensured by allowing
+conditions to depend only on the state of the lockable object—and perhaps also on parameters
+passed by value, which cannot be changed by other threads.
+
+7.4.2 Futures
+
+Futures, first proposed by Halstead (1985) for the Multilisp dialect of Scheme, exploit
+the observation that function arguments, in most languages, are evaluated before they are
+Seven point four Other Language Mechanisms. One hundred thirty one.
+
+class buffer
+const int SIZE is ...
+data buf index SIZE
+int next_full, next_empty is zero, zero
+
+buffer dot insert data d:
+region when full_slots less than SIZE
+buf index next_empty is equal to d
+next_empty is equal to parenthesis next_empty plus one parenthesis mod SIZE
+
+buffer dot remove:
+data d
+region when full_slots greater than zero
+d is equal to buf index next_full
+next_full is equal to parenthesis next_full plus one parenthesis mod SIZE
+return d
+
+Figure seven point four Implementation of a bounded buffer using conditional critical regions. Here we have assumed that regions are with respect to the current object parenthesis this parenthesis unless otherwise specified.
+
+With no restrictions on the conditions tested by guards, we are faced with the prospect, when one thread leaves a region, of context switching into every other thread that is waiting to enter a region on the same object, so that each can evaluate its own condition in its own referencing environment. With a bit more sophistication, we may be able to determine statically or at run time—the set of variables on which a condition depends, and only switch into a thread when one of these has changed value parenthesis raising the possibility that the condition may now be true parenthesis. This optimization turns out to be natural in the context of transactional memory; we will return to it in Section nine point three point two. Depending on the cost of tracking writes, it may be cheaper in practice than resuming every thread on every region exit, but worst-case overhead remains significant.
+
+Another cost reduction strategy, originally proposed by Kessels parenthesis nineteen seventy seven parenthesis and adopted parenthesis in essence parenthesis by Ada, is to require conditions to depend only on the state of the lockable object parenthesis never on the parameters passed to methods parenthesis, and to list these conditions explicitly in the object's declaration. These rules allow the implementation to associate each condition with an implicit queue of waiting threads, and to evaluate it in a generic context, without restoring the referencing environment of any particular thread. When one thread leaves a region, each condition can be evaluated exactly once, and a corresponding thread resumed if the condition is true.
+
+As noted in Section five point one, it is important that tests of a condition not race with updates to the variables on which the condition depends. This property, too, can be ensured by allowing conditions to depend only on the state of the lockable object—and perhaps also on parameters passed by value, which cannot be changed by other threads.
+
+Seven point four point two Futures
+
+Futures, first proposed by Halstead parenthesis nineteen eighty five parenthesis for the Multilisp dialect of Scheme, exploit the observation that function arguments, in most languages, are evaluated before they are
+This content delves into advanced language mechanisms, specifically focusing on concurrent programming and data structures, with a particular emphasis on optimizing performance and ensuring correctness in multi-threaded environments.
+
+Figure Seven point four illustrates the implementation of a bounded buffer using conditional critical regions. A bounded buffer is a fundamental data structure in concurrent programming, acting as a queue with a fixed capacity. The code defines a `buffer` class with a constant `SIZE`, a data array `buf` of that size, and two integer variables, `next_full` and `next_empty`, which act as indices to track the next available slot for insertion and the next element to be removed, respectively. The `insert` method, when `full_slots` is less than `SIZE`, places data `d` into the buffer at the `next_empty` index and then updates `next_empty` using a modulo operation to wrap around the buffer. The `remove` method, when `full_slots` is greater than zero, retrieves data from the buffer at the `next_full` index, updates `next_full` similarly, and returns the retrieved data. The figure's caption notes that regions are assumed to interact with the current object, referred to as `this`, unless otherwise specified, indicating a context for how these operations are managed within a larger system.
+
+The accompanying text discusses the challenges of concurrency and how certain language constructs can mitigate them. Without restrictions, threads might race to enter regions of code associated with an object, leading to unpredictable behavior. To address this, sophisticated systems can track which variables a condition depends on. When one of these variables changes, the system can react, potentially by re-evaluating the condition. This optimization is presented as being more efficient than constantly re-checking all conditions, especially when the overhead of determining which conditions to check is low.
+
+A cost-reduction strategy, inspired by the language Ada, is discussed for managing conditions. This strategy involves requiring conditions to depend solely on the state of the lockable object itself, rather than on parameters passed to methods. These rules enable an implementation to associate each condition with a specific context, avoiding the need to restore the complete referencing environment of any particular thread. When a thread exits a region, another thread can be resumed if its associated condition is met. The importance of ensuring that condition tests do not race with updates to the variables they depend on is highlighted. This property can be achieved by allowing conditions to depend only on the state of the lockable object, or perhaps on parameters passed by value, such that these parameters cannot be modified by other threads.
+
+The text then transitions to the concept of "Futures." Futures, first proposed by Halstead in nineteen eighty five for the Multilisp dialect of Scheme, are a mechanism for handling asynchronous computation. They exploit the observation that function arguments, in many languages, are evaluated before the function call itself. Futures allow for the deferral of evaluation, enabling computations to proceed in parallel. This is particularly useful in languages that support speculative execution or lazy evaluation, where a computation can be initiated and its result can be retrieved later when needed, without blocking the main execution flow. This deferral mechanism is crucial for building high-performance concurrent systems where tasks can be initiated and their results are consumed only when necessary, thereby maximizing resource utilization and minimizing latency.

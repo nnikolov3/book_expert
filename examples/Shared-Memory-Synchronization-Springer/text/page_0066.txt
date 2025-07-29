@@ -1,0 +1,79 @@
+68 4 Practical Spin Locks
+
+class lock
+atomic<int> next_ticket := 0
+atomic<int> now_serving := 0
+const int base = ... // tuning parameter
+
+lock.acquire():
+int my_ticket := next_ticket.FAI(||)
+
+// returns old value; lock.release():
+// arithmetic overflow is harmless intt := now_serving + 1
+loop now_serving.store(t, RW||)
+
+int ns := now_serving.load(||)
+if ns = my_ticket
+break
+pause(base x (my_ticket — ns))
+// overflow in subtraction is harmless
+fence(R||RW)
+
+Figure 4.7 The ticket lock with proportional backoff. Tuning parameter base should be chosen to
+be roughly the length of a trivial critical section.
+
+come-first-served order. Unlike the bakery lock, it uses fetch_and_increment to get by
+with constant space, and with time (per lock acquisition) roughly linear in the number of
+competing threads.
+
+The code in Figure 4.7 employs a backoff strategy due to Mellor-Crummey and Scott
+(1991b). It leverages the fact that my_ticket—L.now_serving represents the number of
+threads ahead of the calling thread in line. If those threads consume an average of k x base
+time per critical section, the calling thread can be expected to probe now_serving about
+k times before acquiring the lock. Under high contention, this can be substantially smaller
+than the O(n) probes expected without backoff.
+
+In a system that runs long enough, the next_ticket and now_serving counters can be
+expected to exceed the capacity of a fixed word size. Rollover is harmless, however: the max-
+imum number of threads in any reasonable system will be less than the largest representable
+integer, and subtraction works correctly in the ring of integers mod 2Wordsize,
+
+4.3 Queued Spin Locks
+
+Even with proportional backoff, a thread can perform an arbitrary number of remote accesses
+in the process of acquiring a ticket lock, inducing an arbitrary amount of contention.
+Anderson et al. (1990) and (independently) Graunke and Thakkar (1990) showed how to
+reduce this to a small constant on a globally cache-coherent machine. The intuition is to
+replace a single now_serving variable (or the Boolean flag of a test_and_set lock) with a
+queue of waiting threads. Each thread knows its place in line: it waits for its predecessor to
+finish before entering the critical section, and signals its successor when it’s done.
+Four Practical Spin Locks.
+
+The code defines a class named lock. Inside the lock class, there is an atomic integer variable named next ticket, initialized to zero. Another atomic integer variable, now serving, is also initialized to zero. A constant integer named base is defined as a tuning parameter. The lock acquisition method is defined as lock dot acquire. Inside acquire, an integer variable my ticket is assigned the result of a fetch and increment operation on next ticket, with full memory ordering. This operation returns the old value of next ticket. A comment indicates that arithmetic overflow here is harmless. An infinite loop begins. Inside the loop, an integer ns is loaded from now serving with full memory ordering. If ns is equal to my ticket, the loop breaks. Otherwise, a pause function is called with an argument calculated as base multiplied by the difference between my ticket and ns. A comment notes that overflow in this subtraction is harmless. A memory fence operation is performed for read and read write ordering. The lock release method is defined as lock dot release. Inside release, an integer t is assigned the value of now serving incremented by one. Then, the value of t is stored into now serving with read write ordering.
+
+Figure four point seven. The ticket lock with proportional backoff. Tuning parameter base should be chosen to be roughly the length of a trivial critical section.
+
+come first served order. Unlike the bakery lock, it uses fetch and increment to get by with constant space, and with time per lock acquisition roughly linear in the number of competing threads.
+
+The code in Figure four point seven employs a backoff strategy due to Mellor Crummey and Scott, one thousand nine hundred ninety one B. It leverages the fact that my ticket minus L dot now serving represents the number of threads ahead of the calling thread in line. If those threads consume an average of K times base time per critical section, the calling thread can be expected to probe now serving about K times before acquiring the lock. Under high contention, this can be substantially smaller than the O of N probes expected without backoff.
+
+In a system that runs long enough, the next ticket and now serving counters can be expected to exceed the capacity of a fixed word size. Rollover is harmless, however: the maximum number of threads in any reasonable system will be less than the largest representable integer, and subtraction works correctly in the ring of integers modulo two to the power of word size.
+
+Four point three Queued Spin Locks.
+
+Even with proportional backoff, a thread can perform an arbitrary number of remote accesses in the process of acquiring a ticket lock, inducing an arbitrary amount of contention. Anderson et al. one thousand nine hundred ninety and independently Graunke and Thakkar one thousand nine hundred ninety showed how to reduce this to a small constant on a globally cache coherent machine. The intuition is to replace a single now serving variable or the Boolean flag of a test and set lock with a queue of waiting threads. Each thread knows its place in line: it waits for its predecessor to finish before entering the critical section, and signals its successor when it's done.
+The provided content elucidates foundational concepts in concurrent programming, specifically focusing on the implementation and optimization of spin locks. Spin locks are a class of synchronization primitive where a thread attempting to acquire a lock repeatedly checks if the lock is available, rather than yielding its execution. This "spinning" avoids context switching overhead, making them suitable for short critical sections on multi processor systems.
+
+Figure four point seven presents a classic implementation known as a ticket lock. This mechanism provides a fair, first come first served ordering for threads acquiring the lock. The core components of this `class lock` are two `atomic` integer variables: `next_ticket` and `now_serving`, both initialized to zero. An `atomic` variable guarantees that operations on it are indivisible and appear to occur instantaneously with respect to other threads, thus preventing race conditions without explicit locking for the operations themselves. A `const int base` is also defined as a tuning parameter, which influences the backoff strategy.
+
+The `lock.acquire()` method is responsible for obtaining the lock. A thread first obtains its unique `my_ticket` number by performing a `fetch_and_increment` operation on `next_ticket`. The `F A I` or `fetch_and_increment` operation atomically increments `next_ticket` and returns its *original* value. This ensures that each thread receives a distinct, monotonically increasing ticket number. Subsequently, the thread enters a `loop`, which represents the spinning phase. Inside this loop, it atomically loads the current `now_serving` value into a local variable `ns`. The condition for acquiring the lock is `if ns is equal to my_ticket break`, meaning the thread's ticket number matches the one currently being served.
+
+If the lock is not yet available, the thread engages in a proportional backoff strategy, indicated by `pause(base × (my_ticket – ns))`. This is a critical optimization. Instead of busy waiting aggressively on the `now_serving` variable, which would lead to excessive bus traffic and cache line contention due to cache coherence protocols, threads pause for a duration proportional to the number of threads ahead of them in the queue. A thread with a `my_ticket` value far greater than `ns` will have a larger difference, resulting in a longer pause. This dynamic adjustment significantly reduces the number of probes to `now_serving` and the associated inter processor communication overhead, such as cache invalidations. The comment regarding "overflow in subtraction is harmless" implies that the system is designed to handle integer wraparound correctly, treating the counter space as a ring of integers modulo `two to the power of word size`. The `fence(R or R W)` operation ensures proper memory ordering, specifically that all prior reads and read write operations are completed and visible before subsequent memory operations, critical for maintaining memory consistency across multiple cores.
+
+The `lock.release()` method is straightforward. The thread holding the lock simply increments the `now_serving` counter by one and atomically stores this new value using `now_serving.store(t, R W ||)`. This action signals to the next waiting thread in the ticket sequence that it is now its turn to acquire the lock. The `R W ||` memory order ensures that the store operation is visible to other threads appropriately.
+
+This ticket lock, as described, offers a fair first come first served order. Its space complexity is constant, as it only requires a few integer variables. The time complexity per lock acquisition, however, is linear in the number of competing threads, specifically an average of `k × base` probes to the `now_serving` variable, where `k` represents the number of threads ahead. The system's robustness against counter overflow is crucial, ensuring correct operation even when `next_ticket` and `now_serving` wrap around within the fixed word size, effectively operating in a modular arithmetic ring.
+
+Building upon these principles, Section four point three introduces `Queued Spin Locks`, which address a key limitation of the basic ticket lock: cache contention. Even with proportional backoff, the `now_serving` variable in a ticket lock remains a global hot spot. Multiple threads still contend for the same cache line containing `now_serving`, leading to performance degradation due to cache line invalidations and coherence traffic on globally cache coherent machines.
+
+Queued spin locks, pioneered by Anderson and independently by Graunke and Thakkar, fundamentally alter the spinning mechanism. Instead of all threads spinning on a single shared variable, each waiting thread spins on a *local* variable or a specific `test_and_set` lock flag associated with its position in a logical queue. When a thread is ready to release the lock, it directly signals its *successor* in the queue. This design significantly reduces remote cache accesses, as threads are primarily spinning on cache lines private to them or those close to their specific waiting position. The intuition is that each thread "knows its place in line" and waits for its immediate predecessor to complete its critical section and then signal its completion, rather than constantly polling a global counter. This distributed waiting strategy drastically reduces cache line bouncing and improves scalability by transforming a global contention point into a series of localized, peer to peer synchronizations, thereby achieving a more constant and reduced number of remote accesses per lock acquisition regardless of the contention level.

@@ -1,0 +1,79 @@
+186 9 Transactional Memory
+
+be found in the work of Knight (1986) and Chang and Mergen (1988). Originally perceived as
+too complex for technology of the day, TM was largely ignored in the hardware community
+for a decade. Meanwhile, as mentioned at the end of Chapter 8, several groups in the theory
+community were exploring the notion of universal constructions (Turek et al. 1992; Herlihy
+1993; Barnes 1993a; Israeli and Rappoport 1994; Shavit and Touitou 1995; Anderson and
+Moir 1999), which could transform a correct sequential data structure, mechanically, into a
+correct concurrent data structure. Shortly after the turn of the century, breakthrough work
+in both hardware (Rajwar and Goodman 2001; Rajwar and Goodman 2002; Martinez and
+Torrellas 2002) and software (Herlihy et al. 2003b; Harris and Fraser 2003; Fraser and Harris
+2007) led to a resurgence of interest in TM. This resurgence was fueled, in part, by the move
+to multicore processors, which raised profound concerns about the ability of “ordinary”
+programmers to write code (correct code!) with significant amounts of exploitable thread-
+level parallelism.
+
+Much of the inspiration for TM, both originally and more recently, has come from the
+database community, where transactions have been used for many years. Much of the theory
+of database transactions was developed in the 1970s (Eswaran et al. 1976). Haerder and
+Reuter (1983) coined the acronym ACID to describe the essential semantics: a transaction
+should be
+
+atomic — it should happen exactly once (or not at all), even in the presence of crashes
+
+consistent — it should maintain all correctness properties of the database
+
+isolated — its internal behavior should not be visible to other transactions, nor should it
+see the effects of other transactions during its execution
+
+durable — once performed, its effects should survive system crashes
+
+These same semantics apply to TM transactions, with two exceptions. First, there 1s an
+(arguably somewhat sloppy) tendency in the TM literature to use the term “atomic” when
+“isolated” would be more accurate. Second, most TM systems dispense with durability.
+
+Composability
+
+We also used the term “composability” in Sec. 3.1.2, where it was one of the advantages of lineariz-
+ability over other ordering criteria. The meaning of the term there, however, was different from the
+meaning here. With linearizability, we wanted to ensure, locally (i.e., on an object-by-object basis,
+without any need for global knowledge or control), that the orders of operations on different objects
+would be mutually consistent, so we could compose them into a single order for the program as a
+whole. In transactional memory, we want to combine small operations (transactions) into larger, still
+atomic, operations. In other words, we're now composing operations, not orders.
+
+Interestingly, the techniques used to implement linearizable concurrent objects do not generally
+support the creation of atomic composite operations: a linearizable operation is designed to be visible
+to all threads before it returns to its caller; its effect can’t easily be delayed until the end of some
+larger operation. Conversely, the techniques used to implement composable transactions generally
+involve some sort of global control—exactly what linearizability was intended to avoid.
+one hundred eighty six
+
+nine transactional memory
+
+be found in the work of Knight nineteen eighty six and Chang and Mergen nineteen eighty eight. Originally perceived as too complex for technology of the day, transactional memory was largely ignored in the hardware community for a decade. Meanwhile, as mentioned at the end of Chapter eight, several groups in the theory community were exploring the notion of universal constructions Turek et al. nineteen ninety two Herlihy nineteen ninety three Barnes nineteen ninety three a Israel and Rappoport nineteen ninety four Shavit and Touitou nineteen ninety five Anderson and Moir nineteen ninety which could transform a correct sequential data structure, mechanically, into a correct concurrent data structure. Shortly after the turn of the century, breakthrough work in both hardware Rajwar and Goodman two thousand one Rajwar and Goodman two thousand two Martínez and Torrellas two thousand two and software Herlihy et al. two thousand three b Harris and Fraser two thousand three Fraser and Harris two thousand seven led to a resurgence of interest in transactional memory. This resurgence was fueled, in part, by the move to multicore processors, which raised profound concerns about the ability of ordinary programmers to write correct code, correct code! with significant amounts of exploitable thread level parallelism.
+
+Much of the inspiration for transactional memory, both originally and more recently, has come from the database community, where transactions have been used for many years. Much of the theory of database transactions was developed in the nineteen seventies Eswaran et al. nineteen seventy six. Haerder and Reuter nineteen eighty three coined the acronym A C I D to describe the essential semantics: a transaction should be
+
+atomic – it should happen exactly once or not at all, even in the presence of crashes
+consistent – it should maintain all correctness properties of the database
+isolated – its internal behavior should not be visible to other transactions, nor should it see the effects of other transactions during its execution
+durable – once performed, its effects should survive system crashes
+
+These same semantics apply to transactional memory transactions, with two exceptions. First, there is an arguably somewhat sloppy tendency in the transactional memory literature to use the term atomic when isolated would be more accurate. Second, most transactional memory systems dispense with durability.
+
+composability
+
+We also used the term composability in Section three point one point two, where it was one of the advantages of linearizability over other ordering criteria. The meaning of the term there, however, was different from the meaning here. With linearizability, we wanted to ensure, locally, that is, on an object by object basis, without any need for global knowledge or control, that the orders of operations on different objects would be mutually consistent, so we could compose them into a single order for the program as a whole. In transactional memory, we want to combine small operations, transactions, into larger, still atomic, operations. In other words, we're now composing operations, not orders.
+
+Interestingly, the techniques used to implement linearizable concurrent objects do not generally support the creation of atomic composite operations: a linearizable operation is designed to be visible to all threads before it returns to its caller; its effect can't easily be delayed until the end of some larger operation. Conversely, the techniques used to implement composable transactions generally involve some sort of global control exactly what linearizability was intended to avoid.
+The text delves into the foundational principles of Transactional Memory, or T M, exploring its historical context and the core properties that define its semantics. Initially perceived as too complex for widespread adoption for nearly a decade, T M saw a resurgence driven by the demands of multicore processors, which necessitate new approaches to managing concurrent operations. This revival was fueled by research groups across both hardware and software domains, focusing on the concept of universal constructions.
+
+The underlying technical challenge is to transform sequential data structures into a format suitable for concurrent execution, ensuring correctness even amidst simultaneous access by multiple threads. This necessitates mechanisms that preserve data integrity and provide predictable behavior in a parallel environment. The inspiration for T M stems significantly from the database community's long-standing use of transactions, a concept formally defined by the ACID properties: atomicity, consistency, isolation, and durability.
+
+Atomicity mandates that a transaction either completes entirely or has no effect, even in the presence of system crashes. Consistency ensures that a transaction brings the system from one valid state to another, upholding all defined correctness properties. Isolation dictates that the internal workings of a transaction are not visible to other concurrent transactions until it completes, preventing interference and maintaining data coherence. Durability guarantees that once a transaction has been committed, its effects are permanent and survive subsequent system failures.
+
+These ACID semantics are directly applicable to T M transactions, though certain nuances arise. For instance, the term "atomic" in T M might be used in a way that permits the omission of durability, a concept that might be considered a simplification or a deviation from the traditional database definition. Similarly, the term "isolated" might have a slightly different interpretation in the context of T M, where the goal is to ensure that operations do not become visible to other transactions prematurely, thereby maintaining the integrity of concurrent execution. The discussion highlights that while these semantics are generally applicable, there can be variations in their strict interpretation within the T M literature.
+
+The concept of composability is also examined, referring to the ability to combine smaller, independently operating units into a larger, functional whole. In the context of T M, composability is crucial for building complex concurrent operations from simpler ones. The text distinguishes this use of composability from its application in serializability, where the focus is on object-by-object ordering. T M aims to compose operations, which could be small transactions, into larger, cohesive units, all while maintaining the desired ordering properties. The techniques employed to achieve linearized concurrent composite operations are designed to be visible to the caller as a single, atomic action, with its effects deferred until the completion of the larger transaction. This contrasts with approaches that might require global control, which linearizability itself was intended to avoid, suggesting a focus on decentralized or localized coordination for composability within T M.

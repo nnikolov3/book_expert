@@ -1,0 +1,62 @@
+3.1 Safety 37
+
+In shared-memory parallel programs, “non-sharable resources” often correspond to por-
+tions of a data structure, with access protected by mutual exclusion (“mutex”) locks. Given
+that exclusive use 1s fundamental, deadlock can then be addressed by breaking any one of
+the remaining three conditions. For example:
+
+I. We can break the hold-and-wait condition by requiring a thread that wishes to perform a
+given operation to request all of its locks at once. This approach 1s impractical in modular
+software, or in situations where the identities of some of the locks depend on conditions
+that cannot be evaluated without holding other locks (suppose, for example, that we wish
+to move an element atomically from set A to set f (v), where v 1s the value of the element
+drawn from set A).
+
+2. We can break the irrevocability condition by requiring a thread to release any locks it
+already holds when it tries to acquire a lock that is held by another thread. This approach is
+commonly employed (automatically) in transactional memory systems, which are able to
+“back a thread out” and retry an operation (transaction) that encounters a locking conflict.
+It can also be used (more manually) in any system capable of dynamic deadlock detection
+(see, for example, the work of Koskinen and Herlihy (2008)). Retrying is complicated
+by the possibility that an operation may already have generated externally-visible side
+effects, which must be “rolled back” without compromising global invariants. We will
+consider rollback further in Chapter 9.
+
+3. We can break the circularity condition by imposing a static order on locks, and requiring
+that every operation acquire its locks according to that static order. This approach is
+slightly less onerous than requiring a thread to request all its locks at once, but still far
+from general. It does not, for example, provide an acceptable solution to the “move from
+A to f(v)” example in strategy 1 above.
+
+Strategy 3 1s widely used in practice. It appears, for example, in every major operating sys-
+tem kernel. The lack of generality, however, and the burden of defining—and respecting—a
+static order on locks, makes strategy 2 quite appealing, particularly when it can be auto-
+mated, as it typically is in transactional memory. An intermediate alternative, sometimes
+used for applications whose synchronization behavior is well understood, 1s to consider,
+at each individual lock request, whether there is a feasible order in which currently active
+operations might complete (under worst-case assumptions about the future resources they
+might need in order to do so), even if the current lock 1s granted. The best known strategy of
+this sort 1s the Banker’s algorithm of Dijkstra (1982, early 1960s), originally developed for
+the THE operating system (Dijkstra 1968a). Where strategies 1 and 3 may be said to prevent
+deadlock by design, the Banker’s algorithm is often described as deadlock avoidance, and
+strategy 2 as deadlock recovery.
+Three point one Safety.
+
+In shared memory parallel programs, non sharable resources often correspond to portions of a data structure, with access protected by mutual exclusion mutex locks. Given that exclusive use is fundamental, deadlock can then be addressed by breaking any one of the remaining three conditions. For example:
+
+One. We can break the hold and wait condition by requiring a thread that wishes to perform a given operation to request all of its locks at once. This approach is impractical in modular software, or in situations where the identities of some of the locks depend on conditions that cannot be evaluated without holding other locks. Suppose, for example, that we wish to move an element atomically from set A to set F of V, where V is the value of the element drawn from set A.
+
+Two. We can break the irrevocability condition by requiring a thread to release any locks it already holds when it tries to acquire a lock that is held by another thread. This approach is commonly employed automatically in transactional memory systems, which are able to back a thread out and retry an operation, transaction, that encounters a locking conflict. It can also be used, more manually, in any system capable of dynamic deadlock detection. See, for example, the work of Koskinen and Herlihy, two thousand eight. Retrying is complicated by the possibility that an operation may already have generated externally visible side effects, which must be rolled back without compromising global invariants. We will consider rollback further in Chapter nine.
+
+Three. We can break the circularity condition by imposing a static order on locks, and requiring that every operation acquire its locks according to that static order. This approach is slightly less onerous than requiring a thread to request all its locks at once, but still far from general. It does not, for example, provide an acceptable solution to the move from A to F of V example in strategy one above.
+
+Strategy three is widely used in practice. It appears, for example, in every major operating system kernel. The lack of generality, however, and the burden of defining and respecting a static order on locks, makes strategy two quite appealing, particularly when it can be automated, as it typically is in transactional memory. An intermediate alternative, sometimes used for applications whose synchronization behavior is well understood, is to consider, at each individual lock request, whether there is a feasible order in which currently active operations might complete, under worst case assumptions about the future resources they might need in order to do so, even if the current lock is granted. The best known strategy of this sort is the Banker's algorithm of Dijkstra, nineteen eighty two, early nineteen sixties, originally developed for the T H E operating system. Dijkstra nineteen sixty eight A. Where strategies one and three may be said to prevent deadlock by design, the Banker's algorithm is often described as deadlock avoidance, and strategy two as deadlock recovery.
+In the realm of shared memory parallel programs, a core challenge arises from the contention for non sharable resources, which are typically safeguarded by mutual exclusion locks, often referred to as mutexes. The presence of mutual exclusion is a fundamental prerequisite for the occurrence of deadlocks. Therefore, to address the issue of deadlock, one must systematically break one of the additional necessary conditions that, alongside mutual exclusion, collectively constitute the classic definition of a deadlock state.
+
+One approach involves breaking the hold and wait condition. This strategy mandates that any thread aiming to execute a specific operation must simultaneously request and acquire all necessary locks upfront in an atomic fashion. The underlying principle is to ensure that a thread either obtains all the resources it requires for its operation or none at all, thereby preventing it from holding some resources while indefinitely awaiting others that are currently held by different threads. However, this method presents significant practical hurdles, particularly in modular software architectures where the complete set of required locks for an operation may not be known a priori. Furthermore, the identities of certain locks might be dynamically dependent on runtime conditions that can only be evaluated after some initial resources have been acquired. For instance, consider an operation to move an element from set A to set `f(v)`, where `v` represents the value of the element; the specific lock for `f(v)` cannot be determined until `v` is accessed, making static pre-acquisition problematic.
+
+A second strategy focuses on breaking the irrevocability condition, which is fundamentally the principle of no preemption. This is achieved by requiring a thread to relinquish any locks it currently holds if it attempts to acquire a lock that is already held by another thread. This mechanism often underpins deadlock recovery or optimistic concurrency control. It is commonly implemented automatically in transactional memory systems, which are designed to support atomic transactions. When a transaction encounters a locking conflict, it can be "backed out" or aborted, causing it to release all its held resources and then typically retry the operation. This approach can also be applied through dynamic deadlock detection, where deadlocks are allowed to occur, subsequently identified, and then resolved through explicit manual preemption and retry. A critical complexity with this strategy arises when an operation has already generated externally visible side effects. For instance, if data has been written to persistent storage or a network message sent, merely rolling back the internal state of the thread and releasing its locks is insufficient. The system must then devise intricate mechanisms to "undo" or compensate for these external changes to maintain global invariants, which poses a substantial design and implementation challenge.
+
+The third method aims to disrupt the circular wait condition. This is accomplished by imposing a static, predefined order on all locks within the system. Every operation is then strictly required to acquire its necessary locks according to this established sequential order. Conceptually, by enforcing a total ordering of resource acquisition, it becomes impossible for a circular chain of dependencies to form, thereby preventing deadlocks. This approach is generally considered less onerous than requiring a thread to acquire all its locks at once, as seen in the first strategy, because threads do not need to know all future lock requirements immediately, only that any subsequent lock must be acquired in increasing order. Despite its advantages, this strategy suffers from a lack of generality and can impose a significant burden in terms of defining and rigorously respecting the static lock order, especially in complex systems. It is, however, widely adopted in practice, particularly within major operating system kernels, where the system has precise control over resource allocation and can enforce strict ordering rules.
+
+While strategy three is prevalent in operating system kernels, its lack of generality can be limiting. The complexities of defining and adhering to a strict static order for all resources often make strategy two, based on preemption and rollback mechanisms such as transactional memory, quite appealing, particularly due to its potential for automation. An intermediate alternative, which examines synchronization behavior from a different perspective, involves a form of deadlock avoidance. This entails dynamically assessing whether a feasible order exists for currently active operations to complete, even under worst case assumptions about their future resource requirements, and irrespective of whether the current lock request is granted. The most well known algorithm for this type of strategy is the Banker's algorithm, originally conceived by Dijkstra in the early one thousand nine hundred sixties and later refined. This algorithm requires processes to declare their maximum resource needs in advance and then verifies that granting a resource request will not lead to an unsafe state, one from which a deadlock could potentially occur. Thus, broadly categorizing these approaches, strategies one and three are considered forms of deadlock prevention, as they structure the system to inherently preclude deadlock. The Banker's algorithm exemplifies deadlock avoidance, as it dynamically checks for safe states to prevent entry into unsafe ones. Conversely, strategy two, with its reliance on preemption and rollback, falls under the umbrella of deadlock recovery, as it addresses deadlocks after they manifest.

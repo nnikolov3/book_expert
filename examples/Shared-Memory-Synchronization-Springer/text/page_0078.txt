@@ -1,0 +1,85 @@
+80 4 Practical Spin Locks
+
+does not. In the latter case, foo needs to acquire L. With most of the locks presented above,
+the program will deadlock in the former case: the thread will end up “waiting for itself.”
+
+A lock that can be re-acquired by the owner thread, and that returns to being free only
+after an equal number of releases, is said to be reentrant. A simple strategy, which can
+be used with any mutual exclusion lock (spin or scheduler-based), is to extend the base
+implementation with an owner field and a counter:
+
+class reentrant_lock
+
+lock L
+
+atomic<7 > owner := |
+
+int count:=0
+
+reentrant_lock.acquire() reentrant_lock.release()
+
+if owner.load(||W) # self if ——count=0
+L.acquire() owner.store(L, ||)
+owner.store(self, ||) L.release()
+
+count++
+
+Given the overhead of inspecting and updating owner and count fields, many designers
+choose not to make locks reentrant by default.
+
+Note the use of explicit loads and stores to access the owner field. These mediate a race
+between the read of owner in reentrant_lock.acquire and the writes of owner in acquire
+and release. There are no races on the count field.
+
+4,5 Special-Case Optimizations
+
+Many techniques have been proposed to improve the performance of spin locks in important
+special cases. We will consider the most important of these—read-mostly synchronization—
+in Chapter 6. In this section we consider three others. Locality-conscious locking biases the
+acquisition of a lock toward threads that are physically closer to the most recent prior
+holder, thereby reducing average hand-off cost on NUMA machines. Double-checked lock-
+ing addresses situations in which initialization of a variable must be synchronized, but
+subsequent use need not be. Asymmetric locking addresses situations in which a lock is
+accessed repeatedly by the same thread, and performance may improve if that thread is able
+to reacquire the lock more easily than others can acquire it.
+
+4.5.1 Locality-Conscious Locking
+
+On a NUMA machine—or even one with a non-uniform cache architecture (sometimes
+known as NUCA )—inter-core communication costs may differ dramatically. If, for example,
+we have multiple processors, each with multiple cores, we may be able to pass a lock to
+another core within the same processor much faster than we can pass it to a core of another
+Four Practical Spin Locks
+
+does not. In the latter case, foo needs to acquire L. With most of the locks presented above, the program will deadlock in the former case: the thread will end up waiting for itself. A lock that can be re acquired by the owner thread, and that returns to being free only after an equal number of releases, is said to be reentrant. A simple strategy, which can be used with any mutual exclusion lock, spin or scheduler based, is to extend the base implementation with an owner field and a counter.
+
+The code defines a `reentrant_lock` class. This class contains a standard lock object named `L`, an atomic variable of type `T` named `owner` initialized to a null or bottom value, and an integer `count` initialized to zero.
+
+The `reentrant_lock.acquire()` method functions as follows:
+First, it checks if the current thread is not the owner of the lock by loading the `owner` field with a weak memory order. If the current thread is not the owner, it then acquires the underlying `L` lock. After acquiring `L`, it sets the `owner` field to the current thread's identifier with a release memory order. Finally, it increments the `count` of acquisitions by one.
+
+The `reentrant_lock.release()` method functions as follows:
+First, it decrements the `count` by one. If the `count` becomes zero after decrementing, indicating all acquisitions by the current owner have been released, it then stores a null or bottom value to the `owner` field with a release memory order, signaling that the lock is no longer owned. Afterwards, it releases the underlying `L` lock.
+
+Given the overhead of inspecting and updating owner and count fields, many designers choose not to make locks reentrant by default. Note the use of explicit loads and stores to access the owner field. These mediate a race between the read of owner in `reentrant_lock.acquire` and the writes of owner in `acquire` and `release`. There are no races on the count field.
+
+Four point five Special Case Optimizations
+
+Many techniques have been proposed to improve the performance of spin locks in important special cases. We will consider the most important of these, read mostly synchronization, in Chapter six. In this section, we consider three others. Locality conscious locking biases the acquisition of a lock toward threads that are physically closer to the most recent prior holder, thereby reducing average hand off cost on Numa machines. Double checked locking addresses situations in which initialization of a variable must be synchronized, but subsequent use need not be. Asymmetric locking addresses situations in which a lock is accessed repeatedly by the same thread, and performance may improve if that thread is able to reacquire the lock more easily than others can acquire it.
+
+Four point five point one Locality Conscious Locking
+
+On a Numa machine, or even one with a non uniform cache architecture, sometimes known as Nuca, inter core communication costs may differ dramatically. If, for example, we have multiple processors, each with multiple cores, we may be able to pass a lock to another core within the same processor much faster than we can pass it to a core of another.
+The fundamental problem addressed by reentrant locks in concurrent programming revolves around the potential for deadlock when a thread attempts to acquire a lock it already holds. Standard mutual exclusion locks, such as basic spin locks, do not permit recursive acquisition. If a function `foo`, while holding a lock `L`, invokes another function `bar` that also attempts to acquire `L`, the system would enter a deadlock state. The thread executing `foo` would be perpetually "waiting for itself" to release the lock, a condition that halts program execution. A lock is termed "reentrant" if the thread currently holding it can reacquire it multiple times without blocking. Crucially, such a lock only becomes truly available to other threads after the owning thread has released it an equal number of times as it acquired it. This reentrancy is typically achieved by extending a base mutual exclusion lock with an owner field and a counter.
+
+Consider the implementation of a `reentrant_lock` class. This class encapsulates an underlying basic mutual exclusion lock, here denoted as `L`, which handles the primary exclusive access. It also maintains an `owner` field, which is an `atomic` variable storing the identity of the thread currently holding the lock, or a special sentinel value, represented by the perpendicular sign, if no thread owns it. The `owner` field is atomic to ensure that reads and writes to it are performed in a manner that maintains consistency across multiple processor cores, preventing race conditions on ownership. Additionally, an `int count` variable tracks the number of times the current owner thread has acquired the lock.
+
+The `reentrant_lock.acquire()` method encapsulates the logic for obtaining the reentrant lock. Upon invocation, it first atomically loads the current value of the `owner` field. If the loaded `owner` value is not equal to the identity of the calling thread, it signifies that another thread, or no thread at all, currently holds the lock. In this scenario, the calling thread must then acquire the underlying basic lock, `L.acquire()`. This action grants the calling thread exclusive access. Once `L` is acquired, the calling thread then atomically stores its own identity into the `owner` field, thereby establishing itself as the lock's current proprietor. Regardless of whether the lock was initially free or already held by the calling thread, the `count` field is then incremented by one. This increment correctly reflects the nested acquisition of the lock by the same thread.
+
+Conversely, the `reentrant_lock.release()` method manages the relinquishment of the lock. Its primary action is to decrement the `count` field. Following this decrement, it checks if the `count` has become equal to zero. If this condition is met, it indicates that the thread has released the lock as many times as it acquired it, signifying that the outermost acquisition has been released. In this specific case, the `owner` field is atomically set back to the sentinel value, the perpendicular sign, denoting that no thread currently owns the lock. Finally, the underlying basic lock, `L.release()`, is released, making it available for acquisition by other threads. It is critical to note that the `count` field itself is implicitly protected by the underlying lock `L`. This design ensures that the `count` is only modified when the lock is held, preventing race conditions on its value. The use of explicit atomic loads and stores for the `owner` field, combined with the protection of the `count` field by `L`, ensures correct synchronization and prevents data races.
+
+Beyond basic reentrancy, significant performance optimizations can be applied to spin locks, particularly in specialized contexts. These optimizations aim to reduce the overhead associated with synchronization, which can be substantial in highly contended scenarios. We often categorize these as read mostly synchronization, which optimizes for access patterns where the lock is primarily read rather than written, and more specific techniques like locality conscious locking, double checked locking, and asymmetric locking.
+
+Locality conscious locking is a sophisticated optimization strategy that recognizes the non uniform costs of inter processor and inter core communication in modern architectures. On a Non Uniform Memory Access, or N U M A, machine, or even a Non Uniform Cache Architecture, or N U C A, system, the time it takes for a C P U to access memory or for two cores to communicate can vary dramatically based on their physical proximity. In N U M A systems, processors typically have their own local memory, and accessing memory attached to another processor incurs higher latency. Similarly, in N U C A, cache coherency protocols lead to varying communication costs for cache line transfers between different cores or cache hierarchies.
+
+When a lock is passed from one core to another, particularly across a processor boundary in a N U M A system, it can trigger expensive cache line invalidations and transfers, known as cache bouncing. This overhead can severely impact performance. Locality conscious locking attempts to mitigate this by biasing the lock acquisition mechanism. Instead of simply granting the lock to the first thread that successfully competes for it, this strategy prioritizes granting the lock to threads that are physically "closer" to the lock's current owner or to the memory location where the lock data resides. For instance, a thread on the same physical processor as the current owner might be given preference over a thread on a different processor. This approach minimizes the average hand off cost by reducing the need for costly cache coherence operations and remote memory accesses, thereby improving overall system throughput for highly contended locks.

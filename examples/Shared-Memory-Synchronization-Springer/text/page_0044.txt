@@ -1,0 +1,73 @@
+3.1 Safety 45
+
+B in the total order. As it turns out, two-phase locking suffices to ensure strict serializability,
+but certain other implementations of “plain” serializability do not.
+
+Quiescent Consistency
+
+In certain applications, designers may be willing to accept a limited amount of unintuitive
+behavior in return for better performance. One arguably minimal criterion, known as guies-
+cent consistency (Derrick et al. 2014; Herlihy et al. 2021, Sec. 3.3), holds that operations on
+a concurrent object should appear to occur in some total order such that if operations A and
+B are separated by a quiescent interval, in which no operations are in progress, then A should
+appear to occur before B. (Some distributed systems adopt even weaker notions of eventual
+consistency, which treat quiescence in a similar manner, but do not necessarily require the
+appearance of a total order. Such extreme relaxations are uncommon in shared-memory
+systems; we do not consider them further here.)
+
+Like linearizability, quiescent consistency is local: if two concurrent objects are quies-
+cently consistent, then any program that uses both objects will see their operations occur
+in some single total order that respects quiescent intervals. Quiescently consistent objects,
+however, may fail to respect either program order or real-time order during nonquiescent
+intervals. To see why this might be useful, consider an object implementation that uses a lock
+to serialize operations, and that allows a thread, when the lock is held, to “stage” its operation
+for later execution—and, if results are not required, to return immediately. Suppose further
+that before releasing the lock, a thread is obligated to execute all pending (“staged”) oper-
+ations. (These conventions can be considered a variation on the flat combining of Hendler
+et al. (2010b), to which we will return in Sec. 5.4.) If a thread doesn’t necessarily execute
+staged operations in the order they were requested (perhaps because some other order is
+known to be more efficient), the resulting behavior may well be quiescently consistent.
+
+Relationships Among the Ordering Criteria
+
+Table 3.1 summarizes the relationships among sequential consistency (for high-level
+objects), linearizability, serializability, strict serializability, and quiescent consistency (with
+serializability defined across threads, rather than individual transactions). A system that cor-
+rectly implements any of these five criteria will provide the appearance of a total order on
+operations. For all but quiescent consistency, this will be consistent with per-thread program
+order. Linearizability and strict serializability add consistency with “real-time” order; quies-
+cent consistency adds this in the limited case of quiescent intervals. Serializability and strict
+serializability add the ability to define multi-object atomic operations. Of the five criteria,
+only linearizability and quiescent consistency are local: they guarantee that operations on
+separate objects always occur in a mutually consistent order, and they decline, as it were, to
+address multi-object operations.
+Section three point one, Safety.
+
+B in the total order. As it turns out, two phase locking suffices to ensure strict serializability, but certain other implementations of "plain" serializability do not.
+
+Quiescent Consistency.
+
+In certain applications, designers may be willing to accept a limited amount of unintuitive behavior in return for better performance. One arguably minimal criterion, known as quiescent consistency, Derrick et al. two thousand fourteen; Herlihy et al. two thousand twenty one, Section three point three, holds that operations on a concurrent object should appear to occur in some total order such that if operations A and B are separated by a quiescent interval, in which no operations are in progress, then A should appear to occur before B. Some distributed systems adopt even weaker notions of eventual consistency, which treat quiescence in a similar manner, but do not necessarily require the appearance of a total order. Such extreme relaxations are uncommon in shared memory systems. We do not consider them further here.
+
+Like linearizability, quiescent consistency is local. If two concurrent objects are quiescently consistent, then any program that uses both objects will see their operations occur in some single total order that respects quiescent intervals. Quiescently consistent objects, however, may fail to respect either program order or real time order during nonquiescent intervals. To see why this might be useful, consider an object implementation that uses a lock to serialize operations, and that allows a thread, when the lock is held, to "stage" its operation for later execution, and, if results are not required, to return immediately. Suppose further that before releasing the lock, a thread is obligated to execute all pending, "staged", operations. These conventions can be considered a variation on the flat combining of Hendler et al. two thousand ten B, to which we will return in Section five point four. If a thread doesn't necessarily execute staged operations in the order they were requested, perhaps because some other order is known to be more efficient, the resulting behavior may well be quiescently consistent.
+
+Relationships Among the Ordering Criteria.
+
+The table three point one summarizes the relationships among sequential consistency for high level objects, linearizability, serializability, strict serializability, and quiescent consistency, with serializability defined across threads, rather than individual transactions. A system that correctly implements any of these five criteria will provide the appearance of a total order on operations. For all but quiescent consistency, this will be consistent with per thread program order. Linearizability and strict serializability add consistency with real time order. Quiescent consistency adds this in the limited case of quiescent intervals. Serializability and strict serializability add the ability to define multi object atomic operations. Of the five criteria, only linearizability and quiescent consistency are local. They guarantee that operations on separate objects always occur in a mutually consistent order, and they decline, as it were, to address multi object operations.
+In the realm of concurrent computing, ensuring data integrity and predictable behavior in shared memory systems is paramount, yet inherently complex. The concept of **safety** is central to this endeavor, particularly concerning how operations on shared data appear to be ordered. While two phase locking is a well-established concurrency control mechanism that often suffices to achieve **strict serializability**, certain other implementations of what is termed "plain" serializability may not inherently provide the same strong guarantees.
+
+**Strict serializability** is a demanding consistency model. It posits that all operations, even across different threads or processes, appear to execute in a single, total order, and this order must be consistent with the real time in which the operations actually occur. This means if operation 'A' completes before operation 'B' begins in real time, then 'A' must appear before 'B' in the serialized execution history. **Plain serializability**, on the other hand, only requires that a concurrent execution is equivalent to some serial execution, but does not impose the real time ordering constraint. Two phase locking enforces a strict order by requiring transactions to acquire all necessary locks before starting their "growing" phase and releasing them only after all operations are complete in their "shrinking" phase, thus preventing deadlocks and ensuring isolation.
+
+However, in certain high performance applications, system designers may be willing to accept a limited amount of unintuitive behavior in return for greater performance. This leads to weaker consistency models. One such model is **quiescent consistency**. The fundamental criterion for quiescent consistency dictates that operations on a concurrent object should appear to occur in some total order such that if operations 'A' and 'B' are separated by a **quiescent interval**, then 'A' should appear to occur before 'B'. A **quiescent interval** is defined as a period during which no operations on the object are in progress. This means that for a system to be quiescently consistent, it must present an observation where all activities related to prior operations on the object have completed before any subsequent operations begin. This allows for significant relaxation compared to models like linearizability or strict serializability, particularly in distributed systems where even weaker notions like **eventual consistency** are sometimes adopted, although those are generally not considered common in traditional shared memory systems.
+
+Unlike the strong global guarantees of linearizability, **quiescent consistency** is fundamentally a **local** property. This means that if two concurrent objects each individually exhibit quiescent consistency, any program that interacts with both objects will observe their operations occurring in some single total order that respects the quiescent intervals of each object. However, a key limitation of quiescent consistency arises during non-quiescent intervals. In these periods, the model may fail to respect either the program order of operations within a single thread or the real time order of operations across multiple threads.
+
+To illustrate how such a system might work, consider an object implementation that utilizes a lock to serialize its operations. When a thread acquires this lock, it might not immediately execute its requested operation. Instead, it could "stage" the operation, queuing it for later execution. If results are not immediately required, this staging allows the system to defer the actual execution. Suppose further that before releasing the lock, a thread is obligated to execute all pending, or "staged", operations. This convention can be viewed as a variation on the concept of **flat combining**, a technique that batches operations to be processed together by a single thread, often the one holding the lock. If a thread, perhaps due to a fault or an optimization, does not necessarily execute operations in the order they were requested, the resulting behavior, while not strictly serial or linearizable, may still be **quiescently consistent** because operations are completed in batches during periods of quiescence, even if their individual intra-batch ordering is relaxed. This "staging" or "batching" approach is known to be more efficient in certain scenarios by reducing synchronization overhead.
+
+A comprehensive understanding of these consistency models often benefits from a comparative analysis, such as that summarized by a conceptual **Table 3.1**, which would typically categorize **relationships among the ordering criteria**. Such a table would delineate the hierarchy among **sequential consistency**, **linearizability**, **serializability**, **strict serializability**, and **quiescent consistency**, differentiating them based on their guarantees for high level object operations versus individual transactions across threads.
+
+In terms of a mental model for this table, one would envision rows representing these five consistency criteria, and columns detailing their specific properties or relationships. For instance, a cell might indicate whether a criterion provides a total order on operations, respects program order, or guarantees real time ordering. A system that correctly implements any of the first four criteria—sequential consistency, linearizability, serializability, or strict serializability—will inherently provide the appearance of a total order on operations. However, for **quiescent consistency**, the total order is specifically consistent with per thread **program order**.
+
+Specifically, **linearizability** and **strict serializability** inherently enforce **consistency with real time order**, meaning the observed order of operations aligns with their actual wall clock timings. This is a critical distinction from plain serializability or sequential consistency, which only guarantee some valid serial ordering but not necessarily one that matches real time. Furthermore, **quiescent consistency** adds this critical property of **consistency with real time order**, but only within the limited context of its quiescent intervals.
+
+**Serializability** and **strict serializability** are the models that provide the crucial ability to define and guarantee **multi object atomic operations**. This means that a series of operations across multiple distinct data objects can be treated as a single, indivisible unit. In contrast, **linearizability** and **quiescent consistency** are primarily **local** properties; they guarantee that operations on separate objects will always occur in a mutually consistent order, but they effectively "decline" to natively address or guarantee atomicity across multiple distinct objects as a primary feature. Therefore, while quiescent consistency offers performance advantages through its relaxed ordering during non quiescent periods, it sacrifices the strong, real time, and multi object atomicity guarantees provided by more stringent models like strict serializability, offering a trade off that system designers carefully evaluate based on the application's specific requirements for correctness and performance.

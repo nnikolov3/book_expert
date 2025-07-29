@@ -1,0 +1,74 @@
+112 6 Read-Mostly Atomicity
+
+that everything it has read in its critical section was mutually consistent. (We assume that
+critical sections are short enough—and writers rare enough—that the lock’s value, n, can
+never roll over and repeat before the reader completes. For real-world integers and critical
+sections, this is a completely safe assumption.) If a reader sees a different value in validate,
+however, it knows that it has overlapped a writer and must repeat its critical section:
+
+repeat
+int s := SL.reader_start()
+// critical section
+
+until SL.reader_validate(s)
+
+It is essential here that the critical section be idempotent—harmlessly repeatable, even if a
+writer has modified data in the middle of the operation, causing the reader to see inconsistent
+state. In the canonical use case, seqlocks serve in the Linux kernel to protect multi-word
+time information, which can then be read atomically and consistently. If a reader critical
+section updates thread-local data (only shared data must be read-only), the idiom shown
+above can be modified to undo the updates in the case where reader_validate returns false.
+
+If a reader needs to perform a potentially “dangerous” operation (integer divide, pointer
+dereference, unbounded iteration, memory allocation/deallocation, etc.) within its critical
+section, the reader_validate method can be called repeatedly (with the same parameter
+each time). If reader_validate returns true, the upcoming operation is known to be safe
+(all values read so far are mutually consistent); if it returns false, consistency cannot be
+guaranteed, and code should branch back to the top of the repeat loop. In the (presumably
+rare) case where a reader discovers that it really needs to write, it can request a “promotion”
+with become_writer:
+
+loop
+int s := SL.reader_start()
+
+if unlikely_condition
+if = SL.become_writer(s) continue // return to top of loop
+
+SL.writer_releasel()
+break
+else // still reader
+
+if SL.reader_validate(s) break
+
+After becoming a writer, of course, a thread has no further need to validate its reads: it will
+exit the loop above after calling writer_release.
+
+Unfortunately, because they are inherently speculative, seqlocks induce a host of data
+races (Boehm 2012). Every read of a shared location in a reader critical section will typically
+race with some write in a writer critical section. These races compound the problem of
+readers seeing inconsistent state: the absence of synchronization means that updates made
+by writers may be seen by readers out of order. In a language like C or C++, which forbids
+Six Read Mostly Atomicity
+
+That everything it has read in its critical section was mutually consistent. We assume that critical sections are short enough, and writers rare enough, that the lock's value, N, can never roll over and repeat before the reader completes. For real world integers and critical sections, this is a completely safe assumption. If a reader sees a different value in validate, however, it knows that it has overlapped a writer and must repeat its critical section:
+
+The first code block illustrates a reader's operation. It begins with a repeat loop. Inside the loop, an integer variable `s` is initialized by calling the `S L dot reader start` function. This is followed by the execution of a critical section. The loop continues until `S L dot reader validate` returns a true value for `s`.
+
+It is essential here that the critical section be idempotent, meaning harmlessly repeatable, even if a writer has modified data in the middle of the operation, causing the reader to see inconsistent state. In the canonical use case, seqlocks serve in the Linux kernel to protect multi word time information, which can then be read atomically and consistently. If a reader critical section updates thread local data, where only shared data must be read only, the idiom shown above can be modified to undo the updates in the case where `reader validate` returns false.
+
+If a reader needs to perform a potentially dangerous operation, such as an integer divide, pointer dereference, unbounded iteration, or memory allocation slash deallocation, within its critical section, the `reader validate` method can be called repeatedly with the same parameter each time. If `reader validate` returns true, the upcoming operation is known to be safe, meaning all values read so far are mutually consistent. If it returns false, consistency cannot be guaranteed, and code should branch back to the top of the repeat loop. In the presumably rare case where a reader discovers that it really needs to write, it can request a promotion with `become writer`:
+
+The second code block describes a more complex reader loop that includes a path for promotion to a writer. The loop begins by initializing an integer variable `s` with the result of `S L dot reader start`. Inside the loop, if an `unlikely condition` is met, the code attempts to transition to a writer by calling `S L dot become writer` with `s`. If `S L dot become writer` returns false, indicating the promotion failed, the reader continues, returning to the top of the loop. If the promotion succeeds, the writer performs its operations, then calls `S L dot writer release`, and breaks out of the loop. If the `unlikely condition` is not met, indicating the thread remains a reader, the code proceeds and then calls `S L dot reader validate` with `s`. If `S L dot reader validate` returns true, the loop is exited, signifying a successful read. Otherwise, the loop continues to the next iteration.
+
+After becoming a writer, of course, a thread has no further need to validate its reads: it will exit the loop above after calling `writer release`.
+
+Unfortunately, because they are inherently speculative, seqlocks induce a host of data races, as documented by Boehm in two thousand twelve. Every read of a shared location in a reader critical section will typically race with some write in a writer critical section. These races compound the problem of readers seeing inconsistent state: the absence of synchronization means that updates made by writers may be seen by readers out of order. In a language like C or C plus plus, which forbids
+The page delves into the intricate mechanisms of concurrent programming, specifically focusing on a synchronization primitive known as a `seqlock`, often employed in read-mostly scenarios within operating systems like the Linux kernel. The fundamental concept explored here is "read-mostly atomicity," which posits that in systems where read operations vastly outnumber write operations, a more performant synchronization approach can be adopted where readers are not blocked by writers, but rather, operate speculatively.
+
+At its core, a `seqlock` operates on the principle of optimistic concurrency. When a reader enters a critical section protected by a `seqlock`, it first records a sequence number by calling `S L.reader_start()`. This sequence number acts as a version indicator for the shared data. The reader then proceeds to access the shared data. Unlike traditional reader-writer locks, this read operation does not acquire a lock that would prevent a writer from modifying the data concurrently. This is the "optimistic" part: the system assumes that write conflicts will be rare. Upon completing its read, the reader invokes `S L.reader_validate(s)`, passing the initial sequence number `s` it recorded. This function checks if the sequence number has changed since the read began. If it has not, implying no writer modified the data during the read, the read operation is considered valid, and the reader can exit the critical section. However, if the sequence number *has* changed, it means a writer intervened and updated the shared data, potentially rendering the reader's acquired data inconsistent. In this scenario, the reader must discard its reads and retry the entire critical section from the beginning. This mechanism prioritizes reader concurrency and low latency for successful reads, as readers avoid the overhead of explicit locking.
+
+A crucial technical requirement for `seqlock` readers is that their critical sections must be "idempotent." This means the operations performed within the read critical section must be "harmlessly repeatable." If a reader's operation fails validation and needs to be retried, performing it multiple times must not alter the system state or produce undesirable side effects. This constraint is vital because readers might observe inconsistent intermediate states of the shared data or even partially updated data before validation fails. For example, operations such as integer division, pointer dereferencing, or dynamic memory allocation and deallocation are considered "dangerous" in this context if they might fail or cause errors due to inconsistent data during speculative execution. An integer divide could result in a divide by zero error if the divisor is momentarily seen as zero during an inconsistent state. Dereferencing an invalid pointer due to a concurrent update could lead to a segmentation fault. Unbounded iterations might loop indefinitely if a loop termination condition relies on a shared variable that is undergoing concurrent modification. Therefore, code within a `seqlock` reader critical section must be carefully designed to tolerate retries and potential temporary inconsistencies, ensuring that any state changes are only committed after a successful validation.
+
+The system also supports a dynamic transition where a thread initially acting as a reader might determine it needs to perform a write operation. This is termed "reader promotion." The second code snippet illustrates this complex flow. A thread enters the `loop` and begins as a reader by calling `S L.reader_start()`. Within its critical section, it might evaluate an `unlikely_condition`. If this condition is met, the thread attempts to become a writer by calling `S L.become_writer(s)`. This function is a sophisticated attempt to atomically transition from a reader to a writer, often involving acquiring the write lock and validating the original sequence number `s` simultaneously. If `S L.become_writer(s)` returns false, it signifies that the promotion failed, perhaps because another writer already intervened, or the write lock could not be acquired. In this case, the thread must `continue` the outer loop, effectively retrying the entire read sequence. If `S L.become_writer(s)` returns true, the thread has successfully transitioned to a writer, enters its writer critical section to modify the shared data, and subsequently calls `S L.writer_release()` to signal the completion of its write operation, exiting the loop. If the `unlikely_condition` is not met, the thread remains a reader and, like in the simpler case, validates its reads using `S L.reader_validate(s)`. If validation succeeds, it `break`s from the loop; otherwise, it retries as a reader.
+
+A significant technical challenge with `seqlocks`, particularly when dealing with C or C++ programming, is their inherent susceptibility to data races. While `seqlocks` provide a strong consistency guarantee for readers *upon successful validation*, the reads within the critical section are speculative and not protected by traditional memory barriers or locks during their execution. This means that a reader's critical section can overlap with a writer's critical section. Consequently, a reader might observe shared memory locations in an inconsistent state or read updates out of order. This is a classic data race: multiple threads concurrently accessing shared data, with at least one access being a write, and without adequate synchronization. The absence of strict synchronization during the read phase of a `seqlock` means that the memory model of the underlying architecture or programming language (such as the C or C++ memory model) comes into play. These memory models define permissible reorderings of memory operations and the visibility of writes across different threads. For instance, a compiler or processor might reorder loads and stores within the critical section in ways that are correct for sequential execution but incorrect in a concurrent context. This can lead to a reader observing a partial update or an outdated value, even if the eventual validation would fail and cause a retry. The cited work by Boehm in `two thousand twelve` further highlights how such speculative synchronization primitives can lead to observable data races that complicate reasoning about program correctness and necessitate careful consideration of memory ordering guarantees.

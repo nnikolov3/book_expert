@@ -1,0 +1,69 @@
+58 3 Essential Theory
+
+ever be able to jeopardize correct operation of the Java Virtual Machine or, by implication, of
+any larger system in which that machine might be embedded. To guarantee system integrity,
+the Java specification must define the behavior of racy programs.
+
+C and C++ have no similar concerns about the behavior of racy programs: there is a long
+tradition of undefined semantics for code that, say, dereferences an uninitialized pointer or
+indexes off the end of an array. There is also, however, a long tradition of unfettered access
+to the full capabilities of the underlying hardware. When implementing synchronization
+mechanisms, concurrent data structures, or the application code of certain important algo-
+rithms (e.g., chaotic relaxation (Chazan and Miranker 1969)), non-sequentially-consistent
+executions may dramatically outperform more strongly ordered alternatives, while still
+producing acceptable results. To accommodate such cases, C and C++ allow the program-
+mer to relax the ordering of synchronization races. Specifically, any explicit load, store,
+or fetch_and_® operation on an atomic variable can include a memory order annotation
+that forgoes write atomicity, acquire-release ordering, or both. This means, of course, that
+the global synchronization order of a program with relaxed atomic accesses is no longer
+necessarily total.
+
+In the end, Java and C/C++ arrive at a similar juncture: A C/C++ program in which
+certain variables are declared atomic but accessed with relaxed loads and stores poses
+the same semantic challenges as a Java program in which the corresponding variables were
+never declared as volatile.
+
+3.4.3.1 Out-of-Thin-Air Reads
+
+For programs with data races (or relaxed synchronization races), it 1s tempting to say that
+a read may see the value written either by the most recent write on some backward path
+through the happens-before graph, or by any incomparable write (one that is unordered with
+respect to the read).
+
+Any such convention, however, must deal with the possibility of circular causality. Sup-
+pose we have an execution in which the assignments x :=Yy, y :=z, and z := x race with one
+another. Since each of the reads 1s incomparable to the corresponding write, we can imagine
+an execution in which each assignment circularly “justifies” the next, passing along a value
+v that is never actually computed anywhere in the program. In addition to being unintu-
+itive, such “out of thin air” values could lead to essentially arbitrary behavior elsewhere in
+the program (Boehm and Demsky 2014). While no hardware or compiler implementation
+currently in use appears to generate out-of-thin-air values in practice, there are plausible
+compilation strategies for hypothetical implementations of current architectures (notably
+Power (Lahav et al. 2017)) in which such values could arise, and researchers have yet to
+devise semantics that would preclude them without forcing compilers to generate fences
+that would be expensive on current machines.
+
+To define the writes-seen relation, the Java specification currently incorporates a notion
+of “incremental justification,” in which each read is required to return a value that might
+Ever be able to jeopardize correct operation of the Java Virtual Machine Or, by implication, of any larger system in which that machine might be embedded. To guarantee system integrity, the Java specification must define the behavior of racy programs.
+
+C and C plus plus have no similar concerns about the behavior of racy programs: there is a long tradition of undefined semantics for code that, say, dereferences an uninitialized pointer or indexes off the end of an array. There is also, however, a long tradition of unfettered access to the full capabilities of the underlying hardware. When implementing synchronization mechanisms, concurrent data structures, Or the application code of certain important algorithms, for example, chaotic relaxation, Chazan and Miranker nineteen sixty nine, non sequentially consistent executions may dramatically outperform more strongly ordered alternatives, while still producing acceptable results. To accommodate such cases, C and C plus plus allow the programmer to relax the ordering of synchronization races. Specifically, any explicit load, store, Or fetch and Phi operation on an atomic variable can include a memory order annotation that forgoes write atomicity, acquire release ordering, Or both. This means, of course, that the global synchronization order of a program with relaxed atomic accesses is no longer necessarily total.
+
+In the end, Java and C slash C plus plus arrive at a similar juncture: A C slash C plus plus program in which certain variables are declared atomic but accessed with relaxed loads and stores poses the same semantic challenges as a Java program in which the corresponding variables were never declared as volatile.
+
+Three dot four dot three dot one. Out of Thin Air Reads.
+
+For programs with data races, Or relaxed synchronization races, it is tempting to say that a read may see the value written either by the most recent write on some backward path through the happens before graph, Or by any *incomparable* write, one that is unordered with respect to the read.
+
+Any such convention, however, must deal with the possibility of circular causality. Suppose we have an execution in which the assignments x is assigned y, y is assigned z, And z is assigned x race with one another. Since each of the reads is incomparable to the corresponding write, we can imagine an execution in which each assignment circularly “justifies” the next, passing along a value v that is never actually computed anywhere in the program. In addition to being unintuitive, such “out of thin air” values could lead to essentially arbitrary behavior elsewhere in the program, Boehm and Demsky two thousand fourteen. While no hardware Or compiler implementation currently in use appears to generate out of thin air values in practice, there are plausible compilation strategies for hypothetical implementations of current architectures, notably Power, Lahav et al. two thousand seventeen, in which such values *could* arise, And researchers have yet to devise semantics that would preclude them without forcing compilers to generate fences that would be expensive on current machines.
+
+To define the writes seen relation, the Java specification currently incorporates a notion of “incremental justification,” in which each read is required to return a value that might
+The correct operation of a Java Virtual Machine, particularly when embedded within a larger system, critically depends on the precise definition of behavior for programs exhibiting concurrency races. Unlike C and C plus plus, which have a long tradition of undefined semantics for erroneous operations such as dereferencing uninitialized pointers or accessing arrays out of bounds, the Java specification aims for strong guarantees. However, implementing synchronization mechanisms, concurrent data structures, and certain algorithms like chaotic relaxation, which was first described by Chazan and Miranker in nineteen sixty nine, often requires navigating the full capabilities and complexities of underlying hardware. These algorithms frequently employ non sequentially consistent execution models, which, despite potentially producing unexpected intermediate states, can dramatically outperform more strictly ordered alternatives.
+
+To facilitate such performance gains while maintaining a semblance of order, both C and C plus plus allow programmers to relax the ordering of synchronization races. This involves explicitly using operations like `load`, `store`, or `fetch and phi` on atomic variables, which can incorporate explicit memory order annotations. These annotations define the required visibility and ordering properties, such as acquire-release semantics or write atomicity. The implication of this relaxed approach is that a globally consistent synchronization order is not necessarily maintained for all operations. Consequently, a C or C plus plus program in which certain variables are declared `atomic` but accessed with relaxed loads and stores presents semantic challenges analogous to those encountered in a Java program where variables are not explicitly designated as `volatile`. The fundamental challenge across these languages is managing memory visibility and consistency in concurrent environments.
+
+The concept of "Out-of-Thin-Air Reads" addresses a particular challenge within relaxed memory models or concurrent data races. In essence, it describes a situation where a read operation observes a value that cannot be causally linked to any prior write operation within the program's execution history, even considering the most recent write on any backward path through the happens before graph, or any incomparable write. Such a phenomenon would constitute a severe violation of program causality.
+
+Consider a hypothetical execution involving circular causality, such as concurrent assignments `x is y`, `y is z`, and `z is x`. In this scenario, if a read of one variable is incomparable to the corresponding write to it, it becomes possible for an execution to arise where each assignment circularly "justifies" the next, leading to a situation where a value `v` is observed that was never actually computed anywhere in the program. This type of "out of thin air" value is highly problematic, leading to unintuitive and potentially arbitrary behavior within the program, as elucidated by Boehm and Demsky in two thousand fourteen.
+
+While no specific hardware or compiler implementation currently in widespread use explicitly generates "out of thin air" values, plausible implementations of contemporary architectures, particularly those discussed by Lahav et al. in two thousand seventeen, could indeed give rise to such values. This necessitates that researchers devise formal semantics that inherently preclude these anomalies without forcing compilers to generate excessive memory fences, which would impose significant performance overhead on modern machines. To address this, the Java specification currently incorporates a rigorous notion of "incremental justification." This principle mandates that every read operation must be justified by a prior write, thereby preventing the observation of values that seemingly appear "out of thin air" and upholding the causality of memory operations.

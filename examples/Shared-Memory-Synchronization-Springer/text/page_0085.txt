@@ -1,0 +1,74 @@
+88 5 Busy-Wait Synchronization with Conditions
+
+In some algorithms, it may be helpful to have a reset method:
+
+flag.reset():
+f.store(false, |W)
+
+Before calling reset, a thread must ascertain (generally through application-specific
+means) that no thread is still using the flag for its previous purpose. The [|W ordering
+on the store ensures that any subsequent updates (to be announced by a future set) are seen
+to happen after the reset.
+
+In an obvious generalization of flags, one can arrange to wait on an arbitrary predicate:
+
+class predicate
+
+abstract bool eval)
+// to be extended by users
+
+predicate.await():
+while —eval(); // spin
+fence(R||[RW)
+
+With compiler or preprocessor support, this can become
+await( condition):
+
+while —condition; // spin
+
+fence(R||IRW)
+This latter form is the notation we employed in Chapters 1 and 3. It must be used with
+care: the absence of an explicit set method means there is no obvious place to specify the
+release ordering that typically accompanies the setting of a Boolean flag. In any program
+that spins on nontrivial conditions, a thread that changes a variable that may contribute to
+such a condition may need to declare the variable as volatile or atomic, and update it with
+a RW|| store. One must also consider the atomicity of attempts to check the condition, and
+the monotonicity of the condition itself: an await will generally be safe if the condition
+will become true due to a single store in some other thread, and never again become false.
+Without such a guarantee, it is unclear what can safely be assumed by the code that follows
+the await. We will return to generalized await statements when we consider conditional
+critical regions in Sec. 7.4.1.
+
+5.2 Barrier Algorithms
+
+Many applications—simulations in particular—proceed through a series of phases, each of
+which is internally parallel but must complete in its entirety before the next phase can begin.
+A typical example might look something like this:
+Chapter five, Busy-Wait Synchronization with Conditions.
+
+In some algorithms, it may be helpful to have a reset method. This code defines a reset method for a flag. It calls `flag.reset()` and then performs a store operation `f.store(false, or or W)` to set the flag to false with an 'or or W' ordering.
+
+Before calling reset, a thread must ascertain, generally through application specific means, that no thread is still using the flag for its previous purpose. The 'or or W' ordering on the store ensures that any subsequent updates, to be announced by a future set, are seen to happen after the reset.
+
+In an obvious generalization of flags, one can arrange to wait on an arbitrary predicate. The code defines an abstract predicate class with an abstract boolean evaluation method `eval` which is intended to be extended by users. The `await` method of this predicate class contains a busy wait loop. While the negation of `eval()` is true, the system executes a fence with 'R or or R W' ordering, effectively spinning until `eval()` becomes true.
+
+With compiler or preprocessor support, this mechanism can be simplified. The `await` function takes a condition as input. It then enters a loop, continuing to spin while the condition is false. Inside the loop, a fence with 'R or or R W' ordering is executed.
+
+This latter form is the notation we employed in Chapters one and three. It must be used with care: the absence of an explicit set method means there is no obvious place to specify the release ordering that typically accompanies the setting of a Boolean flag. In any program that spins on nontrivial conditions, a thread that changes a variable that may contribute to such a condition may need to declare the variable as volatile or atomic, and update it with an 'R W' or or store. One must also consider the atomicity of attempts to check the condition, and the monotonicity of the condition itself: an `await` will generally be safe if the condition will become true due to a single store in some other thread, and never again become false. Without such a guarantee, it is unclear what can safely be assumed by the code that follows the `await`. We will return to generalized `await` statements when we consider conditional critical regions in Section seven point four point one.
+
+Section five point two, Barrier Algorithms.
+
+Many applications, simulations in particular, proceed through a series of phases, each of which is internally parallel but must complete in its entirety before the next phase can begin. A typical example might look something like this:
+The discussion centers on advanced synchronization techniques in concurrent programming, specifically emphasizing busy waiting and the critical role of memory ordering and atomicity in multi-threaded environments.
+
+The concept of a "reset" method for flags within algorithms is introduced as a means to reinitialize shared state. For instance, `flag.reset()` is shown to involve `f.store(false, vertical bar vertical bar W)`. This `store` operation is not merely an assignment; it signifies an atomic write to memory location `f` with `vertical bar vertical bar W` memory ordering semantics, which is a *release* operation. A release operation ensures that all memory writes performed by the current thread *before* this store become visible to other threads that subsequently perform an *acquire* operation on the same memory location. This is crucial for establishing a proper happens before relationship, guaranteeing that any updates preceding the reset are fully committed and globally observable before the flag's state is reset, preventing stale reads or out of order execution visible to other threads.
+
+Before invoking such a reset, a fundamental requirement in concurrent systems is to ascertain that no other active thread is still utilizing the flag for its prior purpose. The explicit use of `vertical bar vertical bar W` ordering on the store operation precisely addresses this, ensuring that any subsequent updates intended to be seen after the reset will indeed be observed in their correct sequence by other threads. This highlights the inherent complexity of maintaining memory consistency across multiple cores or processors that possess their own cache hierarchies, where naive reads and writes can be aggressively reordered by both the compiler and the underlying hardware for performance optimization.
+
+A more generalized approach to busy waiting is presented through the concept of a `predicate`. This abstract class defines an `eval()` method, intended to encapsulate an arbitrary boolean condition. Threads can then `await()` this predicate. The `predicate.await()` method illustrates a classic spin loop: `while not eval()` followed by `fence(R vertical bar vertical bar R W)`. The `not eval()` expression signifies that the thread will continuously execute the loop body, actively checking the condition, until `eval()` returns `true`. This constitutes busy waiting, consuming C P U cycles while waiting. The `fence(R vertical bar vertical bar R W)` represents a memory barrier, specifically a read acquire or a full memory fence. An acquire fence ensures that all memory operations *after* the fence are observed *after* all memory operations *before* the fence. In this context, it guarantees that the `eval()` call observes the most up to date state of the underlying variables that constitute the predicate, as changes made by other threads will be synchronized across the barrier. This prevents issues like reading stale cached data or observing operations out of their intended logical order due to processor reordering.
+
+With advanced compiler or preprocessor support, this pattern can be simplified to a direct `await(condition)` where the `condition` variable replaces the `eval()` method, maintaining the essential spin loop `while not condition` and the necessary `fence(R vertical bar vertical bar R W)` to ensure proper memory visibility.
+
+A critical nuance in implementing such busy-wait mechanisms involves the nature of the shared variables. These variables must be explicitly declared as `volatile` or `atomic`. While `volatile` ensures that reads and writes are performed directly to memory, preventing aggressive compiler optimizations that might reorder or cache accesses, it does not guarantee atomicity for complex operations (like read modify write cycles). `Atomic` types, conversely, guarantee that operations are indivisible and appear instantaneous to other threads, crucial for preventing race conditions on shared data. Furthermore, the discussion underscores the importance of the *monotonicity* of the condition. For a busy wait to be robustly safe, especially without more complex synchronization primitives, the condition should ideally transition from `false` to `true` via a single store by another thread and then *never again revert to `false`*. If a condition can become `false` again after having been `true`, a simple busy wait can lead to livelock or missed wakeups, as the waiting thread might briefly see the condition as `true`, exit the loop, but then the condition reverts before the thread can act upon it. The requirement for a specific "release ordering" in the explicit set method ensures that the memory operations leading to the condition becoming `true` are globally observable before the condition itself is seen as `true` by waiting threads. This is a fundamental principle of memory consistency models in multi processor systems.
+
+The subsequent section introduces "Barrier Algorithms," which are a staple in parallel computing paradigms. In many applications, particularly in simulations, computation proceeds through distinct "phases." Each phase is designed to be internally parallel, allowing multiple threads to work concurrently, but crucially, every thread must complete its current phase before *any* thread can begin the next phase. This collective synchronization point is known as a barrier. Barrier synchronization ensures that all threads reach a specific point in the program execution before any of them are permitted to advance, thereby guaranteeing that all intermediate results from the current phase are available and stable for the subsequent phase. This is vital in scientific computing, parallel numerical methods, and distributed simulations, where dependencies exist between successive stages of computation, requiring a global coordination mechanism.

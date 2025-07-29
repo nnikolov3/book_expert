@@ -1,0 +1,82 @@
+204 9 Transactional Memory
+
+Power TM provides a small ISA enhancement in support of SLE: the tx_commit instruc-
+tion can safely be called when not in transactional mode, in which case it sets a condition
+code. The idiom above then becomes:
+
+tx_begin
+if failure goto handler
+read lock value // add to transaction read set
+if not held goto cs
+abort
+handler: acquire lock
+CS: es // critical section
+tx_commit
+if commit_succeeded goto over
+release lock
+over:
+
+Originally proposed in the thesis work of Ravi Rajwar (2002), SLE plays a significantly
+more prominent role in Intel’s Transactional Synchronization Extensions (TSX), of which
+Rajwar was a principal architect. In its original release, TSX actually provided two separate
+ABIs, called Hardware Lock Elision (HLE) and Restricted Transactional Memory (RTM).
+RTM’s behavior, to first approximation, is similar to that of z or Power TM. There are
+instructions to begin, commit, or abort a transaction, and to test whether one is currently
+active.
+
+Lock Subscription
+
+The pseudocode shown in this section (without Intel’s special ABI) is of course quite similar to what
+a compiler or library would use for best-effort implementation of atomic blocks with fallback to a
+global lock. In both cases, a fallback transaction that writes to a location read or written by a hardware
+transaction will cause the latter to abort. Unfortunately, we must also consider the possibility that a
+fallback transaction might read a pair of locations X and Y that are updated together, atomically, by
+a hardware transaction that runs after the read of X but before the read of Y. To prevent the fallback
+transaction from seeing the resulting inconsistency, both SLE and atomic-block code arrange for a
+hardware transaction to “subscribe” to the fallback lock by reading its value and aborting if the lock
+is held.
+
+Unfortunately, subscription to a global lock (or to a coarse-grain SLE lock) forces a hardware transac-
+tion to defer to software transactions with which it does not logically conflict. To reduce the window
+of vulnerability, several researchers have suggested that subscription should be delayed until the very
+end of the hardware transaction, allowing it to commit if the software transaction has already finished.
+While tempting, this lazy subscription is safe only in the presence of very careful sandboxing on the
+hardware side (Dice et al. 2014). Without it, the hardware transaction may see inconsistent values
+that end up defeating the eventual subscription—e.g., by inducing a logically impossible branch,
+overwriting a return address, or corrupting the lock itself. As we shall see in Sec. 9.2.3, similar issues
+arise in hybrid TM systems.
+
+3 As of early 2020, Intel appears to have deprecated the HLE ABI (Intel 2023, Vol. 1, Sec. 2.5).
+204 9 Transactional Memory
+
+Power T M provides a small I S A enhancement in support of S L E: the tx commit instruc- tion can safely be called when not in transactional mode, in which case it sets a condition code. The idiom above then becomes:
+
+tx begin
+if failure goto handler
+read lock value // add to transaction read set
+if not held goto cs
+abort
+
+handler: acquire lock // critical section
+cs: ...
+tx commit
+if commit succeeded goto over
+release lock
+
+over:
+Originally proposed in the thesis work of Ravi Rajwar (2002), S L E plays a significantly more prominent role in Intel's Transactional Synchronization Extensions (T S X), of which Rajwar was a principal architect. In its original release, T S X actually provided two separate A B I s, called Hardware Lock Elision (H L E) and Restricted Transactional Memory (R T M).³ R T M's behavior, to first approximation, is similar to that of z or Power T M. There are instructions to begin, commit, or abort a transaction, and to test whether one is currently active.
+
+Lock Subscription
+
+The pseudocode shown in this section (without Intel's special A B I) is of course quite similar to what a compiler or library would use for best effort implementation of atomic blocks with fallback to a global lock. In both cases, a fallback transaction that writes to a location read or written by a hardware transaction will cause the latter to abort. Unfortunately, we must also consider the possibility that a fallback transaction might read a pair of locations X and Y that are updated together atomically, by a hardware transaction that runs after the read of X but before the read of Y. To prevent the fallback transaction from seeing the resulting inconsistency, both S L E and atomic block code arrange for a hardware transaction to "subscribe" to the fallback lock by reading its value and aborting if the lock is held.
+
+Unfortunately, subscription to a global lock (or to a coarse grain S L E lock) forces a hardware transac- tion to defer to software transactions with which it does not logically conflict. To reduce the window of vulnerability, several researchers have suggested that subscription should be delayed until the very end of the hardware transaction, allowing it to commit if the software transaction has already finished. While tempting, this lazy subscription is safe only in the presence of very careful sandboxing on the hardware side (Dice et al. 2014). Without it, the hardware transaction may see inconsistent values that end up defeating the eventual subscription—e.g., by inducing a logically impossible branch, overwriting a return address, or corrupting the lock itself. As we shall see in Sec. 9.2.3, similar issues arise in hybrid T M systems.
+
+³ As of early 2020, Intel appears to have deprecated the H L E A B I (Intel 2023, Vol. 1, Sec. 2.5).
+The document discusses transactional memory, a mechanism for simplifying concurrent programming by allowing operations to be executed atomically. Power T M, a system that supports transactional memory, introduces an instruction set architecture (I S A) enhancement. This enhancement enables certain code constructs to operate safely within a transactional mode, which is distinct from non-transactional execution. The presented idiom illustrates a common pattern: initiating a transaction with `tx_begin`, followed by operations that might include reading lock values. If a failure condition is met, such as not holding a required lock, the transaction is aborted. Otherwise, if a commit condition, represented by `tx_commit`, is satisfied, the transaction proceeds, potentially including the release of a lock after a successful commit. The critical section of code is where these transactional operations occur.
+
+The concept of transactional memory, as originally proposed by Ravi Rajwar in his 2002 thesis, played a crucial role in Intel's Transactional Synchronization Extensions (T S X). T S X provided two primary implementations: Hardware Lock Elision (H L E) and Restricted Transactional Memory (R T M). R T M offers an approximation of transactional behavior, enabling developers to instruct the hardware to begin, commit, or abort a transaction and to query its current state.
+
+The section on Lock Subscription delves into a specific technique for implementing atomic blocks, often used with best-effort transactional memory. This approach involves a "fallback transaction" that writes to a location, effectively subscribing to changes. If a hardware transaction is active, it might cause this fallback transaction to abort. This can occur if the fallback transaction modifies a location that was previously read by the hardware transaction, or if the hardware transaction attempts to read a location that is updated by the fallback transaction before the hardware transaction commits. A potential inconsistency arises when a hardware transaction reads location X and Y, which are updated atomically, and then the fallback transaction modifies X before the hardware transaction reads X again but after it has already read Y. This leads to a race condition where the hardware transaction might incorrectly commit.
+
+The document highlights a potential issue with "lazy subscription," where a hardware transaction might observe inconsistent values or undergo logically impossible branches if it doesn't involve careful sandboxing on the hardware side. This can lead to problems such as overwriting a return address. Such issues are relevant in hybrid T M systems. A footnote clarifies that as of early 2020, Intel had deprecated the H L E A B I.

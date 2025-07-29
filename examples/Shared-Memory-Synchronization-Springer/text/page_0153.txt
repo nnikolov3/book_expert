@@ -1,0 +1,66 @@
+8.4 Hash Tables 157
+
+nodes interleaved with the old ones. We can see this dynamic at work in Figure 8.11. Part (a)
+shows a table containing 4 elements whose keys are not shown, but whose hash values are 35,
+15, 16, and 17. For simplicity of presentation, we have assumed that n = 5, so hash values
+range from 0 to 31. Above each node we have shown the corresponding order number. The
+node with hash value 5, for example, has order number (00101,)% << 1 +1 = 1010015.
+
+Still in (a), we use the two low-order bits of the hash to index into an array of 22 =4
+buckets. Slots 0, 1, and 3 contain pointers to dummy nodes. All data whose hash values are
+congruent to » mod 4 are contiguous in the node list, and immediately follow the dummy
+node for bucket b. Note that bucket 2, which would not have been used in the process of
+inserting the four initial nodes, is still uninitialized. In (b) we have inserted a new data node
+with hash value 9. It falls in bucket 1, and 1s inserted, according to its order number, between
+the nodes with hash values 17 and 3. In (¢) we have incremented j and doubled the number
+of buckets in use. The buckets themselves will be lazily initialized.
+
+To avoid copying existing buckets (particularly given that their values may change due
+to lazy initialization), we employ noncontiguous bucket arrays of exponentially increasing
+size. In a simplification of the scheme of Shalev and Shavit, we can access these arrays
+through a single, second-level directory (not shown). The directory can be replaced with
+a single CAS. It indicates the current value of j and the locations of j — 1 bucket arrays.
+The first two arrays are of size 2! (here i = 2); the next is of size 20+ and so on. Given
+a key k, we compute b = h(k) mod 2) andd = b >> i. If d = 0, b’s bucket can be found
+at directory[0][b mod 2]. Otherwise, let m be the index of the most significant bit in d’s
+binary representation; b’s bucket can be found at directory[m+11[b mod 2].
+
+In (d) we have inserted a new data node with hash value 21. This requires initialization of
+bucket (21 mod 23) = 5. We identify the “parent” of bucket 5 (namely, bucket 1) by zeroing
+out the most significant 1 bit in 5’s binary representation. Traversing the parent’s portion of
+the node list, we find that 5’s dummy node (with order number 101000) belongs between
+the data nodes with hash values 9 and 5. Having inserted this node, we can then insert the
+data node with hash value 21. Finally, in (e), we search for a node with hash value 30. This
+requires initialization of bucket (30 mod 23) = 6, which recursively requires initialization
+of bucket 6’s parent—namely bucket 2. Shalev and Shavit prove that the entire algorithm 1s
+correct and nonblocking, and that given reasonable assumptions about the hash function #,
+the amortized cost of insert, delete, and lookup operations will be constant.
+
+More Recent Developments Note that the S&S hash table can only increase in size, as it
+offers no mechanism for contracting the table. This limitation is lifted by Liu et al. (2014),
+who present two new resizable hashing algorithms, one lock free and one wait free. The key
+idea 1s to implement each bucket as a freezable set, which offers operations to attempt an
+insertion or deletion and to permanently freeze a bucket, preventing further modifications.
+An auxiliary data structure such as a list or array is then used to index the buckets, and a
+collaborative helping mechanism 1s used to resize the auxiliary data structure.
+
+More sophisticated hashing algorithms have also been implemented in a lock-free way,
+such as hopscotch hashing (Kelly et al. 2020), which outperforms traditional probing-based
+eight point four Hash Tables. The page number is one hundred fifty seven.
+
+Nodes interleaved with the old ones. We can see this dynamic at work in Figure eight point eleven. Part a shows a table containing four elements whose keys are not shown, but whose hash values are five, fifteen, sixteen, and seventeen. For simplicity of presentation, we have assumed that n is equal to five, so hash values range from zero to thirty one. Above each node we have shown the corresponding order number. The node with hash value five, for example, has order number zero zero one zero one two left shift one plus one equals one zero zero one zero zero one two.
+
+Still in part a, we use the two low order bits of the hash to index into an array of two to the power of two, which equals four buckets. Slots zero, one, and three contain pointers to dummy nodes. All data whose hash values are congruent to b mod four are contiguous in the node list, and immediately follow the dummy node for bucket b. Note that bucket two, which would not have been used in the process of inserting the four initial nodes, is still uninitialized. In part b we have inserted a new data node with hash value nine. It falls in bucket one, and is inserted, according to its order number, between the nodes with hash values seventeen and five. In part c we have incremented j and doubled the number of buckets in use. The buckets themselves will be lazily initialized.
+
+To avoid copying existing buckets, particularly given that their values may change due to lazy initialization, we employ noncontiguous bucket arrays of exponentially increasing size. In a simplification of the scheme of Shalev and Shavit, we can access these arrays through a single, second level directory, not shown. The directory can be replaced with a single C A S. It indicates the current value of j and the locations of j minus one bucket arrays. The first two arrays are of size two to the power of i, here i is equal to two. The next is of size two to the power of i plus one, and so on. Given a key k, we compute b is equal to h of k mod two to the power of j, and d is equal to b right shift i. If d is equal to zero, b's bucket can be found at directory index zero, b mod two to the power of i. Otherwise, let m be the index of the most significant bit in d's binary representation. b's bucket can be found at directory index m plus one, b mod two to the power of m plus one.
+
+In part d we have inserted a new data node with hash value twenty one. This requires initialization of bucket twenty one mod two to the power of three, which equals five. We identify the parent of bucket five, namely bucket one, by zeroing out the most significant one bit in five's binary representation. Traversing the parent's portion of the node list, we find that five's dummy node, with order number one zero zero zero zero two, belongs between the data nodes with hash values nine and five. Having inserted this node, we can then insert the data node with hash value twenty one. Finally, in part e, we search for a node with hash value thirty. This requires initialization of bucket thirty mod two to the power of three, which equals six. This recursively requires initialization of bucket six's parent, namely bucket two. Shalev and Shavit prove that the entire algorithm is correct and nonblocking, and that given reasonable assumptions about the hash function h, the amortized cost of insert, delete, and lookup operations will be constant.
+
+More Recent Developments. Note that the S and S hash table can only increase in size, as it offers no mechanism for contracting the table. This limitation is lifted by Liu et al., two thousand fourteen, who present two new resizable hashing algorithms, one lock free and one wait free. The key idea is to implement each bucket as a freezable set, which offers operations to attempt an insertion or deletion and to permanently freeze a bucket, preventing further modifications. An auxiliary data structure such as a list or array is then used to index the buckets, and a collaborative helping mechanism is used to resize the auxiliary data structure. More sophisticated hashing algorithms have also been implemented in a lock free way, such as hopscotch hashing Kelly et al., two thousand twenty, which outperforms traditional probing based hashing algorithms.
+Section 8.4 delves into the intricacies of Hash Tables, specifically examining techniques for managing dynamic growth and efficient insertion operations. The text begins by illustrating a scenario with nodes interleaved, leading to a demonstration of a hash table containing elements with hash values 5, 15, 16, and 17. The assumed range of hash values is zero to thirty one. For simplicity, the analysis focuses on a node with hash value 5, represented by the binary order number binary one zero one zero one two. This node's hash value, specifically its two low order bits, are used to index into an array of two squared, or four, buckets. Buckets at indices zero, one, and three are shown to contain pointers to dummy nodes, indicating they are allocated but not yet holding active data. All data nodes encountered are described as contiguous within a node list, and immediately follow the dummy node corresponding to their bucket.
+
+The process of inserting four initial nodes is then detailed. The first node, with hash value 9, is inserted into bucket one. Subsequently, nodes with hash values seventeen and five are inserted. Following this, an increment operation is performed, and the number of buckets in use is doubled. Crucially, the presented approach emphasizes lazy initialization of buckets. This strategy is particularly beneficial given that the number of buckets can grow exponentially. The discussion then refers to a simplified scheme by Shalev and Shavit, which employs noncontiguous bucket arrays. This scheme utilizes a single, second level directory, which is not detailed here, but serves to provide access to bucket arrays. These arrays grow in size exponentially, with the first two arrays being of size two to the power of i, where i is two, and the subsequent array being of size two to the power of i plus one. This growth pattern is presented in the context of handling a key k, where the bucket index b is computed as k modulo two to the power of j, and d is determined by shifting b right by i bits. If d is zero, the bucket is located at directory index m plus one, where m is the most significant bit in d's binary representation. Otherwise, the bucket is found at directory index m plus one.
+
+The text then details the insertion of a new data node with hash value twenty one. The "parent" of bucket five, identified by its order number binary one zero zero zero zero two, is located between buckets with hash values nine and five. After inserting this node, a search is performed for a node with hash value thirty, which maps to bucket six using the operation thirty modulo two cubed, resulting in six. This bucket is described as recursively initiating bucket two, which itself requires initialization by zeroing the parent's portion of bucket one. The authors, Shalev and Shavit, are credited with proving that the entire algorithm, under reasonable assumptions regarding the hash function h, results in constant amortized cost for insert, delete, and lookup operations.
+
+The section concludes with a discussion of "More Recent Developments." It highlights a limitation in the described hash table: it can only increase in size, lacking a mechanism for contracting. This is contrasted with work by Liu and colleagues in two thousand fourteen, who introduced two new resizable hashing algorithms. Their key innovation involves implementing each bucket as a "freezable set." This allows operations to freeze a bucket, preventing further modifications during insertion or deletion. An auxiliary data structure, such as a list or array, is then used to index these buckets. The mechanism for resizing this auxiliary data structure is employed to facilitate table resizing. Furthermore, more sophisticated hashing algorithms, such as hopscotch hashing, have been implemented in a lock free manner, outperforming traditional probing based methods, as demonstrated by Kelly and colleagues in two thousand twenty.

@@ -1,0 +1,71 @@
+152 8 Nonblocking Algorithms
+
+Four states—those with status flags LPUSH and RPUSH—are transitory: their contents
+are unambiguous, but they require cleanup before a new operation can begin. To ensure
+nonblocking progress, the cleanup can be performed by any thread. In a push_right from
+state So, for example, an initial CAS changes the status flag of the anchor from STABLE to
+RPUSH and simultaneously updates the tail pointer to refer to a newly allocated node. (This
+node has previously been initialized to contain the to-be-inserted value and a left pointer
+that refers to the previous tail node.) These changes to the anchor move the deque to the
+incoherent state R;, in which the right pointer of the second-to-rightmost node is incorrect.
+A second CAS fixes this pointer, moving the deque to the coherent state R.; a final CAS
+updates the status flag, returning the deque to state So.
+
+The actual code for the deque 1s quite complex. Various operations can interfere with one
+another, but Michael proves that an operation fails and starts over only when some other
+operation has made progress.
+
+Obstruction-Free Bounded and Unbounded Deques
+
+The principal shortcoming of Michael’s deque is the need to colocate the head and tail
+pointers. This colocation not only raises issues of how many bits will fit in a CAS-able word:
+it also implies that all operations on the deque interfere with one another. While nonblocking,
+they must serialize on their access to the anchor word. Ideally, we should like to arrange for
+operations on opposite ends of a nonempty deque to proceed in parallel.
+
+At about the same time that Michael was devising his algorithm, a group at Sun (now
+Oracle) Labs in Boston was developing the notion of obstruction freedom (Herlihy et al.
+2003a), which we introduced in Sec. 3.2.1. Where a lock-free algorithm (such as Michael’s)
+guarantees that some thread will make progress within a bounded number of steps (of any
+thread), an obstruction-free algorithm guarantees only that a thread that runs by itself (without
+interference from other threads) will always make progress, regardless of the starting state.
+In effect, Herlihy et al. argued that since a lock-free algorithm already requires some sort
+of contention management (separate from the main algorithm) to avoid the possibility of
+starvation, one might as well ask that mechanism to address the possibility of livelock as
+well, thereby separating issues of safety and liveness entirely. By doing so, the authors argue,
+one may be able to simplify the main algorithm considerably. Double-ended queues provide
+an illustrative example. Nonblocking versions of transactional memory (Chapter 9) provide
+another.
+
+Michael’s lock-free deque employs a linked list whose length 1s limited only by the range
+of pointers that will fit in the anchor word. By contrast, the deque of Herlihy et al. employs
+a fixed-length circular array. It is most easily understood by first considering a noncircular
+version, illustrated in Figure 8.10. At any given time, reading from left to right, the array will
+contain one or more LN (“left null”) values, followed by zero or more data values, followed
+by one or more RN (“right null”) values. To perform a push_right, one must replace the
+leftmost RN with a data value; to perform a pop_right, one must read the rightmost data
+One hundred fifty two
+eight Nonblocking Algorithms
+
+Four states—those with status flags L P U S H and R P U S H—are transitory: their contents are unambiguous, but they require cleanup before a new operation can begin. To ensure nonblocking progress, the cleanup can be performed by any thread. In a push_right from state S two, for example, an initial C A S changes the status flag of the anchor from S T A B L E to R P U S H and simultaneously updates the tail pointer to refer to a newly allocated node. (This node has previously been initialized to contain the to-be-inserted value and a left pointer that refers to the previous tail node.) These changes to the anchor move the deque to the incoherent state R c, in which the right pointer of the second-to-rightmost node is incorrect. A second C A S fixes this pointer, moving the deque to the coherent state R c; a final C A S updates the status flag, returning the deque to state S two plus. The actual code for the deque is quite complex. Various operations can interfere with one another, but Michael proves that an operation that fails and starts over only when some other operation has made progress.
+
+Obstruction-Free Bounded and Unbounded Deques
+
+The principal shortcoming of Michael’s deque is the need to colocate the head and tail pointers. This colocation not only raises issues of how many bits will fit in a C A S-able word; it also implies that all operations on the deque interfere with one another. While nonblocking, they must serialize on their access to the anchor word. Ideally, we should like to arrange for operations on opposite ends of a nonempty deque to proceed in parallel.
+
+At about the same time that Michael was devising his algorithm, a group at Sun (now Oracle) Labs in Boston was developing the notion of obstruction freedom (Herlihy et al. two thousand three a), which we introduced in Sec. three point two point one. Where a lock-free algorithm (such as Michael’s) guarantees that some thread will make progress within a bounded number of steps (of any thread), an obstruction-free algorithm guarantees only that a thread that runs by itself (without interference from other threads) will always make progress, regardless of the starting state. In effect, Herlihy et al. argued that since a lock-free algorithm already requires some sort of contention management (separate from the main algorithm) to avoid the possibility of starvation, one might as well ask that mechanism to address the possibility of livelock as well, thereby separating issues of safety and liveness entirely. By doing so, the authors argue, one may be able to simplify the main algorithm considerably. Double-ended queues provide an illustrative example. Nonblocking versions of transactional memory (Chapter nine) provide another.
+
+Michael’s lock-free deque employs a linked list whose length is limited only by the range of pointers that will fit in the anchor word. By contrast, the deque of Herlihy et al. employs a fixed-length circular array. It is most easily understood by first considering a noncircular version, illustrated in Figure eight point ten. At any given time, reading from left to right, the array will contain one or more L N (“left null”) values, followed by zero or more data values, followed by one or more R N (“right null”) values. To perform a push_right, one must replace the leftmost R N with a data value; to perform a pop_right, one must read the rightmost data
+The discussion centers on the intricacies of nonblocking algorithms, specifically addressing challenges in implementing concurrent data structures like deques.
+
+A key concept explored is the state management within a deque implementation, utilizing four states. These states are characterized by status flags, specifically L PUSH and R PUSH. The crucial distinction lies in whether these flags permit nonblocking progress. A state transition, exemplified by a push_right operation, can involve an initial Compare And Swap, or C A S, operation. This C A S modifies the status flag of an anchor, transitioning it from a STABLE state to one referencing a newly allocated node. This transition also involves updating a tail pointer. The newly allocated node, in this context, would have been initialized with a to be inserted value and a left pointer, referencing the previous tail node.
+
+Following this initial C A S, a second C A S operation serves to finalize the state change. This second operation might update the status flag to a coherent state, such as S2, and simultaneously move the deque's conceptual "tail" to point to the second-to-rightmost node. If this second pointer is incorrect, it indicates an incoherent state, R_i. The complexity of these state transitions is highlighted, noting that the actual code for such deque operations can be quite involved. In some scenarios, an operation might fail and require a restart, especially when concurrent operations interfere.
+
+The text then introduces "Obstruction Free Bounded and Unbounded Deques," pointing out a principal shortcoming of Michael's deque implementation: the need to collocate head and tail pointers within a single word, often referred to as an anchor word. This colocation is necessary for efficient use of space, particularly when fitting these pointers into a C A S able word. However, it creates a dependency where all operations on the deque must serialize access to this anchor word. This means that operations on opposite ends of the deque, such as a push to the head and a pop from the tail, must effectively serialize on this shared anchor.
+
+The discussion references work by Herlihy et al. from Oracle Labs in Boston, specifically a paper from 2003. This work introduced the concept of obstruction freedom. An obstruction free algorithm guarantees that any thread will make progress within a bounded number of steps, provided it runs in isolation. This is contrasted with lock free algorithms, which provide progress guarantees even under contention. The authors Herlihy et al. argue that by separating contention management mechanisms from the main algorithm, one can simplify the system and address issues of safety and liveness more effectively. They suggest that double ended queues, or deques, are particularly suitable for this approach, and their nonblocking transactional memory implementations, discussed in Chapter 9, provide illustrative examples.
+
+Further detail is provided on Michael's lock free deque implementation, which employs a linked list structure. The length of this linked list is limited by the range of pointers. The deque can be conceptualized as a fixed length circular array. In a typical configuration, this array contains one or more LN, or left null, nodes, followed by zero or more R N, or right null, nodes. The leftmost R N node in this sequence would hold a data value.
+
+To perform a push_right operation, one must replace the left null value of the rightmost R N node with a new data value. Conversely, a pop_right operation requires reading the rightmost data value. This description emphasizes the underlying data representation and the atomic operations required to maintain the deque's integrity in a concurrent environment.

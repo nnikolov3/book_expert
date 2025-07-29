@@ -1,0 +1,107 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+4.4 Interface Extensions 79
+
+Table 4.1 Tradeoffs among fetch_and_®-based spin locks. Symbols are meant to suggest “good”
+(+), “fair” (0), and “poor” (—). Space needs are in words, for n threads and j locks, none of which
+1s requested or held.
+
+TAS ticket MCS CLH MCS CLH Hem-
+
+(w/ backoff) (original) (“K42”)
+Fairness — + + + + + +
+Preemption tolerance 0 — — — − − −
+Scalability 0 0 + + + + +
+Fast-path overhead a a 0 0 — — o
+Interoperability + + − − −⊢ −⊢ −⊢
+NRC-NUMA suitability — — + 0 + o —
+Space needs Jj 2j Jj 2j 2j 2n+3j n+4j
+
+4.4 Interface Extensions
+
+The acquire-release interface for locks—both busy-wait and blocking—is often extended
+to accommodate special use cases. In many packages, for example, acquire takes an extra,
+optional timeout parameter that specifies the maximum length of time that the thread is
+willing to wait to acquire the lock. A Boolean return value then indicates whether the lock
+was actually acquired, or whether it timed out. Timeout is sometimes useful in interactive
+applications, which may need to pursue an alternative code path when a lock 1s not available
+in time to meet a real-time deadline. It may also be useful in programs that are prone to
+deadlock, and in which prevention and avoidance (Sec. 3.1.1) are impractical: expiration of
+a lengthy timeout can be taken as an indication that deadlock has probably occurred, and
+that the calling thread should back out, release its other locks, and retry the operation later.
+
+In some cases, an application may wish to specify a “timeout” of zero—to acquire a lock
+if and only if it is not currently held. This trylock extension is straightforward: a try-acquire
+operation takes no extra parameters, but does return a Boolean: true indicates that the lock
+has just been acquired; false indicates that it was already held by another thread.
+
+Throughout this chapter we have been assuming that the access pattern for a given lock
+is always a sequence of acquire-release pairs, in which the release method is called by the
+same thread that called acquire—and before the thread attempts to acquire the same lock
+again. This assumption is not explicit in the acquire-release API, but is often embedded in
+the underlying implementation.
+
+There are times, however, when it may be desirable to allow a thread to acquire the same
+lock multiple times, so long as it releases it the same number of times before any other thread
+acquires it. Suppose, for example, that operation foo accesses data protected by lock L, and
+that foo is sometimes called by a thread that already holds L, and sometimes by a thread that
+Four point four Interface Extensions.
+
+Table four point one presents tradeoffs among fetch and Phi based spin locks. Symbols are meant to suggest "good" represented by a plus sign, "fair" represented by a circle, and "poor" represented by a minus sign. Space needs are measured in words, for N threads and J locks, none of which is requested or held.
+
+Looking at the table row by row:
+
+For **Fairness**: The T A S with backoff lock is poor. The ticket, M C S original, C L H, M C S K forty two, C L H, and Hemlock locks are all good.
+
+For **Preemption tolerance**: The T A S with backoff lock is fair. The ticket, M C S original, C L H, M C S K forty two, C L H, and Hemlock locks are all poor.
+
+For **Scalability**: The T A S with backoff and ticket locks are fair. The M C S original, C L H, M C S K forty two, C L H, and Hemlock locks are all good.
+
+For **Fast path overhead**: The T A S with backoff and ticket locks are good. The M C S original and C L H locks are fair. The M C S K forty two and C L H locks are poor. The Hemlock lock is fair.
+
+For **Interoperability**: The T A S with backoff and ticket locks are good. The M C S original and C L H locks are poor. The M C S K forty two and C L H locks are good. The Hemlock lock is poor.
+
+For **N R C N U M A suitability**: The T A S with backoff, ticket, and Hemlock locks are poor. The M C S original and M C S K forty two locks are good. The C L H locks are fair.
+
+For **Space needs**: The T A S with backoff and M C S original locks require J words. The ticket, C L H, and M C S K forty two locks require two J words. One C L H lock requires two N plus three J words. And the Hemlock lock requires N plus J words.
+
+Four point four Interface Extensions.
+
+The acquire release interface for locks, which involves both busy wait and blocking, is often extended to accommodate special use cases. In many packages, for example, acquire takes an extra, optional *timeout* parameter that specifies the maximum length of time that the thread is willing to wait to acquire the lock. A Boolean return value then indicates whether the lock was actually acquired, or whether it timed out. Timeout is sometimes useful in interactive applications, which may need to pursue an alternative code path when a lock is not available in time to meet a real time deadline. It may also be useful in programs that are prone to deadlock, and in which prevention and avoidance as described in Section three point one point one are impractical. Expiration of a lengthy timeout can be taken as an indication that deadlock has probably occurred, and that the calling thread should back out, release its other locks, and retry the operation later.
+
+In some cases, an application may wish to specify a "timeout" of zero, to acquire a lock if and only if it is not currently held. This *trylock* extension is straightforward: a try acquire operation takes no extra parameters, but does return a Boolean. True indicates that the lock has just been acquired; false indicates that it was already held by another thread.
+
+Throughout this chapter, we have been assuming that the access pattern for a given lock is always a sequence of acquire release pairs, in which the release method is called by the same thread that called acquire, and before the thread attempts to acquire the same lock again. This assumption is not explicit in the acquire release A P I, but is often embedded in the underlying implementation.
+
+There are times, however, when it may be desirable to allow a thread to acquire the same lock multiple times, so long as it releases it the same number of times before any other thread acquires it. Suppose, for example, that operation foo accesses data protected by lock L, and that foo is sometimes called by a thread that already holds lock L, and sometimes by a thread that does not.
+This page elucidates fundamental concepts in concurrent programming, specifically focusing on the design, performance characteristics, and interface extensions of spin locks. Spin locks are a class of synchronization primitives used to enforce mutual exclusion on shared resources in multi-threaded environments. Unlike blocking locks, spin locks cause a thread to busy wait, repeatedly checking a flag or variable until the resource becomes available, which is efficient for very short critical sections but can waste C P U cycles under heavy contention or if the thread holding the lock is preempted.
+
+Table four point one presents a comparative analysis of various fetch and Phi based spin lock implementations across several critical performance and resource utilization metrics. The symbols denote a qualitative assessment: a plus sign indicates a 'good' characteristic, a circle represents 'fair', and a minus sign signifies 'poor'.
+
+Considering the lock implementations:
+*   **T A S with backoff** refers to a Test And Set atomic instruction based lock, augmented with an exponential backoff mechanism. Backoff involves a strategic delay before retrying lock acquisition, which helps mitigate cache coherence traffic and reduces contention, particularly on multiprocessor systems.
+*   **Ticket lock** implements a first in, first out fairness policy by assigning sequential tickets to threads attempting to acquire the lock and releasing it based on a "now serving" ticket.
+*   **M C S (Mellor Crummey Scott) lock** is a scalable, list-based spin lock where each waiting thread spins on a local memory location, significantly reducing shared cache line contention compared to T A S. The "K42" variant suggests an optimized version, potentially tailored for the K42 operating system kernel.
+*   **C L H (Craig Landin Hagersten) lock** is another high performance, queue-based spin lock, similar to M C S, designed for scalability by minimizing remote memory access.
+*   **Hemlock** is presented as another optimized spin lock, whose specific algorithm is not detailed here but its properties are compared.
+
+Let us dissect the characteristics:
+*   **Fairness** refers to the guarantee that threads acquire the lock in the order they requested it, preventing starvation. Ticket, M C S, C L H, and Hemlock locks are rated 'good' due to their queueing mechanisms, which enforce an ordered acquisition. T A S with backoff is 'fair' as backoff can help distribute access, but it doesn't strictly guarantee order.
+*   **Preemption tolerance** evaluates how a lock behaves when a thread holding it is preempted by the operating system scheduler. T A S with backoff is 'fair', but all other advanced spin locks (Ticket, M C S, C L H, Hemlock) are 'poor'. This is a critical limitation of spin locks: if a lock holder is preempted, other threads will continue to busy wait, consuming C P U cycles needlessly until the preempted thread is rescheduled and releases the lock. This highlights the trade off between low overhead in the uncontended case and robustness in a preemptive environment.
+*   **Scalability** indicates how well the lock performs as the number of threads or C P U cores increases. M C S and C L H locks are 'good' because their distributed queue structure minimizes contention on a single shared variable, thereby reducing cache coherence traffic. T A S with backoff and Ticket locks are 'fair' as they still involve some degree of shared state contention that can become a bottleneck at very high concurrency.
+*   **Fast path overhead** measures the performance cost when acquiring an uncontended lock. T A S and Ticket locks are 'good' because their acquisition logic is simple and direct. M C S and C L H have 'fair' overhead due to the slightly more complex atomic operations required to manipulate their queue structures, even when the lock is free. Hemlock has 'poor' fast path overhead, suggesting a more complex initial acquisition phase.
+*   **Interoperability** refers to the ease of integrating the lock with other synchronization primitives or across different system contexts. T A S and Ticket locks, relying on fundamental atomic operations, are 'good'. M C S and C L H are 'poor', likely due to more complex dependencies on specific memory models or atomic primitives that might not be universally portable or compatible.
+*   **N R C N U M A suitability** assesses performance on Non Uniform Memory Access architectures, where memory access times depend on the memory's physical proximity to the accessing processor. M C S and C L H locks are 'good' because their queue-based design allows threads to spin on memory locations local to their own N U M A node, drastically reducing costly remote memory accesses and cache line bouncing between N U M A domains. T A S and Ticket locks are 'poor' as their central shared state tends to reside in one location, leading to frequent remote accesses and cache coherency issues across N U M A nodes.
+*   **Space needs** specifies the memory footprint of the lock, measured in words. 'j' represents the number of locks, and 'n' the number of threads. T A S and M C S (original) require 'j' words, indicating space proportional only to the number of locks. Other locks, like Ticket, M C S K42, C L H, and Hemlock, require additional space, often proportional to the number of threads, such as 'two n plus three j' for C L H, implying per thread queue nodes or more complex state.
+
+Beyond these fundamental comparisons, the text introduces crucial interface extensions for lock acquisition. The standard acquire-release interface, foundational to mutual exclusion, is augmented to provide more robust and flexible concurrency control. A primary extension is the `timeout` parameter for the acquire operation. This allows a thread to specify a maximum duration it is willing to wait for a lock. The principle is to prevent indefinite blocking, which is vital for maintaining responsiveness in interactive applications or enabling alternative execution paths. The operation returns a Boolean value, indicating whether the lock was successfully acquired or if the timeout expired. This outcome is particularly useful for detecting and potentially recovering from deadlock conditions. A lengthy timeout that triggers can signal that a deadlock has likely occurred, prompting the calling thread to release other locks it might hold and retry the operation later. This is a practical application of deadlock prevention and avoidance strategies.
+
+A more specialized extension is the `trylock` operation, which is conceptually equivalent to an acquire call with a timeout of zero. `Trylock` attempts to acquire the lock immediately. If successful, it returns true; otherwise, if the lock is already held by another thread, it returns false without blocking. This non-blocking nature allows threads to attempt lock acquisition speculatively, proceeding with other tasks if the lock is unavailable, thereby improving overall system throughput in certain scenarios.
+
+Finally, the text addresses the implicit assumption of strict acquire-release pairing and introduces the concept of reentrant lock acquisition. While typically a lock is acquired and released once by a single thread, some programming patterns necessitate that a thread holding a lock can acquire it again, for instance, through nested function calls or recursive algorithms. For this to work correctly, the lock implementation must track the number of times the current thread has acquired it. The lock is only fully released when the release operation has been invoked an equal number of times as the acquisitions, decrementing an internal count to zero. This ensures that the lock remains held for the duration of all nested critical sections. The example of operation `foo` accessing protected data and being called by a thread already holding the lock illustrates the need for reentrancy to prevent self deadlock. Without this capability, a thread attempting to acquire a lock it already possesses would wait indefinitely for itself to release it, leading to a system freeze.

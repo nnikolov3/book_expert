@@ -1,0 +1,57 @@
+128 7 Synchronization and Scheduling
+
+while —condition
+cvar.wait()
+
+in a Mesa monitor. This change is certainly not onerous. It is also consistent with the notion of
+covering conditions, discussed in the box below. Most modern implementations of monitors
+adopt Mesa semantics for signals.
+
+As it turns out, many algorithms (including our bounded buffer) naturally place signal
+operations only at the ends of entries. A few languages—notably Concurrent Pascal—have
+required this positioning of signals, thereby maintaining the semantics of signals as absolutes
+while avoiding any extra context switches for immediate transfer to the signalee.
+
+7.3.3 Nested Monitor Calls
+
+A second major difference among monitor implementations concerns behavior in the event
+of nested calls. Suppose a thread calls entry E of monitor M1, which in turn calls entry F
+of monitor M2, and the code in F then waits on a condition variable. Clearly monitor M2
+will be unlocked. But what about M1? If we leave it locked, the program will deadlock if
+the only way for another thread to reach the necessary signal in M2 is through M1. If we
+unlock it, however, then the waiting thread in M2 will need to reacquire it when it wakes
+up, and we may deadlock if some other thread is holding M1’s lock at that time—especially
+if that thread can’t release M1’s lock without making a nested call to M2.
+
+Covering Conditions and Cascading Signals
+
+Several languages, including Mesa and Java, provide a broadcast or signalAll operation that awakens
+all threads waiting on a condition. Such an operation finds obvious use in cases where all threads
+should continue: it makes it trivial, for example, to implement a monitor-based barrier. Broadcast can
+also be used in programs where the conditions on which threads may wait cannot easily be statically
+enumerated. Consider, for example, a concurrent set that provides a remove(v) method that waits until
+v is a member of the set. Absent a separate condition variable for every possible value of v, waiting
+threads must share a covering condition. When such threads may be present, a thread performing an
+insert operation must broadcast the covering condition, awakening all threads. Since at most one
+thread will continue in this case, while the rest discover that they must wait again, covering conditions
+can lead to very high overhead, and must be used with care.
+
+In the absence of broadcast operations, one can employ a cascading signal idiom, in which only one
+thread is initially awoken. If unable to proceed, it explicitly re-signals the condition variable before
+waiting on it again. Unfortunately, this idiom requires both FIFO ordering of waiting threads (which
+some systems may not provide) and some mechanism to avoid an infinite loop of signals in the case
+where no waiting thread is able to proceed.
+one hundred twenty eight. Seven Synchronization and Scheduling. while not condition cvar dot wait function is in a Mesa monitor. This change is certainly not onerous. It is also consistent with the notion of covering conditions, discussed in the box below. Most modern implementations of monitors adopt Mesa semantics for signals. As it turns out, many algorithms, including our bounded buffer, naturally place signal operations only at the ends of entries. A few languages, notably Concurrent Pascal, have required this positioning of signals, thereby maintaining the semantics of signals as absolutes while avoiding any extra context switches for immediate transfer to the signalee.
+
+Seven point three point three Nested Monitor Calls. A second major difference among monitor implementations concerns behavior in the event of nested calls. Suppose a thread calls entry E of monitor M one, which in turn calls entry F of monitor M two, and the code in F then waits on a condition variable. Clearly monitor M two will be unlocked. But what about M one? If we leave it locked, the program will deadlock if the only way for another thread to reach the necessary signal in M two is through M one. If we unlock it, however, then the waiting thread in M two will need to reacquire it when it wakes up, and we may deadlock if some other thread is holding M one's lock at that time, especially if that thread cannot release M one's lock without making a nested call to M two.
+
+Covering Conditions and Cascading Signals. Several languages, including Mesa and Java, provide a broadcast or signal all operation that awakens all threads waiting on a condition. Such an operation finds obvious use in cases where all threads should continue; it makes it trivial, for example, to implement a monitor based barrier. Broadcast can also be used in programs where the conditions on which threads may wait cannot easily be statically enumerated. Consider, for example, a concurrent set that provides a remove method that waits until V is a member of the set. A thread might present a separate condition variable for every possible value of V, waiting threads must share a covering condition. When such threads may be present, a thread performing an insert operation must broadcast the covering condition, awakening all threads. Since at most one thread will continue in this case, while the rest discover that they must wait again, covering conditions can lead to very high overhead and must be used with care. In the absence of broadcast operations, one can employ a cascading signal idiom, in which only one thread is initially awoken. If unable to proceed, it explicitly re signals the condition variable before waiting on it again. Unfortunately, this idiom requires both first in first out ordering of waiting threads, which some systems may not provide, and some mechanism to avoid an infinite loop of signals in the case where no waiting thread is able to proceed.
+The presented text delves into nuanced aspects of concurrency control, specifically within the context of monitors and signaling mechanisms, elaborating on principles that underpin reliable multithreaded system design.
+
+The excerpt begins by illustrating a common pattern within monitor implementations: a `while` loop checking a condition, followed by a `cvar.wait()` call. This construct is fundamental to condition variables, a synchronization primitive that allows threads to block until a specific condition becomes true. The `wait` operation typically releases the monitor's lock, allowing other threads to enter and potentially modify the shared state that the condition depends on. Once signaled, the thread reacquires the lock and re-evaluates the condition. This pattern ensures that even if a thread is awakened prematurely or if the condition is not yet met, it will re-enter the waiting state correctly. The text notes that this behavior is consistent with the notion of "covering conditions" and that many modern monitor implementations, such as those found in Concurrent Pascal, adopt this approach. The advantage highlighted is the maintenance of signal semantics without the overhead of explicit context switches for immediate transfer to the signaler, simplifying the signaling process.
+
+A key challenge in monitor design, particularly concerning nested monitor calls, is discussed. Consider a scenario where a thread, M one, enters monitor M one, and within its execution, calls an entry point E of another monitor, M two. If the code within M two then waits on a condition variable, the question arises about the state of M one's lock. If M one's lock is retained, then any other thread attempting to enter M one would be blocked. The problem becomes acute if the thread in M two requires M one's lock to proceed, creating a potential for deadlock, especially if M two is called recursively or if other threads are waiting on M one. The critical aspect here is that if the thread cannot release M one's lock while waiting in M two, it may indeed deadlock. This illustrates the complexity of managing nested monitor locks and the importance of careful lock management to prevent circular dependencies.
+
+The section on "Covering Conditions and Cascading Signals" expands on how signals are handled. Languages like Mesa and Java offer a "broadcast" or "signal all" operation. This is particularly useful for implementing mechanisms like monitor-based barriers, where all threads waiting on a particular condition need to be awakened simultaneously. Such broadcast operations are contrasted with individual `signal` operations which wake up only one waiting thread. The significance of "covering conditions" is further elaborated with an example involving a concurrent set providing a "remove" method. If a thread removes an element, it might need to signal that a certain condition is met. If multiple threads are waiting on this condition, a broadcast signal ensures that all relevant waiting threads are awakened. However, if only one thread proceeds and the rest discover the condition is not yet met, they might have to re-wait. This can lead to a cascading effect, where threads are awakened only to find themselves needing to wait again, potentially leading to inefficient context switching.
+
+In the absence of broadcast operations, an idiom called "cascading signal" is employed. In this approach, when a thread is awakened and finds it cannot proceed, it explicitly re-signals the condition variable. This mechanism typically requires a FIFO ordering of waiting threads to ensure fairness and a way to prevent infinite loops where a thread continuously signals itself without making progress. The implication is that the signaling thread must carefully manage its re-signaling to avoid livelock or starvation. The efficiency and correctness of such cascading mechanisms are highly dependent on the underlying scheduling and signaling policies of the operating system or concurrency framework.

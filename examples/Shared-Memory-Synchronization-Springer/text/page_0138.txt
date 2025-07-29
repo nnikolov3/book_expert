@@ -1,0 +1,66 @@
+142 8 Nonblocking Algorithms
+
+[F—{10] J=—{20] F—[30] F
+head CAS
+(b)
+
+{0 F—EF—E
+
+head
+
+(d)
+
+Figure 8.3 Atomic update of a singly linked list. Naive insertion (a) and deletion (b), if executed
+concurrently, can leave the list in an inconsistent state (¢). The H&M list therefore performs a two-step
+deletion that first marks the next pointer of the to-be-deleted node (shown here with shading) (d),
+thereby preventing conflicting insertion.
+
+Strictly speaking, the use of a type-preserving allocator means that initialization of a
+newly allocated object may race (in the sense of Sec. 3.4.2) with accesses in other threads
+that retain references from the object’s prior incarnation. While we have not used explicit
+synchronizing stores for initialization in any of our code examples, correct source code
+would need to do so to avoid data races in a language like C++.
+
+In some cases the restriction to a type-preserving allocator may be undesirable (for exam-
+ple, because it prevents memory from being released to the operating system for the duration
+of a program’s execution). There are many alternative approaches to memory management
+for nonblocking data structures, including reference counting, hazard pointers, and epochs.
+We survey these options in Sec. 8.7.
+
+8.2 Linked Lists
+
+8.2.1 Harris and Michael (H&M) Lists
+
+Singly-linked lists are among the most ubiquitous data structures in computer science. Sorted
+linked lists, in particular, are frequently used as a simple implementation of a set, and may
+also be used as a component of more complex data structures (e.g., hash tables and skip lists).
+Sundell and Tsigas (2008b) have shown that even doubly linked lists can be manipulated in
+a lock-free fashion, though the code to do so is quite complex. We focus here on the singly
+linked case.
+
+It is tempting to expect that both insertion of a node into a list and removal of a node from
+a list would be trivial to implement in a nonblocking fashion using CAS, since in each case
+only a single pointer of the existing list needs to change. In Figure 8.3a, insertion of a node
+containing the value 25 requires only that we swing the next pointer of the node containing
+one hundred forty two, eight Nonblocking Algorithms
+
+Figure eight point three Atomic update of a singly linked list. Naive insertion and deletion, if executed concurrently, can leave the list in an inconsistent state. The H and M list therefore performs a two step deletion that first marks the next pointer of the to be deleted node shown here with shading, thereby preventing conflicting insertion.
+
+Strictly speaking, the use of a type preserving allocator means that initialization of a newly allocated object may race in the sense of Section three point four point two with accesses in other threads that retain references from the object's prior incarnation. While we have not used explicit synchronizing stores for initialization in any of our code examples, correct source code would need to do so to avoid data races in a language like C++. In some cases the restriction to a type preserving allocator may be undesirable for example, because it prevents memory from being released to the operating system for the duration of a program's execution. There are many alternative approaches to memory management for nonblocking data structures, including reference counting, hazard pointers, and epochs. We survey these options in Section eight point seven.
+
+eight point two Linked Lists
+
+eight point two point one Harris and Michael H and M Lists
+
+Singly linked lists are among the most ubiquitous data structures in computer science. Sorted linked lists, in particular, are frequently used as a simple implementation of a set, and may also be used as a component of more complex data structures, for example, hash tables and skip lists. Sundell and Tsigas, have shown that even doubly linked lists can be manipulated in a lock free fashion, though the code to do so is quite complex. We focus here on the singly linked case. It is tempting to expect that both insertion of a node into a list and removal of a node from a list would be trivial to implement in a nonblocking fashion using C A S, since in each case only a single pointer of the existing list needs to change. In Figure eight point three a, insertion of a node containing the value twenty five requires only that we swing the next pointer of the node containing
+The concept of nonblocking algorithms, particularly as applied to linked lists, is illustrated through the atomic update of a singly linked list. Figure 8.3 presents a series of diagrams depicting insertion and deletion operations. Diagram (a) shows a naive insertion into a singly linked list, where a new node is intended to be inserted between nodes containing values 20 and 30. Diagram (b) illustrates a naive deletion operation, aiming to remove the node with value 25.
+
+The critical challenge arises when these operations are executed concurrently. The text explains that a naive concurrent insertion and deletion can lead to an inconsistent state, as depicted in diagram (c). This inconsistency stems from the potential for a race condition where one thread might modify a pointer while another thread is attempting to read or update it. For instance, if a deletion operation proceeds by first marking a node for deletion and then updating its predecessor's pointer, and concurrently an insertion operation tries to update the pointer of the node being deleted, the list's integrity can be compromised.
+
+The Harris and Michael (H&M) list approach, as referenced in Section 8.3, addresses this by employing a two-step deletion process, as shown in diagram (d). This process typically involves first logically marking the node for deletion, often by modifying its value or a specific flag, and then retrying the pointer update if necessary. This retrying mechanism is crucial for maintaining correctness in the face of concurrency. The atomic Compare-And-Swap, or C A S, operation is fundamental here. C A S is an indivisible machine instruction that atomically reads a memory location, compares its current value with an expected value, and if they match, writes a new value to that memory location. This primitive allows threads to attempt updates optimistically and retry if a conflict is detected.
+
+The text further delves into the complexities of memory management in the context of concurrent data structures, specifically mentioning type-preserving allocators. Initialization of a newly allocated object must be carefully handled to avoid data races. If a thread accesses an object before its initialization is complete, or if another thread's access interferes with initialization, it can lead to incorrect behavior. The use of explicit synchronizing stores is often required in languages like C++ to ensure proper memory ordering and prevent such races. However, relying solely on a type-preserving allocator can sometimes be undesirable, as it might prevent memory from being released to the operating system for the duration of a program's execution. Alternative approaches for memory management in concurrent scenarios include reference counting, hazard pointers, and epochs, which are discussed in more detail in Section 8.7.
+
+Singly linked lists are fundamental data structures, widely used as simple sets and as building blocks for more complex structures like hash tables and skip lists. The ability to manipulate these structures in a lock-free fashion, meaning without requiring exclusive locks that can lead to contention and deadlock, is a significant area of research. Implementing lock-free insertion and deletion for singly linked lists, while seemingly straightforward, presents subtle challenges. Specifically, both insertion of a new node and removal of an existing node necessitate changes to the pointers of adjacent nodes.
+
+Consider the insertion of a node with value 25 into a list where the node containing 20 points to the node containing 30. In a naive implementation, a thread might attempt to update the pointer of the node containing 20 to point to the new node, and then update the new node's pointer to point to the node containing 30. If a concurrent deletion operation is in progress, it could interfere with this sequence, potentially leading to data loss or corruption. The H&M list, through its atomic operations and careful sequencing, aims to mitigate these issues. The text highlights that in Figure 8.3a, insertion of a node requires swinging the next pointer of the preceding node. Similarly, deletion requires updating the pointer of the node preceding the one to be deleted. The use of C A S for these pointer manipulations ensures atomicity, preventing race conditions during these critical updates. The core principle is to make the modification of a node's pointer an atomic step, ensuring that no other thread can observe an intermediate, inconsistent state of the list.

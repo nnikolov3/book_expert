@@ -1,0 +1,62 @@
+34 Memory Models 59
+
+have been produced by a previous write to the same location in some sequential execution
+of the given program on the given input (not necessarily the same execution used to justify
+previous writes) (Manson et al. 2005). The details are surprisingly subtle and complex
+(Aspinall and Sevéik 2007), and as of 2023 it is still unclear whether they can be made
+mathematically sound. Mindful of the Java experience, the designers of C and C++ have for
+the time being chosen (in programs with relaxed accesses to atomic variables) to forbid
+out-of-thin-air reads without actually defining what that means. Formalization of the model
+remains an active topic of research (Boehm and Demsky 2014; Pichon-Pharabod and Sewell
+2016; Chakraborty and Vafeiadis 2019; Kang et al. 2017).
+
+In an alternative approach for C and C++, Sinclair et al. (2017) have proposed to guarantee
+sequential consistency for data-race-free programs, but to extend the set of operations on
+atomic variables to provide sequentially consistent semantics for the most important use
+cases of relaxed accesses in existing programs. As a simple example, the notion of operation
+commutativity, if supported directly in the language, might allow an operation like counter
+increments (without a return value) to be implemented as a reduction (Sec. 5.2.2) without
+introducing races.
+
+Advice to the Parallel Programmer
+
+In a C or C++ program, all reads and writes of atomic variables are considered to be synchronizing
+accesses. This includes those accesses that are explicitly labeled as relaxed, meaning they are
+neither write atomic nor ordered (from the perspective of other threads) with respect to preced-
+ing or following accesses of the issuing thread. By using weak but explicit labels on atomic
+accesses, the expert programmer (e.g., the author of a synchronization library) can enlarge the
+set of valid executions, thereby freeing the compiler and the hardware to pursue more aggressive
+optimizations.
+
+At the same time, abundant real-world experience indicates that programmers routinely overestimate
+the potential performance benefits of relaxed ordering, and underestimate the likelihood that using
+it will lead to subtle bugs. Recent work by Attiya et al. (2011) has also shown that certain W||R
+orderings and fetch_and_® operations are essential in a fundamental way: standard concurrent
+objects cannot be written without them. Absent a compelling, experimentally quantified performance
+need and a solid (i.e., formally validated) correctness argument, programmers would be wise to rely
+in all cases on the default memory order and its guarantee of sequential consistency for data-race-free
+programs.
+
+In keeping with C/C++ conventions, this monograph will, in general, explicitly label all loads and
+stores that may race with concurrent accesses in other threads. The principal exception is initialization,
+which can generally be performed safely using ordinary writes. Once an initialized object has been
+published (made visible to other threads), subsequent accesses will generally require explicit loads
+and stores. For more on this subject, see Sec. 9.3.3.
+Three point four Memory Models.
+
+have been produced by a previous write to the same location in some sequential execution of the given program on the given input, not necessarily the same execution used to justify previous writes, Manson et al. two thousand five. The details are surprisingly subtle and complex, Aspinall and Sevick two thousand seven, and as of two thousand twenty three it is still unclear whether they can be made mathematically sound. Mindful of the Java experience, the designers of C and C plus plus have for the time being chosen, in programs with relaxed accesses to atomic variables, to forbid out of thin air reads without actually defining what that means. Formalization of the model remains an active topic of research, Boehm and Demsky two thousand fourteen; Pichon Pharabod and Sewell two thousand sixteen; Chakraborty and Vafeiadis two thousand nineteen; Kang et al. two thousand seventeen. In an alternative approach for C and C plus plus, Sinclair et al. two thousand seventeen have proposed to guarantee sequential consistency for data race free programs, but to extend the set of operations on atomic variables to provide sequentially consistent semantics for the most important use cases of relaxed accesses in existing programs. As a simple example, the notion of operation commutativity, if supported directly in the language, might allow an operation like counter increments, without a return value, to be implemented as a reduction, Section five point two point two, without introducing races.
+
+Advice to the Parallel Programmer.
+
+In a C or C plus plus program, all reads and writes of atomic variables are considered to be synchronizing accesses. This includes those accesses that are explicitly labeled as relaxed, meaning they are neither write atomic nor ordered, from the perspective of other threads, with respect to preceding or following accesses of the issuing thread. By using weak but explicit labels on atomic accesses, the expert programmer, for example, the author of a synchronization library, can enlarge the set of valid executions, thereby freeing the compiler and the hardware to pursue more aggressive optimizations. At the same time, abundant real world experience indicates that programmers routinely overestimate the potential performance benefits of relaxed ordering, and underestimate the likelihood that using it will lead to subtle bugs. Recent work by Attiya et al. two thousand eleven has also shown that certain write or or read orderings and fetch and operations are essential in a fundamental way: standard concurrent objects cannot be written without them. Absent a compelling, experimentally quantified performance need and a solid, that is, formally validated, correctness argument, programmers would be wise to rely in all cases on the default memory order and its guarantee of sequential consistency for data race free programs. In keeping with C slash C plus plus conventions, this monograph will, in general, explicitly label all loads and stores that may race with concurrent accesses in other threads. The principal exception is initialization, which can generally be performed safely using ordinary writes. Once an initialized object has been published, made visible to other threads, subsequent accesses will generally require explicit loads and stores. For more on this subject, see Section nine point three point three.
+The provided text elucidates the fundamental principles and intricate challenges associated with *memory models* in concurrent programming, particularly within the context of C and C plus plus. At its core, a memory model defines the permissible orderings of memory operations, such as loads and stores, as observed by different processing units or threads in a multi core system. The ideal, and most straightforward, model is *sequential consistency*, which dictates that all operations appear to execute in a single, global, total order, and that the result of any execution is the same as if all operations were executed in some sequential order consistent with the program order of each individual thread. This model greatly simplifies reasoning about concurrent programs, as it eliminates the complexities of instruction reordering.
+
+However, strict adherence to sequential consistency often comes with a significant performance penalty, primarily because it inhibits aggressive hardware and compiler optimizations that reorder memory accesses. Modern architectures and optimizing compilers frequently reorder operations to hide memory latency and exploit parallelism. This leads to the concept of *relaxed memory models*, where certain memory operations, even on *atomic variables*, do not enforce strong ordering guarantees with respect to other operations. While this relaxation can yield substantial performance benefits, it introduces profound complexities. For instance, the text highlights that precisely defining the semantics of such "relaxed accesses" and verifying their correctness mathematically remains an active and challenging area of research. Without precise definitions, programmers face the formidable task of reasoning about the true execution order of memory operations, leading to subtle and pervasive bugs.
+
+A key concept in this discussion is the distinction between *data races* and *atomic operations*. A data race occurs when multiple threads access the same memory location concurrently, at least one of which is a write, and at least one of these accesses is non atomic. Such scenarios lead to undefined behavior. *Atomic variables* are designed to prevent data races on the specific memory location they encapsulate, ensuring that operations on them appear indivisible and instantaneous. However, merely using an atomic variable does not automatically guarantee sequential consistency for all operations involving that variable or other memory locations. Relaxed atomic operations, for example, ensure atomicity but permit reordering with respect to other memory accesses, whether atomic or non atomic. The text suggests leveraging *commutativity* for operations like counter increments, which are a form of *reduction*. If an operation is commutative, its order relative to other commutative operations does not affect the final result, potentially allowing for more relaxed memory access semantics without introducing incorrectness.
+
+The "Advice to the Parallel Programmer" section transitions from theoretical foundations to practical guidance. It strongly recommends that programmers, by default, employ *synchronizing accesses* when dealing with shared state in C or C plus plus. These synchronizing operations, typically achieved through specific atomic types or mutexes, establish a "happens before" relationship between operations across different threads, guaranteeing visibility and ordering. In contrast, *relaxed atomic accesses*, while useful for specific, performance critical scenarios, offer minimal ordering guarantees. They only ensure that the specific operation on the atomic variable itself is indivisible, but do not constrain how that operation is ordered relative to other memory operations within the same or other threads. This lack of constraint is why compilers and hardware can aggressively reorder them, potentially leading to hard to debug issues.
+
+The text emphasizes that programmers frequently *overestimate* the performance gains from relaxed ordering and simultaneously *underestimate* the likelihood of introducing elusive bugs. It points to the importance of specific *atomic read or write operations* and *fetch and add* operations for ensuring correctness, especially in scenarios involving concurrent modifications to shared data. These operations, when properly used, provide stronger semantic guarantees necessary for robust concurrent programming. The overarching recommendation is to default to *sequential consistency* for data race free programs unless there is a *compelling, experimentally quantified performance benefit* that necessitates the use of a weaker memory model. This preference for sequential consistency simplifies reasoning and significantly reduces the risk of subtle errors arising from unexpected memory reorderings.
+
+Finally, a critical principle for concurrent programming is highlighted: the correct *publishing* of initialized objects. It is imperative that an object's internal state is fully constructed and consistent *before* its reference is made visible or "published" to other threads. If an object reference is published prematurely, other threads might observe a partially initialized or inconsistent state, leading to program failures. This principle often necessitates the use of memory barriers or specific atomic operations with `release` semantics for the publishing store and `acquire` semantics for the subsequent load by consuming threads, thereby ensuring that all writes performed during the object's initialization become visible before the object itself is observed. The text concludes by stating that, in the context of this monograph, all loads and stores that could potentially race with concurrent accesses in other threads will generally be explicitly labeled, with initialization being a notable exception where the implicit guarantees may suffice, subject to further discussion in later sections.

@@ -1,0 +1,71 @@
+162 8 Nonblocking Algorithms
+
+type node enum state Clean, IFlag, DFlag, Mark
+const keytype key type info = insertflag or deleteflag
+atomic<node*> left type updateptr = (state, info*)
+atomic<node™> right
+atomic<updateptr> update type insertflag
+// initially (Clean, null) node* const p
+node* const target
+class tree node* const newlnternal
+node* const root = new node with key oc,
+and two new children with key oo type deleteflag
+node* const gp
+bool tree.lookup(keytype key): node* const p
+(-, -, -, -, target) := search(key) node” const target
+return (target—key = key) const updateptr pupdate
+
+bool tree.insert(keytype key):
+loop
+(-, -, p, pupdate, target) := search(key)
+if target—key = key then return false
+
+if pupdate.state # Clean then help(pupdate)
+else
+node* newleaf := new node(key, null, null)
+node newsibling := new node(target—key, null, null)
+node* n := (key < target—key)
+? new node(target—key, newleaf, newsibling)
+: new node(key, newsibling, newleaf)
+
+updateptr update := (IFlag, new insertflag(p, target, newinternal))
+if p—update.CAS(pupdate, update)
+
+help(update)
+
+return true
+
+bool tree.delete(keytype key):
+loop
+(gp, gpupdate, p, pupdate, target) := search(key)
+if target—key # key then return false
+
+if gpupdate.state # Clean then help(gpupdate)
+else if pupdate.state # Clean then help(pupdate)
+else
+updateptr update := (DFlag, new deleteflag(gp, p, target, pupdate))
+if gp—update.CAS(gpupdate, update)
+help(update)
+return true
+
+Figure 8.14 EFRB BST: data types and public methods.
+One hundred sixty two. Eight Nonblocking Algorithms. Type node, const keytype key, atomic node star left, atomic node star right, atomic updateptr update, initially Clean, null. Enum state Clean, IFlag, DFlag, Mark. Type info is insertflag or deleteflag. Type updateptr is state, info star. Type insertflag, node star const p, node star const target, node star const newInternal. Class tree. Node star const root is equal to new node with key infinity, and two new children with key infinity. Type deleteflag, node star const gp, node star const p, node star const target, node star updateptr pupdate. Bool tree dot lookup with keytype key. Parent, Grandparent, sibling, target is assigned to search with key. Return target key is equal to key. Bool tree dot insert with keytype key. Loop. Parent, sibling, p, pupdate, target is assigned to search with key. If target key is equal to key then return false. If pupdate dot state is not equal to Clean then help pupdate. Else. Node star newleaf is assigned to new node with key, null, null. Node star newsibling is assigned to new node with target key, null, null. Node star n is assigned to key less than target key. Question mark new node with target key, newleaf, newsibling. Colon new node with key, newleaf, newsibling. Updateptr update is assigned to IFlag, new insertflag with p, target, newinternal. Update dot CAS with pupdate, update. Help update. Return true. Bool tree dot delete with keytype key. Loop. Grandparent, gpupdate, p, pupdate, target is assigned to search with key. If target key is not equal to key then return false. If gpupdate dot state is not equal to Clean then help gpupdate. Else if pupdate dot state is not equal to Clean then help pupdate. Else. Updateptr update is assigned to DFlag, new deleteflag with gp, p, target, pupdate. Update dot CAS with gpupdate, update. Help update. Return true. Figure eight point fourteen EFRB BST: data types and public methods.
+This document delves into the construction of nonblocking data structures, specifically illustrating operations on an Extensible and Resilient Binary Search Tree (EFRB BST). The core of the design revolves around atomic operations and the management of node states and update pointers to ensure correctness in a concurrent environment without requiring locks.
+
+We begin with the fundamental data structure definition: `type node`. Each node contains a `key` of type `keytype`. Critically, the `left` and `right` child pointers are declared as `atomic<node*>`, signifying that modifications to these pointers must be performed atomically. This is essential for preventing torn writes and ensuring that other threads observe consistent views of the tree structure. Furthermore, an `atomic<updateptr>` named `updateptr` is included. This pointer, initially set to a null value, is central to the nonblocking mechanism, facilitating the coordination of concurrent modifications.
+
+The `class tree` encapsulates the tree's operations, with `node* const root` serving as the entry point to the tree. The root is initialized to represent a new node with an "infinity" key, and its children are two new nodes, also with "infinity" keys. This initialization strategy is common in lock-free data structures to handle boundary conditions and simplify initial insertions.
+
+The `lookup` operation, `bool tree.lookup(keytype key)`, demonstrates a read-heavy operation. It begins by calling a `search(key)` function, which presumably traverses the tree based on key comparisons. The result of `search` is used to determine if the key exists, returning `true` if found and `false` otherwise. The use of `atomic<node*>` for child pointers implies that reads of these pointers are also atomic, ensuring that a reader does not observe a partially updated pointer.
+
+The `insert` operation, `bool tree.insert(keytype key)`, is a more complex write operation. It employs a `loop` construct, indicative of a retry mechanism inherent in lock-free algorithms. Inside the loop, the `search(key)` function is invoked to find the appropriate position for the new key, returning the potential parent (`p`), its update pointer (`pupdata`), and the node that would be the target of the insertion (`target`). If the `target` node's key matches the key being inserted, the operation can immediately return `false`, indicating that the key already exists.
+
+A crucial part of the insertion logic involves examining the state of the `pupdata` pointer. If `pupdata.state` is not `Clean`, it implies that an ongoing operation is modifying the parent node's update chain. In such scenarios, the `help(pupdata)` function is called to assist in completing the prior operation before retrying the current one. If `pupdata.state` is `Clean`, the algorithm proceeds to create new nodes.
+
+A `newleaf` node is constructed with the given `key` and null children, representing the actual new data node. A `newsibling` node is also created, typically holding the `target` node's key, and initially having null children. The logic then determines whether the `newleaf` should be the left or right child of the `target` node based on key comparison. A new `updateptr` structure is then constructed containing a new `insertflag`, references to `p`, `target`, and `pupdata`, and potentially a `newinternal` node which may be related to the `newsibling`. This new update structure is then attempted to be installed using a Compare-And-Swap (CAS) operation on `pupdata`. The `CAS` operation atomically checks if `pupdata` still holds its expected value and, if so, replaces it with the new update structure. If the CAS succeeds, the insertion is considered complete, and the function returns `true`. If the CAS fails, it signifies a conflict with another concurrent operation, and the `loop` causes the operation to retry.
+
+The `delete` operation, `bool tree.delete(keytype key)`, also utilizes a `loop` for retries. It first uses `search(key)` to locate the node to be deleted (`target`) and its parent (`p`) and grandparent (`gp`), along with their respective update pointers (`pupdata` and `gpupdate`). If the `target` node's key does not match the key to be deleted, the operation returns `false`. Similar to insertion, the algorithm checks the states of `gpupdate` and `pupdata`. If either is not `Clean`, the corresponding `help` function is called to resolve ongoing operations.
+
+If both parent and grandparent update pointers are clean, a `deleteflag` is constructed. This flag encapsulates information about the deletion, including references to the grandparent, parent, target node, and the parent's update pointer. A new update structure is then formed, containing this `deleteflag` and the necessary references. This new update is then applied to the grandparent's update pointer using a CAS operation. Success in this CAS indicates successful deletion, and the function returns `true`; failure triggers a retry.
+
+The enumerated type `state` defines possible states for nodes or update operations: `Clean`, `I` Flag, `D` Flag, and `Mark`. The `info` type combines the `state` with an `info*` pointer, likely for managing chained update operations. The `updateptr` type is a structure containing `state`, `info*`, and a pointer to the `updateptr` itself, forming a linked list for managing concurrent updates. The `insertflag` and `deleteflag` are specialized structures for their respective operations, carrying specific context needed for atomic updates. These structures, along with the atomic pointers and CAS operations, form the foundation of the nonblocking binary search tree implementation. The figure caption, "Figure 8.14 EFRB BST: data types and public methods," indicates that this code snippet defines the core components and interfaces for this advanced data structure.

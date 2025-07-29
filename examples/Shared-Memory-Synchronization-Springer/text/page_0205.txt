@@ -1,0 +1,67 @@
+210 9 Transactional Memory
+
+framework, one can easily show that a data-race-free program is transactionally sequentially
+consistent. all memory accesses appear to happen in a global total order that is consistent
+with program order in each thread, and that keeps the accesses of any given transaction
+contiguous.
+
+Some challenges of language integration are more pedestrian: If there are limits on the
+operations allowed inside transactions, should these be enforced at compile time or at run
+time? If the former, how do we tell whether it is safe to call a subroutine that is defined in
+a different compilation unit? Must the subroutine interface explicitly indicate whether it 1s
+“transaction safe”?
+
+Other challenges involve “surprise” interactions with other language features. Exceptions
+are particularly problematic. If an exception arises in a transaction and 1s not caught inter-
+nally, what should happen when its propagation reaches the transaction boundary? Should
+the transaction commit or abort? If the exception represents an error, committing may not
+be safe: the transaction may not have restored program invariants. On the other hand, if the
+transaction aborts, and “never happened,” how can it raise an exception? The answer may
+depend, at least in part, on whether speculation 1s part of the language semantics. Some
+researchers argue “no”’—transactions should simply be atomic, and speculation (if any)
+should be an implementation detail. Other researchers argue that not only exceptions but
+also inevitability, explicit aborts, and condition synchronization (the latter two of which we
+consider in Sec. 9.3.2 below) are easier to understand if the programmer thinks in terms of
+speculation.
+
+Finally, there 1s the 1ssue of forward progress (absence of deadlock or livelock). Guerraoui
+and Kapatka (2009) formalize this issue in terms of a property they call progressiveness,
+with two key variants. A TM system is said to be weakly progressive if a transaction that
+encounters no conflicts is always able to commit. A system is said to be strongly progressive
+if whenever a set of transactions conflict on only a single variable (or perhaps a single Orec),
+at least one of them is able to commit. Language semantics based on progressiveness would
+presumably require not only an explicit acknowledgment of speculation but also a formal
+definition of conflict. The latter would appear to be challenging, given issues of granularity
+and of false conflicts due to collisions in object-to-Orec mappings.
+
+Strong and Weak Isolation
+
+As we noted at the beginning of Sec. 9.2, most HTM systems are strongly atomic—their transactions
+serialize not only with other transactions but also with individual loads and stores. Some researchers
+have argued (Blundell et al. 2005; Schneider et al. 2008; Baugh et al. 2008; Abadi et al. 2009;
+Shpeisman et al. 2007) that language-level TM should guarantee strong atomicity as well, though this
+is difficult to implement in software. The difference between strong and weak atomicity, however,
+can be seen only in programs with data races—races between transactional and non-transactional
+accesses in particular (Dalessandro and Scott 2009). If data races are considered to be bugs, then
+strong atomicity serves only to make the behavior of buggy programs easier to diagnose—race-free
+programs can never tell the difference.
+210 9 Transactional Memory
+
+framework, one can easily show that a data race free program is transactionally sequentially consistent: all memory accesses appear to happen in a global total order that is consistent with program order in each thread, and that keeps the accesses of any given transaction contiguous.
+
+Some challenges of language integration are more pedestrian: If there are limits on the operations allowed inside transactions, should these be enforced at compile time or at run time? If the former, how do we tell whether it is safe to call a subroutine that is defined in a different compilation unit? Must the subroutine interface explicitly indicate whether it is "transaction safe"?
+
+Other challenges involve "surprise" interactions with other language features. Exceptions are particularly problematic. If an exception arises in a transaction and is not caught internally, what should happen when its propagation reaches the transaction boundary? Should the transaction commit or abort? If the exception represents an error, committing may not be safe: the transaction may not have restored program invariants. On the other hand, if the transaction aborts, and "never happened," how can it raise an exception? The answer may depend, at least in part, on whether speculation is part of the language semantics. Some researchers argue "no" - transactions should simply be atomic, and speculation (if any) should be an implementation detail. Other researchers argue that not only exceptions but also inevitability, explicit aborts, and condition synchronization (the latter two of which we consider in Sec. 9.3.2 below) are easier to understand if the programmer thinks in terms of speculation.
+
+Finally, there is the issue of forward progress (absence of deadlock or livelock). Guerraoui and Kapalka (2009) formalize this issue in terms of a property they call progressiveness, with two key variants. A T M system is said to be weakly progressive if a transaction that encounters no conflicts is always able to commit. A system is said to be strongly progressive if whenever a set of transactions conflict on only a single variable (or perhaps a single Orec), at least one of them is able to commit. Language semantics based on progressiveness could presumably require not only an explicit acknowledgment of speculation but also a formal definition of conflict. The latter would appear to be challenging, given issues of granularity and of false conflicts due to collisions in object to Orec mappings.
+
+Strong and Weak Isolation
+
+As we noted at the beginning of Sec. 9.2, most H T M systems are strongly atomic—their transactions serialize not only with other transactions but also with individual loads and stores. Some researchers have argued (Blundell et al. 2005; Schneider et al. 2008; Baugh et al. 2008; Abadi et al. 2009; Shpeisman et al. 2007) that language level T M should guarantee strong atomicity as well, though this is difficult to implement in software. The difference between strong and weak atomicity, however, can be seen only in programs with data races—races between transactional and non transactional accesses in particular (Diassandro and Scott 2009). If data races are considered to be bugs, then strong atomicity serves only to make the behavior of buggy programs easier to diagnose—race free programs can never tell the difference.
+A data race free program exhibits sequential consistency, meaning all memory accesses appear to occur in a global total order that respects the program order within each thread and is also consistent with the order of any given transaction.
+
+Challenges in language integration for transactional memory systems arise from several sources. One significant aspect is the enforcement of transactionality at compile time or runtime. The question of whether a subroutine is transaction safe, and how this safety is communicated, is crucial. If a subroutine is not transaction safe, its calls within a transaction could lead to unpredictable behavior. Furthermore, "surprise" interactions with other language features, particularly exceptions, present a complex problem. When an exception occurs within a transaction, the propagation of that exception across the transaction boundary must be carefully handled. If the exception signals an error that requires state restoration, the transaction commit might not be able to guarantee the restoration of program invariants. This leads to the question of how to raise an exception within a transaction if it's considered to have "never happened." Some researchers argue that transactions should fundamentally be atomic and that speculation, a technique often used in transactional memory to improve performance by executing tentative operations, should be an implementation detail rather than a core semantic concern. This perspective suggests that instead of focusing solely on exceptions, researchers should also consider other factors like inevitability and condition synchronization, which are also influenced by the underlying implementation, as highlighted in section nine point three point two.
+
+Guerraoui and Kapalka, in their work from two thousand nine, formalized the issue of forward progress, which essentially means the absence of deadlocks or livelocks in a transactional system. They introduced the concept of progressiveness. A transactional memory system is considered weakly progressive if a transaction is always able to commit. A system is deemed strongly progressive if conflicts among transactions are limited to a single variable, or perhaps a single object in a more general sense, and if progressiveness is guaranteed, it implies that speculation is not only a mechanism for performance but also a component of the formal semantics. The definition of conflict itself becomes important, as does the potential for false conflicts arising from the granularity of transactional operations and their mappings to underlying hardware structures.
+
+The distinction between strong and weak isolation in transactional memory is significant. As noted earlier, most hardware transactional memory, or H T M, systems aim for strong atomicity, serializing not only transactions but also individual loads and stores. However, some researchers, such as Blundell et al. in two thousand five, Schneider et al. in two thousand eight, and Baugh et al. in two thousand nine, suggest that language level transactional memory should guarantee strong atomicity as well, though its implementation can be challenging, especially within software. The difference between strong and weak atomicity becomes apparent when considering data races, which are problematic interleavings of accesses by different threads that can lead to incorrect program behavior. In particular, data races between transactional and non transactional accesses, or even between two non transactional accesses, are considered bugs. If these data races are a primary concern and difficult to manage, then the distinction between strong atomicity and other forms becomes crucial for diagnosing and debugging concurrent programs. Weak atomicity might, in certain contexts, make the behavior of buggy programs easier to diagnose due to a more relaxed consistency model.

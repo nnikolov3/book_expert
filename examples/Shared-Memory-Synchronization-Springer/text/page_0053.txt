@@ -1,0 +1,74 @@
+54 3 Essential Theory
+
+At the programming language level, a memory model is the portion of language semantics
+that determines whether the values read from variables in an abstract execution are valid,
+given the values written by other program steps. In a single-threaded program, the memory
+model is trivial: there 1s a total order on program steps in any given execution, and the value
+read in a given step 1s valid if and only if it matches the value written by the most recent
+prior write to the same variable—or the initial value if there is no such write.”
+
+In a multithreaded program, the memory model is substantially more complex, because
+a read in one thread may see a value written by a write in a different thread. An execution
+1s said to be sequentially consistent (in the sense of Sec. 2.2) if there exists a total order
+on memory operations (across all threads) that explains all values read. As we have seen,
+of course, most hardware is not sequentially consistent. Absent language restrictions, it 1s
+unlikely that all concrete executions will be both fast and sequentially consistent. For the
+sake of efficiency, the memory model for a concurrent language therefore typically requires
+only a partial order—known as happens-before—on the steps of an abstract execution. Using
+this partial order, the model then defines a writes-seen relation that identifies, for every read,
+the writes whose values may be seen.
+
+To define the happens-before order, most memory models begin by distinguishing
+between “ordinary” and “synchronizing” steps in the abstract execution. Ordinary steps
+are typically reads and writes of scalar variables. Depending on the language, synchroniz-
+ing steps might be lock acquire and release, transactions, monitor entry and exit, message
+send and receive, or reads and writes of special atomic variables. Like ordinary steps, most
+synchronizing steps read or write values in memory (an acquire operation, for example,
+changes a lock from “free” to “held”). A sequentially consistent execution must explain
+these reads and writes, just as it does those effected by accesses to ordinary scalar variables.
+
+Given the definition of ordinary and synchronizing steps, we proceed incrementally as
+follows:
+
+Program order is the union of a collection of disjoint total orders, each of which captures
+the steps performed by one of the program’s threads. Each thread’s steps must be allowable
+under the language’s sequential semantics, given the values returned by read operations.
+
+Synchronization order is a total order, across all threads, on all synchronizing steps. This
+order must be consistent with program order within each thread. It must also explain the
+values read and written by the synchronizing steps (this will ensure, for example, that
+acquire and release operations on any given lock occur in alternating order). Crucially,
+synchronization order 1s not specified by the source program. An execution is valid only
+if there exists a synchronization order that leads, as described below, to a writes-seen
+relation that explains the values read by both ordinary and synchronizing steps.
+
+2 Note that there may be multiple valid executions of a given source program on a given input, even
+when the program is single threaded. Many languages, for example, allow side effects of evaluating
+arguments to a given function to occur in any order. Nevertheless, the steps in any given single-
+threaded execution will occur in total order.
+At the programming language level, a memory model is the portion of language semantics that determines whether the values read from variables in an abstract execution are valid, given the values written by other program steps. In a single threaded program, the memory model is trivial: there is a total order on program steps in any given execution, and the value read in a given step is valid if and only if it matches the value written by the most recent prior write to the same variable, or the initial value if there is no such write.
+
+In a multi threaded program, the memory model is substantially more complex, because a read in one thread may see a value written by a write in a different thread. An execution is said to be sequentially consistent, in the sense of Section two point two, if there exists a total order on memory operations across all threads that explains all values read. As we have seen, of course, most hardware is not sequentially consistent. Absent language restrictions, it is unlikely that all concrete executions will be both fast and sequentially consistent. For the sake of efficiency, the memory model for a concurrent language therefore typically requires only a partial order, known as happens before, on the steps of an abstract execution. Using this partial order, the model then defines a writes seen relation that identifies, for every read, the writes whose values may be seen.
+
+To define the happens before order, most memory models begin by distinguishing between ordinary and synchronizing steps in the abstract execution. Ordinary steps are typically reads and writes of scalar variables. Depending on the language, synchronizing steps might be lock acquire and release, transactions, monitor entry and exit, message send and receive, or reads and writes of special atomic variables. Like ordinary steps, most synchronizing steps read or write values in memory. An acquire operation, for example, changes a lock from free to held. A sequentially consistent execution must explain these reads and writes, just as it does those effected by accesses to ordinary scalar variables. Given the definition of ordinary and synchronizing steps, we proceed incrementally as follows:
+
+Program order is the union of a collection of disjoint total orders, each of which captures the steps performed by one of the programs threads. Each threads steps must be allowable under the languages sequential semantics, given the values returned by read operations.
+
+Synchronization order is a total order, across all threads, on all synchronizing steps. This order must be consistent with program order within each thread. It must also explain the values read and written by the synchronizing steps. This will ensure, for example, that acquire and release operations on any given lock occur in alternating order. Crucially, synchronization order is not specified by the source program. An execution is valid only if there exists a synchronization order that leads, as described below, to a writes seen relation that explains the values read by both ordinary and synchronizing steps.
+
+A related note states that there may be multiple valid executions of a given source program on a given input, even when the program is single threaded. Many languages, for example, allow side effects of evaluating arguments to a given function to occur in any order. Nevertheless, the steps in any given single threaded execution will occur in total order.
+At the foundational level of programming language design, a memory model defines the crucial interface between the abstract semantics of a program and the concrete behavior of its execution environment, particularly concerning how memory accesses by different program components interact. Fundamentally, it is a formal specification that dictates which values a read operation from a variable may observe, given a history of writes to that variable by other program steps.
+
+In a single threaded program, the memory model typically operates under a principle often referred to as sequential consistency, which is conceptually straightforward. It posits that there exists a total, linear order of all program steps within any given execution. Consequently, a read operation performed at a specific step in time is valid if and only if it retrieves the value written by the most recent preceding write operation to that same variable within this total order. If no prior write exists, the read obtains the variable's initial value. It is important to note, however, that even within a single threaded context, certain language constructs, such as the evaluation order of arguments to a function with side effects, may not be strictly defined to permit multiple valid execution paths. Nevertheless, the memory model for single threaded execution must still ensure that the overall behavior remains consistent with the program's observable effects, even if the intermediate steps are not fully ordered.
+
+The landscape shifts dramatically when considering multithreaded programs. The complexity of the memory model increases substantially because a read operation in one thread may observe a value written by a distinct thread. For an execution to be deemed sequentially consistent in a multithreaded environment, there must exist a single, global total order of all memory operations originating from all threads, such that each thread's operations appear in their program order within this global sequence. Furthermore, every read in this global order must return the value written by the most recent prior write to the same location within that same global order. While this strong consistency model offers intuitive reasoning about program behavior, most modern hardware architectures, for the sake of efficiency and performance optimization, do not strictly enforce sequential consistency for all memory operations. This means that concrete executions might exhibit reorderings of memory accesses that violate a simple global interleaving, making direct reasoning challenging.
+
+To manage this complexity, particularly when hardware does not guarantee strict sequential consistency, concurrent programming languages often rely on a partial order relationship known as 'happens before'. This partial order is established on the steps of an abstract execution and forms the basis for defining a 'writes seen' relation. The 'writes seen' relation identifies, for every read operation, the set of writes whose values might legitimately be observed by that read.
+
+The 'happens before' order is constructed by distinguishing between two fundamental categories of program steps: 'ordinary' steps and 'synchronizing' steps. Ordinary steps typically encompass simple reads and writes of scalar variables, which might be reordered by the underlying hardware or compiler for performance gains, provided the reordering does not alter the outcome within a single thread. In contrast, synchronizing steps are explicitly designed to impose ordering constraints and facilitate inter thread communication. Examples include operations such as acquiring or releasing locks, initiating or concluding transactions, entering or exiting monitors, sending or receiving messages, and performing reads or writes on special atomic variables. These synchronizing steps, unlike ordinary ones, are typically guaranteed to exhibit sequentially consistent behavior regarding their own memory accesses. For instance, a lock acquire operation will reliably observe the latest state of the lock, and a lock release will make its associated memory writes visible to subsequent lock acquires.
+
+Given this distinction, the overall memory model incrementally defines two critical ordering principles: 'program order' and 'synchronization order'.
+
+'Program order' represents a collection of disjoint total orders, one for each individual thread in the program. Each thread's sequence of steps must adhere to the sequential semantics of the language, meaning that within a single thread, operations appear to execute in the order specified by the source code. The values returned by read operations within a single thread are consistent with this per thread total order.
+
+'Synchronization order' is a total order that spans across all threads and applies specifically to all synchronizing steps. This order must be consistent with the individual 'program order' within each thread for those synchronizing steps. For example, if a thread acquires a lock and then releases it, the synchronization order must reflect this temporal sequence, ensuring that the acquire operation always precedes the release in the global view. This consistency is crucial for ensuring properties such as mutual exclusion, where successive acquire and release operations on a given lock are guaranteed to occur in an alternating pattern. Importantly, 'synchronization order' is not directly specified by the source program; rather, it emerges from the interactions of synchronizing operations at runtime. Its existence provides the necessary framework to establish the 'writes seen' relation, thereby explaining the values observed by both ordinary and synchronizing read operations across the entire concurrent system. This dual ordering framework allows for efficient hardware implementations while still providing a robust and predictable semantic model for concurrent programming.

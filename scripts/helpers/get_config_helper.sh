@@ -10,16 +10,16 @@ if [[ $# -lt 1 ]]; then
 	exit 2
 fi
 
-CONFIG_FILE="${CONFIG_FILE:-$PWD/project.toml}"
+declare -r CONFIG_FILE="$PWD/../project.toml"
 KEY="$1"
 DEFAULT="${2:-}"
 
 if [[ ! -f $CONFIG_FILE ]]; then
-	echo "ERROR: Config file not found: $CONFIG_FILE" >&2
+	echo "ERROR: Config file not found: $CONFIG_FILE"
 	exit 1
 fi
 
-VALUE="$(yq -r ".${KEY} // \"\"" "$CONFIG_FILE" 2>/dev/null || true)"
+VALUE="$(yq -r ".${KEY} // \"\"" "$CONFIG_FILE" || true)"
 
 if [[ -n $VALUE ]]; then
 	echo "$VALUE"
@@ -31,5 +31,5 @@ if [[ -n $DEFAULT ]]; then
 	exit 0
 fi
 
-echo "ERROR: Missing configuration for key '$KEY' in $CONFIG_FILE" >&2
+echo "ERROR: Missing configuration for key '$KEY' in $CONFIG_FILE"
 exit 1

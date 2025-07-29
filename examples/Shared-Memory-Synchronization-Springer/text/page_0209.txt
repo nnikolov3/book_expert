@@ -1,0 +1,68 @@
+214 9 Transactional Memory
+
+at the implementation level, and may require compiler support for correctness (Rodriguez
+and Spear 2020). Races arise for two reasons, and may lead to incorrect behavior in programs
+that seem logically correct. First, completed transactions may perform “cleanup” operations
+(write-back of redo or undo logs) after their serialization point. These cleanup writes may
+interfere with nontransactional reads in the thread that now owns the privatized data. Second,
+“zombie” transactions, which are doomed to abort but have not yet realized this fact, may
+read locations that are written nontransactionally by the thread that now owns the privatized
+data; such transactions must be carefully sandboxed to avoid erroneous, externally visible
+behavior.
+
+Early STM systems did not experience the “privatization problem” because they assumed
+(implicitly or explicitly) that any datum that was ever accessed by more than one thread was
+always accessed transactionally. One solution to the privatization problem is thus to stati-
+cally partition data into “always private” and “sometimes shared” categories. Unfortunately,
+attempts to enforce this partition via the type system lead to programs in which utility rou-
+tines and data structures must be “cloned” to create explicitly visible transactional and
+nontransactional versions (Dalessandro et al. 2007).
+
+Absent a static partition of data, any modern STM system must be “privatization safe”
+to be correct. Systems that serialize cleanup—RingSTM and NOrec among them—are nat-
+urally so. Others can be made so with extra instrumentation. Marathe et al. (2008) describe
+and evaluate several instrumentation alternatives. They identify an adaptive strategy whose
+performance 1s stable across a wide range of workloads. Dice et al. (2010) describe an
+additional mechanism that can be used to reduce the cost of privatization when the num-
+ber of active transactions is significantly smaller than the number of extant threads. Even
+so, the overheads remain significant—enough so that one must generally dismiss reported
+performance numbers for any prototype STM system that is not privatization safe.
+
+Publication, it turns out, can also lead to unexpected or erroneous behavior, but only in
+the presence of program-level data races between transactional and nontransactional code
+(Menon et al. 2008). If data races are viewed as bugs, the “publication problem” can safely
+be ignored.
+
+Compilation
+
+While many researchers once expected that TM might be successfully implemented in a
+library/run-time system, most now agree that it requires language integration and compiler
+support if it 1s to be used by non-experts. Compilers can be expected to instrument transac-
+tional loads and stores; clone code paths for nontransactional, STM, and HTM execution;
+and insert validation where necessary to sandbox dangerous operations. They can also be
+expected to implement a variety of performance optimizations:
+
+e Identify accesses that are sure to touch the same location, and elide redundant instrumen-
+tation (Harris et al. 20006).
+At the implementation level, and may require compiler support for correctness (Rodriguez and Spear 2020). Races arise for two reasons, and may lead to incorrect behavior in programs that seem logically correct. First, completed transactions may perform "cleanup" operations (write-back of redo or undo logs) after their serialization point. These cleanup writes may interfere with nontransactional reads in the thread that now owns the privatized data. Second, "zombie" transactions, which are doomed to abort but have not yet realized this fact, may read locations that are written nontransactionally by the thread that now owns the privatized data; such transactions must be carefully sandboxed to avoid erroneous, externally visible behavior.
+
+Early S T M systems did not experience the "privatization problem" because they assumed (implicitly or explicitly) that any datum that was ever accessed by more than one thread was always accessed transactionally. One solution to the privatization problem is thus to statically partition data into "always private" and "sometimes shared" categories. Unfortunately, attempts to enforce this partition via the type system lead to programs in which utility routines and data structures must be "cloned" to create explicitly visible transactional and nontransactional versions (Dalessandro et al. 2007).
+
+Absent a static partition of data, any modern S T M system must be "privatization safe" to be correct. Systems that serialize cleanup—Ring S T M and N Orec among them—are naturally so. Others can be made so with extra instrumentation. Marathe et al. (2008) describe and evaluate several instrumentation alternatives. They identify an adaptive strategy whose performance is stable across a wide range of workloads. Dice et al. (2010) describe an additional mechanism that can be used to reduce the cost of privatization when the number of active transactions is significantly smaller than the number of extant threads. Even so, the overheads remain significant—enough so that one must generally dismiss reported performance numbers for any prototype S T M system that is not privatization safe.
+
+Publication, it turns out, can also lead to unexpected or erroneous behavior, but only in the presence of program-level data races between transactional and nontransactional code (Menon et al. 2008). If data races are viewed as bugs, the "publication problem" can safely be ignored.
+
+Compilation
+
+While many researchers once expected that T M might be successfully implemented in a library/run-time system, most now agree that it requires language integration and compiler support if it is to be used by non-experts. Compilers can be expected to instrument transactional loads and stores; clone code paths for nontransactional, S T M, and H T M execution; and insert validation where necessary to sandbox dangerous operations. They can also be expected to implement a variety of performance optimizations.
+
+* Identify accesses that are sure to touch the same location, and elide redundant instrumentation (Harris et al. 2006).
+Transactional memory systems, particularly early Software Transactional Memory or S T M implementations, faced a significant challenge known as the "privatization problem." This issue arises when a datum that was once shared among multiple threads becomes exclusively accessed by a single thread, a transition that S T M systems might not always detect or handle gracefully. This can lead to race conditions, where the logical correctness of the program is compromised due to the non-atomic nature of the transition.
+
+The privatization problem manifests in two primary ways. First, a completed transaction might perform "cleanup" operations, such as writing back transactional log entries, after its serialization point. These writes can interfere with data that has since been privatized, meaning it's now exclusively managed by a single thread and is no longer part of any active transaction. Second, transactions might abort and leave behind "zombie" transactions. These are transactions that have attempted to read locations that are now being written to nontransactionally by another thread. If these zombie transactions are not carefully handled or sandboxed, they can lead to externally visible erroneous behavior. This necessitates a robust mechanism for identifying and managing such data transitions to maintain transactional integrity.
+
+Addressing the privatization problem often involves strategies like data partitioning or cloning. Some systems attempt to partition data into categories such as "always private" and "sometimes shared" via the type system. This approach can lead to programs that rely on utility routines or data structures requiring explicit cloning to create privatized versions for transactional operations. For instance, Dalessandro et al. in two thousand seven explored such cloning mechanisms.
+
+Modern S T M systems generally aim to be "privatization safe" by ensuring that any datum accessed transactionally is either exclusively private or managed within a transactional context. Systems that achieve this naturally, or through specific instrumentation, strive to prevent privatization issues. Marathe et al. in two thousand eight, and Dice et al. in two thousand ten, have described adaptive strategies and mechanisms to handle the overheads associated with privatization, especially as the number of active transactions and extant threads grows. These approaches are crucial because unmanaged privatization can lead to subtle, difficult-to-detect data races between transactional and nontransactional code sections. When such races are viewed as bugs, the "publication problem"—the difficulty of safely making transactional data accessible to nontransactional code—can significantly impact system reliability.
+
+The implementation of transactional memory also intersects with compiler design and optimization. While initial expectations might have placed transactional memory primarily within library or run-time systems, there is a growing consensus that it requires deeper language and compiler integration. Compilers can play a vital role by assisting with instrumenting transactions, performing load and store operations, and inserting validation checks. Furthermore, compilers can optimize transactional code by cloning code paths for nontransactional S T M, and H T M execution, and by implementing validation logic where necessary. They can also sandbox potentially dangerous operations and apply a variety of performance optimizations. A key compiler task in this domain is to identify accesses that are guaranteed to touch the same memory location, thereby enabling optimizations such as eliminating redundant instrumentation or detecting potential privatization scenarios more effectively, as explored by Harris et al. in two thousand six.

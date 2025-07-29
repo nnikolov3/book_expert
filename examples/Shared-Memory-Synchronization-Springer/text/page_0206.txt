@@ -1,0 +1,71 @@
+9.3 Challenges 211
+
+Interestingly, progressiveness is largely orthogonal to nonblocking progress. A nonblock-
+ing TM system, as discussed in Sec. 9.1.1, may allow a thread to make progress within the
+STM implementation while still not providing progressiveness at the level of complete
+transactions. Perhaps the strongest argument for nonblocking STM is its ability to accom-
+modate event-based code, in which a handler may need to make progress (again, within the
+STM implementation) even when a main-program thread is in the middle of a conflicting
+transaction.
+
+9.3.2 Extensions
+
+When adding transactions to a programming language, one may want—or need—to include
+a variety of features not yet discussed in this chapter.
+
+Nesting
+
+In the chapter introduction we argued that one of the key advantages of transactions over
+lock-based critical sections was their composability. Composability requires that we allow
+transactions to nest. The simplest way to do so is to “flatten” them—to subsume the inner
+transaction(s) in the outer and allow the entire unit to commit or abort together. All cur-
+rent commercial HTM implementations provide subsumption nesting, generally with some
+maximum limit on depth. Several STM systems do likewise.
+
+For performance reasons, it may sometimes be desirable to allow an inner transaction to
+abort and retry while retaining the work that has been done so far in the outer transaction.
+This option, known as “true” or closed nesting, will also be required in any system that
+allows a transaction to abort and not retry. We have already considered such a possibility
+for exceptions that escape transactions. It will also arise in any language that provides the
+programmer with an explicit abort command (Harris et al. 2005).
+
+For the sake of both performance and generality, it may also be desirable to allow concur-
+rency within transactions—e.g., to employ multiple threads to cooperate in a computationally
+demanding operation and commit their results together, atomically (Agrawal et al. 2008).
+
+In some cases it may even be desirable to allow an inner transaction to commit when
+the surrounding transaction aborts (Ni et al. 2007; Moss and Hosking 2006). This sort of
+open nesting may violate serializability, and must be used with care. Possible applications
+include the preservation of semantically neutral but performance-advantageous operations
+like garbage collection, memoization, and rebalancing; the collection of debugging or per-
+formance information; and the construction of “boosted” abstractions (Sec.9.1.3).
+
+Condition Synchronization
+Like lock-based critical sections, transactions sometimes depend on preconditions, which
+may or may not hold. In Chapter 5 we considered a variety of mechanisms whereby a thread
+Nine point three Challenges.
+
+Interestingly, progressiveness is largely orthogonal to nonblocking progress. A nonblocking T M system, as discussed in Section Nine point one point one, may allow a thread to make progress within the S T M implementation while still not providing progressiveness at the level of complete transactions. Perhaps the strongest argument for nonblocking S T M is its ability to accommodate event based code, in which a handler may need to make progress, again, within the S T M implementation, even when a main program thread is in the middle of a conflicting transaction.
+
+Nine point three point two Extensions.
+
+When adding transactions to a programming language, one may want or need to include a variety of features not yet discussed in this chapter.
+
+Nesting.
+
+In the chapter introduction, we argued that one of the key advantages of transactions over lock based critical sections was their composability. Composability requires that we allow transactions to nest. The simplest way to do so is to flatten them to subsume the inner transaction or transactions in the outer and allow the entire unit to commit or abort together. All current commercial H T M implementations provide subsumption nesting, generally with some maximum limit on depth. Several S T M systems do likewise.
+
+For performance reasons, it may sometimes be desirable to allow an inner transaction to abort and retry while retaining the work that has been done so far in the outer transaction. This option, known as true or closed nesting, will also be required in any system that allows a transaction to abort and not retry. We have already considered such a possibility for exceptions that escape transactions. It will also arise in any language that provides the programmer with an explicit abort command Harris et al. Two thousand five.
+
+For the sake of both performance and generality, it may also be desirable to allow concurrency within transactions, for example, to employ multiple threads to cooperate in a computationally demanding operation and commit their results together, atomically Agrawal et al. Two thousand eight. In some cases, it may even be desirable to allow an inner transaction to commit when the surrounding transaction aborts Ni et al. Two thousand seven Moss and Hosking Two thousand six. This sort of open nesting may violate serializability, and must be used with care. Possible applications include the preservation of semantically neutral but performance advantageous operations like garbage collection, memoization, and rebalancing; the collection of debugging or performance information; and the construction of boosted abstractions Section Nine point one point three.
+
+Condition Synchronization.
+
+Like lock based critical sections, transactions sometimes depend on preconditions, which may or may not hold. In Chapter Five, we considered a variety of mechanisms whereby a thread
+The discussion here delves into challenges associated with transactional memory (TM) systems, particularly in achieving progressiveness and handling extensions like nesting and condition synchronization. Progressiveness, as mentioned in Section nine point one point one, is largely orthogonal to nonblocking TM implementations. This means a nonblocking system might allow a thread to make progress at the level of complete transactions even if it doesn't guarantee progressiveness for individual operations within those transactions. The core strength of a TM system in this context is its ability to accommodate progress, even when a main program thread is engaged in a conflicting transaction.
+
+Section nine point three point two introduces extensions to transactional memory systems, suggesting that features not yet discussed in the chapter can be added. One significant extension is nesting. The concept of composability, a key advantage of transactions over lock based critical sections, necessitates allowing transactions to nest. The simplest way to achieve this is through a "flattening" approach, where inner transactions are subsumed into the outer transaction, allowing them to commit or abort together. All current commercial HTM implementations support a form of subsumption nesting, often with a bounded depth limit.
+
+For performance reasons, it may be desirable to permit transactions to abort and retry while retaining the work done so far. This is known as "true" or "closed" nesting, and it requires that any system supporting it must also allow a transaction to abort and not retry. Such behavior can also arise in languages that provide explicit abort commands, as noted by Harris et al. in two thousand five. Furthermore, for both performance and generality, it is beneficial to enable concurrent transactions to cooperate in computationally demanding operations, committing their results atomically, as observed by Agrawal et al. in two thousand eight. In certain scenarios, it might even be advantageous to allow an inner transaction to commit independently of the outer transaction, a concept explored by Ni et al. in two thousand seven and Moss and Hosking in two thousand six. This latter form of "open nesting" can potentially violate serializability, and thus requires careful handling with appropriate safeguards. Applications benefiting from this include semantic neutrality, performance optimization, memoization, rebalancing, and the construction of "boosted" abstractions, as referenced in Section nine point one point three.
+
+The final topic discussed is condition synchronization. Similar to lock based critical sections, transactions can depend on preconditions that may or may not be met. Chapter five explored various mechanisms to manage these dependencies, where a thread might need to wait for a specific condition to become true before proceeding with its transaction.

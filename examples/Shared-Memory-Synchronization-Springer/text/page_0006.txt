@@ -1,0 +1,79 @@
+6 1 Introduction
+
+but must complete in its entirety before the next phase can begin. Many simulations, for
+example, have this structure. For such programs, a synchronization barrier, executed by
+all threads at the end of every phase, ensures that all have arrived before any is allowed to
+depart.
+
+It is tempting to suppose that atomicity (or mutual exclusion, at least) would be simpler
+to implement—or to model formally—than condition synchronization. After all, it could be
+thought of as a subcase: “wait until no other thread is currently in its critical section.” The
+problem with this thinking is the scope of the condition. By standard convention, we allow
+conditions to consider only the values of variables, not the states of other threads. Seen in
+this light, atomicity is the more demanding concept: it requires agreement among all threads
+that their operations will avoid interfering with each other. And indeed, as we shall see in
+Sec. 3.3, atomicity 1s more difficult to implement, in a formal, theoretical sense.
+
+1.3 Spinning Versus Blocking
+
+Just as synchronization patterns tend to fall into two main camps (atomicity and condition
+synchronization), so too do their implementations: they all employ spinning or blocking.
+Spinning is the simpler case. For isolated condition synchronization, it takes the form of a
+trivial loop:
+
+while —condition
+// do nothing (spin)
+
+For mutual exclusion, the simplest implementation employs a special hardware instruc-
+tion known as test_and_set (TAS). The TAS instruction, available on almost every modern
+machine, sets a specified Boolean variable to true and returns the previous value. Using
+TAS, we can implement a trivial spin lock’:
+
+type lock = bool := false
+
+L.acquire(): L.release():
+while L.TAS() L :=false
+// spin
+
+Here we have equated the acquisition of L with the act of changing it from false to true. The
+acquire operation repeatedly applies TAS to the lock until it finds that the previous value
+was false. As we shall see in Chapter 4, the trivial test_and_set lock has several major
+performance problems. It is, however, correct.
+
+The obvious objection to spinning (also known as busy-waiting) 1s that it wastes processor
+cycles. In a multiprogrammed system it 1s often preferable to block—to yield the processor
+
+I As we shall see in Secs. 2.2 and 3.3, both of the examples in this section—for condition synchroniza-
+tion and for mutual exclusion—would in practice need to be extended with ordering annotations that
+prevent the compiler and hardware from performing optimizations that are unsafe in multithreaded
+code. Correctly annotated versions of these examples can be found on Secs. 5.1 and 4.1.1, respectively.
+But must complete in its entirety before the next phase can begin. Many simulations, for example, have this structure. For such programs, a synchronization barrier, executed by all threads at the end of every phase, ensures that all have arrived before any is allowed to depart.
+
+It is tempting to suppose that atomicity, or mutual exclusion at least, would be simpler to implement, or to model formally, than condition synchronization. After all, it could be thought of as a subcase: "wait until no other thread is currently in its critical section." The problem with this thinking is the scope of the condition. By standard convention, we allow conditions to consider only the values of variables, not the states of other threads. Seen in this light, atomicity is the more demanding concept: it requires agreement among all threads that their operations will avoid interfering with each other. And indeed, as we shall see in Section three point three, atomicity is more difficult to implement, in a formal, theoretical sense.
+
+One point three Spinning Versus Blocking
+
+Just as synchronization patterns tend to fall into two main camps, atomicity and condition synchronization, so too do their implementations: they all employ spinning or blocking. Spinning is the simpler case. For isolated condition synchronization, it takes the form of a trivial loop. The first example shows a trivial loop that continuously checks a condition, and if the condition is not met, it does nothing, effectively spinning.
+
+For mutual exclusion, the simplest implementation employs a special hardware instruction known as test and set, T A S. The T A S instruction, available on almost every modern machine, sets a specified Boolean variable to true and returns the previous value. Using T A S, we can implement a trivial spin lock. A lock type is defined as a Boolean variable, initially set to false. The acquire operation for the lock, L, uses a while loop. It continuously calls L dot T A S, which is the test and set operation, and spins until it successfully acquires the lock. The release operation for the lock, L, simply sets the lock variable to false.
+
+Here we have equated the acquisition of L with the act of changing it from false to true. The acquire operation repeatedly applies T A S to the lock until it finds that the previous value was false. As we shall see in Chapter four, the trivial test and set lock has several major performance problems. It is, however, correct.
+
+The obvious objection to spinning, also known as busy waiting, is that it wastes processor cycles. In a multiprogrammed system it is often preferable to block, to yield the processor.
+
+As we shall see in Sections two point two and three point three, both of the examples in this section, for condition synchronization and for mutual exclusion, would in practice need to be extended with ordering annotations that prevent the compiler and hardware from performing optimizations that are unsafe in multithreaded code. Correctly annotated versions of these examples can be found on Sections five point one and four point one point one, respectively.
+The page delves into the fundamental technical concepts of thread synchronization within concurrent programming environments, primarily contrasting **spinning** and **blocking** mechanisms. It begins by establishing the necessity of **synchronization barriers** in parallel computations, particularly those structured in phases, like numerical simulations. A synchronization barrier serves as a global rendezvous point, ensuring that all threads executing a particular phase of computation complete their work and reach this barrier before any thread is allowed to proceed to the subsequent phase. This is critical for maintaining data consistency and correct interdependencies across computational stages, preventing scenarios where faster threads might attempt to process incomplete or outdated data.
+
+The discussion then clarifies the distinction between **atomicity**, which is often equated with **mutual exclusion**, and **condition synchronization**. **Atomicity** refers to the property of an operation being indivisible and uninterruptible; it either completes entirely or has no effect. In the context of shared resources, **mutual exclusion** is a specific application of atomicity, guaranteeing that only one thread can execute a particular section of code, known as a critical section, at any given time. This prevents race conditions and ensures data integrity when multiple threads access shared mutable state. **Condition synchronization**, conversely, is a broader concept that involves threads coordinating their actions based on the fulfillment of specific logical conditions, such as waiting for a data buffer to become available. While one might intuitively consider mutual exclusion as a form of condition synchronization—where a thread waits until "no other thread is currently in its critical section"—the text implies that this perspective understates the inherent demands of atomicity, which requires a more profound agreement among all threads to avoid interference, often relying on specialized hardware support for its strict guarantees.
+
+The central theme is the exposition of **spinning versus blocking** as fundamental strategies for implementing synchronization. **Spinning**, also known as **busy waiting**, involves a thread repeatedly executing a loop, continuously checking a condition, without relinquishing its control of the C P U. The code `while ->condition // do nothing (spin)` illustrates this concept directly: the processor cycles are consumed by the thread in a tight, unyielding loop while it waits for the `condition` to become true. This approach is conceptually straightforward for isolated synchronization needs.
+
+For practical implementation of mutual exclusion, the page introduces the **`test_and_set`** instruction, or T A S. This is a crucial atomic hardware primitive found in virtually all modern C P U architectures. The T A S instruction atomically performs two actions: it reads the current value of a memory location, typically a Boolean variable, and then immediately sets that memory location to `true`. Critically, it returns the *original* value that was read *before* the modification. The atomicity of this read-modify-write sequence means that no other C P U or thread can interrupt it, ensuring that the operation is indivisible and thus preventing race conditions when acquiring a lock.
+
+A **trivial spin lock** is then demonstrated using this T A S instruction. A Boolean variable, `lock`, is initialized to `false`.
+The **`L dot acquire()`** operation is implemented with a `while` loop that continuously calls `L dot T A S()`. If `L dot T A S()` returns `true`, it indicates that the lock was already held by another thread (because T A S set it to `true` and returned its previous `true` state), so the current thread continues to spin in the `while` loop. If `L dot T A S()` returns `false`, it signifies that the lock was previously `false` (unlocked), and the current thread successfully acquired it by atomically setting it to `true`. The loop condition `L dot T A S()` then evaluates to `false`, and the thread proceeds.
+The **`L dot release()`** operation is simpler: it merely sets the `lock` variable `L` back to `false`, making it available for other threads.
+
+The text proceeds to highlight the significant **performance problems** associated with this trivial spin lock due to its reliance on **busy waiting**. When a thread spins, it actively consumes C P U cycles, performing no useful computational work while waiting for the lock to become available. In a multiprogrammed system, where the O S manages the allocation of C P U time among multiple competing threads or processes, this translates directly into wasted processor resources. The C P U cycles spent spinning by one thread could otherwise be utilized by another thread that is ready to perform productive work, leading to a substantial decrease in overall system throughput and efficiency. Consequently, the general preference in multiprogrammed systems is for **blocking** mechanisms. Blocking involves a waiting thread yielding the C P U to the O S, transitioning into a sleep or waiting state, and being reactivated only when the condition it awaits is met. This allows the O S to schedule other runnable threads, maximizing C P U utilization.
+
+A crucial consideration, highlighted in the footnote, pertains to the practical robustness of such synchronization primitives. Real world implementations of both condition synchronization and mutual exclusion mechanisms require the inclusion of explicit **ordering annotations**. These annotations, often manifested as memory barriers or fences, are essential to constrain the aggressive optimizations performed by modern compilers and hardware. Without these explicit directives, compilers might reorder memory accesses or instructions in ways that, while seemingly preserving single-threaded correctness, could break the fundamental memory consistency guarantees required for correct operation in a multithreaded environment. Similarly, hardware caches and write buffers can introduce non-intuitive memory orderings that necessitate explicit synchronization. Failing to include these annotations can lead to subtle and extremely difficult to debug race conditions, rendering the multithreaded code **unsafe** despite its logical correctness at a high level. This underscores the profound complexity involved in bridging the gap between high level programming models and the intricate behaviors of contemporary C P U architectures to achieve reliable concurrent systems.

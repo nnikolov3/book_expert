@@ -1,0 +1,75 @@
+36 3 Essential Theory
+
+When designing a concurrent object, we typically wish to allow concurrent method calls
+(“operations”), each of which should appear to occur atomically. This goal in turn leads to
+at least three safety issues:
+
+I. In a sequential program, an attempt to call a method whose precondition does not hold
+can often be considered an error: the program’s single thread has complete control over
+the order in which methods are called, and can either reason that a given call is valid or
+else check the precondition first, explicitly, without worrying about changes between the
+check and the call (if (—=Q.empty()) e := Q.dequeue()). In a parallel program, the potential
+for concurrent operation in other threads generally requires either that a method be fotal
+(1.e., that its precondition simply be true, allowing it to run under any circumstances),
+or that it use condition synchronization to wait until the precondition holds. The former
+option is trivial if we are willing to return an indication that the operation is not currently
+valid (Q.dequeue(), for example, might return a special 1 value when the queue is
+empty). The latter option is explored in Chapter 5.
+
+2. Because threads may wait for one another due to locking or condition synchronization,
+we must address the possibility of deadlock, in which some set of threads are permanently
+waiting for each other. We consider lock-based deadlock in Sec. 3.1.1. Deadlocks due
+to condition synchronization are a matter of application-level semantics, and must be
+addressed on a program-by-program basis.
+
+3. The notion of atomicity requires clarification. If operations do not actually execute one
+at a time in mutual exclusion, we must somehow specify the order(s) in which they are
+permitted to appear to execute. We consider several popular notions of ordering, and the
+differences among them, in Sec. 3.1.2.
+
+3.1.1 Deadlock Freedom
+
+As noted in Sec. 1.4, deadlock freedom is a safety property: it requires that there be no
+reachable state of the system in which some set of threads are all “waiting for one another.”
+As originally observed by Coffman et al. (1971), deadlock requires four simultaneous con-
+ditions:
+
+exclusive use — threads require access to some sort of non-sharable “resources”
+
+hold and wait— threads wait for unavailable resources while continuing to hold resources
+they have already acquired
+
+irrevocability — resources cannot forcibly be taken from threads that hold them
+
+circularity — there exists a circular chain of threads in which each is holding a resource
+needed by the next
+When designing a concurrent object, we typically wish to allow concurrent method calls, referred to as operations, each of which should appear to occur atomically. This goal in turn leads to at least three safety issues.
+
+First, in a sequential program, an attempt to call a method whose precondition does not hold can often be considered an error. The program's single thread has complete control over the order in which methods are called, and can either reason that a given call is valid or else check the precondition first, explicitly, without worrying about changes between the check and the call. For example, if not Q dot empty, e is assigned Q dot dequeue. In a parallel program, the potential for concurrent operation in other threads generally requires either that a method be total, meaning its precondition simply be true, allowing it to run under any circumstances, or that it use condition synchronization to wait until the precondition holds. The former option is trivial if we are willing to return an indication that the operation is not currently valid. Q dot dequeue, for example, might return a special value when the queue is empty. The latter option is explored in Chapter five.
+
+Second, because threads may wait for one another due to locking or condition synchronization, we must address the possibility of deadlock, in which some set of threads are permanently waiting for each other. We consider lock-based deadlock in Section three point one point one. Deadlocks due to condition synchronization are a matter of application level semantics, and must be addressed on a program by program basis.
+
+Third, the notion of atomicity requires clarification. If operations do not actually execute one at a time in mutual exclusion, we must somehow specify the order or orders in which they are permitted to appear to execute. We consider several popular notions of ordering, and the differences among them, in Section three point one point two.
+
+### Deadlock Freedom
+
+As noted in Section one point four, deadlock freedom is a safety property: it requires that there be no reachable state of the system in which some set of threads are all waiting for one another. As originally observed by Coffman et al. in nineteen seventy one, deadlock requires four simultaneous conditions. These conditions are:
+
+First, exclusive use, which means threads require access to some sort of non-sharable resources. Second, hold and wait, which means threads wait for unavailable resources while continuing to hold resources they have already acquired. Third, irrevocability, meaning resources cannot forcibly be taken from threads that hold them. Fourth, circularity, meaning there exists a circular chain of threads in which each is holding a resource needed by the next.
+When designing a concurrent object, a primary objective is to ensure that its method calls, often referred to as operations, appear to occur atomically. This atomicity is fundamental for maintaining program correctness and predictability in a multi-threaded environment. Achieving this objective necessitates addressing several critical safety issues.
+
+The first safety issue arises from the inherent difficulty of managing preconditions in concurrent programs. In a sequential program, if an attempt is made to invoke a method whose precondition does not hold, it is typically deemed an error. A single thread of execution possesses complete control over the order in which methods are invoked and can reliably verify the precondition before proceeding. However, in a parallel program, the state of shared data can change unexpectedly between the time a precondition is checked and the actual method invocation occurs. Consider the classic example of checking if a queue is not empty, `if not Q dot empty`, before attempting to dequeue an element, `e is assigned Q dot dequeue`. Another concurrent thread might empty the queue in the interval between the `Q dot empty` check and the `Q dot dequeue` operation, leading to an invalid state or an error. To mitigate this race condition, three principal approaches exist. Firstly, a method can be designed to be *total*, meaning its precondition is always satisfied, allowing it to run under any circumstances, perhaps by returning a specific error value if the operation cannot logically complete. Secondly, condition synchronization mechanisms, such as monitors or condition variables, can be employed to compel the invoking thread to wait until the precondition becomes true. This ensures that the method executes only when its necessary conditions are met. Thirdly, the method can be designed to return a special bottom value, symbolized as perpendicular T, indicating that the operation was not valid at the time of invocation, such as returning this value when attempting to dequeue from an empty queue. This approach shifts the responsibility for error handling to the caller.
+
+The second safety issue in concurrent object design is the possibility of deadlock. This occurs when threads become perpetually blocked, each waiting for a resource that is held by another thread within the waiting set. Deadlocks are a consequence of particular resource allocation policies and thread interactions, often stemming from the use of locking mechanisms or explicit condition synchronization. Understanding and preventing lock based deadlock is crucial, as it represents a permanent cessation of progress for the involved threads. Such deadlocks are primarily an application level semantic problem and require careful, program by program analysis to identify and resolve.
+
+The third safety issue revolves around the precise notion of atomicity. While the goal is for operations to appear atomic, the actual interleaving of instructions from different threads can lead to complex and unintuitive behaviors if atomicity is not rigorously defined and enforced. If operations are not truly executed in a mutually exclusive manner, the specific order in which they appear to occur becomes critical for correctness. This mandates a clear understanding and specification of ordering properties within concurrent systems. Various models of atomicity, such as linearizability or sequential consistency, address these challenges by providing formal guarantees about how operations from different threads appear to interleave.
+
+Delving deeper into the concept of Deadlock Freedom, it is formally classified as a safety property in concurrent systems. A system is considered deadlock free if there is no reachable state in which a set of threads are indefinitely waiting for one another, leading to system stasis. This foundational concept was rigorously articulated by Coffman and colleagues in one thousand nine hundred seventy one, who identified four simultaneous necessary and sufficient conditions for deadlock to occur. All four of these conditions must be present for a deadlock to manifest.
+
+The first condition is **exclusive use**, also known as mutual exclusion. This principle dictates that at least one resource involved in the potential deadlock must be non sharable, meaning it can only be used by one thread at a time. Examples include a printer or a write lock on a data structure. If resources were freely shareable, conflicts over their access would not arise.
+
+The second condition is **hold and wait**. This describes a scenario where a thread holds at least one allocated resource while simultaneously waiting to acquire additional resources that are currently held by other threads. A thread does not release its existing resources until it has successfully acquired the new ones it needs.
+
+The third condition is **irrevocability**, or no preemption. This means that resources cannot be forcibly taken away from a thread that is currently holding them. A resource can only be released voluntarily by the thread that acquired it, once that thread has completed its operation with the resource.
+
+Finally, the fourth condition is **circularity**, also known as circular wait. This signifies the existence of a circular chain of two or more threads, where each thread in the chain is waiting for a resource that is held by the next thread in the chain. For instance, thread A holds resource X and waits for resource Y, which is held by thread B; thread B holds resource Y and waits for resource Z, held by thread C; and thread C holds resource Z and waits for resource X, held by thread A. This circular dependency is the hallmark of a deadlock. The absence of any one of these four conditions is sufficient to prevent the occurrence of deadlock.

@@ -1,0 +1,107 @@
+72 4 Practical Spin Locks
+
+type gnode = record
+
+atomic<gnode*> tail
+
+atomic<gnode*> next
+const gnode* waiting := 1
+
+// In a real gnode, tail = null means the lock is free;
+
+// In the gnode that is a lock, tail is the real tail pointer.
+class lock
+
+atomic<qnode> q := { null, null}
+
+lock.acquire():
+
+loop
+gnode* prev := q.tail.load(||)
+if prev = null // lock appears to be free
+if g.tail. CAS(null, &q, ||) break
+else
+gnode n := { waiting, null}
+if g.tail. CAS(prev, &n, W|)) // we're in line
+prev—next.store(&n, W|R)
+while n.tail.load(||) = waiting; // spin
+
+// now we have the lock
+gnode* succ := n.next.load(R]))
+if succ = null
+qg.next.store(null, ||)
+/[ try to make lock point at itself:
+if —q.tail. CAS(&n, &q, W||R)
+// somebody got into the timing window
+repeat succ := n.next.load(||) until succ # null
+g.next.store(succ, R||)
+break
+else
+g.next.store(succ, R||)
+break
+fence(R||RW)
+
+lock.release():
+gnode* succ := g.next.load(RW|))
+if succ = null
+if g.tail.CAS(&q, null, ||) return
+
+repeat succ := g.next.load(||) until succ # null
+succ—tail.store(null, ||)
+
+Figure 4.10 K42 variant of the MCS queued lock. Note the standard interface to acquire and release,
+with no parameters other than the lock itself.
+Practical Spin Locks.
+
+The following describes the K42 variant of the M C S queued lock.
+
+A data structure is defined for a type called `qnode`. This `qnode` record contains an atomic `qnode` pointer named `tail`, an atomic `qnode` pointer named `next`, and a constant `qnode` pointer named `waiting` which is initialized to one. Comments indicate that in a real `qnode`, if `tail` is equal to `null`, it means the lock is free. Furthermore, in the `qnode` that represents the lock itself, `tail` is the actual `tail` pointer of the queue.
+
+A class named `lock` is defined. It contains an atomic `qnode` pointer named `q`, which is initialized as a structure containing two `null` values. This `q` pointer acts as the head of the queue of waiting `qnode`s.
+
+The `lock.acquire()` function is implemented as follows:
+The process enters a loop.
+Inside the loop, a `qnode` pointer named `prev` is assigned the value loaded from `q`'s `tail` field.
+An `if` condition checks if `prev` is equal to `null`. If it is, this indicates that the lock appears to be free. The code then attempts to atomically compare and swap `q`'s `tail` from `null` to the address of `q`. If this operation is successful, it means the current process has acquired the lock, and the loop breaks.
+If `prev` is not `null`, the `else` branch is executed.
+A new `qnode` named `n` is created, initialized with the `waiting` state and a `null` `next` pointer.
+The code then attempts to atomically compare and swap `q`'s `tail` from the value of `prev` to the address of `n`, using a write memory ordering. If this is successful, it means the current process has successfully placed itself in the queue.
+The `next` pointer of the `prev` `qnode` (the node that was previously at the tail) is then stored with the address of `n`, using a write-read memory ordering.
+The process then enters a `while` loop, spinning until `n`'s `tail` field is no longer equal to `waiting`. This indicates that the current `qnode` `n` has successfully acquired the lock.
+After acquiring the lock, a `qnode` pointer named `succ` is assigned the value loaded from `n`'s `next` field using a read memory ordering.
+An `if` condition checks if `succ` is equal to `null`.
+If `succ` is `null`, `q`'s `next` field is stored with `null`. The code then attempts to make the lock point at itself by trying to atomically compare and swap `q`'s `tail` from the address of `n` to the address of `q`, using a write-read memory ordering. If this operation is *not* successful, it implies that another process entered a timing window. In this case, `succ` is repeatedly assigned the value loaded from `n`'s `next` field until `succ` is not equal to `null`. Finally, `q`'s `next` field is stored with the value of `succ` using a read memory ordering, and the loop breaks.
+If the previous atomic compare and swap was successful, meaning the lock points to itself, the loop also breaks.
+If `succ` is not `null` (from the initial check after acquiring the lock), then `q`'s `next` field is stored with the value of `succ` using a read memory ordering, and the loop breaks.
+
+The `lock.release()` function is implemented as follows:
+A memory fence is executed with read and read-write ordering.
+A `qnode` pointer named `succ` is assigned the value loaded from `q`'s `next` field using a read-write memory ordering.
+An `if` condition checks if `succ` is equal to `null`.
+If `succ` is `null`, an attempt is made to atomically compare and swap `q`'s `tail` from the address of `q` to `null`. If this is successful, the function returns, as the lock is now free and no other processes are waiting. If this compare and swap fails, `succ` is repeatedly assigned the value loaded from `q`'s `next` field until `succ` is not equal to `null`.
+Finally, the `tail` field of the `succ` node is stored with `null`.
+
+Figure four point one zero displays the K42 variant of the M C S queued lock. It highlights the standard interface used for acquiring and releasing the lock, noting that no parameters are required other than the lock itself.
+This detailed code snippet presents a K42 variant of the M C S, or Mellor Crummey Scott, queued spin lock. This lock mechanism is a fundamental synchronization primitive in concurrent programming, designed to provide mutual exclusion for critical sections in multi-processor environments, while addressing the scalability issues inherent in simpler spin locks.
+
+The core concept revolves around a `qnode` record, which represents an individual participant in the lock's queue. Each `qnode` contains `atomic<qnode*> tail` and `atomic<qnode*> next` pointers. The `tail` pointer within a `qnode` is a local status flag that the current thread spins on, while the `next` pointer links `qnode`s together to form a queue. The `const qnode* waiting = one` field is a special sentinel value, indicating that a thread associated with a particular `qnode` is still waiting for the lock. The accompanying comments clarify that for a `real qnode`, `tail is equal to null` means the lock is free, and for the global `lock` object itself, `tail` refers to the actual tail of the queue of waiting threads. The `class lock` encapsulates this mechanism, with `atomic<qnode> q` representing the global lock state, initialized to `null, null`, signifying an initially free lock.
+
+The `lock.acquire()` function orchestrates the process of obtaining the lock. It begins with a continuous `loop`. Inside this loop, `qnode* prev is q.tail.load(||)` attempts to load the current `tail` of the queue. The `||` denotes a relaxed memory order, which is suitable here because this initial read is merely speculative for a subsequent atomic operation.
+
+If `prev is equal to null`, it signifies an uncontended lock. In this fast path, the function attempts to acquire the lock directly via a Compare And Swap, or `C A S`, operation: `if q.tail.C A S(null, and q, ||) break`. This atomic instruction attempts to change the global `q.tail` from `null` to `and q` (the current thread's `qnode` which will effectively represent the lock holder). If this `C A S` succeeds, it means no other thread intervened, and the current thread has successfully acquired the lock, exiting the loop. The `||` memory order for the `C A S` indicates that on success, only atomicity is guaranteed, without strong ordering constraints on other memory operations.
+
+The `else` block handles the contended scenario where `prev` is not `null`, indicating other threads are holding or waiting for the lock. A new `qnode n is {waiting, null}` is instantiated. This `qnode n` will serve as the current thread's entry in the waiting queue, initialized to the `waiting` state. The critical step for enqueuing is `if q.tail.C A S(prev, and n, W||)`. This atomic `C A S` attempts to update the global `q.tail` from its previously observed value (`prev`) to point to the current thread's node (`and n`). The `W||` memory order indicates a release store, ensuring that any writes performed by the current thread *before* this `C A S` are made visible to other processors that might subsequently observe this `q.tail` update. If this `C A S` fails, it implies another thread concurrently modified `q.tail`, so the `acquire` loop retries.
+
+If the `C A S` succeeds, the current thread has successfully added itself to the end of the queue. The next logical step is to link the `prev`ious tail's `next` pointer to the current thread's node: `prev arrow next.store(and n, W||R)`. This forms the explicit linked list structure of the queue. The `W||R` indicates an acquire-release memory order, which ensures both that preceding writes are made visible and that subsequent reads related to `prev` are ordered correctly.
+
+Following successful enqueuing, the current thread enters a `while n.tail.load(||) is equal to waiting;` loop. This is the hallmark optimization of M C S locks: instead of spinning on a contended global variable, each thread spins locally on its *own* `qnode`'s `tail` field. This dramatically reduces cache contention and inter-processor communication overhead, enhancing scalability. The `||` specifies a relaxed load, as only the value transition is important. Once `n.tail` changes from `waiting` to `null`, it signals that the current thread can proceed, having acquired the lock.
+
+After acquiring the lock, the code prepares for the subsequent release by identifying its successor: `qnode* succ is n.next.load(R||)`. The `R||` acquire memory order guarantees that any writes from a concurrently enqueuing successor are visible. If `succ` is `null`, it implies no immediate successor. The code then attempts to optimize by setting `q.next.store(null, ||)` and trying to reset the global lock state: `if not q.tail.C A S(and n, and q, W||R)`. This `C A S` tries to free the lock by changing `q.tail` from the current node (`and n`) back to the initial lock state (`and q`), only if no other thread enqueued in a critical timing window. If this `C A S` fails, it means another thread indeed entered a "timing window" and enqueued itself. The code then `repeat succ is n.next.load(||) until succ not equal to null`, spinning until the successor is finally linked and visible, then updates `q.next.store(succ, R||)`. If a successor was found directly, `q.next.store(succ, R||)` updates the global `q.next` to point to it.
+
+The `fence(R||RW)` instruction acts as a memory barrier. The `R||RW` parameter specifies a strong memory fence, ensuring that all read and write operations issued prior to the fence complete and become globally visible before any subsequent memory operations are allowed to proceed. This is crucial for maintaining memory consistency and visibility of state changes within the critical section.
+
+The `lock.release()` function reverses the acquisition process. It first loads the next thread in the queue: `qnode* succ is q.next.load(RW||)`. The `RW||` indicates an acquire-release load, ensuring correct ordering and visibility of writes by the enqueuing successor.
+If `succ is equal to null`, it suggests no immediate successor. The code then attempts `if q.tail.C A S(and q, null, ||) return`. This `C A S` aims to fully free the lock by setting the global `q.tail` to `null` if it currently points to `and q` (the initial lock state, implying the lock is now completely free). If successful, the function returns. If this `C A S` fails, it means another thread has concurrently enqueued itself. In this "timing window" scenario, the releasing thread must wait for the successor to become visible: `repeat succ is q.next.load(||) until succ not equal to null`.
+Finally, once a `succ`essor is identified, the crucial step for releasing the lock is `succ arrow tail.store(null, ||)`. This operation writes `null` to the `tail` field of the successor's `qnode`, which is the local flag the successor thread has been spinning on. Changing this value effectively "taps" the successor, allowing it to exit its spin loop and acquire the lock. The `||` for this store is a relaxed memory order, as the atomicity of the store is sufficient to unblock the waiting thread.
+
+In essence, this M C S lock variant exemplifies a sophisticated approach to concurrent synchronization. By utilizing a fair, queue-based mechanism implemented with atomic operations and judicious memory ordering, it transforms global contention into localized spinning, significantly enhancing scalability and performance on multi-core architectures compared to simple spin locks that suffer from excessive cache line bouncing. The intricate logic around timing windows and successor identification demonstrates robust handling of complex interleavings in a highly concurrent environment.

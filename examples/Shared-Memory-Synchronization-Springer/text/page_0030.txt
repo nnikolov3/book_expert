@@ -1,0 +1,86 @@
+2.3 Atomic Primitives 31
+
+top
+
+@ [FA Jct
+® [FE JE Jc +
+
+© La Basler
+
+Figure 2.6 The ABA problem in a linked-list stack.
+
+Because it chooses whether to perform its update based on the value in the target location,
+CAS may succeed in situations where the value has changed (say from A to B) and then
+changed back again (from B to A) (IBM 1975; IBM 1983; Treiber 1986). In some algorithms,
+such a change and restoration is harmless: it is still acceptable for the CAS to succeed. In
+other algorithms, incorrect behavior may result. This possible incorrectness, often referred
+to as the ABA problem, 1s particularly worrisome in pointer-based algorithms. Consider the
+following (buggy!) code to manipulate a linked-list stack:
+
+class node { atomic<node*> next, ...} 1: node* pop(atomic<node*> *top):
+1: void push(atomic<node*> *top, node* new): 2: node” old, new
+2: node* old 3: repeat
+3: repeat 4 old := top—load(]l)
+4 old := top— load(])) 5: if old = null return null
+5: new— next— store(old, ||) 6 new := old— next—load())
+6: until top— CAS(old, new, W||) 7: until top—CAS(old, new, [|
+8: returnold
+
+Note the explicit ordering annotation on the CAS in push. This annotation is necessary
+to prevent the hardware (or compiler) from reordering the CAS before the preceding store.
+Such reordering would allow a node to become visible to other threads before its next pointer
+1s set, causing a segmentation fault or data corruption. We have omitted explicit ordering on
+the CAS in pop, on the assumption that neither the compiler nor the hardware will speculate
+a value for the load of new at line 6.
+
+Despite the ordering annotation, this code has many problem scenarios, one of which 1s
+shown in Figure 2.6. In (a), our stack contains the elements A and C. Suppose that thread 1
+begins to execute pop(&top), and has completed line 6, but has yet to reach line 7. If
+thread 2 now executes a (complete) pop(&top) operation, followed by push(&top, &B) and
+then push(&top, &A), it will leave the stack as shown in (b). If thread 1 now continues, its
+CAS will succeed, leaving the stack in the broken state shown in (c).
+
+The problem here is that top changed between thread 1’s load and the subsequent CAS.
+If these two instructions were replaced with LL and SC, the latter would fail—as indeed it
+should—causing thread 1 to try again.
+
+On machines with CAS, programmers must consider whether the ABA problem can arise
+in the algorithm at hand and, if so, take measures to avoid it. The simplest and most common
+Two point three Atomic Primitives
+
+Figure two point six illustrates the A B A problem in a linked list stack. In state A, labeled A, the stack's top pointer refers to node A, which is followed by node C. In state B, labeled B, the top pointer still refers to node A, but node B has been inserted between A and C, so A points to B, and B points to C. In state C, labeled C, the top pointer now refers to node B, and B points to C. An arrow from the original top pointer position in state A now points directly to node B, depicting the problematic state after a sequence of operations.
+
+Because it chooses whether to perform its update based on the value in the target location, C A S may succeed in situations where the value has changed, for example, from A to B, and then changed back again, from B to A. This behavior is documented in I B M 1975, I B M 1983, and Treiber 1986. In some algorithms, such a change and restoration is harmless, as it is still acceptable for the C A S to succeed. However, in other algorithms, incorrect behavior may result. This possible incorrectness, often referred to as the A B A problem, is particularly worrisome in pointer based algorithms. Consider the following buggy code to manipulate a linked list stack:
+
+The code defines a `node` structure that contains an atomic pointer to the next node. It includes two methods: `push` and `pop`.
+
+The `push` method, `void push(atomic node pointer to top, node pointer new)`, first declares a local `node` pointer named `old`. It then enters a `repeat` loop. Inside this loop, `old` is loaded with the current value of `top` using a relaxed memory order. The `next` pointer of the `new` node is then set to the value of `old` using a store operation with relaxed memory order. The loop continues until a `compare and swap` operation on `top` using `old` as the expected value and `new` as the desired value, with relaxed memory order, successfully updates `top`.
+
+The `pop` method, `node pointer pop(atomic node pointer to top)`, also declares a local `node` pointer named `old`. It then enters a `repeat` loop. Inside this loop, `old` is loaded with the current value of `top` using a relaxed memory order. If `old` is found to be equal to `null`, the function immediately returns `null`. Otherwise, a `node` pointer named `new` is assigned the value of the `next` pointer of `old`, loaded with relaxed memory order. The loop continues until a `compare and swap` operation on `top` using `old` as the expected value and `new` as the desired value, with relaxed memory order, successfully updates `top`. Finally, the method returns the `old` node pointer.
+
+Note the explicit ordering annotation on the C A S in `push`. This annotation is necessary to prevent the hardware or compiler from reordering the C A S before the preceding store operation. Such reordering would allow a node to become visible to other threads before its `next` pointer is properly set, potentially causing a segmentation fault or data corruption. Explicit ordering on the C A S in `pop` has been omitted, based on the assumption that neither the compiler nor the hardware will speculate a value for the load of `new` at line six.
+
+Despite the ordering annotation, this code presents many problem scenarios. One such scenario is depicted in Figure two point six. Imagine that in state A, our stack contains the elements A and C. Suppose thread one begins to execute `pop` from the address of `top`, and has completed line six of the `pop` function, but has not yet reached line seven. At this point, if thread two now executes a complete `pop` operation from the address of `top`, followed by a `push` operation of node B to the address of `top`, and then another `push` operation of node A to the address of `top`, this sequence of operations will leave the stack in the configuration shown in state B. If thread one then continues its execution, its C A S operation will succeed, resulting in the stack being left in the broken state shown in C.
+
+The fundamental issue here is that the `top` pointer changed its value between thread one's initial load operation and its subsequent C A S. If these two instructions were to be replaced with L L and S C, meaning `load linked` and `store conditional` respectively, the `store conditional` would correctly fail, as it should, prompting thread one to retry the operation. On machines that utilize C A S, programmers must carefully assess whether the A B A problem could manifest in their chosen algorithm. If it can, appropriate measures must be taken to prevent it. The simplest and most common approach.
+The analysis begins by examining fundamental concepts in concurrent programming, specifically the challenges inherent in building lock-free data structures using atomic primitives. Figure two point six visually describes the A B A problem within the context of a linked list stack.
+
+Panel A of Figure two point six illustrates an initial, valid stack configuration. A pointer, designated `top`, references a node labeled 'A'. This node, in turn, has a pointer to another node labeled 'C'. This represents a stack where 'A' is the current top element, followed by 'C'.
+
+Panel B depicts an intermediate or subsequent state of the stack after some operations. Here, the `top` pointer still references node 'A'. However, 'A' now points to node 'B', and 'B' points to 'C'. This configuration implies that node 'B' was inserted into the stack between 'A' and 'C'.
+
+Panel C presents a corrupted state of the stack, which is a key outcome of the A B A problem. In this configuration, the `top` pointer references node 'B'. Critically, node 'B' points back to node 'A', which then points to node 'C'. This forms an incorrect sequence, potentially a cycle or an inaccessible segment, and signifies a logical corruption where the stack's integrity is violated.
+
+The underlying technical principle explored here is the A B A problem, a subtle but significant issue arising in lock-free algorithms that rely on C A S, or Compare And Swap, operations. C A S is an atomic instruction that attempts to update a memory location only if its current value matches an expected value. The A B A problem occurs when a memory location's value changes from 'A' to 'B' and then back to 'A' during the interval between a thread's initial read of 'A' and its subsequent C A S attempt. Since the value is 'A' again when the C A S executes, the operation succeeds, even though the underlying state or the logical sequence of elements might have been altered in a way that renders the C A S's success logically incorrect, leading to data corruption or silent failures. This is particularly worrisome in pointer-based data structures like linked lists, where pointers might be reused after a node is popped and subsequently pushed back onto the structure.
+
+The provided code segments illustrate the `push` and `pop` operations for a linked-list stack, designed with atomic primitives to achieve concurrency. The `node` structure declares its `next` pointer as `atomic<node*>`, signifying that operations on this pointer, such as `load` and `store`, are guaranteed to be atomic, preventing direct data races on individual pointer manipulations.
+
+In the `push` operation, the algorithm first atomically loads the current `top` pointer into a local variable `old` using a relaxed memory order. Then, it sets the `next` pointer of the `new` node to point to this `old` top, effectively linking the `new` node to the existing stack. The critical step is the `until top->CAS(old, new, W||)` loop. This performs a C A S operation, attempting to update the `top` pointer from its expected value, `old`, to the `new` node. The `W||` parameter indicates a strong memory ordering, likely a Release fence, ensuring that all writes performed *before* this C A S operation, specifically the `new->next->store(old, ||)` operation, are made globally visible *before* `top` is updated. This prevents other threads from observing the `new` node at the `top` before its `next` pointer has been correctly configured, thus avoiding potential segmentation faults or data corruption due to dangling pointers. The `repeat until` construct signifies a busy-wait loop, where the `push` operation retries if the C A S fails, indicating that another thread concurrently modified the `top` pointer.
+
+Similarly, the `pop` operation first atomically loads the current `top` pointer into `old`. If the stack is empty, it returns null. Otherwise, it loads the `next` pointer of the `old` top node into `new`, which represents the node that should become the new `top` of the stack. The operation then attempts to update the `top` pointer from `old` to `new` using a C A S operation. Like `push`, this is enclosed in a `repeat until` loop, meaning it will retry if the C A S fails due to concurrent modification of the `top` pointer by another thread.
+
+The danger of the A B A problem with C A S is highlighted by a specific concurrent scenario. Suppose the stack initially contains nodes 'A' and 'C', with `top` pointing to 'A'. Thread one begins a `pop` operation: it reads `top` as 'A' (assigning `old` to 'A') and its `next` pointer as 'C' (assigning `new` to 'C'). Before thread one can complete its C A S, a context switch occurs. Concurrently, thread two performs a sequence of operations: it completely `pop`s node 'A', then `push`es node 'B', and finally `push`es node 'A' back onto the stack. After thread two's sequence, the stack is logically A -> B -> C, and critically, the `top` pointer is again pointing to 'A'.
+
+When thread one resumes its execution, its C A S operation attempts to update `top` from its *expected* value of 'A' to its *new* value of 'C'. Because the `top` pointer's value is currently 'A' (due to thread two's operations), the C A S succeeds. The `top` pointer is then updated to 'C'. However, the logical structure of the stack has been irrevocably broken. Nodes 'A' and 'B', which were legitimately part of the stack's sequence due to thread two's actions, are now detached or orphaned from the `top` of the stack. This leads to data loss and a memory leak, as 'A' and 'B' are no longer reachable through the stack's public interface, even though their memory might still be allocated. This outcome perfectly exemplifies the A B A problem: the C A S succeeded because the value of `top` returned to 'A', deceiving the operation into believing no significant change occurred, even though the structural integrity of the stack was compromised. Figure C visually captures the essence of such a corrupted state, illustrating an incorrect linkage that can arise from these types of concurrent anomalies.
+
+To mitigate the A B A problem, alternative atomic primitives such as Load-Linked and Store-Conditional, or techniques like adding version tags or counters to pointers, are often employed. Load-Linked and Store-Conditional operations, unlike C A S, detect *any* intervening write to the monitored memory location between the Load-Linked and Store-Conditional instructions, not just a value change and subsequent return. Version tagging involves incrementing a small counter associated with a pointer or node every time the node is reused or the pointer changes its target. The C A S operation is then extended to compare both the pointer value and its associated tag, ensuring that if the pointer value returns, the tag value will be different, causing the C A S to correctly fail and signal a retry. These advanced techniques ensure the correctness and robustness of lock-free data structures in highly concurrent environments.

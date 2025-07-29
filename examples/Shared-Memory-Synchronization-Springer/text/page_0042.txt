@@ -1,0 +1,70 @@
+3.1 Safety 43
+
+able to combine smaller atomic operations into larger ones—not just perform the smaller
+ones in a mutually consistent order. Where linearizability ensures that the orders of separate
+objects will compose “for free,” multi-object atomic operations will generally require some
+sort of global or distributed control.
+
+Multi-object atomic operations are the hallmark of database systems, which refer to them
+as transactions. Transactional memory (the subject of Chapter 9) adapts transactions to
+shared-memory parallel computing, allowing the programmer to request that a multi-object
+operation like thread 1’s transfer or thread 2’s sum should execute atomically.
+
+The simplest ordering criterion for transactions—both database and memory—is known
+as serializability. Transactions are said to serialize if they have the same effect they would
+have had if executed one at a time in some total order. For transactional memory (and
+sometimes for databases as well), we can extend the model to allow a thread to perform a
+series of transactions, and require that the global order be consistent with program order in
+each thread.
+
+It turns out to be NP-hard to determine whether a given set of transactions (with the
+given inputs and outputs) 1s serializable (Papadimitriou 1979). Fortunately, we seldom need
+to make such a determination in practice. Generally all we really want is to ensure that
+the current execution will be serializable—something we can achieve with conservative
+(sufficient but not necessary) measures. A global lock is a trivial solution, but admits no
+concurrency. Databases and most TM systems employ more elaborate fine-grain locking. A
+few TM systems employ nonblocking techniques.
+
+If we regard the objects to be accessed by a transaction as “resources” and revisit the
+conditions for deadlock outlined at the beginning of Sec.3.1.1, we quickly realize that a
+transaction may, in the general case, need to access some resources before it knows which
+others it will need. Any implementation of serializability based on fine-grain locks will
+thus entail not only “exclusive use,” but also both “hold and wait” and “circularity.” To
+address the possibility of deadlock, a database or lock-based TM system must be prepared to
+break the “irrevocability” condition by releasing locks, rolling back, and retrying conflicting
+transactions.
+
+Like branch prediction or CAS-based fetch_and_®, this strategy of proceeding “in the
+hope” that things will work out (and recovering when they don’t) is an example of specula-
+tion. So-called lazy TM systems take this even further, allowing conflicting (non-serializable)
+transactions to proceed in parallel until one of them is ready to commit—and only then abort-
+ing and rolling back the others.
+
+Two-Phase Locking. As an example of fine-grain locking for serializability, consider a
+simple scenario in which transactions 1 and 2 read and update symmetric variables:
+three point one Safety
+
+We are able to combine smaller atomic operations into larger ones, not just perform the smaller ones in a mutually consistent order. Where linearizability ensures that the orders of separate objects will compose for free, multi object atomic operations will generally require some sort of global or distributed control.
+
+Multi object atomic operations are the hallmark of database systems, which refer to them as transactions. Transactional memory, the subject of Chapter nine, adapts transactions to shared memory parallel computing, allowing the programmer to request that a multi object operation like thread one's transfer or thread two's sum should execute atomically.
+
+The simplest ordering criterion for transactions, both database and memory, is known as serializability. Transactions are said to serialize if they have the same effect they would have had if executed one at a time in some total order. For transactional memory, and sometimes for databases as well, we can extend the model to allow a thread to perform a series of transactions, and require that the global order be consistent with program order in each thread.
+
+It turns out to be N P hard to determine whether a given set of transactions, with the given inputs and outputs, is serializable, as referenced by Papadimitriou in one nine seven nine. Fortunately, we seldom need to make such a determination in practice. Generally, all we really want is to ensure that the current execution will be serializable, something we can achieve with conservative, sufficient but not necessary, measures. A global lock is a trivial solution, but admits no concurrency. Databases and most T M systems employ more elaborate fine grain locking. A few T M systems employ nonblocking techniques.
+
+If we regard the objects to be accessed by a transaction as resources and revisit the conditions for deadlock outlined at the beginning of Section three point one point one, we quickly realize that a transaction may, in the general case, need to access some resources before it knows which others it will need. Any implementation of serializability based on fine grain locks will thus entail not only exclusive use, but also both hold and wait and circularity. To address the possibility of deadlock, a database or lock based T M system must be prepared to break the irrevocability condition by releasing locks, rolling back, and retrying conflicting transactions.
+
+Like branch prediction or C A S based fetch and Phi, this strategy of proceeding in the hope that things will work out, and recovering when they don't, is an example of speculation. So called lazy T M systems take this even further, allowing conflicting, non serializable, transactions to proceed in parallel until one of them is ready to commit, and only then aborting and rolling back the others.
+
+Two Phase Locking. As an example of fine grain locking for serializability, consider a simple scenario in which transactions one and two read and update symmetric variables.
+The fundamental concept of atomicity in computing dictates that an operation must either complete entirely or not at all, appearing as an indivisible unit. When we extend this principle to encompass multiple smaller atomic operations, combining them into a larger, coherent unit, we create what is known as a composite atomic operation. The integrity of such composite operations, especially in parallel or distributed environments, hinges on maintaining a mutually consistent order across all participating processes or threads. A crucial aspect here is linearizability, a strong consistency model that ensures that every operation appears to take effect instantaneously at some point between its invocation and its response. This property is vital for multi-object atomic operations, as it guarantees that they appear to occur as a single, indivisible step, thereby preserving data consistency across multiple memory locations or objects, without requiring explicit global coordination, often referred to as being "lock free."
+
+These multi-object atomic operations form the very bedrock of robust data management systems and are conventionally known as transactions. In the context of shared memory parallel computing, a transactional memory, or T M, system adapts the principles of database transactions to allow programmers to designate a multi-object operation, such as the transfer of data between two accounts by thread one, or the summation of values by thread two, to execute atomically. The most stringent correctness criterion for such transactions, across both databases and transactional memory systems, is serializability. Transactions are deemed serializable if their concurrent execution yields the same final state as some sequential execution of those transactions. For instance, in a database system, a series of concurrent transactions must appear to have executed one after another in some total order, preserving the consistency of the data. This model extends to transactional memory, demanding that the global order of operations remains consistent with the program order observed by each individual thread.
+
+The practical determination of whether a given set of transactions, considering their inputs and outputs, is indeed serializable presents a significant computational challenge, classified as `N P` hard, as demonstrated by Papadimitriou in nineteen seventy nine. In real world systems, however, the objective is generally to ensure that the current execution is serializable, a goal often achievable through conservative, though not always strictly necessary, measures. A naive approach involves employing a global lock, which while providing a trivial solution for atomicity, severely limits concurrency. Consequently, most transactional memory systems and modern database management systems opt for more sophisticated, fine grain locking mechanisms or nonblocking techniques to maximize parallelism.
+
+When dealing with concurrent access to shared resources, often termed "objects" or "items" in transactional contexts, it becomes clear that a transaction might attempt to access resources before it fully knows which ones it will ultimately require, as discussed in further detail in section three point one point one. Implementing serializability through fine grain locks introduces complexities such as "exclusive use" of resources, which can lead to "hold and wait" conditions and "circularity" in resource dependencies, both of which are direct precursors to deadlock. To mitigate deadlock, a transactional memory system or a lock based database system must be engineered to detect and resolve such conditions. This often involves mechanisms like releasing held locks, rolling back partial transactions, and reattempting conflicting transactions. Such rollbacks are crucial for breaking the "irrevocability" condition, which implies that a transaction, once started, cannot be undone without careful management.
+
+Some advanced transactional memory systems leverage a strategy akin to branch prediction in a `C P U`, or the compare and swap based `fetch and phi` primitive in concurrent programming. This speculative approach allows transactions to proceed with operations, even if they are temporarily non-serializable, with the optimistic hope that these operations will ultimately converge to a serializable state. If conflicts arise, the system recovers by rolling back the affected transactions. So called `lazy T M` systems take this concept further, deferring the commit decision for potentially conflicting transactions and allowing them to execute in parallel until one of them is ready to commit, at which point any conflicting transactions are aborted and rolled back.
+
+An illustrative example of fine grain locking for achieving serializability is `Two Phase Locking`. In this protocol, a transaction operates in two distinct phases: a growing phase, where it acquires all necessary locks but cannot release any, and a shrinking phase, where it releases locks but cannot acquire any new ones. To visualize this in a simple scenario, consider two transactions, Transaction one and Transaction two, both attempting to read and then update shared, symmetric variables. Under `Two Phase Locking`, each transaction would acquire locks on the variables it needs to read and update during its growing phase. Once all required locks are obtained, it enters the shrinking phase, performing its updates and then releasing the locks. The strict separation of lock acquisition and release ensures that any concurrent execution of transactions following this protocol will be equivalent to some serial order, thus guaranteeing serializability and maintaining data consistency.

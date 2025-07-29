@@ -1,0 +1,72 @@
+104 6 Read-Mostly Atomicity
+
+which require exclusive access while modifying protected data, and reads, which can be
+concurrent with one another (though not with writes) because they are known in advance to
+make no observable changes.
+
+As recognized by Courtois et al., different fairness properties are appropriate for a reader-
+writer lock, depending on the context in which it 1s used. A “reader preference” lock min-
+imizes the delay for readers and maximizes total throughput by allowing a newly arriving
+reader to join a group of current readers even if a writer 1s already waiting. A “writer pref-
+erence” lock ensures that updates are seen as soon as possible by requiring readers to wait
+for any current or waiting writer, even if other threads are currently reading, and even if
+the writer arrived after some of the readers did. Both of these options permit indefinite
+postponement and even starvation of non-preferred threads when competition for the lock
+1s high. Though not explicitly recognized by Courtois et al., it is also possible to construct
+a reader-writer lock (called a “fair” lock below) in which readers wait for any earlier writer
+and writers wait for any earlier thread of either kind.
+
+The locks of Courtois et al., were based on semaphores, a scheduler-based synchroniza-
+tion mechanism that we will introduce in Sec. 7.2. In the current chapter we limit ourselves to
+busy-wait synchronization. Like standard mutual-exclusion locks, reader-writer locks admit
+a wide range of special-purpose adaptations. Calciu et al. (2013), for example, describe
+mechanisms to extend the locality-conscious locking of Sec. 4.5.1 to the reader-writer case.
+
+6.1.1 Centralized Algorithms
+
+There are many ways to construct a centralized reader-writer lock. We consider three exam-
+ples here.
+
+Our first example (Figure 6.1) gives preference to readers. It uses an unsigned integer to
+represent the state of the lock. The lowest bit indicates whether a writer 1s active; the upper
+bits contain a count of active or interested readers. When a reader arrives, it increments the
+reader count (atomically) and waits until there are no active writers. When a writer arrives,
+it attempts to acquire the lock using CAS. The writer succeeds, and proceeds, only when all
+bits were clear, indicating that no other writer was active and that no readers were active or
+interested. Since a reader waits only when a writer is active, and 1s able to proceed as soon
+as that one writer finishes, exponential backoff for readers 1s probably not needed (constant
+backoff may sometimes be appropriate; we do not consider it here). Since writers may be
+delayed during the execution of an arbitrary number of critical sections, they use exponential
+backoff to minimize contention.
+
+The symmetric case—writer preference—appears in Figure 6.2. In this case we must
+count both active readers (to know when all of them have finished) and interested writers (to
+know whether a newly arriving reader must wait). We also need to know whether a writer 1s
+currently active. Even on a 32-bit machine, a single word still suffices to hold both counts
+and a Boolean flag. A reader waits until there are no active or waiting writers; a writer waits
+which require exclusive access while modifying protected data, and reads, which can be concurrent with one another, though not with writes, because they are known in advance to make no observable changes.
+
+As recognized by Courtois et al., different fairness properties are appropriate for a reader writer lock, depending on the context in which it is used. A reader preference lock minimizes the delay for readers and maximizes total throughput by allowing a newly arriving reader to join a group of current readers even if a writer is already waiting. A writer preference lock ensures that updates are seen as soon as possible by requiring readers to wait for any current or waiting writer, even if other threads are currently reading, and even if the writer arrived after some of the readers did. Both of these options permit indefinite postponement and even starvation of non preferred threads when competition for the lock is high. Though not explicitly recognized by Courtois et al., it is also possible to construct a reader writer lock, called a fair lock below, in which readers wait for any earlier writer and writers wait for any earlier thread of either kind.
+
+The locks of Courtois et al., were based on semaphores, a scheduler based synchronization mechanism that we will introduce in Section seven point two. In the current chapter we limit ourselves to busy wait synchronization. Like standard mutual exclusion locks, reader writer locks admit a wide range of special purpose adaptations. Calciu et al. two thousand thirteen, for example, describe mechanisms to extend the locality conscious locking of Section four point five point one to the reader writer case.
+
+Centralized Algorithms
+
+There are many ways to construct a centralized reader writer lock. We consider three examples here.
+
+Our first example, Figure six point one, gives preference to readers. It uses an unsigned integer to represent the state of the lock. The lowest bit indicates whether a writer is active; the upper bits contain a count of active or interested readers. When a reader arrives, it increments the reader count atomically and waits until there are no active writers. When a writer arrives, it attempts to acquire the lock using C A S. The writer succeeds, and proceeds, only when all bits were clear, indicating that no other writer was active and that no readers were active or interested. Since a reader waits only when a writer is active, and is able to proceed as soon as that one writer finishes, exponential backoff for readers is probably not needed. Constant backoff may sometimes be appropriate; we do not consider it here. Since writers may be delayed during the execution of an arbitrary number of critical sections, they use exponential backoff to minimize contention.
+
+The symmetric case, writer preference, appears in Figure six point two. In this case we must count both active readers, to know when all of them have finished, and interested writers, to know whether a newly arriving reader must wait. We also need to know whether a writer is currently active. Even on a thirty two bit machine, a single word still suffices to hold both counts and a Boolean flag. A reader waits until there are no active or waiting writers; a writer waits.
+The foundational concept underpinning this discussion is read-mostly atomicity, which describes a class of concurrent data structures and algorithms optimized for scenarios where read operations significantly outnumber write operations. In such systems, the objective is to permit maximal parallelism for reads while maintaining the necessary serialization for writes to ensure data consistency. Reads can typically proceed concurrently because they do not modify the protected data, thus posing no threat to its integrity. Conversely, writes, by their very nature, modify the state and therefore necessitate exclusive access to prevent race conditions and ensure that changes are applied atomically and consistently.
+
+The primary synchronization primitive employed to manage this concurrent access is the reader-writer lock. Unlike a simple mutual exclusion lock, which serializes all accesses—both reads and writes—the reader-writer lock allows multiple threads to read the shared resource simultaneously. However, when a writer thread wishes to modify the resource, it must acquire exclusive access, meaning no other readers or writers can be active. This design improves throughput in read heavy workloads by avoiding unnecessary serialization of non-mutating operations.
+
+A critical design consideration for reader-writer locks involves their fairness properties, which dictate how threads are prioritized when contending for the lock. Different fairness policies lead to distinct performance characteristics and potential issues. For instance, a "reader preference" lock is engineered to minimize the delay experienced by readers. Under this policy, a newly arriving reader can often immediately join an existing group of active readers, even if a writer is currently waiting for access. This strategy maximizes overall throughput, especially in highly read-intensive environments. However, a significant drawback of reader preference is the potential for writer starvation, where a continuously arriving stream of readers can indefinitely postpone a waiting writer, preventing it from ever acquiring the lock.
+
+Conversely, a "writer preference" lock prioritizes writers. In this scheme, if a writer is waiting, subsequent readers may be forced to wait, even if no writer is currently active. This prevents writer starvation but can lead to increased latency for readers or even reader starvation if writes are frequent. To mitigate these issues, a "fair" lock aims to balance access, typically by honoring the arrival order of threads, whether they are readers or writers. This ensures that no thread type is indefinitely starved, as readers and writers wait for any earlier thread that requested the lock. The trade off for such fairness is often a reduction in peak throughput compared to the specialized preference locks, as readers might be blocked by a waiting writer even when the data is otherwise available for reading.
+
+The underlying synchronization mechanisms for constructing these locks often rely on fundamental primitives such as semaphores. Semaphores, introduced by Dijkstra, are integer variables used for signaling between processes or threads, allowing them to control access to shared resources or coordinate execution. They are foundational to building more complex synchronization constructs like reader-writer locks. The text also alludes to busy wait synchronization, a technique where a thread repeatedly checks a condition in a tight loop, consuming C P U cycles while waiting. While simple, busy waiting is generally inefficient in multi programmed systems and is typically avoided in favor of blocking mechanisms that yield the C P U to other tasks, unless the expected wait time is extremely short.
+
+In the context of centralized algorithms, a reader preference lock, as might be depicted in Figure six point one (were it present), would likely represent the lock's state using a single unsigned integer. Conceptually, within this integer, the lowest bit could serve as a flag indicating whether a writer is currently active. A value of binary one might denote an active writer, while binary zero indicates no active writer. The higher order bits of the same integer would then be used to maintain a count of active or interested readers. When a reader arrives, it attempts to atomically increment this reader count. If the writer active bit is zero, and no writer is present, the reader proceeds. If a writer is active, the reader waits. A writer, upon arrival, would wait until both the reader count in the upper bits is zero and the writer active flag in the lowest bit is zero, indicating no active readers and no active writer. The writer then attempts to acquire the lock using a Compare And Swap, or C A S, operation. C A S is a crucial atomic instruction that allows a processor to conditionally update a memory location only if its current value matches an expected value. This atomicity is vital for ensuring that the writer can transition the lock state from "unlocked" to "writer active" without interference from other concurrent threads. Should the C A S operation fail, it signifies that another thread has modified the lock state, necessitating a retry by the writer. To manage contention and avoid thrashing, especially for readers in a reader preference scheme, strategies like exponential backoff might be employed. Exponential backoff involves waiting for an exponentially increasing duration before retrying a failed lock acquisition, which helps to reduce the number of simultaneous retries and improve overall system stability. However, for readers in a highly read favored system, a constant backoff might suffice, as their operations are non mutating. The inherent characteristic of this reader preference design is that writers might experience significant delays due to an arbitrary number of readers repeatedly entering the critical section.
+
+For a symmetric or fair reader-writer lock, which might be illustrated in Figure six point two (if provided), the state representation becomes more complex to track both active and interested readers, as well as active and interested writers. A thirty two bit machine word, for instance, could conceptually be partitioned to accommodate separate counts for active readers, waiting readers, active writers, and waiting writers, possibly alongside a Boolean flag indicating a writer's pending request. In this design, a reader arriving at the lock would wait not only for active writers but also for any writers that are currently waiting for the lock. This ensures that a waiting writer will eventually get its turn, preventing starvation. Conversely, a writer would wait only until there are no active readers, with the explicit understanding that once a writer expresses interest, subsequent readers queue behind it. These architectural choices for lock state representation and access protocols directly influence the concurrent behavior, fairness, and performance characteristics of the system.

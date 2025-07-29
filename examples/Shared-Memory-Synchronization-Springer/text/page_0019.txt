@@ -1,0 +1,70 @@
+20 2 Architectural Background
+
+the change to f. Alternatively, ordering could be ensured by inserting a full fence instruction
+between lines 1 and 2 in thread 1, and between lines 2 and 3 in thread 2. A full fence doesn’t
+read or write memory itself, but it ensures that all preceding memory accesses in its thread
+appear to occur before all subsequent memory accesses in its thread, from the perspective
+of all threads.
+
+Write atomicity guarantees that stores will be seen in the same order by all threads; it 1s
+a necessary condition for global ordering, and 1s usually available—at least as an option—
+for synchronizing stores (even if not for ordinary stores). At the hardware level, the cache
+coherence protocol can ensure write atomicity by preventing a load from returning the value
+written by a given store until it verifies that no load elsewhere in the machine can ever again
+return the previous value.
+
+In Figure 2.3, circularity could be avoided by using fully ordered stores for the line-1
+writes (in both threads) or by using fully ordered loads for the line-2 reads (in both threads).
+Alternatively, we could insert full fences between lines 1 and 2 in both threads. Interestingly,
+write atomicity has no impact, since each thread reads only one variable. In Figure 2.4, by
+contrast, write atomicity is really all that matters; to ensure it, we must use write-atomic
+synchronizing stores in both thread 1 and thread 4. Synchronizing loads in threads 2 and 3—
+or fences between the loads—will not address the problem: absent write atomicity, it is
+possible for thread 1’s write to appear to happen before the entire set of reads—and thread 4’s
+write after—from the perspective of thread 2, and vice versa for thread 3.
+
+On many machines, fully ordered synchronizing instructions turn out to be quite expen-
+sive—tens or even hundreds of cycles. Moreover, in many cases—including those described
+above—full ordering is more than we need for correct behavior. Architects therefore often
+provide a variety of weaker synchronizing instructions. These may or may not be globally
+ordered, and may prevent some, but not all, local bypassing. As we shall see in Sec. 2.2.3, the
+details vary greatly from one machine architecture to another. Moreover, behavior is often
+defined not in terms of the orderings an instruction guarantees among memory accesses,
+but in terms of the reorderings it inhibits in the processor core, the cache subsystem, or the
+interconnect.
+
+Unfortunately, there 1s no obvious, succinct way to specify minimal ordering requirements
+in parallel programs. Neither synchronizing accesses nor fences, for example, allow us to
+order two individual accesses with respect to one another (and not with respect to anything
+else), if that is all that is really required. In an attempt to balance simplicity and clarity,
+subsequent examples in this monograph use a notation inspired by (but simpler than) the
+atomic operations of C++’11 and its successors. Using this notation, we will indicate
+opportunities to employ less-than-fully-ordered synchronizing accesses in many (though
+not all) algorithms.
+
+A summary of our notation, and of the memory model behind it, can be found in Table 2.1.
+To specify local ordering, each synchronizing instruction admits an optional annotation of
+the form P||S, indicating that the instruction is ordered with respect to preceding (P) and/or
+subsequent (S) read and write accesses in its thread (P,S C {R, W}). Note that atomic
+Two Architectural Background.
+
+The change to F. Alternatively, ordering could be ensured by inserting a full fence instruction between lines one and two in thread one, and between lines two and three in thread two. A full fence does not read or write memory itself, but it ensures that all preceding memory accesses in its thread appear to occur before all subsequent memory accesses in its thread, from the perspective of all threads.
+
+Write atomicity guarantees that stores will be seen in the same order by all threads. It is a necessary condition for global ordering, and is usually available, at least as an option, for synchronizing stores, even if not for ordinary stores. At the hardware level, the cache coherence protocol can ensure write atomicity by preventing a load from returning the value written by a given store until it verifies that no load elsewhere in the machine can ever again return the previous value.
+
+In Figure two point three, circularity could be avoided by using fully ordered stores for the line one writes in both threads, or by using fully ordered loads for the line two reads in both threads. Alternatively, we could insert full fences between lines one and two in both threads. Interestingly, write atomicity has no impact, since each thread reads only one variable. In Figure two point four, by contrast, write atomicity is really all that matters. To ensure it, we must use write atomic synchronizing stores in both thread one and thread four. Synchronizing loads in threads two and three, or fences between the loads, will not address the problem. Absent write atomicity, it is possible for thread one's write to appear to happen before the entire set of reads, and thread four's write after, from the perspective of thread two, and vice versa for thread three.
+
+On many machines, fully ordered synchronizing instructions turn out to be quite expensive, tens or even hundreds of cycles. Moreover, in many cases, including those described above, full ordering is more than we need for correct behavior. Architects therefore often provide a variety of weaker synchronizing instructions. These may or may not be globally ordered, and may prevent some, but not all, local bypassing. As we shall see in Section two point two point three, the details vary greatly from one machine architecture to another. Moreover, behavior is often defined not in terms of the orderings an instruction guarantees among memory accesses, but in terms of the reorderings it inhibits in the processor core, the cache subsystem, or the interconnect.
+
+Unfortunately, there is no obvious, succinct way to specify minimal ordering requirements in parallel programs. Neither synchronizing accesses nor fences, for example, allow us to order two individual accesses with respect to one another, and not with respect to anything else, if that is all that is really required. In an attempt to balance simplicity and clarity, subsequent examples in this monograph use a notation inspired by, but simpler than, the atomic operations of C plus plus eleven and its successors. Using this notation, we will indicate opportunities to employ less than fully ordered synchronizing accesses in many, though not all, algorithms.
+
+A summary of our notation, and of the memory model behind it, can be found in Table two point one. To specify local ordering, each synchronizing instruction admits an optional annotation of the form P or or S, indicating that the instruction is ordered with respect to preceding P, and or subsequent S, read and write accesses in its thread, where P and S are subsets of the set containing R and W. Note that atomic
+In the domain of parallel computing and shared memory architectures, maintaining the correct observable order of memory operations across multiple threads is a fundamental challenge. A core concept in addressing this is the use of memory fences, sometimes referred to as full fences. A full fence is a synchronizing instruction that guarantees all memory operations initiated by a given thread *before* the fence become globally visible and complete *before* any memory operations initiated by the same thread *after* the fence are allowed to begin, from the perspective of all other threads in the system. This strict enforcement of program order, while ensuring correctness in many scenarios, comes at a significant performance cost, often consuming tens or even hundreds of cycles, as it can necessitate flushing processor pipelines and enforcing global cache coherence. The goal is to ensure that a read operation by one thread does not incorrectly return an outdated value if a write operation by another thread, logically preceding the read, has not yet been fully committed to memory and observed by the reading thread.
+
+Central to robust concurrent programming is the principle of write atomicity. This ensures that a multi byte store operation to a memory location is perceived by all other threads as an indivisible unit. That is, other threads will observe either the data before the write, or the data after the write, but never an inconsistent intermediate state where only a portion of the data has been updated. This property is crucial for the integrity of shared data structures. Modern hardware, particularly through sophisticated cache coherence protocols like M E S I or M O E S I, inherently supports write atomicity for individual cache lines. These protocols guarantee that a store operation by one processor prevents any other processor from simultaneously accessing or modifying the same cache line until the write is complete and its effects are propagated. However, it is vital to distinguish write atomicity from broader memory ordering guarantees. While write atomicity ensures an individual write completes without interruption, it does not, by itself, impose any ordering constraints on when that write becomes visible relative to other, unrelated writes or reads from other threads. For example, circularity in memory access patterns, where threads read and write in a sequence that could lead to deadlocks or inconsistent states without proper synchronization, might require more than just atomic writes. Such scenarios often demand fully ordered loads and stores, or explicit fences, to prevent erroneous behavior stemming from compiler or processor reordering.
+
+The behavior of memory operations is often more complex in real world systems due to performance optimizations. Modern machine architectures frequently employ relaxed memory models, which permit significant reordering of memory accesses to maximize instruction level parallelism and hide memory latencies. This reordering can occur within the processor core, the cache subsystem, or even the interconnects between processors. Consequently, a program written to assume sequential consistency – where all memory operations appear to execute in the order specified by the program, across all threads – may exhibit incorrect behavior on such weakly ordered machines. Architects, recognizing the overhead of full ordering, often provide weaker synchronizing instructions that offer only the minimal ordering guarantees necessary for specific synchronization tasks. These weaker semantics allow for optimizations like local bypassing of memory operations, where data can be forwarded directly from one stage of the pipeline to another without waiting for full global commit, thereby improving performance.
+
+The challenge for programmers then becomes how to precisely specify the required ordering constraints without incurring the prohibitive cost of full fences where they are not strictly necessary. This is precisely what modern programming language memory models, such as the one introduced in C++ increment by one one and its successors, aim to address. These models provide atomic operations with fine grained memory ordering semantics, allowing developers to express exactly what ordering guarantees are needed for particular memory accesses. For instance, an acquire load ensures that all subsequent memory operations in the thread logically occur after the acquire operation has completed, effectively "acquiring" the effects of preceding release operations by other threads. Conversely, a release store ensures that all preceding memory operations in the thread logically occur before the release operation completes, thereby "releasing" those effects to other threads.
+
+A formal notation can be employed to describe these local ordering requirements within a thread. For example, an instruction can be annotated with the form "P double pipe S", indicating that this instruction is ordered with respect to a preceding set of memory accesses, denoted by 'P', and a subsequent set of memory accesses, denoted by 'S'. The sets 'P' and 'S' are subsets of all possible read 'R' and write 'W' memory accesses within the thread. This notation precisely defines the local dependencies that a synchronizing instruction establishes, thereby enabling the use of less than fully ordered synchronizing accesses and optimizing performance by avoiding unnecessary global barriers. The ability to specify these minimal ordering requirements is crucial for developing high performance, correct parallel algorithms that scale efficiently on contemporary multi core and many core architectures.

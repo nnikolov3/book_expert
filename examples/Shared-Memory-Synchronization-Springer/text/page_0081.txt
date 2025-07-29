@@ -1,0 +1,71 @@
+4.5 Special-Case Optimizations 83
+
+4.5.3 Asymmetric Locking
+
+Many applications contain data structures that are usually—or even always—accessed by a
+single thread, but are nonetheless protected by locks, either because they are occasionally
+accessed by another thread, or because the programmer 1s preserving the ability to reuse code
+in a future parallel context. Several groups have developed locks that can be biased toward
+a particular thread, whose acquire and release operations then proceed much faster than
+those of other threads. The HotSpot Java Virtual Machine, for example, uses biased locks
+to accommodate objects that appear to “belong” to a single thread, and to control re-entry
+to the JVM by threads that have escaped to native code, and may need to synchronize with
+a garbage collection cycle that began while they were absent (Dice et al. 2001; Russell and
+Detlefs 20006).
+
+On a sequentially consistent machine, one might be tempted to avoid (presumably expen-
+sive) fetch_and_ ® operations by using a two-thread load/store-only synchronization algo-
+rithm (e.g., Dekker’s or Peterson’s algorithm) to arbitrate between the preferred (bias-
+holding) thread and some representative of the other threads. Code might look like this:
+
+class lock
+Peterson lock PL
+general_lock GL
+
+lock.acquire(): lock.release():
+if —preferred_thread PL.release()
+GL.acquire() if —preferred_thread
+PL.acquire() GL.release()
+
+The problem, of course, is that load/store-only acquire routines invariably contain some
+variant of the Dekker store—load sequence—
+
+interested[self].store(true, ||)
+
+bool potential_conflict := interested[other].load(W||)
+
+if potential_conflict ...
+—and this code works correctly on a non-sequentially consistent machine only when it
+incorporates the (presumably also expensive) W||R ordering between the first and second
+lines. The cost of the ordering has led several researchers (Dice et al. 2001; Russell and
+Detlefs 2006; Vasudevan et al. 2010 to propose asymmetric Dekker-style synchronization.
+Applied to Peterson’s lock, the solution looks as shown in Figure 4.17.
+
+The key is the handshake operation on the “slow” (non-preferred) path of the lock. This
+operation must interact with execution on the preferred thread’s core in such a way that
+Four point five Special Case Optimizations. Four point five point three Asymmetric Locking.
+
+Many applications contain data structures that are usually, or even always, accessed by a single thread, but are nonetheless protected by locks, either because they are *occasionally* accessed by another thread, or because the programmer is preserving the ability to reuse code in a future parallel context. Several groups have developed locks that can be *biased* toward a particular thread, whose acquire and release operations then proceed much faster than those of other threads. The HotSpot Java Virtual Machine, for example, uses biased locks to accommodate objects that appear to "belong" to a single thread, and to control re-entry to the J V M by threads that have escaped to native code, and may need to synchronize with a garbage collection cycle that began while they were absent. This is detailed by Dice et al. two thousand one, and Russell and Detlefs two thousand six.
+
+On a sequentially consistent machine, one might be tempted to avoid, presumably expensive, fetch and phi operations by using a two thread load slash store only synchronization algorithm, for example, Dekker’s or Peterson’s algorithm, to arbitrate between the preferred, bias holding, thread and some representative of the other threads. Code might look like this:
+
+The code block illustrates a lock structure. It contains two lock instances: `Peterson lock P L` and `general lock G L`. For the `lock dot acquire` method: If `preferred thread` is false, `G L dot acquire` is called. After this conditional execution, `P L dot acquire` is always called. For the `lock dot release` method: If `preferred thread` is false, `G L dot release` is called. After this conditional execution, `P L dot release` is always called.
+
+The problem, of course, is that load slash store only acquire routines invariably contain some variant of the Dekker store load sequence. For example, consider the code snippet: `interested index self dot store, passing true, or or.` `boolean potential conflict is assigned the result of interested index other dot load, passing W or or.` `If potential conflict, then proceed with further actions.`
+
+And this code works correctly on a non sequentially consistent machine only when it incorporates the, presumably also expensive, `W or or R` ordering between the first and second lines. The cost of the ordering has led several researchers, Dice et al. two thousand one; Russell and Detlefs two thousand six; Vasudevan et al. two thousand ten, to propose asymmetric Dekker style synchronization. Applied to Peterson’s lock, the solution looks as shown in Figure four point one seven.
+
+The key is the handshake operation on the slow, non preferred, path of the lock. This operation must interact with execution on the preferred thread’s core in such a way that.
+The passage delves into sophisticated optimization techniques for concurrent systems, specifically focusing on **Asymmetric Locking**. This concept addresses a common challenge in multi threaded applications: many data structures are predominantly accessed by a single, designated thread, yet require robust synchronization to handle occasional access from other threads. Traditional symmetric locks, such as mutexes or semaphores, impose a performance overhead on every acquisition and release, regardless of the accessing thread. This overhead becomes particularly detrimental when the vast majority of operations originate from a "preferred" thread.
+
+The core principle behind asymmetric locking is to introduce a **bias** towards this preferred thread. The design goal is to ensure that the preferred thread's lock acquisition and release operations are extremely fast, ideally involving minimal overhead or even being completely lock-free in the common case. In contrast, operations by non-preferred threads, while correct, are permitted to be significantly slower. This approach optimizes for the statistically dominant execution path, leading to substantial performance gains in scenarios exhibiting such access patterns. The text highlights its relevance in contexts like the Java Virtual Machine, where objects may "belong" to specific threads or require synchronization during garbage collection re-entry or interactions with native code.
+
+The proposed solution often adapts classic software-based synchronization algorithms, such as **Peterson's Algorithm**, which fundamentally guarantees mutual exclusion for two concurrent processes using only atomic load and store operations. In this asymmetric context, Peterson's algorithm is conceptualized to arbitrate between the "preferred" thread, acting as one party, and a "representative" of all other non-preferred threads, acting as the second party.
+
+Let us analyze the presented code structure, which illustrates this two-path approach. The `class lock` encapsulates the asymmetric locking mechanism, comprising two internal components: `Peterson_lock P L` and `general_lock G L`. The `lock.acquire()` method implements the conditional logic for distinguishing between the preferred and non-preferred access paths. If the current thread is *not* the `preferred_thread`, it first invokes `G L.acquire()`. This `general_lock` is likely a more traditional, potentially heavier-weight lock that ensures mutual exclusion among all non-preferred threads, or between any non-preferred thread and the preferred thread when the latter is attempting a conflicting operation. Subsequently, `P L.acquire()` is invoked, representing the two-party Peterson's algorithm logic. Conversely, if the current thread *is* the `preferred_thread`, it bypasses the `general_lock` and directly attempts `P L.acquire()`. Similarly, the `lock.release()` method mirrors this conditional structure, releasing `G L` only if the thread is not the preferred one, and always releasing `P L`. This architecture ensures that the preferred thread experiences a streamlined, potentially cheaper, acquisition path, while the non-preferred threads incur the cost of the `general_lock` to maintain correctness across heterogeneous access patterns.
+
+A critical challenge in implementing such load/store-only synchronization algorithms on modern computer architectures arises from **memory consistency models**. Contemporary multi-core processors typically employ relaxed memory models, which allow compilers and hardware to reorder memory operations (loads and stores) for performance optimization, provided sequential consistency is maintained for a single thread. Algorithms like Peterson's, however, inherently rely on specific global ordering of memory operations between distinct threads to prevent race conditions and ensure mutual exclusion. The text explicitly states that load/store-only acquire routines necessitate variants of the "Dekker store-load sequence," which is a core component of many software synchronization primitives.
+
+Consider the example given: `interested index self.store(true, double vertical bar)` and `bool potential_conflict is interested index other.load(W double vertical bar)`. The explicit inclusion of `double vertical bar` (which denotes a memory barrier or fence) and `W double vertical bar` (likely indicating a strong acquire-load or a full memory fence for writes) is paramount. Without these memory ordering primitives, a store by one thread might not be immediately visible to another thread's subsequent load, or operations might be reordered in a way that violates the algorithm's correctness assumptions. For instance, if the `store(true)` operation were reordered after the `load(W double vertical bar)` by the processor, it could lead to both threads believing they have exclusive access, violating mutual exclusion. Therefore, these barriers are essential for enforcing the necessary happens-before relationships and ensuring that the algorithm works correctly on non-sequentially consistent machines, albeit at a cost. The presence of `W double vertical bar R` ordering, denoting write-read ordering, is explicitly noted as a potentially expensive but necessary component for correctness on such architectures.
+
+The overarching design principle is further elaborated by the concept of an "asymmetric Dekker-style synchronization," building upon the biased locking idea. The key to the efficiency and correctness of the "slow" or non-preferred path is described as a **handshake operation**. This implies a more intricate, multi-step protocol for the non-preferred thread to interact with the lock state or the preferred thread's execution. This handshake ensures proper synchronization and memory visibility even with the relaxed memory models, typically involving specific read-modify-write atomic operations or sequences of memory barrier-protected loads and stores, which orchestrate the transition of lock ownership or state awareness between the preferred and non-preferred execution paths. This complex interaction on the slow path guarantees global consistency while preserving the performance advantage for the common, fast path of the preferred thread.

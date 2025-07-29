@@ -1,0 +1,77 @@
+14 2 Architectural Background
+
+(temporal locality). The benefit stems from the fact that / 1s likely still to be in cache, and
+the second reference will be a hit instead of a miss. Similarly, if a thread accesses location /p
+shortly after /;, performance is likely to be better if the two locations have nearby addresses
+(spatial locality). Here the benefit stems from the fact that /; and [> are likely to lie in the
+same cache line, so [, will have been loaded into cache as a side effect of loading /;.
+
+On current machines, cache line sizes typically vary between 32 and 512 bytes. There has
+been a gradual trend toward larger sizes over time. Different levels of the cache hierarchy
+may also use different sizes, with lines at lower levels typically being larger.
+
+To improve temporal locality, the programmer must generally restructure algorithms, to
+change the order of computations. Spatial locality 1s often easier to improve—for example,
+by changing the layout of data in memory to co-locate items that are frequently accessed
+together, or by changing the order of traversal in multidimensional arrays. These sorts of
+optimizations have long been an active topic of research, even for sequential programs—
+see, for example, the texts of Muchnick (1997, Chapter 20) or Allen and Kennedy (2002,
+Chapter 9).
+
+2.1.2 Cache Coherence
+
+On a single-core machine, there is a single cache at each level, and while a given block of
+memory may be present in more than one level of the memory hierarchy, one can always
+be sure that the version closest to the top contains up-to-date values. (With a write-through
+cache, values in lower levels of the hierarchy will never be out of date by more than some
+bounded amount of time. With a write-back cache, values in lower levels may be arbitrarily
+stale—but harmless, because they are hidden by copies at higher levels.)
+
+On a shared-memory parallel system, by contrast—unless we do something special—
+data in upper levels of the memory hierarchy may no longer be up-to-date if they have been
+modified by some thread on another core. Suppose, for example, that threads on Cores 1
+and k in Figure 2.1 have both been reading variable x, and each has retained a copy in its L1
+cache. If the thread on Core 1 then modifies x, even if it writes its value through (or back)
+to memory, how do we prevent the thread on Core k from continuing to read the stale copy?
+
+A cache-coherent parallel system is one in which (1) changes to data, even when cached,
+are guaranteed to become visible to all threads, on all cores, within a bounded (and typically
+small) amount of time; and (2) changes to the same location are seen in the same order
+by all threads. On almost all modern machines, coherence is achieved by means of an
+invalidation-based cache coherence protocol. Such a protocol, operating across the system’s
+cache controllers, maintains the invariant that there 1s at most one writable copy of any given
+cache line anywhere in the system—and, if the number is one and not zero, there are no
+read-only copies.
+
+Algorithms to maintain cache coherence are a complex topic, and the subject of ongoing
+research (for an overview, see the monograph of Sorin et al. (2019), or the more extensive [if
+Architectural Background
+
+Temporal locality. The benefit stems from the fact that L is likely still to be in cache, and the second reference will be a hit instead of a miss. Similarly, if a thread accesses location L two shortly after L one, performance is likely to be better if the two locations have nearby addresses, known as spatial locality. Here, the benefit stems from the fact that L one And L two are likely to lie in the same cache line, so L two will have been loaded into cache as a side effect of loading L one.
+
+On current machines, cache line sizes typically vary between thirty two And five hundred twelve bytes. There has been a gradual trend toward larger sizes over time. Different levels of the cache hierarchy may also use different sizes, with lines at lower levels typically being larger.
+
+To improve temporal locality, the programmer must generally restructure algorithms to change the order of computations. Spatial locality is often easier to improve. For example, by changing the layout of data in memory to co locate items that are frequently accessed together, Or by changing the order of traversal in multidimensional arrays. These sorts of optimizations have long been an active topic of research, even for sequential programs. See, for example, the texts of Muchnick, published in one thousand nine hundred ninety seven, Chapter twenty, Or Allen And Kennedy, published in two thousand two, Chapter nine.
+
+Two point one point two Cache Coherence
+
+On a single core machine, there is a single cache at each level. And while a given block of memory may be present in more than one level of the memory hierarchy, one can always be sure that the version closest to the top contains up to date values. With a write through cache, values in lower levels will never be out of date by more than some bounded amount of time. With a write back cache, values in lower levels may be arbitrarily stale, but harmless, because they are hidden by copies at higher levels.
+
+On a shared memory parallel system, by contrast, unless we do something special, data in upper levels of the memory hierarchy may no longer be up to date if they have been modified by some thread on another core. Suppose, for example, that threads on Cores one And k, shown in Figure two point one, have both been reading variable x, And each has retained a copy in its L one cache. If the thread on Core one then modifies x, even if it writes its value through Or back to memory, how do we prevent the thread on Core k from continuing to read the stale copy?
+
+A cache coherent parallel system is one in which: one, changes to data, even when cached, are guaranteed to become visible to all threads, on all cores, within a bounded and typically small amount of time; And two, changes to the same location are seen in the same order by all threads. On almost all modern machines, coherence is achieved by means of an invalidation based cache coherence protocol. Such a protocol, operating across the system’s cache controllers, maintains the invariant that there is at most one writable copy of any given cache line anywhere in the system. And, if the number is one And not zero, there are no read only copies.
+
+Algorithms to maintain cache coherence are a complex topic And the subject of ongoing research. For an overview, see the monograph of Sorin et al., published in two thousand nineteen, Or the more extensive.
+The efficiency of computational systems is fundamentally predicated on effective memory management, a principle exemplified by the concepts of temporal and spatial locality. Temporal locality describes the phenomenon where, if a specific memory location, denoted here as `l`, is accessed, it is highly probable that `l` will be accessed again in the near future. The benefit of this pattern arises when `l` remains resident in a high speed cache after its initial access, resulting in a cache hit for subsequent requests and significantly reducing memory latency.
+
+Spatial locality, conversely, refers to the tendency for processor accesses to cluster in memory. When a memory location, say `l one`, is accessed, there is a high likelihood that nearby locations, such as `l two`, will be accessed shortly thereafter. This principle is leveraged by cache designs where data is transferred between memory and cache in larger units known as cache lines or cache blocks. If `l one` and `l two` reside within the same cache line, the act of fetching `l one` into cache as a result of a memory request implicitly brings `l two` along. Consequently, a subsequent request for `l two` will likely result in a cache hit, even though `l two` was not the original target of the memory operation. Modern machine architectures typically employ cache line sizes ranging from thirty two bytes to five hundred twelve bytes, and there has been a notable trend toward progressively larger cache line sizes over time. Furthermore, in hierarchical cache structures, it is common for lower levels of the cache, those physically closer to the C P U, to utilize smaller cache line sizes compared to higher levels.
+
+Programmers play a crucial role in exploiting these locality principles. To enhance temporal locality, one may need to restructure algorithms to reuse data more frequently. For spatial locality, optimizing data layout in memory to co locate frequently accessed items, or altering the traversal order for data structures like multidimensional arrays, can yield substantial performance improvements. These types of optimizations have historically been and continue to be a significant area of research in computer science, particularly for sequential program execution.
+
+Moving beyond single core systems, the concept of cache coherence becomes paramount in shared memory parallel architectures. In a single core machine, while a block of memory might exist across multiple levels of the cache hierarchy, the copy residing in the cache level closest to the C P U is guaranteed to be the most up to date. With a write back cache policy, where modifications are initially made only to the cache and propagated to main memory later, lower level cached copies may temporarily become stale. However, this is innocuous because any C P U access to that data will naturally retrieve the current value from the higher level, modified cache.
+
+In a parallel system, this inherent guarantee of up to date data is no longer automatically provided. If a data block is present in the caches of multiple cores and is modified by a thread on one core, the copies of that block in the caches of other cores immediately become stale. Consider a scenario where threads executing on Core one and Core k both read a variable `x`, each obtaining a copy into their respective L one caches. If the thread on Core one subsequently modifies `x`, a critical issue arises: how is the thread on Core k prevented from continuing to read its now outdated, stale copy of `x`?
+
+This challenge is addressed by cache coherence protocols, which define the behavior of a cache coherent parallel system. Such a system ensures two fundamental properties. First, any changes to data, even if cached, must become visible to all threads on all cores within a bounded, and typically very short, amount of time. This property guarantees that once a write operation completes, its effects are promptly propagated throughout the system. Second, changes to the same memory location must be observed in the same order by all threads. This defines the memory consistency model, ensuring a consistent global ordering of writes to a specific address.
+
+Most modern multi core architectures achieve this coherence through invalidation based cache coherence protocols. These protocols operate by having cache controllers enforce an invariant: for any given cache line, there is at most one writable copy present anywhere in the entire system. If a writable copy exists, then no read only copies are permitted. Conversely, if multiple read only copies of a cache line exist across different cores, then no writable copy is allowed anywhere. When a core needs to write to a cache line that is held as a read only copy by other cores, the protocol requires that core to first invalidate all other read only copies of that line before it can acquire exclusive ownership and perform the write. This mechanism ensures that all threads eventually see the most current version of the data and that a consistent view of memory is maintained across the parallel system. The design and optimization of algorithms to maintain cache coherence is a complex and highly active area of ongoing research in computer architecture and parallel computing.

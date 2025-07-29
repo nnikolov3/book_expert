@@ -1,0 +1,69 @@
+8.3 Queues and Deques 153
+
+left right
+
+A nN A
+ILN[LN| --- [LN] v | |v [RN] .-- [RN|RN|
+A nN A
+
+Figure 8.10 The HLM obstruction-free deque. Each ‘v’ represents a data value. ‘LN’ is a left null
+value; ‘RN’ is a right null value. The left and right (head and tail) pointers are hints; they point at or
+near the rightmost LN and leftmost RN slots in the array.
+
+value and replace it with an RN. The left-hand cases are symmetric. To find the leftmost RN,
+one can start at any entry of the array: if it’s an RN, scan left to find the last RN; it it’s an LN
+or data value, scan right to find the first RN. To reduce the time consumed, it is helpful to
+know approximately where to start looking, but the indication need not be exact.
+
+Given these observations, the only two really tricky parts of the algorithm are, first, how to
+make sure that every operation maintains the LN...v...RN structural invariant, and, second,
+how to join the ends of the array to make it circular.
+
+The first challenge is addressed by adding a count to every element of the array, and then
+arranging for every operation to modify, in an appropriate order, a pair of adjacent elements.
+A push_right operation, for example, identifies the index, k, of the leftmost RN value. If
+k 1s the rightmost slot in the array, the operation returns a “deque is full” error message.
+Otherwise, it performs a pair of CASes. The first increments the count in element k — 1; the
+second replaces element k with a new data value and an incremented count. A pop_right
+operation goes the other way: It identifies the index, j, of the rightmost data value (if any).
+It then performs its own pair of CASes. The first increments the count in element j + 1;
+the second replaces element j with RN and an incremented count. Left-hand operations are
+symmetric.
+
+The key to linearizability is the observation that only the second CAS of a pair changes the
+actual content of the deque; the first ensures that any conflict with a concurrent operation will
+be noticed. Since we read both locations (k — 1 and k, or j + 1 and j) before attempting a
+CAS on either, if both CASes succeed, no other operation modified either location in-between.
+If the first CAS fails, no change has been made. If the second CAS fails, no substantive change
+has been made. In either case, the operation can simply start over. Updates to the global left
+and right pointers constitute cleanup. Because the pointers are just hints, atomicity with the
+rest of the operation is not required. Moreover, updates to left and right need not interfere
+with one another.
+
+It 1s easy to see that the algorithm is obstruction free: an operation that observes an
+unchanging array will always complete in a bounded number of steps. It is also easy to see
+that the algorithm is not lock free: if a push_right and a pop_right occur at just the right
+time, each can, in principle, succeed at its first CAS, fail at the second, and start over again,
+indefinitely. A push_right and a push_left on an empty deque can encounter a similar
+8.3 Queues and Deques
+
+The diagram shows an obstruction free deque implementation. It uses an array with left and right pointers. Each element in the array can be a left null, a right null, or a data value. The left pointer indicates the start of the deque, and the right pointer indicates the end. 'LN' signifies a left null value, and 'RN' signifies a right null value. The diagram illustrates that the left and right pointers are hints, pointing to or near the rightmost left null and leftmost right null slots in the array respectively.
+
+The operation of replacing a value and using a Risc Five queue that is one sided is symmetric. A one can start at any entry of the array. If it is an RN, scan left to find the last RN. If it's an LN or data value, scan right to find the first RN. To reduce the time consumed, it is helpful to know approximately where to start looking, but the indication need not be exact. Given these observations, the only two really tricky parts of the algorithm are, first, how to make sure that every operation maintains the L N, V, R N structural invariant, and, second, how to join the ends of the array to make it circular. The first challenge is addressed by adding a count to every element of the array, and then arranging for every operation to modify, in an appropriate order, a pair of adjacent elements. A push right operation, for example, identifies the index, k, of the leftmost R N value. If k is the rightmost slot in the array, the operation returns a "deque is full" error message. Otherwise, it performs a pair of C A S operations. The first increments the count in element k minus one. The second replaces element k with a new data value and an incremented count. A pop right operation goes the other way. It identifies the index, j, of the rightmost data value (if any). It then performs its own pair of C A S operations. The first increments the count in element j plus one. The second replaces element j with R N and an incremented count. Left hand operations are symmetric.
+
+The key to linearizability is the observation that only the second C A S of a pair changes the actual content of the deque. The first ensures that any conflict with a concurrent operation will be noticed. Since we read both locations, k minus one and k, or j plus one and j, before attempting a C A S on either, if both C A S operations succeed, no other operation modified either location in between. If the first C A S fails, no change has been made. If the second C A S fails, no substantive change has been made. In either case, the operation can simply start over. Updates to the global left and right pointers constitute cleanup. Because the pointers are just hints, atomicity with the rest of the operation is not required. Moreover, updates to left and right need not interfere with one another. It is easy to see that the algorithm is obstruction free: an operation that observes an unchanging array will always complete in a bounded number of steps. It is also easy to see that the algorithm is not lock free: if a push right and a pop right occur at just the right time, each can, in principle, succeed at its first C A S, fail at the second, and start over again, indefinitely. A push left on an empty deque can encounter a similar issue.
+The discussion pertains to the implementation of a deque, a double-ended queue, using an array-based structure designed for concurrent access. This particular implementation, referred to as a "lock-free deque," aims to provide high performance in multithreaded environments without relying on traditional mutual exclusion locks.
+
+The fundamental data structure is an array where elements are organized with specific markers. Each element in the array can be either a data value, denoted by 'v', or one of two special markers: 'LN' representing a left null, and 'RN' representing a right null. These null markers serve as sentinels, delimiting the active region of the deque within the array. The array is conceptually circular, meaning that operations can wrap around from one end to the other. Two pointers, 'left' and 'right', are maintained. The 'left' pointer typically indicates the position of the leftmost element (or the element just before the first element), and the 'right' pointer indicates the position of the rightmost element. In Figure 8.10, these pointers are depicted as pointing to array slots, with the 'left' pointer generally associated with a 'LN' and the 'right' pointer with an 'RN'.
+
+A core challenge in concurrent data structure design is ensuring correctness and liveness, especially when multiple threads attempt to modify the structure simultaneously. This lock-free deque addresses this by utilizing atomic operations, specifically Compare And Swap, or CAS. CAS is a primitive that atomically reads a memory location, compares its value with an expected value, and if they match, writes a new value to that location. It returns a status indicating whether the swap was successful.
+
+The text highlights two primary challenges in maintaining the integrity of this deque implementation. The first is preserving a specific structural invariant: the sequence of elements within the array must maintain the pattern 'LN' followed by zero or more 'v' elements, and then an 'RN'. Essentially, the active part of the deque should be bounded by a left null and a right null, and this structure must be maintained even as elements are added or removed. The second challenge is ensuring that the array behaves as a circular buffer, allowing operations to seamlessly wrap around the array boundaries.
+
+To manage the operations and maintain these invariants, a technique involving adding a count to each element is employed. This count is crucial for ordering operations and resolving conflicts. For instance, a 'push_right' operation involves identifying the rightmost element in the deque, denoted by its index 'k'. If the array is full, an error condition is signaled. Otherwise, the operation proceeds by first locating the rightmost 'RN' slot, which is at index 'k'. The operation then attempts to update this slot with the new data value and an incremented count, effectively transforming the 'RN' into a 'v' and establishing a new 'RN' marker to its right. This update is typically performed using a CAS operation.
+
+The text elaborates on how operations like 'push_right' and 'pop_right' are handled. A 'push_right' might involve finding the index 'k' of the 'RN' marker that precedes the insertion point. The operation then attempts to replace this 'RN' with a 'v' and increment its associated count. If this CAS succeeds, the operation then needs to establish a new 'RN' marker at 'k' plus one, again using a CAS. If the array is full, an error is raised. Conversely, a 'pop_right' operation aims to remove the rightmost 'v' element. This involves locating the rightmost 'v' and its preceding 'RN'. The operation then attempts to replace this 'v' with an 'RN', effectively consuming the data element and updating the count.
+
+The discussion on linearization is particularly important for understanding the correctness of concurrent data structures. Linearizability guarantees that a concurrent operation appears to take effect instantaneously at some point between its invocation and its completion. For this deque, linearization is achieved by ensuring that each operation appears to occur as a single atomic step. The text explains that this is accomplished by performing atomic updates to pairs of adjacent elements, often using CAS on two locations. The critical insight is that if an operation modifies a pair of elements, say at indices 'k' and 'k+1', it must first ensure that the state of these elements has not been concurrently modified by another operation. This is typically handled by using CAS on both locations. If a CAS on one location fails, the operation might retry or restart. The text emphasizes that the second CAS in a pair of operations is crucial for linearization; if the first CAS fails, no actual change has been made, but if the second CAS fails, it implies a conflict that requires the operation to be restarted. Updates to the 'left' and 'right' pointers are intrinsically linked to these element updates and must be handled atomically to maintain the correct state of the deque.
+
+The properties of obstruction-freedom and lock-freedom are also discussed. An algorithm is obstruction-free if, in the absence of contention, any operation completes in a bounded number of steps. This deque is described as obstruction-free because individual operations, when uncontended, will complete within a finite number of steps. An algorithm is lock-free if at least one thread makes progress in a finite number of steps, even under contention. The algorithm's reliance on CAS operations aims to achieve this lock-freedom. The text notes that if a 'push_right' and a 'pop_right' operation occur concurrently, and their critical CAS operations are timed such that they interfere, one of them may fail and need to restart. For example, if a 'push_right' updates an element to 'v' with an incremented count, and then a 'pop_right' attempts to read that 'v' and its preceding 'RN' but the 'push_right' has already updated the 'RN' to a 'v' and its count before the 'pop_right' can complete its read, the 'pop_right' will fail. The algorithm must then retry. The illustration implies that the system is designed to handle such interleavings robustly, ensuring that despite potential retries, progress is eventually made. The mention of starting over again in case of failure is a direct indication of a retry mechanism inherent in lock-free algorithms.

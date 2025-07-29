@@ -1,0 +1,119 @@
+144 8 Nonblocking Algorithms
+
+type ptr = (bool d, node” p, int ¢) /l markable counted pointer
+type node
+
+atomic<value> val
+
+atomic<ptr> next
+class list
+
+atomic<ptr> head
+
+/[ thread-private variables, changed by search:
+atomic<ptr>* PREVp
+ptr CURR, NEXT
+
+// Find first node N (or null) where val is > v. On return, CURR refers to N (or is null);
+// PREVp points at ptr that referred to N; NEXT caches N’s next ptr (if any).
+private bool list.search(value v):
+loop
+PREVp := &head
+CURR := PREVp—load()
+loop
+if CURR.p = null Il v is bigger than anything in list
+return false
+NEXT := CURR.p—next.load()
+value cv := CURR.p—val.load()
+if PREVp—load() # (false, CURR.p, CURR.c)
+continue outer loop // list has been changed; start over
+if NEXT.d
+/l node has been marked deleted; attempt to link it out
+if PREVp—CAS((false, CURR.p, CURR.c), (false, NEXT.p, CURR.c+1))
+
+free_for_reuse(CURR.p) // type-preserving
+NEXT.c := CURR.c+1
+else continue outer loop // list has been changed; start over
+
+else
+ifcv > vreturncv =v
+PREVp := &CURR.p—next
+CURR := NEXT
+
+Figure 8.4 The H&M lock-free list, as presented by Michael (2002b) (definitions and internal search
+routine), with counted pointers to solve the ABA problem. Synchronizing instructions have been
+added to the original, but no attempt has been made to specify minimal ordering. CAS instructions
+are assumed to be write atomic.
+
+node, if any, that follows CURR. The various cases that arise near the beginning and end of
+the list are illustrated in Figure 8.6.
+
+In Sec. 3.1.2 we mentioned the existence of algorithms in which a run-time check allows a
+method to determine that it linearized at some previous instruction. The H&M list is such an
+algorithm. As noted above, successful insertions and deletions linearize at CAS operations
+that occur after the call to search. Unsuccessful insertions (attempts to insert an already
+present key), unsuccessful deletions (attempts to remove an already missing key), and all
+calls to lookup linearize within the search routine. If the list is empty, the linearization
+144 8 Nonblocking Algorithms
+
+type ptr is b Bool d, node* p, int c // markable counted pointer
+type node
+  atomic value val
+  atomic ptr next
+class list
+  atomic ptr head
+// thread private variables, changed by search:
+atomic ptr* PREVp
+ptr CURR, NEXT
+
+// Find first node N (or null) where val is greater than or equal to v. On return, CURR refers to N (or is null);
+// PREVp points at ptr that referred to N; NEXT caches N's next ptr (if any).
+private bool list.search(value v):
+  loop
+    PREVp := &head
+    CURR := PREVp->load()
+    loop
+      if CURR.p is null
+        return false // v is bigger than anything in list
+      NEXT := CURR.p->next.load()
+      value cv := CURR.p->val.load()
+      if PREVp->load() is not equal to {false, CURR.p, CURR.c}
+        continue outer loop // list has been changed; start over
+      if NEXT.d // NEXT.d indicates the node is marked deleted
+        // node has been marked deleted; attempt to link it out
+        // if PREVp->CAS({false, CURR.p, CURR.c}, {false, NEXT.p, CURR.c+1})) // type preserving
+        if PREVp->CAS({false, CURR.p, CURR.c}, {false, NEXT.p, CURR.c+1})) // type preserving
+          free_for_reuse(CURR.p)
+        NEXT.c := CURR.c + 1
+        continue outer loop // list has been changed; start over
+      else
+        if cv greater than or equal to v return cv is v
+        PREVp := &CURR.p->next
+        CURR := NEXT
+
+Figure 8.4 The H&M lock free list, as presented by Michael (2002b) (definitions and internal search routine), with counted pointers added to the original, but no attempt has been made to specify minimal ordering. CAS instructions are assumed to be write atomic.
+
+node, if any, that follows CURR. The various cases that arise near the beginning and end of the list are illustrated in Figure 8.6.
+
+In Sec. 3.1.2 we mentioned the existence of algorithms in which a run time check allows a method to determine that it linearized at some previous instruction. The H&M list is such an algorithm. As noted above, successful insertions and deletions linearize at CAS operations that occur after the call to search. Unsuccessful insertions (attempts to insert an already present key), unsuccessful deletions (attempts to remove an already missing key), and all calls to lookup linearize within the search routine. If the list is empty, the linearization
+The provided text delves into the intricacies of nonblocking algorithms, specifically focusing on a lock free linked list implementation that addresses the ABA problem. The core of the discussion revolves around a C++-like pseudocode defining a linked list structure and a search operation.
+
+The `node` structure contains an `atomic<value>` named `val` and an `atomic<ptr>` named `next`. The use of atomic types is fundamental to concurrent programming, ensuring that operations on these members are indivisible and maintain memory consistency even when accessed by multiple threads simultaneously. The `list` class encapsulates this structure with an `atomic<ptr>` named `head`, pointing to the first node.
+
+The pseudocode introduces thread-private variables: `atomic<ptr>* PREVp` and `ptr CURR, NEXT`. The `PREVp` variable, a pointer to an atomic pointer, is particularly interesting as it hints at a mechanism for tracking the previous node during traversal, crucial for operations like deletion. The `CURR` and `NEXT` pointers will be used to navigate the list. The comment "// thread-private variables, changed by search" indicates these variables are local to each thread's search operation, preventing interference.
+
+The search algorithm, defined as `private bool list.search(value v)`, aims to find a node whose value is greater than or equal to a target value `v`. The algorithm employs a loop that begins by initializing `PREVp` to point to the `head` and `CURR` to the node pointed to by `head`. The inner loop continues as long as `CURR` is not null.
+
+Inside the inner loop, a check `if CURR.p == null` signifies that the end of the list has been reached, and if the value is greater than `v`, it implies `v` is larger than all elements in the list. The algorithm proceeds to read the `next` pointer of the current node into `NEXT`. It then reads the value of the current node into `cv`.
+
+A critical operation occurs with `if PREVp->load() is not equal to {false, CURR.p, CURR.c}`. This is a compare-and-swap (CAS) operation, likely on the `PREVp` pointer itself. The values `CURR.p` and `CURR.c` suggest that the `PREVp` might be a "counted pointer" where `c` represents a counter. This CAS attempts to atomically update the `PREVp` if it hasn't changed since it was last read. If the CAS fails, it implies the list has been modified by another thread, necessitating a restart of the search from the beginning of the outer loop. This is a common technique in nonblocking algorithms to handle concurrent modifications.
+
+If the CAS succeeds, the code checks `if NEXT.d`, which likely checks for a deleted marker on the `NEXT` pointer. If the `NEXT` pointer is marked as deleted, it means the node pointed to by `NEXT` is no longer valid. In this scenario, the algorithm attempts to link the current node (`CURR`) to the node after `NEXT` using a CAS operation: `PREVp->CAS({false, CURR.p, CURR.c}, {false, NEXT.p, CURR.c + 1})`. This operation essentially removes the deleted node from the list by bypassing it. If this CAS fails, indicating concurrent modification of the predecessor's `next` pointer, the outer loop is restarted.
+
+If the `NEXT` pointer is not marked as deleted and the CAS operation on `PREVp` was successful, the algorithm proceeds by updating `PREVp` to point to `CURR`'s `next` pointer, and `CURR` is updated to `NEXT`. This advances the traversal to the next node in the list.
+
+The pseudocode also handles the case where `v` is found to be less than or equal to the current node's value. In this situation, if `cv` is equal to `v`, the search has found an exact match. If `cv` is greater than `v`, the search has found the first node that satisfies the condition. In both cases, the loop terminates, and the algorithm returns. The comment "// v is bigger than anything in list" implies that if the `CURR.p` is null and the condition `val is greater than v` is met, it means `v` is greater than all list elements.
+
+The figure caption, "Figure 8.4 The H&M lock-free list, as presented by Michael (2002b)...", attributes this implementation to a well-known paper on lock-free data structures. It highlights that counted pointers were added to address the ABA problem. The ABA problem arises in concurrent algorithms when a memory location is read, then modified, then restored to its original value. If another thread observes the original value without seeing the intermediate modification, it might incorrectly assume no change has occurred. Counted pointers, by including a version or modification counter along with the pointer, provide a more robust way to detect such problematic sequences. The text notes that the original H&M algorithm made minimal assumptions about ordering for CAS instructions, indicating a focus on efficiency and low-level atomic operations.
+
+The subsequent paragraph discusses the context of these algorithms, mentioning a run-time check that allows a method to determine linearization at some previous instruction. This relates to the concept of *linearizability*, a correctness condition for concurrent objects that requires that every operation appears to take effect atomically at some instant between its invocation and its completion. The H&M list is presented as an example where insertions and deletions linearize at CAS operations. Unsuccessful insertions and deletions, as well as lookups, are also discussed in terms of their linearization points. The paragraph touches upon the scenario where the list is empty, further emphasizing the robust handling of edge cases in concurrent data structure design.

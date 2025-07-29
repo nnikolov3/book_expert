@@ -1,0 +1,97 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+96 5 Busy-Wait Synchronization with Conditions
+
+Table 5.1 Tradeoffs among leading software barriers. Critical path lengths are in remote memory
+references (assuming broadcast on a CC-NUMA machine); they may not correspond precisely to
+wall-clock time. Space needs are in words. Constants a and d in the static tree barrier are arrival
+fan-in and departure fan-out, respectively. Fuzzy barriers are discussed in Sec. 5.3.1.
+
+central dissemination static tree
+
+space needs
+
+CC-NUMA dn + 1
+
+n+l n+ 2nflog, n]
+
+NRC-NUMA OS +d)n
+critical path length
+
+CC-NUMA n+ 1 [log, nl] +1
+
+[log; n]
+
+NRC-NUMA 00 [log, nl] + [logy n]
+total remote refs
+
+CC-NUMA n+1..2n n
+
+nllog, nl
+
+NRC-NUMA oo 2n — 2
+fuzzy barrier suitability −⊢ − −
+tolerance of changes in n + − −
+
+5.3 Barrier Extensions
+5.3.1 Fuzzy Barriers
+
+One of the principal performance problems associated with barriers is skew in thread arrival
+times, often caused by irregularities in the amount of work performed between barrier
+episodes. If one thread always does more work than the others, of course, then its arrival
+will always be delayed, and all of the others will wait. If variations are more randomly
+distributed, we may see the situation illustrated on the left side of Figure 5.6, where the
+time between barrier episodes is repeatedly determined by a different slowest thread. If 7; ,
+1s the time thread i consumes in phase r of the computation, then total execution time 1s
+> (tp + max;c7 T; »), where 1p, is the time required by a single barrier episode.
+
+Fortunately, it often turns out that the work performed in one algorithmic phase depends
+on only some of the work performed by peers in previous phases. Imagine, for example, a
+program that repeatedly updates all the elements of a complex simulated system, collects
+and logs information about the current state for subsequent (off-line) analysis, and proceeds
+to the next step. If logs are kept on a per-thread basis, then we can start the next phase of
+simulation in a fast thread as soon as its peers have finished their local updates: we don’t
+have to wait for them to finish their logging. This observation, due to Gupta (1989), leads
+to the design of a fuzzy barrier, in which arrival and departure are separate operations. The
+standard idiom
+Table five point one presents tradeoffs among leading software barriers. Critical path lengths are expressed in remote memory references, assuming a broadcast on a C C N U M A machine. These lengths may not correspond precisely to wall clock time. Space needs are measured in words. Constants *a* and *d* in the static tree barrier represent arrival fan in and departure fan out, respectively. Fuzzy barriers are further discussed in section five point three point one.
+
+The table details performance characteristics across three barrier types: central, dissemination, and static tree, for both C C N U M A and N R C N U M A architectures.
+
+For **space needs**, on a C C N U M A architecture, the central barrier requires n plus one words, dissemination requires n plus two n times floor of log base two of n words, and the static tree needs four n plus one words. For N R C N U M A, a central barrier requires infinity words, dissemination uses floor of log base two of n words, and the static tree needs five plus d times n words.
+
+Regarding **critical path length**, for C C N U M A, the central barrier has a length of n plus one, dissemination has floor of log base two of n, and the static tree has floor of log base a of n plus one. On an N R C N U M A architecture, the central barrier's critical path length is infinity, dissemination is floor of log base two of n, and the static tree is floor of log base a of n plus floor of log base d of n.
+
+For **total remote references**, under C C N U M A, the central barrier ranges from n plus one to two n references, dissemination requires n times floor of log base two of n references, and the static tree needs n references. Under N R C N U M A, the central barrier uses infinity references, dissemination uses n times floor of log base two of n, and the static tree uses two n minus two references.
+
+In terms of **fuzzy barrier suitability**, for both C C N U M A and N R C N U M A architectures, the central barrier is suitable, indicated by a plus sign, while both dissemination and static tree barriers are not suitable, indicated by a minus sign.
+
+Finally, for **tolerance of changes in n**, for both C C N U M A and N R C N U M A architectures, the central barrier shows tolerance, indicated by a plus sign, whereas dissemination and static tree barriers show no tolerance, indicated by a minus sign.
+
+Section five point three: Barrier Extensions.
+
+Subsection five point three point one: Fuzzy Barriers.
+
+One of the principal performance problems associated with barriers is *skew* in thread arrival times, often caused by irregularities in the amount of work performed between barrier episodes. If one thread consistently does more work than the others, its arrival will naturally be delayed, and all other threads will wait. If variations in work are more randomly distributed, this situation is illustrated on the left side of Figure five point six, where the time between barrier episodes is repeatedly determined by a different slowest thread. If T subscript i comma r is the time thread *i* consumes in phase *r* of the computation, then the total execution time is the sum over *r* of the quantity *t* subscript *b* plus the maximum over all threads *i* in set *T* of *T* subscript *i* comma *r*, where *t* subscript *b* is the time required by a single barrier episode.
+
+Fortunately, it often turns out that the work performed in one algorithmic phase depends on only *some* of the work performed by peers in previous phases. Imagine, for example, a program that repeatedly updates all the elements of a complex simulated system. It collects and logs information about the current state for subsequent off line analysis, and then proceeds to the next step. If these logs are kept on a per thread basis, we can start the next phase of simulation in a fast thread as soon as its peers have finished their local updates; we do not have to wait for them to finish their logging. This observation, first noted by Gupta in one thousand nine hundred eighty nine, leads to the design of a *fuzzy* barrier, in which arrival and departure are separate operations. This concept represents the standard idiom.
+The provided material presents a sophisticated analysis of synchronization barriers within parallel computing architectures, particularly emphasizing Non Uniform Memory Access, or Numa, systems. Table five point one meticulously quantifies the trade offs inherent in three principal software barrier implementations: central, dissemination, and static tree, across two distinct Numa memory models: Cache Coherent Numa, or C C Numa, and Non Remote Cacheable Numa, or N R C Numa. The underlying principles governing these trade offs relate directly to memory access patterns, cache coherence protocols, and inter processor communication overhead.
+
+In a C C Numa system, processors have varying access latencies to different memory regions, but a hardware mechanism ensures that all caches maintain a consistent view of shared data. Conversely, in an N R C Numa system, remote memory may not be cached, or cache coherence is not automatically managed in hardware, necessitating explicit software handling for data consistency, which typically incurs significantly higher overheads for remote accesses.
+
+Let us dissect the characteristics presented in Table five point one, focusing on the fundamental computer science principles at play. The variable 'n' uniformly represents the number of participating threads or processors.
+
+For **space needs**, the central barrier on C C Numa requires `n increment by one` units of memory. This typically signifies a single shared counter or flag that all 'n' threads access, plus perhaps a variable for each thread to indicate its local state. However, for N R C Numa, the space need is listed as 'infinity'. This signifies a fundamental incompatibility or prohibitive cost. Without hardware cache coherence, a central variable becomes a massive bottleneck; every access from every thread would be a slow, explicit remote memory operation, and maintaining a consistent view would require expensive software synchronization, rendering it impractical. The dissemination barrier, exhibiting `n increment by two n times log base two n` on C C Numa and `n times log base two n` on N R C Numa, reflects its hierarchical, tree like communication structure. In a dissemination barrier, threads synchronize in `log base two n` stages, and each stage requires storage for communication flags or counters, leading to this logarithmic dependency on 'n'. The static tree barrier, with `four n increment by one` for C C Numa and `parentheses five increment by d parentheses n` for N R C Numa, suggests a fixed, pre determined tree topology. The constants 'a' and 'd' relate to the fan in and fan out of the tree nodes respectively, influencing the memory required for pointers and synchronization variables at each node.
+
+**Critical path length** represents the minimum time required for all threads to synchronize, assuming optimal conditions and ignoring contention. For the central barrier on C C Numa, the path length is `log base a n increment by one`. This logarithmic behavior, even for a "central" barrier, can arise if the updates to the central variable are themselves aggregated via a tree structure to reduce hot spot contention, where 'a' is the fan in factor of this aggregation tree. Again, for N R C Numa, the central barrier's critical path is 'infinity', emphasizing its unsuitability due to the immense latency of uncohered remote accesses. The dissemination barrier consistently offers `log base two n` for both C C Numa and N R C Numa. This is a fundamental property of dissemination algorithms, where the synchronization completes in a number of stages proportional to the logarithm of the number of participants, as threads recursively half the unsynchronized group in each step. The static tree barrier shows `log base a n increment by one` for C C Numa and `log base a n increment by log base d n` for N R C Numa. The `log base a n` term accounts for the arrival phase, where threads signal their readiness up the tree (fan in 'a'). The additional `log base d n` term for N R C Numa explicitly models the departure phase, where the root signals completion down the tree (fan out 'd'), requiring distinct remote operations due to the lack of remote cacheability.
+
+**Total remote references** quantifies the overall communication overhead. The central barrier on C C Numa generates `n increment by one` to `two n` references, as each thread must access the central variable. Its 'infinity' for N R C Numa underscores the impracticality. The dissemination barrier consistently incurs `n times log base two n` remote references across both architectures. This aligns with its staged communication, where each of 'n' threads participates in `log base two n` communication steps. The static tree barrier demonstrates `n` remote references for C C Numa and `two n decrement by two` for N R C Numa. The C C Numa case suggests that hardware coherence and network topology might optimize these accesses to `O(n)`. The `two n decrement by two` for N R C Numa explicitly reflects separate remote accesses for the arrival path (up the tree) and the departure path (down the tree), totaling approximately `two n` distinct remote operations.
+
+The **fuzzy barrier suitability** and **tolerance of changes in 'n'** rows address higher level design considerations. Central barriers are generally well suited for fuzzy extensions and tolerant of dynamic changes in 'n' because of their inherent simplicity; adding or removing threads primarily impacts the expected final count. In contrast, dissemination and static tree barriers are typically less suitable for fuzziness and less tolerant of dynamic 'n'. Their fixed or power of two based communication structures are rigid, making it complex to adapt to varying thread counts without significant reconfiguration.
+
+Section five point three point one delves into **Fuzzy Barriers**, which represent a critical extension to traditional synchronization paradigms. The core problem addressed by fuzzy barriers is the performance degradation caused by *skew* in thread arrival times at a synchronization point. In a strict barrier, the total execution time of a parallel phase is dictated by the slowest thread in that phase. This is formalized by the expression `sum over r of parentheses t sub b increment by max over i in T of T sub i comma r parentheses`, where `t sub b` is the base time for a single barrier episode and `T sub i comma r` is the time consumed by thread 'i' in phase 'r'. The `max` operator clearly illustrates that the overall performance is bottlenecked by the maximum `T sub i comma r` across all threads.
+
+Fuzzy barriers mitigate this by relaxing the stringent requirement that all threads must complete their work and arrive before any can proceed. Instead, they allow threads to proceed to subsequent work phases under certain conditions, even if not all peers have arrived. This is particularly valuable when the subsequent work is independent of the precise arrival of all other threads, or when threads can perform local updates that do not require global consistency immediately. The critical insight, attributed to Gupta, is the ability to separate the "arrival" and "departure" operations of a barrier. A thread might "arrive" by completing its current phase of work, but its "departure" (commencing the next phase) can be delayed or decoupled. This separation allows faster threads to perform useful work (e.g., logging or speculative execution) that might otherwise be idle waiting for slower threads, thereby enhancing overall system throughput and resource utilization by reducing the impact of arrival skew.

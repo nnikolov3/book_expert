@@ -1,0 +1,116 @@
+176
+
+8 Nonblocking Algorithms
+
+T1: delete(1)
+gparent ————
+
+parent ~—__|
+target
+
+T2: search(3)
+
+target — |
+
+T3: search(8)
+
+target ——————
+
+T1: quiescent
+
+T2: quiescent
+
+T3: search(8)
+
+target
+
+TT]
+
+T1: search(3)
+
+re]
+
+target
+
+T2: quiescent
+
+T3: quiescent
+
+Tree
+
+(-)
+
+pl
+
+©
+
+(e)
+
+T1: quiescent
+
+T2: search(3)
+»
+target =|
+T3: search(8) R-RoW
+target ———————
+
+(b)
+
+T1: search(3)
+
+target — 1 ©
+T2: quiescent AW
+
+T3: search(8)
+target (3)
+
+(d)
+
+T1: free()
+
+T2: quiescent
+
+T3: quiescent
+
+©,
+
+(f)
+
+Figure 8.20 Three-thread example execution for the EFRB tree with EBR. In (textbfa), we see an
+ongoing delete and two ongoing searches. In (b), T1 finishes its delete, retires two nodes, and
+becomes quiescent. In (¢), T2 becomes quiescent. At this point, if T1 had full knowledge of the
+system state, it could safely free the retired nodes. However, EBR does not yet free them. In (d),
+T1 starts a new search. Note that this search cannot obtain pointers to the retired nodes, and does
+not cause EBR to delay freeing them. In (e), T3 becomes quiescent. At this point, each thread has
+forgotten its pointers since T1 retired its nodes, so in (f), T1 is allowed to free its nodes.
+
+To illustrate what recovery code might look like in the EFRB tree, suppose a thread 1s
+neutralized while it 1s executing insert. If the insert has not yet flagged a node, then the
+thread can simply restart the insert. On the other hand, if it already flagged a node, then it
+should not restart the insert, since another thread may have already helped the insert and
+the inserted key may even have been deleted since then, in which case restarting the insert
+would erroneously insert the key a second time. Instead, the insert can call help to finish
+its operation and return. Two challenges arise.
+
+First, in order to call help to finish its own operation, the thread must not have forgotten
+all of its pointers into the data structure! This 1s solved in DEBRA+ by having a thread use
+One hundred seventy six. Eight. Nonblocking Algorithms.
+
+Figure eight point twenty. Three thread example execution for the E F R B tree with E B R ongoing delete and two ongoing searches. In (b), T one finishes its delete, retires two nodes, and becomes quiescent. At this point, if T one had full knowledge of the system state, it could safely free the retired nodes. However, E B R does not yet free them. In (d), T one starts a new search. Note that this search cannot obtain pointers to the retired nodes, and does not cause E B R to delay freeing them. In (e), T three becomes quiescent. At this point, each thread has forgotten its pointers since T one retired its nodes, so in (f), T one is allowed to free its nodes.
+
+To illustrate what recovery code might look like in the E F R B tree, suppose a thread is neutralized while it is executing insert. If the insert has not yet flagged a node, then the thread can simply restart the insert. On the other hand, if it already flagged a node, then it should not restart the insert, since another thread may have already helped the insert and the inserted key may even have been deleted since then, in which case restarting the insert would erroneously insert the key a second time. Instead, the insert can call help to finish its operation and return. Two challenges arise. First, in order to call help to finish its own operation, the thread must not have forgotten all of its pointers into the data structure! This is solved in D E B R A plus by having a thread use
+The provided figures illustrate a three-thread execution scenario involving a binary tree data structure, likely employing a non-blocking synchronization mechanism such as an Epoch-Based Reclamation (EBR) scheme. This approach aims to facilitate concurrent access and modification of shared data structures without relying on traditional locking primitives, thereby avoiding issues like deadlock and improving scalability. The diagrams depict snapshots of the tree's state and the operations of three threads, T1, T2, and T3, at various points in time, labeled (a) through (f).
+
+In figure (a), we see an initial state where T1 is performing a delete operation targeting the node with value 1. Simultaneously, T2 is searching for the node with value 3, and T3 is searching for the node with value 8. The tree structure is represented by nodes containing integer values, with directed edges indicating parent-child relationships. Notably, T1's operation involves identifying a 'gparent', 'parent', and 'target' node, which are typical components in tree traversal and modification algorithms.
+
+Figure (b) shows the state after T1 has completed its delete operation, retiring the node with value 1. T2 continues its search for node 3, and T3 is still searching for node 8. The tree now appears structurally altered due to the deletion.
+
+In figure (c), T1 has become quiescent, meaning it has finished its operation and is no longer actively modifying the tree. T2 has also become quiescent after successfully searching for node 3. T3, however, is still engaged in searching for node 8. The cyan "X" marks on the nodes with value 3 indicate that these nodes are logically removed or marked for retirement by T1's delete operation. The thick arrow from the node 5 to the node 3 signifies a structural link that is being modified or is about to be modified.
+
+Figure (d) shows T1 as quiescent, and T3 has now also become quiescent after its search for node 8. The node with value 3, which was previously involved in the delete operation and marked for retirement, is now logically removed from the tree structure. The search operations by T2 and T3 are completed without interference from T1's delete, and they do not need to restart, indicating successful non-blocking progress.
+
+Figure (e) depicts a scenario where T1 is now searching for node 3. T2 remains quiescent. T3 is also quiescent. The crucial observation here is that T1's current search operation might encounter challenges if the nodes it needs to traverse were retired by concurrent operations, a common problem that reclamation schemes like EBR address.
+
+Finally, figure (f) shows T1 having completed its search for node 3. Both T2 and T3 are quiescent. The text below the figures clarifies the semantics: in (b), T1 finishes its delete, retiring two nodes, and T2 becomes quiescent. By the time T1 is quiescent, it could safely free its retired nodes. However, the figure indicates that T1 does not immediately free its retired nodes. In (d), T3 becomes quiescent. The text notes that T1's search cannot obtain pointers to the retired nodes, implying that the retirement mechanism correctly handles such scenarios. In (e), T3 becomes quiescent. The text then clarifies that T1 retired its nodes, implying a successful retirement process, and in (f), T1 is allowed to free its nodes. This sequence demonstrates how threads can proceed with their operations even when other threads are modifying the structure, and how retired nodes are eventually reclaimed.
+
+The subsequent paragraph discusses the challenges in implementing recovery code, specifically for an insert operation within an EBR managed data structure. If a thread performing an insert has flagged a node for modification, and another thread has already helped with that insert (e.g., by completing a necessary sub-operation), the original thread might need to restart its insert if the state has changed significantly. However, if the inserted key may have been deleted in the interim, restarting the insert could lead to an erroneous re-insertion of the same key, or worse, the insertion of a key that has already been deleted. The primary challenge highlighted is how a thread can safely assist in completing another thread's operation without risking such data corruption, especially when dealing with node retirement. The solution is stated to be found in DEBRA+, suggesting a specific advancement or refinement of the EBR technique. The core problem revolves around maintaining data structure integrity and correctness under concurrent access, where operations might be interleaved in ways that require careful handling to avoid logical inconsistencies, particularly during the retirement and reclamation phases of the non-blocking algorithm. The mention of DEBRA+ implies a mechanism that ensures operations are atomic or can be safely completed even if intermediate states are observed by other threads.

@@ -1,0 +1,89 @@
+122 7 Synchronization and Scheduling
+
+class buffer
+const int SIZE =...
+data buf[SIZE]
+int next_full, next_empty := 0, 0
+semaphore mutex := 1
+semaphore full_slots, empty _slots := 0, SIZE
+
+buffer.insert(data d): buffer.remove():
+empty_slots.P() full_slots.P()
+mutex.P() mutex.P()
+buf[next_empty] :=d data d := buf[next_full]
+next_empty := (next_empty + 1) mod SIZE next_full := (next_full + 1) mod SIZE
+mutex.V() mutex.V()
+full_slots.V() empty _slots.V()
+return d
+
+Figure 7.1 Implementation of a bounded buffer using semaphores. Semaphore mutex is used to
+ensure the atomicity of updates to buf, next_full, and next_empty. Semaphores full_slots and
+empty_slots are used for condition synchronization.
+
+7.2 Semaphores
+
+Semaphores are the oldest and probably still the most widely used of the scheduler-based
+synchronization mechanisms. They were introduced by Dijkstra in the mid 1960s (Dijkstra
+1968b). A semaphore 1s essentially a non-negative integer with two special operations, P and
+V.! P waits, if necessary, for the semaphore’s value to become positive, and then decrements
+it. V increments the value and, if appropriate, unblocks a thread that is waiting in P. If the
+initial value of the semaphore is C, is easy to see that #P — #V < C, where #P is the
+number of completed P operations and #V is the number of completed V operations.
+
+If we let C = 1, the semaphore functions as a mutual exclusion lock: P is the acquire
+operation; V is the release operation. Assuming that the program uses acquire and release
+correctly (never attempting to release a lock that is not held), the value of the semaphore
+will always be either O (indicating that the lock is held) or 1 (indicating that the lock 1s
+free). In this case we say we have a binary semaphore. In other cases, a semaphore may
+represent some general resource of which there are C instances. In this case we say we have
+a general or counting semaphore. A thread reserves a resource instance using P; it releases
+it using V. Within the OS kernel, a semaphore might represent a frame buffer, an optical
+drive, a physical page of memory, a recurring slot in a time-based communication protocol,
+or any other resource with a limited, discrete set of instances. Many (though not all) forms
+of condition synchronization can be captured by the notion of waiting for such a resource.
+
+In Sec. 1.2 we introduced condition synchronization using the example of a bounded
+buffer, where insert operations would wait, if necessary, for the buffer to become nonfull,
+and remove operations would wait for it to become nonempty. Code for such a buffer using
+semaphores appears in Figure 7.1.
+
+I The names stand for words in Dijkstra’s native Dutch: passeren (to pass) and vrijgeven (to release).
+English speakers may find it helpful to pretend that P stands for “pause.”
+The code block describes a buffer class designed for concurrent access using semaphores.
+
+The `buffer` class includes a constant integer `SIZE` that defines the buffer's capacity. It has a `data buf` array of this `SIZE`, and two integer pointers, `next_full` and `next_empty`, both initialized to zero. For synchronization, it uses three semaphores: `mutex`, initialized to one for mutual exclusion; `full_slots`, initialized to zero to count occupied slots; and `empty_slots`, initialized to `SIZE` to count available slots.
+
+The `buffer dot insert` method, which takes `data d` as an argument, performs the following steps: It first calls `empty_slots dot P()`, which waits until an empty slot is available. Then, it calls `mutex dot P()` to acquire a lock for exclusive access to the buffer. The incoming data `d` is then stored in `buf index next_empty`. The `next_empty` pointer is updated by incrementing it by one modulo `SIZE` to wrap around the buffer. After the data is placed, `mutex dot V()` is called to release the lock, and `full_slots dot V()` is called to signal that a slot has been filled.
+
+The `buffer dot remove` method operates similarly: It first calls `full_slots dot P()`, waiting for a slot to become full. It then calls `mutex dot P()` to acquire the exclusive lock. Data `d` is retrieved from `buf index next_full`. The `next_full` pointer is updated by incrementing it by one modulo `SIZE`. After retrieval, `mutex dot V()` is called to release the lock, and `empty_slots dot V()` is called to signal that a slot has become empty. Finally, the retrieved data `d` is returned.
+
+Figure seven point one depicts the implementation of a bounded buffer using semaphores. The semaphore `mutex` is utilized to guarantee the atomicity of updates to the buffer, `next_full` pointer, and `next_empty` pointer. The semaphores `full_slots` and `empty_slots` are employed for condition synchronization.
+
+Section seven point two, titled Semaphores.
+
+Semaphores are described as the oldest and probably still the most widely used of the scheduler based synchronization mechanisms. They were introduced by Dijkstra in the mid nineteen sixties, specifically in Dijkstra nineteen sixty eight B. A semaphore is essentially a non negative integer coupled with two special operations, P and V. Footnote one clarifies that P stands for Passeren, meaning to pass, and V for Vrijgeven, meaning to release. For English speakers, it can be helpful to pretend that P stands for "pause".
+
+The P operation waits, if necessary, for the semaphore's value to become positive, and then decrements it. The V operation increments the value and, if appropriate, unblocks a thread that is waiting in P. If the initial value of the semaphore is C, it is easy to see that the number of P operations performed less the number of V operations performed is less than or is equal to C, where the number of P operations is the count of completed P operations and the number of V operations is the count of completed V operations.
+
+If we let C be equal to one, the semaphore functions as a mutual exclusion lock. P is the acquire operation, and V is the release operation. Assuming that the program correctly uses acquire and release operations, never attempting to release a lock that is not held, the value of the semaphore will always be either zero, indicating that the lock is held, or one, indicating that the lock is free. In this scenario, we say we have a binary semaphore.
+
+In other cases, a semaphore may represent some general resource for which there are C instances. In this case, we say we have a general or counting semaphore. A thread reserves a resource instance using P; it releases it using V. Within the O S kernel, a semaphore might represent a frame buffer, an optical drive, a physical page of memory, a recurring slot in a time based communication protocol, or any other resource with a limited, discrete set of instances. Many, though not all, forms of condition synchronization can be captured by the notion of waiting for such a resource.
+
+In section one point two, we introduced condition synchronization using the example of a bounded buffer, where insert operations would wait, if necessary, for the buffer to become non full, and remove operations would wait for it to become non empty. The code for such a buffer using semaphores appears in Figure seven point one.
+
+Footnote one: The names stand for words in Dijkstra's native Dutch: *passeren* to pass and *vrijgeven* to release. English speakers may find it helpful to pretend that P stands for "pause."
+The technical content presented outlines a fundamental concurrent programming problem: the bounded buffer, and its solution using semaphores. This implementation, shown in figure seven point one, defines a `class buffer` designed to manage a fixed size circular buffer, facilitating safe data exchange between concurrent producer and consumer threads.
+
+The `class buffer` encapsulates several key components. First, a constant `SIZE` dictates the maximum capacity of the buffer. An array, `buf index SIZE`, serves as the actual storage for data elements. Two integer variables, `next_full` and `next_empty`, act as indices to track the positions for reading and writing, respectively. These indices implement a circular queue, wrapping around to the beginning of the `buf` array when they reach `SIZE`. Both `next_full` and `next_empty` are initialized to zero, indicating an initially empty buffer.
+
+Central to this concurrent design are three semaphore instances. A `semaphore mutex`, initialized to one, serves as a binary semaphore, enforcing mutual exclusion to the shared buffer and its associated state variables, `next_full` and `next_empty`. This ensures that only one thread can access or modify these shared resources at any given time, preventing race conditions and maintaining data integrity. The `semaphore full_slots`, initialized to zero, is a counting semaphore that tracks the number of occupied slots in the buffer. Conversely, `semaphore empty_slots`, initialized to `SIZE`, is another counting semaphore that tracks the number of available empty slots.
+
+The `buffer.insert` method, which conceptually represents a producer's action, begins by invoking `empty_slots.P()`. The `P` operation on a semaphore decrements its value and will block the calling thread if the semaphore's value becomes negative, thus acting as a wait mechanism. In this context, `empty_slots.P()` ensures that a producer thread waits if there are no empty slots available, preventing buffer overflow. Once an empty slot is confirmed, `mutex.P()` is called to acquire the mutual exclusion lock, entering the critical section. Inside this critical section, the data `d` is placed into `buf index next_empty`, and `next_empty` is incremented by one modulo `SIZE` to advance the write pointer circularly. After the data is placed and the pointer updated, `mutex.V()` is invoked to release the mutual exclusion lock, exiting the critical section. Finally, `full_slots.V()` is called. The `V` operation increments the semaphore's value and, if there are threads waiting on this semaphore, unblocks one of them. Here, `full_slots.V()` signals that a slot has become full, potentially unblocking a waiting consumer.
+
+Symmetrically, the `buffer.remove` method, representing a consumer's action, starts with `full_slots.P()`. This ensures that a consumer thread waits if there are no full slots available, preventing buffer underflow. Upon confirming data availability, `mutex.P()` acquires the mutual exclusion lock. Within the critical section, data is retrieved from `buf index next_full`, and `next_full` is incremented by one modulo `SIZE` to advance the read pointer circularly. `mutex.V()` then releases the mutual exclusion lock. Finally, `empty_slots.V()` signals that a slot has become empty, potentially unblocking a waiting producer. The retrieved data is then returned. The careful ordering of `P` and `V` operations for the condition semaphores (outside the mutex) and the mutual exclusion semaphore (around the shared data access) is critical to prevent deadlocks and ensure correct operation in a multi threaded environment.
+
+This implementation relies on the fundamental concept of semaphores, which are scheduler based synchronization mechanisms introduced by Dijkstra in the mid nineteen sixties. A semaphore is abstractly defined as a non negative integer variable, accessible only through two atomic operations: `P` and `V`. The `P` operation, derived from the Dutch word `passeren` meaning to pass, first waits for the semaphore's value to become positive, and then atomically decrements it. If the value is already positive, it simply decrements it. If the value becomes negative, the process calling `P` is blocked until the semaphore's value is incremented by a `V` operation. The `V` operation, from `vrijgeven` meaning to release, atomically increments the semaphore's value and, if a thread is waiting on that semaphore, unblocks one such thread.
+
+The relationship between `P` and `V` operations and the semaphore's initial value, denoted `C`, is critical. For any semaphore, the number of `P` operations completed (`number P`) minus the number of `V` operations completed (`number V`) must always be less than or is equal to `C`. When `C` is one, the semaphore functions as a binary semaphore, which is precisely a mutual exclusion lock. In this mode, `P` is the acquire operation, and `V` is the release. The semaphore's value will strictly alternate between zero (locked) and one (free). When `C` is greater than one, it is a counting semaphore, useful for managing a pool of `C` identical resources. A thread can acquire an instance of the resource by calling `P` and release it by calling `V`.
+
+Semaphores are broadly applicable within an O S kernel, serving diverse synchronization needs. For instance, a semaphore could represent the availability of a frame buffer, a physical page of memory that can be allocated, or a recurring slot in a time based communication protocol. The bounded buffer example perfectly illustrates their use for both mutual exclusion, via the `mutex` semaphore, and condition synchronization, where `empty_slots` and `full_slots` ensure producers wait for space and consumers wait for data, respectively. These mechanisms are foundational to constructing robust and correct concurrent systems, ensuring atomicity and preventing race conditions in shared resource management.

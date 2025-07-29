@@ -1,0 +1,63 @@
+94 5 Busy-Wait Synchronization with Conditions
+
+tree, threads in the resulting tournament barrier begin at the leaves and move upward, with
+only one continuing at each level. Instead of the last arrival, however, itis a particular thread
+(say the one from the left-most child) that always continues upward. Other threads set a flag
+in the node to let the “winner” know they have arrived. If the winner arrives before its peers,
+it simply waits. Wakeup can proceed back down the tree, as in the combining tree barrier, or
+(on a machine with broadcast-based cache coherence) it can use a global flag. With care, the
+tree can be designed to avoid remote spinning, even on an NRC-NUMA machine, though
+the obvious way to do so increases space requirements from O(n) to O(n log, n) (Lee 1990;
+Mellor-Crummey and Scott 1991b).
+
+Inspired by experience with tournament barriers, Mellor-Crummey and Scott (1991b)
+proposed a static tree barrier that takes logarithmic time and linear space, spins only on
+local locations (even on an NRC-NUMA machine), and performs the theoretical minimum
+number of remote memory accesses (2n — 2) on machines that lack broadcast. Unlike a
+tournament barrier, the static tree barrier associates threads with internal nodes as well as
+leaves, thereby reducing the overall size of the tree. Each thread signals its parent, which in
+turn signals its parent when it has heard from all of its children.
+
+Code for the static tree barrier appears in Figure 5.5. It incorporates a minor bug fix from
+Kishore Ramachandran. Each thread is assigned a unique tree node which is linked into an
+arrival tree by a parent link and into a wakeup tree by a set of child links. It 1s useful to think
+of the trees as separate because their arity may be different. The code shown here uses an
+arrival fan-in of 4 and a departure fan-out of 2, which worked well in the authors’ original
+(c. 1990) experiments. Assuming that the hardware supports single-byte writes, fan-in of 4
+(on a 32-bit machine) or 8 (on a 64-bit machine) will allow a thread to use a single-word
+spin to wait for all of its arrival-tree children simultaneously. Optimal departure fan-out is
+likely to be machine-dependent. As in the tournament barrier, wakeup on a machine with
+broadcast-based global cache coherence could profitably be effected with a single global
+flag.
+
+5.2.5 Which Barrier Should | Use?
+
+Experience suggests that the centralized, dissemination, and static tree barriers are all useful
+in certain circumstances. Tradeoffs among them are summarized in Table 5.1. Given the
+cost of remote spinning (and of fetch_and_® operations on most machines), the combining
+tree barrier tends not to be competitive. The tournament barrier (mentioned in Sec. 5.2.4)
+likewise has little to recommend it over the static tree barrier.
+
+The centralized barrier has the advantage of simplicity, and tends to outperform all other
+alternatives when the number of threads 1s small. It also adapts easily to different numbers of
+threads. In an application in which the number changes from one barrier episode to another,
+this advantage may be compelling. Likewise, central barriers are the only option we have
+considered so far that can exploit the “fuzzy” barrier technique of Sec. 5.3.1 below.
+tree, threads in the resulting tournament barrier begin at the leaves and move upward, with only one continuing at each level. Instead of the last arrival, however, it is a particular thread, say the one from the left most child, that always continues upward. Other threads set a flag in the node to let the "winner" know they have arrived. If the winner arrives before its peers, it simply waits. Wakeup can proceed back down the tree, as in the combining tree barrier, or, on a machine with broadcast based cache coherence, it can use a global flag. With care, the tree can be designed to avoid remote spinning, even on an N R C Numa machine, though the obvious way to do so increases space requirements from O N to O N log base two N. This is according to Lee nineteen ninety, and Mellor Crummey and Scott nineteen ninety one b.
+
+Inspired by experience with tournament barriers, Mellor Crummey and Scott, nineteen ninety one b, proposed a static tree barrier that takes logarithmic time and linear space. It spins only on local locations, even on an N R C Numa machine, and performs the theoretical minimum number of remote memory accesses, which is two n minus two, on machines that lack broadcast. Unlike a tournament barrier, the static tree barrier associates threads with internal nodes as well as leaves, thereby reducing the overall size of the tree. Each thread signals its parent, which in turn signals its parent when it has heard from all of its children.
+
+Code for the static tree barrier appears in Figure five point five. It incorporates a minor bug fix from Kishore Ramachandran. Each thread is assigned a unique tree node which is linked into an arrival tree by a parent link and into a wakeup tree by a set of child links. It is useful to think of the trees as separate because their arity may be different. The code shown here uses an arrival fan in of four and a departure fan out of two, which worked well in the authors' original circa nineteen ninety experiments. Assuming that the hardware supports single byte writes, a fan in of four, on a thirty two bit machine, or eight, on a sixty four bit machine, will allow a thread to use a single word spin to wait for all of its arrival tree children simultaneously. Optimal departure fan out is likely to be machine dependent. As in the tournament barrier, wakeup on a machine with broadcast based global cache coherence could profitably be effected with a single global flag.
+
+Five point two point five. Which Barrier Should I Use?
+
+Experience suggests that the centralized, dissemination, and static tree barriers are all useful in certain circumstances. Tradeoffs among them are summarized in Table five point one. Given the cost of remote spinning, and of fetch and phi operations on most machines, the combining tree barrier tends not to be competitive. The tournament barrier, mentioned in Section five point two point four, likewise has little to recommend it over the static tree barrier.
+
+The centralized barrier has the advantage of simplicity, and tends to outperform all other alternatives when the number of threads is small. It also adapts easily to different numbers of threads. In an application in which the number changes from one barrier episode to another, this advantage may be compelling. Likewise, central barriers are the only option we have considered so far that can exploit the "fuzzy" barrier technique of Section five point three point one below.
+In the realm of parallel computing, synchronization barriers serve as a critical primitive to ensure correct program execution. A barrier defines a point in a parallel algorithm where all participating threads must arrive before any thread is allowed to proceed. This mechanism guarantees that certain computations have completed and their results are visible across all threads, thereby establishing a global state and preventing race conditions or data inconsistencies.
+
+One class of these primitives is the *tournament barrier*. This design organizes threads into a conceptual tree structure. Threads begin at the leaves of this tree and propagate their arrival upward towards the root. At each level, a subset of threads competes, and only one, designated as the 'winner' or specific thread, continues its ascent. The remaining threads, upon signalling their arrival, simply enter a busy-wait state. Once the ultimate winner reaches the root, indicating all threads have arrived, it initiates a 'wakeup' phase, broadcasting a signal or setting a global flag. This signal then propagates back down the tree, releasing the waiting threads. The temporal complexity of such a barrier is logarithmic with respect to the number of threads, specifically O of logarithm base two N, where N is the number of threads, reflecting the height of the tree. However, on N R C-N U M A machines, the physical distribution of memory can introduce significant performance penalties. To mitigate the high cost of 'remote spinning' on non-local memory locations, tournament barriers may increase their space requirements to O of N logarithm base two N. This is a design trade-off where memory consumption is increased to improve temporal performance by minimizing expensive remote memory accesses and exploiting local cache coherence, especially on systems supporting broadcast-based cache coherence protocols where a global flag can be efficiently disseminated.
+
+Inspired by these early designs, the *static tree barrier* was proposed, building upon the principles of hierarchical synchronization. This barrier also exhibits logarithmic time complexity and linear space complexity. A key advantage of the static tree barrier lies in its locality-aware design: it ensures that threads spin exclusively on memory locations within their local cache, thereby circumventing the performance overhead associated with remote memory accesses on N U M A architectures. This characteristic allows it to achieve the theoretical minimum number of memory accesses, which is two N minus two, on machines that lack explicit broadcast mechanisms. In this static tree structure, each thread is assigned a unique node, and the synchronization process involves a carefully choreographed exchange of signals. Threads at the leaves of the conceptual arrival tree signal their parents. An internal node, upon receiving signals from all its designated children, in turn signals its own parent. This hierarchical aggregation continues until the root of the arrival tree is reached, signifying that all threads have arrived. Concurrently, a separate *wakeup tree* operates. Once the root of the arrival tree has processed all arrivals, a signal propagates down the wakeup tree, releasing the waiting threads. The structure of these trees, specifically their fan-in for arrival and fan-out for departure, can be tuned for optimal performance. For instance, early experiments on thirty two bit machines suggested an arrival fan-in of four and a departure fan-out of two. Later work on sixty four bit machines demonstrated that leveraging single-byte writes and single-word spins for eight arrival-tree children simultaneously could be beneficial. The optimal departure fan-out, like many architectural parameters, is often machine-dependent. In scenarios where hardware supports broadcast-based cache coherence, the wakeup mechanism can be simplified by using a single global flag, leveraging the underlying hardware capabilities for efficient dissemination.
+
+When considering the various types of barriers for a parallel application, one must carefully weigh the inherent trade-offs. The *combining tree barrier*, for example, often proves uncompetitive due to the substantial overhead associated with remote spinning and atomic `fetch and phi` operations on contemporary N U M A machines. These operations, while fundamental for shared memory synchronization, can incur significant latency if they involve off-chip or remote memory accesses. Similarly, the *tournament barrier*, while conceptually elegant, generally offers little performance advantage over the static tree barrier, which typically provides superior locality and reduced memory contention. The *centralized barrier*, despite its simplicity where all threads synchronize against a single shared variable, often faces scalability challenges due to high contention as the number of threads increases. However, its simplicity makes it highly adaptable to applications where the number of threads may vary dynamically from one barrier episode to another. Furthermore, the centralized barrier is often the only viable option when implementing more advanced, less rigid synchronization paradigms, such as the "fuzzy" barrier technique, which permits some degree of temporal flexibility in thread synchronization. This highlights that the choice of barrier type is not universal but rather a function of the specific application's requirements, the underlying hardware architecture, and the desired balance between performance, scalability, and implementation complexity.

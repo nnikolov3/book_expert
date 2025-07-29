@@ -1,0 +1,102 @@
+5.2 Barrier Algorithms 95
+
+type node = record
+atomic<bool> parent_sense = false
+atomic<bool>* parent_ptr
+
+const bool have_child[0..3] // for arrival
+atomic<bool> child_not_ready][0..3]
+
+atomic<bool>* child_ptrs[0..1] // for departure
+atomic<bool> dummy // pseudodata
+
+class barrier
+bool sense[7] := true
+node nodes[7]
+// on an NRC-NUMA machine, nodes]i] should be local to thread :
+// in nodes|i]:
+// have_child[j] =trueiff4i + j +1 <n
+// parent_ptr = &nodes[| (i — 1)/4]].child_not_ready[(i — 1) mod 4],
+// or &dummy if 7: = 0
+// child_ptrs[0] = &nodes[2i + 1].parent_sense, or &dummy if 2: +1 > n
+// child_ptrs[1] = &nodes[2i + 2].parent_sense, or &dummy if 2: + 2 > n
+// initially child_not_ready := have_child
+
+barrier.cycle():
+fence(RW/||W)
+node n := &nodes[self]
+bool my_sense := senselself]
+
+while n—child_not_ready.load(||) # {false, false, false, false}; I] spin
+n—child_not_ready.store(n—have_child) // prepare for next episode
+n—parent_ptr—store(false) / let parent know we're ready
+// if not root, wait until parent signals departure:
+if self #0
+
+while n—parent_sense.load() # my_sense; Il spin
+
+// signal children in departure tree:
+n—child_ptrs[0]—store(my_sense, ||)
+n—child_ptrs[1]—store(my_sense, ||)
+sense[self] := —-my_sense
+fence(R||[RW)
+
+Figure 5.5 A static tree barrier with local-spinning tree-based departure.
+
+The choice between the dissemination and static tree barriers comes down to a question of
+architectural features and costs. The dissemination barrier has the shortest critical path, but
+induces asymptotically more total network traffic. Given broadcast-based cache coherence,
+nothing is likely to outperform the static tree barrier, modified to use a global departure flag.
+In the absence of broadcast, the dissemination barrier will do better on a machine with high
+cross-sectional bandwidth; otherwise the static tree barrier (with explicit departure tree) 1s
+likely to do better. When in doubt, practitioners would be wise to try both and measure their
+performance.
+Barrier Algorithms.
+
+The `type node` is defined as a record with the following fields: an `atomic boolean` called `parent sense` which is assigned `false`; an `atomic boolean pointer` called `parent P T R`; a `constant boolean` array named `have child` indexed from `zero to three`, which is for arrival; an `atomic boolean` array named `child not ready` indexed from `zero to three`, which is for departure; an `atomic boolean pointer` array named `child P T R s` indexed from `zero to one`, which is for pseudodata; and an `atomic boolean` called `dummy`.
+
+The `class barrier` is defined with a `boolean` array named `sense` indexed by `T`, which is assigned `true`. It also contains a `node` array named `nodes` indexed by `T`. On an N R C dash N U M A machine, `nodes index I` should be local to `thread I`.
+For `nodes index I`, the `have child index J` field is `true` if `four I incremented by J incremented by one` is `less than N`. The `parent P T R` field is assigned the `address of nodes index open parenthesis I decrement by one divided by four close parenthesis` `child not ready index open parenthesis I decrement by one modulo four close parenthesis`, `or` the `address of dummy` if `I is equal to zero`. The `child P T R s index zero` field is assigned the `address of nodes index two I incremented by one` `parent sense`, `or` the `address of dummy` if `two I incremented by one` is `greater than or equal to N`. The `child P T R s index one` field is assigned the `address of nodes index two I incremented by two` `parent sense`, `or` the `address of dummy` if `two I incremented by two` is `greater than or equal to N`. Initially, the `child not ready` field is assigned `have child`.
+
+The `barrier.cycle()` function performs the following steps:
+First, a `fence` operation is executed with `R W or or W` memory ordering.
+A `node pointer n` is assigned the `address of nodes index self`.
+A `boolean` variable `my sense` is assigned the value of `sense index self`.
+The code then enters a `while` loop that continues as long as `n pointer child not ready.load(or or)` is `not equal to` the set `false, false, false, false`. This loop represents a spin.
+After the spin, `n pointer child not ready.store(n pointer have child)` is performed, which prepares for the next episode.
+Next, `n pointer parent P T R pointer store(false)` is executed, indicating to the parent that the current node is ready.
+If `self is not equal to zero`, meaning it is not the root node, the node waits until its parent signals departure. This is done by entering a `while` loop that continues as long as `n pointer parent sense.load()` is `not equal to my sense`. This loop also represents a spin.
+Subsequently, the code signals children in the departure tree. This involves `n pointer child P T R s index zero pointer store(my sense, or or)` and `n pointer child P T R s index one pointer store(my sense, or or)`.
+Finally, `sense index self` is assigned the `inverse of my sense`, and a `fence` operation is executed with `R or or R W` memory ordering.
+
+Figure five point five illustrates a static tree barrier with local spinning tree based departure.
+
+The choice between the dissemination and static tree barriers comes down to a question of architectural features and costs. The dissemination barrier has the shortest critical path, but induces asymptotically more total network traffic. Given broadcast based cache coherence, nothing is likely to outperform the static tree barrier, modified to use a global departure flag. In the absence of broadcast, the dissemination barrier will do better on a machine with high cross sectional bandwidth. Otherwise, the static tree barrier with explicit departure tree is likely to do better. When in doubt, practitioners would be wise to try both and measure their performance.
+The presented material outlines a sophisticated barrier synchronization algorithm, specifically a static tree barrier with a local spinning, sense reversing mechanism, optimized for architectures exhibiting non-uniform memory access, or N U M A, characteristics.
+
+At its core, a barrier ensures that all threads in a parallel computation arrive at a designated point before any thread is allowed to proceed. This is fundamental for maintaining correctness in many parallel algorithms, particularly those involving iterative computations or phases that depend on the complete results of a preceding phase. The `node` record structure defines the state for each participant in this distributed barrier. Each `node` contains several fields, all of which are declared `atomic<bool>` or `atomic<bool>*`. The `atomic` keyword is critical, indicating that these variables are subject to atomic operations, guaranteeing thread safety by ensuring that read and write operations are indivisible and that their effects are immediately visible across all processor cores. This is essential for preventing data races and maintaining memory consistency in a multi-threaded environment.
+
+The `parent_sense` field, initialized to `false`, is an atomic boolean used by a child node to signal its arrival to its parent in the barrier tree. The `parent_ptr` is an atomic pointer to the `parent_sense` field of its parent node. The `have_child` array, a constant boolean array of size four, indicates whether a node has a child in a particular logical quadrant, which is a structural hint for the tree topology. The `child_not_ready` array, also of size four and atomic booleans, is used during the arrival phase: a parent node uses these flags to determine if its children have arrived. Initially, these flags mirror the `have_child` values, meaning all children are initially considered "not ready." The `child_ptrs` array, an array of two atomic pointers, points to the `parent_sense` variables of the node's children, enabling the node to signal their departure. Finally, `dummy` serves as a placeholder for pseudodata, likely used for padding or aligning data structures to optimize cache performance or to provide a null target for pointers when a child or parent does not exist, such as for root or leaf nodes.
+
+The `class barrier` encapsulates the overall barrier mechanism. The `sense` array, a boolean array indexed by thread I D `T`, implements the sense reversing technique. Each thread maintains its own `sense` variable. The value `true` is its initial state. The `nodes` array, an array of `node` records indexed by thread I D `T`, represents the individual participants. The comments within the `class barrier` describe how the tree structure is mapped onto the `nodes` array, especially considering N U M A machine characteristics. On a N U M A machine, memory access times vary based on the physical location of the memory relative to the processor. Therefore, `nodes[i]` should ideally be local to thread `i`, meaning the memory for a given node record resides physically close to the processor running the corresponding thread. This minimizes latency for accessing that node's state.
+
+The tree structure is implicitly defined by the indices:
+*   A `have_child` entry is true if `four` times `i` plus `j` plus one is less than `n`, where `n` is the total number of threads, indicating the existence of a child.
+*   A thread's `parent_ptr` points to the `child_not_ready` field of its parent. The parent of thread `i` is determined by integer division `i minus one` divided by `four`. For the root node, `i is equal to zero`, the `parent_ptr` can point to `dummy`. This arrangement forms an implicit four-ary tree for the arrival phase.
+*   The `child_ptrs` arrays are configured for the departure phase. `child_ptrs[0]` points to the `parent_sense` of the first child, which is at index `two` times `i` plus one. Similarly, `child_ptrs[1]` points to the `parent_sense` of the second child, at index `two` times `i` plus two. These definitions suggest a binary tree for the departure signaling, potentially distinct from the arrival tree structure, or a simplification for signaling. If a child index `two` times `i` plus one or `two` times `i` plus two is greater than or equal to `n`, meaning the child does not exist, the pointer can target `dummy` to avoid invalid memory accesses.
+*   Initially, the `child_not_ready` flags for each node are set to the value of `have_child`, ensuring that a parent waits for all its children as the barrier cycle begins.
+
+The `barrier.cycle()` function implements the core logic for a single barrier synchronization.
+1.  **Memory Fence for Release Semantics**: `fence(R W || W)` establishes a memory fence before the barrier logic. The `R W || W` parameter indicates a full memory barrier, enforcing release semantics for previous writes and acquire semantics for subsequent reads. This ensures that all memory writes performed by the current thread *before* entering the barrier are made visible to other threads *after* they pass the barrier. This is crucial for correctly propagating results between parallel phases.
+2.  **Node Initialization**: `node* n := &nodes[self]` gets a pointer to the current thread's node in the barrier tree. `bool my_sense := sense[self]` copies the thread's current sense value, which will be used to signal completion for the current barrier cycle.
+3.  **Arrival Phase (Spinning for Children)**: `while n->child_not_ready.load(||) is not equal to {false, false, false, false}; // spin` This loop implements the arrival phase for a parent node. A parent spins, continuously loading the `child_not_ready` array from its own node, until all four elements of the array become `false`. Each `false` indicates that a child in that position has arrived and signaled its readiness. The `||` argument to `load()` signifies an "acquire" memory order, ensuring that any writes performed by the child threads to their `parent_sense` or other memory locations are visible to this parent thread before the spin condition evaluates to `false`.
+4.  **Preparation for Next Episode**: Once all children have signaled, `n->child_not_ready.store(n->have_child)` is executed. This resets the `child_not_ready` flags for the *next* barrier cycle, effectively re-initializing them based on which children the node inherently possesses. This is a crucial step in the sense-reversing mechanism, preparing the barrier for its subsequent use. This `store` operation likely uses a "release" memory order, ensuring that this reset is visible to its children in the next barrier iteration.
+5.  **Signaling Parent (If Not Root)**: `if self is not equal to zero` checks if the current thread is the root of the tree. If it is not the root, it signals its own arrival to its parent: `n->parent_ptr->store(false)`. This effectively sets the corresponding `child_not_ready` flag in the parent's node to `false`, signifying this child's arrival. The `false` value here is likely the specific sense value used to indicate "arrived" for this barrier cycle.
+6.  **Waiting for Parent (If Not Root)**: `while n->parent_sense.load() is not equal to my_sense; // spin` If the thread is not the root, it then spins, waiting for its parent to signal departure. It continuously loads its own `parent_sense` variable (which is actually located in the parent's memory space and points back to the current node) and compares it to `my_sense`. When the parent updates `parent_sense` to `my_sense`, it indicates that the parent has processed the arrival phase and is now ready to signal departure. The `load()` again implies an "acquire" memory order. The root node, by definition, does not have a parent and thus does not execute this waiting step.
+7.  **Departure Phase (Signaling Children)**: Once a node has been signaled by its parent (or is the root), it then signals its own children. `n->child_ptrs[0]->store(my_sense, ||)` and `n->child_ptrs[1]->store(my_sense, ||)` update the `parent_sense` variables of its two children. This causes the children (who are spinning on `n->parent_sense.load()`) to break out of their waiting loops, allowing them to proceed. The `||` indicates a "release" memory order, ensuring that the updated `parent_sense` values are immediately visible to the child threads.
+8.  **Sense Reversal**: `sense[self] := not my_sense` toggles the thread's personal sense flag. This is the hallmark of a sense reversing barrier. For the next barrier cycle, the expected `my_sense` value will be the opposite, preventing threads from prematurely passing the barrier if a previous `my_sense` value happens to reappear due to timing issues or memory reordering.
+9.  **Memory Fence for Acquire Semantics**: `fence(R || R W)` establishes another memory fence, this time likely focusing on acquire semantics. `R || R W` suggests a full memory barrier or one prioritizing acquire operations. This ensures that all memory writes performed by other threads *before* they passed the barrier are visible to this current thread *after* it passes the barrier. This complements the first fence, guaranteeing consistency for all subsequent operations.
+
+The concluding paragraph discusses the fundamental trade-offs between different barrier implementations, specifically "dissemination barriers" and "static tree barriers." Dissemination barriers typically involve a series of logarithmic phases where threads communicate with an increasing number of peers, achieving synchronization through a ripple effect. This often leads to the "shortest critical path" for synchronization, meaning the minimum time required for all threads to reach the barrier and proceed, as communication is distributed and often parallelized. However, dissemination barriers can generate "more total network traffic" because each thread is actively involved in multiple rounds of communication. In contrast, a static tree barrier, like the one detailed in the code, creates a fixed hierarchical communication structure. While potentially having a longer critical path due to the tree traversal (especially for very deep trees), it generally results in less overall network traffic because communication flows up and down a defined path, rather than broadcasting.
+
+The text posits that "given broadcast-based cache coherence, nothing is likely to outperform the static tree barrier, modified to use a global departure flag." This implies that on systems with efficient hardware broadcast mechanisms for cache coherence (where changes to a memory location are rapidly propagated to all caches), the tree structure's efficiency for the arrival phase, combined with a single global flag for departure, could be optimal. This is because the global flag would leverage the fast broadcast, avoiding the multi-stage tree traversal for departure. Conversely, "in the absence of broadcast, the dissemination barrier will do better on a machine with high cross-sectional bandwidth." Cross-sectional bandwidth refers to the total bandwidth across an interconnect network, often in a parallel computer. If a system has high cross-sectional bandwidth but lacks efficient broadcast, the distributed nature of the dissemination barrier, which can utilize all available communication paths simultaneously, would likely outperform the tree barrier. Otherwise, if bandwidth is limited and broadcast is absent, the static tree barrier with its explicit departure tree, which carefully manages communication paths, becomes preferable due to its lower total network traffic. This highlights a crucial principle in high-performance computing: optimal synchronization strategies are deeply intertwined with the underlying architectural features and network topology of the parallel machine.

@@ -1,0 +1,57 @@
+8.9 Nonblocking Elimination 181
+
+Hendler et al. (2004) use elimination in a nonblocking stack to “back off” adaptively in
+the wake of contention. As in a Treiber stack (Sec. 8.1), a thread can begin by attempting a
+CAS on the top-of-stack pointer. When contention is low, the CAS will generally succeed. If
+it fails, the thread chooses a slot in (some subset of) a separate elimination array. If it finds
+a matching operation already parked in that slot, the two exchange data and complete. If the
+slot 1s empty, the thread parks its own operation in it for some maximum time #, in hopes
+that a matching operation will arrive. Modifications to a slot—parking or eliminating—are
+made with CAS to resolve races among contending threads.
+
+If a matching operation does not arrive in time, or if a thread finds a nonmatching operation
+in its chosen slot (e.g., a push encounters another push), the thread attempts to access the
+top-of-stack pointer again. This process repeats—back and forth between the stack and the
+elimination array—until either a push/pop CAS succeeds in the stack or an elimination CAS
+succeeds in the array. If recent past experience suggests that contention is high, a thread can
+go directly to the elimination array at the start of a new operation, rather than beginning
+with a top-of-stack CAS.
+
+To increase the odds of success, threads dynamically adjust the subrange of the elimination
+array in which they operate. Repeated failure to find a matching operation within the time
+interval ¢ causes a thread to use a smaller prefix of the array on its next iteration. Repeated
+failure to eliminate successfully given a matching operation (as can happen when some other
+operation manages to eliminate first) causes a thread to use a larger prefix. The value of ¢,
+the overall size of the array, the number of failures required to trigger a subrange change,
+and the factor by which it changes can all be tuned to maximize performance.
+
+Similar techniques can be used for other abstractions in which operations may “cancel
+out.” Scherer et al. (2005) describe an exchange channel in which threads must “pair up”
+and swap information; a revised version of this code appears as the Exchanger class in the
+standard Java concurrency library.
+
+With care, elimination can also be applied to abstractions like queues, in which operations
+cannot naively eliminate in isolation. As shown by Moir et al. (2005), one can delay an
+enqueue operation until its datum, had it been inserted right away, would have reached the
+head of the queue: at that point it can safely combine with any arriving dequeue operation.
+To determine when an operation is “sufficiently old,” it suffices to augment the nodes of
+an M&S queue with monotonically increasing serial numbers. Each enqueue operation
+in the elimination array is augmented with the count found at the tail of the queue on
+the original (failed) CAS attempt. When the count at the head of the queue exceeds this
+value, the enqueue can safely be eliminated. This “FIFO elimination” has the nontrivial
+disadvantage of significantly increasing the latency of dequeue operations that encounter
+initial contention, but it can also significantly increase scalability and throughput under load.
+
+Elimination has also been implemented in priority queues, allowing deleteMin operations
+and insert operations on very small keys to eliminate one another (Braginsky et al. 2016,
+Calciu et al. 2014).
+eight point nine Nonblocking Elimination. Hendler et al. two thousand four use elimination in a nonblocking stack to back off adaptively in the wake of contention. As in a Treiber stack, Section eight point one, a thread can begin by attempting a C A S on the top of stack pointer. When contention is low, the C A S will generally succeed. If it fails, the thread chooses a slot in some subset of a separate elimination array. If it finds a matching operation already parked in that slot, the two exchange data and complete. If the slot is empty, the thread parks its own operation in it for some maximum time t, in hopes that a matching operation will arrive. Modifications to a slot parking or eliminating are made with C A S to resolve races among contending threads. If a matching operation does not arrive in time, or if a thread finds a nonmatching operation in its chosen slot, for example, a push encounters another push, the thread attempts to access the top of stack pointer again. This process repeats back and forth between the stack and the elimination array until either a push pop C A S succeeds in the stack or an elimination C A S succeeds in the array. If recent past experience suggests that contention is high, a thread can go directly to the elimination array at the start of a new operation, rather than beginning with a top of stack C A S. To increase the odds of success, threads dynamically adjust the subrange of the elimination array in which they operate. Repeated failure to find a matching operation within the time interval t causes a thread to use a smaller prefix of the array on its next iteration. Repeated failure to eliminate successfully given a matching operation, as can happen when some other operation manages to eliminate first, causes a thread to use a larger prefix. The value of t, the overall size of the array, the number of failures required to trigger a subrange change, and the factor by which it changes can all be tuned to maximize performance. Similar techniques can be used for other abstractions in which operations may cancel out. Scherer et al. two thousand five describe an exchange channel in which threads must pair up and swap information; a revised version of this code appears as the Exchanger class in the standard Java concurrency library. With care, elimination can also be applied to abstractions like queues, in which operations cannot naively eliminate in isolation. As shown by Moir et al. two thousand five, one can delay an enqueue operation until its datum, had it been inserted right away, would have reached the head of the queue; at that point, it can safely combine with any arriving dequeue operation. To determine when an operation is sufficiently old, it suffices to augment the nodes of an M and S queue with monotonically increasing serial numbers. Each enqueue operation in the elimination array is augmented with the count found at the tail of the queue on the original failed C A S attempt. When the count at the head of the queue exceeds this value, the enqueue can safely be eliminated. This FIFO elimination has the nontrivial disadvantage of significantly increasing the latency of dequeue operations that encounter initial contention, but it can also significantly increase scalability and throughput under load. Elimination has also been implemented in priority queues, allowing delete Min operations and insert operations on very small keys to eliminate one another. Braginsky et al. two thousand sixteen, Calciu et al. two thousand fourteen.
+The principle of nonblocking elimination, as discussed in this text, is a sophisticated technique employed in concurrent data structures to reduce contention and enhance scalability. At its core, elimination leverages a temporary, auxiliary data structure, often referred to as an "elimination array" or "elimination buffer," to facilitate the resolution of conflicts between operations that would otherwise require blocking or involve expensive atomic primitives like Compare And Swap, or C A S.
+
+Consider a nonblocking stack implementation. When contention is low, threads can perform standard C A S operations on the top of the stack, which typically succeed with high probability. However, under high contention, these operations can frequently fail, leading to repeated attempts and wasted cycles. To mitigate this, Hendler et al. proposed an elimination strategy. When a thread attempting an operation, say a push, finds the top of the stack occupied and thus its C A S operation fails, it doesn't immediately retry. Instead, it can attempt to find a "matching" operation in the elimination array. For instance, a push operation could look for a pending pop operation, or vice versa.
+
+The elimination array is conceptually partitioned. A thread might first attempt to access a slot at the beginning of this array, perhaps representing a small prefix. If it finds an empty slot, it parks its operation there for a limited duration, say time $t$. During this time, it hopes that another thread performing a complementary operation will find its parked operation and perform a "hand-off," thereby resolving both operations without recourse to the main data structure. This hand-off typically involves an atomic exchange of data. If a matching operation is found, the two operations are eliminated, and the threads can complete successfully.
+
+If, after a certain period $t$, no matching operation is found, the thread might dynamically adjust its strategy. This adjustment could involve shrinking the range of slots it probes in the elimination array, or conversely, expanding it if recent attempts to find a match were successful. Repeated failures to find a matching operation within the time interval $t$ suggest that contention might be too high for the current strategy, prompting the thread to increase the size of the array prefix it searches or to employ a different back-off strategy. Conversely, if a thread successfully eliminates its operation, it might reduce the prefix size it searches in subsequent attempts. The frequency of failures and the factor by which the search range is adjusted are critical tuning parameters.
+
+This concept of elimination is not limited to stacks. It has been applied to other data structures, such as queues. In queue implementations, an enqueue operation might be paired with a dequeue operation. If a dequeue operation is "sufficiently old," meaning it was initiated some time ago and has not yet completed, it can be combined with a new enqueue operation. This temporal aspect is often managed using monotonically increasing serial numbers. When the count of operations at the head of the queue exceeds a certain threshold, an enqueue operation can be eliminated. This strategy, while potentially introducing a slight latency disadvantage for dequeues in certain scenarios, offers significant improvements in overall throughput and scalability, especially under heavy load. The "First In, First Out," or F I F O, elimination mechanism is a notable example of this. Furthermore, elimination techniques have been adapted for priority queues, where operations with very small keys might eliminate other operations. The core idea remains the same: to provide a localized, temporary conflict resolution mechanism that bypasses the need for contention on the primary data structure. The efficiency of this approach hinges on the probability of finding a matching operation within the elimination buffer before its parking timeout expires.

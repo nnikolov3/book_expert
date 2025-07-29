@@ -1,0 +1,86 @@
+98 5 Busy-Wait Synchronization with Conditions
+
+in parallel fori e 7
+repeat
+// do i's portion of the work of a phase
+b.cycle()
+until terminating condition
+
+class barrier
+atomic<int> count := 0
+const intn = |7|
+atomic<bool> sense := true
+bool local_sense[7] = {true... }
+
+barrier.arrive():
+local_sense[self] := —local_sense[self] /[ each thread toggles its own sense
+if count.FAI(RW||) = n—1 // note release ordering
+count.store(0, W||) // last thread prepares for next episode
+sense.store(local_sense[self], W||) // and toggles global sense
+barrier.depart():
+
+while sense.load(R||) # local_sense[self];  // spin
+fence(R||RW)
+
+Figure 5.7 Fuzzy variant of the sense-reversing centralized barrier.
+
+centralized barrier. In the other barriers it will almost always require logarithmic time (an
+exception being the lucky case in which the last-arriving thread just happens to own a node
+within constant distance of the root of the static tree barrier).
+
+This inability to amortize arrival time is the reason why most log-time barriers do not
+easily support fuzzy-style separation of their arrival and departure operations. In any fuzzy
+barrier it is essential that threads wait only in the departure operation, and then only for
+threads that have yet to reach the arrival operation. In the dissemination barrier, no thread
+knows that all other threads have arrived until the very end of the algorithm. In the tournament
+and static tree barriers, static synchronization orderings force some threads to wait for their
+peers before announcing that they have reached the barrier. In all of the algorithms with
+tree-based departure, threads waiting near the leaves cannot discover that the barrier has
+been achieved until threads higher in the tree have already noticed this fact.
+
+Among our log-time barriers, only the combining tree appears to offer a way to sepa-
+rate arrival and departure. Each arriving thread works its way up the tree to the top-most
+unsaturated node (the first at which it was not the last to arrive). If we call this initial traver-
+sal the arrive operation, it is easy to see that it involves no spinning. On a machine with
+broadcast-based global cache coherence, the thread that saturates the root of the tree can
+flip a sense-reversing flag, on which all threads can spin in their depart operation. On other
+machines, we can traverse the tree again in depart, but in a slightly different way: this time
+a thread proceeds upward only if it is the first to arrive at a node, rather than the last. Other
+threads spin in the top-most node in which they were the first to arrive. The thread that
+reaches the root waits, if necessary, for the last arriving thread, and then flips flags in each
+Five Busy-Wait Synchronization with Conditions
+
+The code describes a parallel loop where for each element I in set T, it repeats a block of operations. The first step is to perform the current I's portion of the work of a phase. This is followed by calling the cycle method on object B. The loop continues until a terminating condition is met.
+
+Next, a barrier class is defined. It contains an atomic integer variable named 'count', initialized to zero. A constant integer 'N' is defined as the size of the set T. An atomic boolean variable named 'sense' is initialized to true. A boolean array named 'local sense', indexed by T, is initialized with all elements as true.
+
+The barrier dot arrive method is defined. Inside, the local sense for the current thread, or 'self', is set to the logical not of its current local sense. This means each thread toggles its own sense. An if condition checks if the result of an atomic fetch and increment operation on 'count', with read write memory ordering, is equal to N decrement by one. This indicates a note release ordering. If the condition is true, 'count' is stored as zero, with a write memory ordering. This means the last thread prepares for the next episode. Then, the global 'sense' is stored with the current thread's 'local sense', with a write memory ordering. This action toggles the global sense.
+
+The barrier dot depart method is defined. Inside, a while loop continuously loads the global 'sense' with read memory ordering and checks if it is not equal to the current thread's 'local sense'. This is a spin wait until the global sense matches the thread's local sense.
+
+Figure five point seven presents a fuzzy variant of the sense reversing centralized barrier.
+
+This section discusses the centralized barrier. Unlike other barriers, this variant will almost always require logarithmic time, with the exception of a specific case: when the last arriving thread coincidentally owns a node that is within a constant distance from the root of the static tree barrier.
+
+The inability to amortize arrival time explains why most logarithmic time barriers do not readily support a fuzzy style separation of their arrival and departure operations. In a fuzzy barrier, it is crucial that threads only wait during the departure operation, and only for other threads that have not yet reached their arrival operation. For instance, in the dissemination barrier, no thread is aware that all other threads have arrived until the very end of the algorithm. Similarly, in the tournament and static tree barriers, static synchronization orderings compel some threads to wait for their peers before signaling their arrival at the barrier. Moreover, in all algorithms employing tree based departure, threads located near the leaves cannot ascertain that the barrier has been achieved until threads higher up in the tree have already detected this state.
+
+Among the logarithmic time barriers discussed, only the combining tree seems to provide a mechanism for separating arrival and departure phases. Each thread, upon arriving, traverses up the tree to the highest unsaturated node, which is defined as the first node where it was not the last thread to arrive. This initial traversal is termed the 'arrive' operation, and notably, it involves no spinning. On systems with broadcast based global cache coherence, the thread that fills the root of the tree can toggle a sense reversing flag. All other threads can then spin on this flag during their depart operation. On alternative machine architectures, the tree can be traversed again during the depart phase, but with a slight modification: in this scenario, a thread moves upward only if it is the first to arrive at a particular node, rather than the last. Other threads will spin at the topmost node where they were the first to arrive. The thread that ultimately reaches the root waits, if necessary, for the final arriving thread, and subsequently toggle flags at each node.
+In the realm of parallel computing, synchronization barriers serve as fundamental primitives that ensure all participating threads or processes reach a specific point in execution before any of them are allowed to proceed. This is critical for maintaining data consistency and correct program flow in multi-threaded environments. The mechanism described here, a fuzzy variant of the sense-reversing centralized barrier, illustrates a common pattern of busy-wait synchronization. Busy-waiting, also known as spinning, involves a thread repeatedly checking a condition until it becomes true, consuming C P U cycles in the process. While simple, it can be inefficient if wait times are long, though it avoids the overhead of context switching inherent in blocking synchronization.
+
+The code defines a `barrier` class, which encapsulates the state required for synchronization. Central to this class are three key fields: `atomic count`, `const int n`, and `atomic sense`. The `atomic<int> count` variable is a shared counter, initialized to zero, which tracks the number of threads that have arrived at the barrier. Its `atomic` nature is crucial, guaranteeing that operations on it, such as incrementing or storing, are indivisible and appear to occur instantaneously to other threads, thus preventing race conditions. The `const int n` represents the total number of threads participating in the barrier, derived from the total set of threads denoted as the cardinality of `T`. The `atomic<bool> sense` variable acts as a global flag that flips its state in each barrier phase. This `sense` variable is complemented by a thread local `bool local_sense` array, which allows each thread to maintain its own current barrier phase state. This local sense is initialized to `true` for all threads.
+
+The barrier's operation is split into two logical parts: `arrive` and `depart`. When a thread invokes `barrier.arrive()`, its `local_sense` variable is first toggled by assigning it the logical not of its current value. This ensures that for each new barrier phase, a thread's `local_sense` will alternate, allowing it to differentiate between the current and previous barrier cycles. Subsequently, the thread performs a `count.F A I(R W)` operation, which atomically fetches the current value of `count`, increments it by one, and returns the original value. The `R W` memory fence ensures that this operation has full read and write memory ordering semantics, meaning all prior memory operations by this thread are completed and visible to other threads before the `F A I` completes, and no subsequent memory operations can be reordered before it.
+
+The thread then checks if the value returned by `F A I` is equal to `n minus one`. This condition identifies the last thread to arrive at the barrier. Only the last arriving thread undertakes specific responsibilities: it `count.store(0, W)`, resetting the shared counter to zero for the next barrier cycle. The `W` memory fence here guarantees that this write is globally visible. Immediately after, it `sense.store(local_sense[self], W)`, flipping the global `sense` variable to match its own `local_sense`. This critical action effectively signals the completion of the arrival phase and initiates the departure phase for all waiting threads. The `W` fence ensures this global state change is propagated. These operations by the last thread are vital for maintaining the barrier's state across successive synchronizations.
+
+Following the arrival phase, all threads, including the last one, proceed to the `barrier.depart()` method. Here, each thread enters a busy-wait loop: `while sense.load(R || R W) is not equal to local_sense[self]`. This loop causes threads to repeatedly load the global `sense` variable until it matches their own `local_sense`. The `R || R W` memory fence for the load operation ensures that the read of `sense` observes the most recent value and that any subsequent memory accesses by the thread are not reordered before this read. This spinning mechanism efficiently utilizes processor time when the wait is expected to be short, as it avoids the overhead of kernel involvement and context switches. After exiting the loop, the `fence(R || R W)` instruction serves as an additional memory barrier, ensuring that all prior memory operations, specifically the read of the `sense` variable that released the thread, are fully completed and globally visible before the thread proceeds with any subsequent operations in its program phase. This strict ordering is crucial for the correctness of the overall parallel algorithm.
+
+This particular barrier is described as "fuzzy" because of its separation of arrival and departure operations. In traditional, strict barriers, threads typically block or spin until *all* threads have arrived and are ready to depart simultaneously. In contrast, the fuzzy approach allows threads to complete their arrival, and if they arrive early, they can potentially perform other, non-dependent work or simply wait, without strictly enforcing that all threads immediately depart together. The core idea is to amortize arrival time by allowing threads to wait *only* in the departure operation, and then only until the global sense matches their local sense, which is updated by the last arriving thread.
+
+The text further elaborates on the limitations of the centralized barrier and introduces more sophisticated, scalable designs. The primary drawback of a centralized barrier is contention on the single shared counter. As the number of threads increases, the `atomic F A I` operations on `count` become a hot spot, leading to significant performance degradation due to cache coherency traffic and serialization. This bottleneck means centralized barriers inherently scale poorly, often exhibiting performance that grows linearly or worse with the number of threads, rather than scaling gracefully.
+
+To address this, more advanced barriers, such as dissemination barriers and tournament barriers, leverage distributed synchronization schemes. Dissemination barriers, for instance, synchronize threads in a series of `logarithmic time` rounds. In each round, a thread waits for a specific peer, and once that peer arrives, the thread can then signal another. This process continues until all threads are implicitly synchronized across the rounds, significantly reducing contention on any single variable. Tournament barriers are conceptually similar, often structured as a binary tree, where threads ascend the tree in pairs, with one "winning" to proceed up the tree, until a single thread reaches the root, signaling the completion of the arrival phase. These designs achieve `logarithmic time` complexity for synchronization, making them far more scalable for a large number of threads compared to centralized approaches.
+
+The combining tree barrier is a specific variant of a tree-based barrier that offers superior performance. In its `arrive` phase, threads work their way up the tree. Each internal node in the tree has a local counter. When a thread reaches a node, it increments the node's counter. If it is the first thread to arrive at that particular node in the current phase, it might perform some local work or simply wait. If it is the last thread to arrive at that node, it proceeds upwards to the parent node. This strategy dramatically reduces contention compared to a centralized counter, as threads are distributed across multiple nodes, each with its own local synchronization point. The thread that reaches the root of this combining tree is the last one to arrive overall. Crucially, the arrival operation in a combining tree barrier involves "no spin," meaning threads do not busy-wait during the upward traversal; they only proceed when the local condition at their current node is met.
+
+The `depart` phase of the combining tree barrier operates differently. Once the root node is saturated, it broadcasts a release signal down the tree. This broadcast typically leverages broadcast based global cache coherence protocols to efficiently propagate the release signal to all threads. As the signal propagates downwards, threads, upon receiving it, are released from the barrier. Similar to the sense-reversing centralized barrier, this release involves flipping flags, but in a distributed manner down the tree. For instance, a thread might flip a flag at its current node, which then allows its children to proceed, and so on. The logic around whether a thread is the "first" or "last" to arrive at a node during the upward `arrive` phase, versus its role in flipping flags during the downward `depart` phase, is fundamental to its correctness and efficiency. This design ensures that all threads are eventually released while minimizing the synchronization overhead and contention on shared resources, leading to significantly better scalability for large-scale parallel systems.

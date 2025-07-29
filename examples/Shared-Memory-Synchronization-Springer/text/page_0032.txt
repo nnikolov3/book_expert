@@ -1,0 +1,65 @@
+2.3 Atomic Primitives 33
+
+2.3.2 The Value of FAA
+
+While both CAS and LL/SC can be used to implement fetch_and_®, the emulation may
+not be as efficient as we might hope. Suppose, for example, that n threads, running on
+n cores, attempt to increment a counter more or less concurrently, using the speculative
+implementation defined above. In the worst case, all n threads will compute a new value,
+all will execute CAS or SC, and exactly one will succeed. If the remaining n — 1 try again
+concurrently, n — 2 may fail and try again, then n — 3, and so on. In the end, the hardware
+may be forced to serialize O(n?) atomic accesses to the counter in order to complete n
+updates.
+
+Consider, on the other hand, what happens with FAA or FAI. The hardware still serializes
+atomic accesses to the counter, but each access succeeds: no speculation is involved, and all
+n updates can complete in O(n) time, worst case. For data structures with high contention,
+the difference in performance can be quite dramatic, and clearly justifies the continued
+inclusion of FAA in the x86 instruction set. While similar arguments could in principle be
+made for other functions ®, the specific case of add has proven most useful in practice.
+A particularly compelling application to queues can be found in the work of Morrison and
+Afek (2013).
+
+2.3.3 Other Synchronization Hardware
+
+Several historical machines have provided special locking instructions. The QOLB (queue on
+lock bit) instruction, originally designed for the Wisconsin Multicube (Goodman et al. 1989),
+and later adopted for the IEEE Scalable Coherent Interface (SCI) standard (Aboulenein et al.
+1994), leverages a coherence protocol that maintains, in hardware, a linked list of copies
+of a given cache line. When multiple processors attempt to lock the same line at the same
+time, the hardware arranges to grant the requests in linked-list order. The Kendall Square
+KSR-1 machine (KSR 1992) provided a similar mechanism based not on an explicit linked
+list, but on the implicit ordering of nodes in a ring-based network topology. As we shall see
+in Chapter 4, similar strategies can be emulated in software. The principal argument for the
+hardware approach is the ability to avoid a costly cache miss when passing the lock (and
+perhaps its associated data) from one processor to the next (Woest and Goodman 1991).
+
+The x86 allows many memory-update instructions (including increment and add) to
+be prefixed with a special LOCK code, rendering them atomic (Intel 2023, Vol. 2, Sec. 3.3;
+Vol. 3, Sec. 9.1). The benefit to the programmer 1s limited, however, by the fact that most
+update instructions do not return the previous value from the modified location. Two threads
+executing concurrent FAI instructions can use the resulting return values to tell which update
+happened first. Two threads executing concurrent LOCKed increments can be sure that both
+updates will happen, but will be unable to determine their order.
+Two point three Atomic Primitives.
+
+Two point three point two The Value of F A A.
+
+While both C A S and L L / S C can be used to implement fetch and Phi, the emulation may not be as efficient as we might hope. Suppose, for example, that n threads, running on n cores, attempt to increment a counter more or less concurrently, using the speculative implementation defined above. In the worst case, all n threads will compute a new value, all will execute C A S or S C, and exactly one will succeed. If the remaining n decrement by one try again concurrently, n decrement by two may fail and try again, then n decrement by three, and so on. In the end, the hardware may be forced to serialize Big O of n squared atomic accesses to the counter in order to complete n updates.
+
+Consider, on the other hand, what happens with F A A or F A I. The hardware still serializes atomic accesses to the counter, but each access succeeds: no speculation is involved, and all n updates can complete in Big O of n time, worst case. For data structures with high contention, the difference in performance can be quite dramatic, and clearly justifies the continued inclusion of F A A in the x eighty six instruction set. While similar arguments could in principle be made for other functions Phi, the specific case of add has proven most useful in practice. A particularly compelling application to queues can be found in the work of Morrison and Afek two thousand thirteen.
+
+Two point three point three Other Synchronization Hardware.
+
+Several historical machines have provided special locking instructions. The Q O L B, queue on lock bit, instruction, originally designed for the Wisconsin Multicube, Goodman et al. one nine eight nine, and later adopted for the I triple E Scalable Coherent Interface, S C I, standard, Aboulenein et al. one nine nine four, leverages a coherence protocol that maintains, in hardware, a linked list of copies of a given cache line. When multiple processors attempt to lock the same line at the same time, the hardware arranges to grant the requests in linked list order. The Kendall Square K S R one machine, K S R one nine nine two, provided a similar mechanism based not on an explicit linked list, but on the implicit ordering of nodes in a ring based network topology. As we shall see in Chapter four, similar strategies can be emulated in software. The principal argument for the hardware approach is the ability to avoid a costly cache miss when passing the lock, and perhaps its associated data, from one processor to the next, Woest and Goodman one nine nine one.
+
+The x eighty six allows many memory update instructions, including increment and add, to be prefixed with a special L O C K code, rendering them atomic, Intel two zero two three, Volume two, Section three point three; Volume three, Section nine point one. The benefit to the programmer is limited, however, by the fact that most update instructions do not return the previous value from the modified location. Two threads executing concurrent F A I instructions can use the resulting return values to tell which update happened first. Two threads executing concurrent L O C K E D increments can be sure that both updates will happen, but will be unable to determine their order.
+The discussion centers on the efficacy and implementation of atomic primitives in concurrent computing environments, particularly contrasting software based emulation with dedicated hardware support for synchronization.
+
+Section two point three point two, titled "The Value of F A A," delves into the performance implications of emulating a Fetch And Add, or F A A, operation using other fundamental atomic primitives such as Compare And Swap, or C A S, and Load Linked/Store Conditional, or L L/S C. While these primitives are foundational for building lock free data structures and synchronization constructs, their application to a simple increment operation, like F A A, can exhibit significant performance bottlenecks under contention. Specifically, if *n* threads concurrently attempt to increment a shared counter using C A S or L L/S C, the emulation often requires a speculative approach. Each thread might first read the current value, compute a new value, and then attempt to write it back using C A S or S C. If another thread modifies the value in the interim, the C A S or S C operation will fail, necessitating a retry. In a worst case scenario, particularly under high contention where all *n* threads target the same counter, only one thread’s C A S or S C operation will succeed per attempt. The remaining *n* less one threads must then retry, leading to cascading failures. This process effectively serializes the updates. In such a high contention scenario, completing *n* updates can force the hardware to perform a number of atomic accesses that scales quadratically with *n*, represented as big O of *n* squared. This quadratic complexity highlights a severe scalability limitation, as performance degrades rapidly with an increasing number of contending threads.
+
+In stark contrast, a true hardware supported Fetch And Add, or F A A, instruction fundamentally alters this performance profile. With a hardware F A A, each atomic access is guaranteed to succeed. There is no speculative computation, no retry loop, and no cascading failures due to contention. Each of the *n* updates can complete in a time complexity that scales linearly with *n*, or big O of *n*, even in the worst case. This linear scalability is a profound advantage for highly contended data structures. The dramatic difference in performance between an emulated F A A and a native hardware F A A serves as a compelling justification for the inclusion of such dedicated atomic operations in instruction set architectures, such as the X eight six I S A. The practical utility of hardware accelerated F A A extends beyond simple counters, proving valuable for various concurrent data structures, including queue management, as demonstrated by research in the field.
+
+Section two point three point three, "Other Synchronization Hardware," expands on the historical and contemporary approaches to hardware assisted synchronization. Historically, various machine architectures have incorporated special locking instructions to facilitate efficient concurrency. One notable example is the Queue On Lock Bit, or Q O L B, instruction, which originated from the Wisconsin Multicube project. This mechanism provided a hardware managed queue for threads attempting to acquire a lock, ensuring fair access and reducing software overhead. Similarly, the I triple E Scalable Coherent Interface, or S C I, standard adopted a coherence protocol that maintains, in hardware, a linked list of copies for a given cache line. This coherence mechanism is crucial for distributed shared memory systems, enabling efficient sharing of data across multiple processors. When multiple processors contend for a lock on the same cache line, the hardware-level arrangement prioritizes requests in a linked list order, which optimizes lock passing. The Kendall Square Research one, or K S R one, machine also offered a similar hardware mechanism, specifically not based on an explicit software linked list, but rather leveraging the implicit ordering properties of nodes within a ring based network topology for lock management.
+
+A primary motivation for these hardware based approaches to synchronization, particularly for lock passing, is the ability to circumvent costly cache misses. When a lock is passed from one processor to another, the cache line containing the lock must often migrate between processor caches. Without efficient hardware support, this migration can incur significant latency due to cache coherence protocol overhead and memory access times. Hardware assistance can optimize this handoff, minimizing performance penalties. The X eight six architecture, for instance, incorporates a special L O C K prefix that can be applied to certain memory update instructions, such as increment by one and add. This prefix ensures that the entire memory operation becomes atomic, meaning it executes indivisibly with respect to other processor or I O operations. This atomicity guarantees that the update to a shared memory location is performed without interruption, preventing race conditions. However, the direct benefit to the programmer, while ensuring correctness, can be limited by the information returned by these atomic operations. For example, if an atomic increment operation only returns the modified value without indicating the pre-modification value, or without a precise timestamp, two threads concurrently executing L O C K prefixed increments on the same location can be certain that both updates will eventually complete, but they may be unable to definitively determine the precise sequential order in which their individual updates were applied relative to each other. This distinction between atomicity and strict temporal ordering is a crucial consideration in the design of concurrent algorithms.

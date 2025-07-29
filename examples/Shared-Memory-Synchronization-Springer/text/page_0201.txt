@@ -1,0 +1,58 @@
+206 9 Transactional Memory
+
+9.2.3 Hybrid TM
+
+While faster than the all-software TM implementations of Sec.9.1, HTM systems seem
+likely, for the foreseeable future, to have limitations that will sometimes lead them to abort
+even in the absence of conflicts. It seems reasonable to hope that a hardware/software hybrid
+might combine (most of) the speed of the former with the generality of the latter.
+
+Several styles of hybrid have been proposed. In some, hardware serves only to accelerate
+a TM system implemented primarily in software. In others, hardware implements complete
+support for some subset of transactions. In this latter case, the hardware and software may be
+designed together, or the software may be designed to accommodate a generic “best effort”
+HTM.
+
+“Best effort” hybrids have the appeal of compatibility with near-term commercial HTM.
+If transactions abort due to conflicts, the only alternative to rewriting the application would
+seem to be fallback to a global lock. If transactions abort due to hardware limitations,
+however, fallback to software transactions would seem to be attractive.
+
+Hardware-Accelerated STM
+
+Experimental results with a variety of STM systems suggest a baseline overhead (single-
+thread slowdown) of 3—10x for atomic operations. Several factors contribute to this over-
+head, including conflict detection, the buffering of speculative writes (undo or redo logging),
+validation to ensure consistency, and conflict resolution (arbitration among conflicting trans-
+actions). All of these are potentially amenable to hardware acceleration.
+
+Saha et al. (2006b) propose to simplify conflict detection by providing hardware mark
+bits on cache lines. Set and queried by software, these bits are cleared when a cache line 1s
+invalidated—e.g., by remote access. To avoid the need to poll the bits, Spear et al. (2007) pro-
+pose a general-purpose alert-on-update mechanism that triggers a software handler when a
+marked line 1s accessed remotely. Minh et al. (2007) propose an alternative conflict detection
+mechanism based on hardware read and write signatures (Bloom filters).
+
+Shriraman et al. (2007) propose to combine in-cache hardware buffering of speculative
+cache lines with software conflict detection and resolution; alert-on-update provides imme-
+diate notification of conflicts, eliminating the need for validation. In subsequent work, the
+authors add signatures and conflict summary tables; these support eager conflict detection
+in hardware, leaving software responsible only for conflict resolution, which may be lazy
+if desired (Shriraman et al. 2010). As suggested by Hill et al. (2007), the “decoupling” of
+mechanisms for access tracking, buffering, notification, etc. serves to increase their gen-
+erality: in various other combinations they can be used for such non-TM applications as
+debugging, fine-grain protection, memory management, and active messaging.
+Two hundred six. Nine Transactional Memory. Nine point two point three Hybrid T M. While faster than the all software T M implementations of Sec. nine point one, H T M systems seem likely, for the foreseeable future, to have limitations that will sometimes lead them to abort even in the absence of conflicts. It seems reasonable to hope that a hardware software hybrid might combine most of the speed of the former with the generality of the latter. Several styles of hybrid have been proposed. In some, hardware serves only to accelerate a T M system implemented primarily in software. In others, hardware implements complete support for some subset of transactions. In this latter case, the hardware and software may be designed together, or the software may be designed to accommodate a generic best effort H T M. Best effort hybrids have the appeal of compatibility with near term commercial H T M. If transactions abort due to conflicts, the only alternative to rewriting the application would seem to be fallback to a global lock. If transactions abort due to hardware limitations, however, fallback to software transactions would seem to be attractive. Hardware Accelerated S T M. Experimental results with a variety of S T M systems suggest a baseline overhead single thread slowdown of three to ten times for atomic operations. Several factors contribute to this overhead, including conflict detection, the buffering of speculative writes undo or redo logging, validation to ensure consistency, and conflict resolution arbitration among conflicting transactions. All of these are potentially amenable to hardware acceleration. Saha et al. two thousand six b propose to simplify conflict detection by providing hardware mark bits on cache lines. Set and queried by software, these bits are cleared when a cache line is invalidated, e g., by remote access. To avoid the need to poll the bits, Spear et al. two thousand seven propose a general purpose alert on update mechanism that triggers a software handler when a marked line is accessed remotely. Minh et al. two thousand seven propose an alternative conflict detection mechanism based on hardware read and write signatures Bloom filters. Shriraman et al. two thousand seven propose to combine in cache hardware buffering of speculative cache lines with software conflict detection and resolution. Alert on update provides immediate notification of conflicts, eliminating the need for validation. In subsequent work, the authors add signatures and conflict summary tables; these support eager conflict detection in hardware, leaving software responsible only for conflict resolution, which may be lazy if desired. Shriraman et al. two thousand ten As suggested by Hill et al. two thousand seven, the decoupling of mechanisms for access tracking, buffering, notification, etc. serves to increase their generality. In various other combinations they can be used for such non T M applications as debugging, fine grain protection, memory management, and active messaging.
+The document discusses hybrid transactional memory, or H T M, systems, which aim to combine the performance advantages of hardware transactional memory with the flexibility and compatibility of software transactional memory. Section nine point two point three, "Hybrid T M," explores the design space of these systems. While pure hardware transactional memory implementations, as discussed in Section nine point one, can achieve significant speedups, they often face limitations and may require applications to be re-engineered to fully leverage their capabilities. Hybrid approaches seek to mitigate these limitations by integrating hardware acceleration for specific, performance-critical aspects of transaction management, while relying on software for broader compatibility and handling of complex scenarios.
+
+Several styles of hybrid transactional memory have been proposed. Some systems may implement the core transaction logic primarily in software, using hardware only to accelerate certain operations, such as speculative writes or conflict detection. In other designs, the hardware might manage a significant portion of the transaction's state and execution, with software providing support for a subset of transactional operations or handling situations where hardware mechanisms fall short. The objective is to achieve a "best effort" transactional system that offers broad compatibility with existing software, making it easier to adopt without extensive code modifications. This approach is particularly appealing for commercial systems where minimizing porting costs is a key consideration. When transactions encounter conflicts, which are detected either by hardware or software, a common strategy in hybrid systems is to fall back to more general synchronization primitives, such as global locks, when hardware capabilities are exceeded or when conflicts are too frequent to be efficiently managed by the hybrid mechanism. This fallback strategy ensures atomicity even under heavy contention, albeit potentially at the cost of reduced concurrency compared to a fully hardware-managed solution.
+
+The subsequent section, "Hardware Accelerated S T M," delves into experimental results that highlight the performance benefits of integrating hardware support into software transactional memory. These results often indicate a significant reduction in overhead for atomic operations, with improvements ranging from three to ten times faster compared to purely software-based solutions. Several key factors contribute to this performance enhancement. These include the efficient buffering of speculative writes, which are values that threads tentatively write within a transaction, and the precise conflict detection mechanisms. Conflict detection is crucial for ensuring transactional integrity, where transactions must appear to execute atomically and isolated from each other.
+
+The mechanisms for ensuring consistency and resolving conflicts, such as arbitration logic for determining which transaction proceeds in case of a conflict, are amenable to hardware acceleration. For instance, Saha et al. (two thousand six b) proposed a method utilizing specific bits within cache lines to track transactional access. When a cache line is accessed, these bits are queried by software. If a line is invalidated, for example, by a remote access, this indicates a potential conflict. To streamline this process, they introduced an "alert on update" mechanism. This mechanism triggers a software handler whenever a cache line that is part of an ongoing transaction is modified, effectively providing an immediate notification of potential conflicts without requiring the software to constantly poll the cache lines. This hardware-assisted notification significantly reduces the burden on the software, improving performance.
+
+Minh et al. (two thousand seven) proposed an alternative approach that relies on hardware to manage read and write signatures, possibly using Bloom filters, to detect conflicts more efficiently. Bloom filters are probabilistic data structures that offer a space-efficient way to test set membership, allowing for rapid, albeit potentially approximate, detection of elements.
+
+More recent work, such as that by Shriraman et al. (two thousand seven), focuses on combining in-cache hardware mechanisms for conflict detection and resolution. Their approach, termed "alert-on-update," aims to provide immediate notification of conflicts, thereby simplifying the validation process and eliminating the need for periodic validation steps. This method also utilizes conflict summary tables to efficiently track conflicts. In this architecture, the hardware is primarily responsible for detecting conflicts, while the software handles the resolution, which may involve aborting and restarting transactions. This division of labor allows for a more streamlined and potentially faster conflict management process.
+
+Hill et al. (two thousand ten) further explored this concept of decoupling by suggesting mechanisms for access tracking, buffering, and notification that can be leveraged to increase the generality of transactional memory. This decoupling allows these fundamental transactional components to be utilized in non-transactional contexts as well, such as in debugging, fine-grained protection mechanisms, memory management, and active messaging systems, thereby broadening the applicability of the underlying transactional primitives.

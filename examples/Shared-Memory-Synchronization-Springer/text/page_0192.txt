@@ -1,0 +1,69 @@
+9.2 HardwareTM 197
+
+9.1.5 Contention Management
+
+In a system with lazy conflict resolution, contention management is more or less straight-
+forward: since one transaction is ready to commit, and cannot encounter further problems at
+this point, it should generally win out over any partially-completed transactions with which
+it conflicts (Spear et al. 2009a). In particular, letting it do so ensures livelock freedom:
+whenever a conflict 1s resolved, some transaction is guaranteed to commit, and the system
+as a whole makes progress. Starvation may still be a problem, especially for long-running
+transactions that read a large number of locations. Spear et al. report good results with a
+simple heuristic: any transaction that aborts repeatedly will eventually acquire a global lock
+that blocks other transactions from committing and makes completion of the previously
+starving transaction inevitable.
+
+It 1s much less clear what strategy to use for systems with eager conflict resolution.
+Possibilities include favoring the transaction that started earlier, or has read or written a
+larger number of shared locations, or has been forced to abort more often, or has already
+killed off a larger number of competitors. In general, these strategies attempt to recognize
+and preserve the investment that has already been made in a transaction. There was a flurry
+of papers on the subject back around 2005 (Guerraoui et al. 2005a; Guerraoui et al. 2005b;
+Scherer and Scott 2005a), and follow-on projects continued for some time. No one strategy
+appears to work best in all situations.
+
+9.2 Hardware TM
+
+While (as we have seen) TM can be implemented entirely in software, hardware implemen-
+tations have several compelling advantages. They are faster, of course, at least for equivalent
+functionality. Most can safely (and speculatively) call code in unmodified (uninstrumented)
+binary libraries. Most guarantee that transactions will serialize not only with other transac-
+tions but also with individual (non-transactional) loads, stores, and other atomic instruc-
+tions. (This property is sometimes known as strong atomicity or strong isolation (Blundell
+et al. 2005).) Finally, most provide automatic, immediate detection of inconsistency, elimi-
+nating the need for explicit validation.
+
+Most of the design decisions discussed in Sec. 9.1, in the context of STM, are relevant
+to HTM as well, though hardware may impose additional restrictions. Contention manage-
+ment, for example, will typically be quite simple, or else deferred to software handlers. More
+significantly, buffer space for speculative updates is unlikely to exceed the size of on-chip
+caches: transactions that exceed the limit may abort even in the absence of conflicts. Trans-
+actions may also abort for any of several “spurious” reasons, including context switches and
+external interrupts.
+
+In any new hardware technology, there is a natural incentive for vendors to leverage
+existing components as much as possible, and to limit the scope of changes. Several HTM
+9.2 Hardware T M
+
+9.1.5 Contention Management
+
+In a system with lazy conflict resolution, contention management is more or less straightforward: since one transaction is ready to commit, and cannot encounter further problems at this point, it should generally win out over any partially completed transactions with which it conflicts. Spear et al. two thousand nine a. In particular, letting it do so ensures livelock freedom: whenever a conflict is resolved, some transaction is guaranteed to commit, and the system as a whole makes progress. Starvation may still be a problem, especially for long running transactions that read a large number of locations. Spear et al. report good results with a simple heuristic: any transaction that aborts repeatedly will eventually acquire a global lock that blocks other transactions from committing and makes completion of the previously starving transaction inevitable.
+
+It is much less clear what strategy to use for systems with eager conflict resolution. Possibilities include favoring the transaction that started earlier, or has read or written a larger number of shared locations, or has been forced to abort more often, or has already killed off a larger number of competitors. In general, these strategies attempt to recognize and preserve the investment that has already been made in a transaction. There was a flurry of papers on the subject back around two thousand five Guerraoui et al. two thousand five a; Guerraoui et al. two thousand five b; Scherer and Scott two thousand five a, and follow on projects continued for some time. No one strategy appears to work best in all situations.
+
+9.2 Hardware T M
+
+While as we have seen T M can be implemented entirely in software, hardware implementations have several compelling advantages. They are faster, of course, at least for equivalent functionality. Most can safely and speculatively call code in unmodified uninstrumented binary libraries. Most guarantee that transactions will serialize no: not only with other transactions but also with individual non transactional loads, stores, and other atomic instructions. This property is sometimes known as strong atomicity or strong isolation Blundell et al. two thousand five. Finally, most provide automatic immediate detection of inconsistency, eliminating the need for explicit validation.
+
+Most of the design decisions discussed in Section 9.1, in the context of S T M, are relevant to H T M as well, though hardware may impose additional restrictions. Contention management, for example, will typically be quite simple, or else deferred to software handlers. More significantly, buffer space for speculative updates is unlikely to exceed the size of on chip caches: transactions that exceed the limit may abort even in the absence of conflicts. Transactions may also abort for any of several spurious reasons, including context switches and external interrupts.
+
+In any new hardware technology, there is a natural incentive for vendors to leverage existing components as much as possible, and to limit the scope of changes. Several H T M
+The document discusses aspects of Hardware Transactional Memory, specifically focusing on contention management within such systems. Contention arises when multiple concurrent transactions attempt to access or modify the same shared resources, leading to potential conflicts. In a system employing "lazy conflict resolution," contention management is the strategy employed when a transaction is ready to commit but cannot do so without encountering further problems due to ongoing concurrent operations.
+
+When a transaction conflicts with another that has already committed, it generally leads to the abort of the latter. However, the document highlights that allowing a partially completed transaction to commit over a fully completed one ensures livelock freedom. Despite this, starvation remains a potential issue, particularly for long-running transactions. A simple heuristic for managing contention is to abort any transaction that repeatedly encounters conflicts. This approach aims to prevent transactions from being blocked indefinitely from committing, thereby potentially reducing the likelihood of a transaction starving. Research, such as that by Spear et al., suggests this heuristic can yield good results. However, a critical challenge arises when transactions must acquire a global lock to ensure atomic completion.
+
+The complexity of contention management is further illustrated by the question of which strategy to adopt when transactions interact with shared locations or have been forced to abort multiple times due to competitors. Strategies that favor transactions based on factors like their start time, the number of locations they access, or the number of times they have aborted are considered. The rationale behind these approaches is to recognize and potentially reward transactions that have invested significant effort. This area saw a surge of research around two thousand five, with publications like Guerraoui et al. presenting findings, and subsequent projects exploring these concepts further. However, it is noted that no single strategy has proven universally optimal across all scenarios.
+
+Hardware Transactional Memory (HTM) can be implemented entirely in software or through hardware mechanisms. Hardware implementations often offer performance advantages, being faster and capable of safely executing code speculatively, even within uninstrumented binary libraries. A key characteristic of many transactional systems is their ability to serialize transactions, not only with other transactional operations but also with individual, non-transactional loads and stores. This property is sometimes referred to as "strong atomicity" or "strong isolation." Such systems typically provide automatic and immediate detection of inconsistencies, thereby eliminating the need for explicit validation.
+
+The design decisions discussed in the context of Software Transactional Memory (STM) are relevant to HTM as well. Hardware implementations may introduce additional restrictions. For instance, contention management strategies in HTM might be simplified or deferred to software handlers. Moreover, buffer space for speculative updates in caches is a significant factor. Transactions that exceed the allocated buffer size may abort, even in the absence of direct conflicts, potentially due to reasons like context switches or external interrupts. In the realm of new hardware technology, there is a strong incentive for vendors to leverage existing components, thereby limiting the scope of changes. This approach aims to streamline development and adoption.

@@ -1,0 +1,84 @@
+76 4 Practical Spin Locks
+
+gnode initial_thread_gnodes[T]
+gnode* thread_gnode_ptrs[7] := {i € T: &initial_thread_gnodes]i] }
+type gnode = record
+
+atomic<bool> succ_must_wait
+
+class lock
+atomic<gnode™> tail := new gnode(null, false)
+gnode* head /[ accessed only by lock owner
+~lock(): /[ destructor
+delete tall
+
+lock.acquire():
+gnode* p := thread_gnode_ptrs[self]
+p—succ_must_wait.store(true, ||)
+gnode* pred := tail.swap(p, W||)
+while pred—succ_must_wait.load(
+fence(R||RW)
+head =p
+thread_gnode_ptrs[self] := pred
+
+); // spin
+
+lock.release():
+head—succ_must_wait.store(false, RW||)
+
+Figure 4.14 A CLH variant with standard interface.
+
+priority, rather than first-come-first-served (Markatos (1991) presented a similar technique
+for MCS locks). By marking nodes as abandoned, and skipping over them at release time,
+one can accommodate timeout (we will consider this topic further in Sec.7.5.2, together
+with the possibility—suggested by Craig as future work—of skipping over threads that are
+currently preempted). Finally, Craig sketched a technique to accommodate nested critical
+sections without requiring a thread to allocate multiple gnodes: arrange for the thread to
+acquire its predecessor’s gqnode when the lock is acquired rather than when it is released,
+and maintain a separate thread-local stack of pointers to the gnodes that must be modified
+in order to release the locks.
+
+Modifications for a Standard Interface
+Craig’s suggestion for nested critical sections requires that locks be released in the reverse
+of the order in which they were acquired; it does not generalize easily to idioms like hand-
+over-hand locking (Sec. 3.1.2). If we adopt the idea of a head pointer field from the K42
+MCS lock, however, we can devise a (previously unpublished) CLH variant that serves as a
+“plug-in” replacement for traditional locks (Figure 4.14).
+
+Our code assumes a global array, thread_qgnode_ptrs, indexed by thread id. In prac-
+tice this could be replaced by any form of “thread-local” storage—e.g., using the POSIX
+pthread_getspecific mechanism. Operation is very similar to that of the original CLH lock:
+The following code defines a queue node structure and a lock mechanism.
+First, a `qnode initial thread qnodes index seven` array is declared.
+Next, `qnode pointer thread qnode ptrs index seven` is initialized such that for each `i` in the set `T`, it points to the address of `initial thread qnodes index i`.
+The `qnode` type is defined as a record containing an `atomic boolean succ must wait`.
+The `lock` class is defined. It includes an `atomic qnode pointer tail`, which is initialized as a new `qnode` with a null pointer and `false`. It also has a `qnode pointer head` which is accessed only by the lock owner. The destructor for the lock deletes the `tail` node.
+The `lock acquire` function performs the following steps: a `qnode pointer p` is assigned the `thread qnode ptrs` for the current thread. The `succ must wait` field of `p` is atomically stored as `true` using `or or` memory order. A `qnode pointer pred` is assigned the result of atomically swapping `p` with `tail`, using `W or or` memory order. While the `succ must wait` field of `pred`, loaded using `or or` memory order, is `true`, the function spins. A memory fence is applied with `R or or R W` memory ordering. The `head` pointer is assigned `p`. Finally, the `thread qnode ptrs` for the current thread is assigned `pred`.
+The `lock release` function performs the following step: the `succ must wait` field of `head` is atomically stored as `false` using `R or or R W` memory order.
+
+Figure four point one four shows a C L H variant with a standard interface.
+
+Priority, rather than first come first served as presented by Markatos in one thousand nine hundred ninety one, offers a similar technique for M C S locks. By marking nodes as abandoned, and skipping over them at release time, one can accommodate timeout. We will consider this topic further in Section seven point five point two, together with the possibility, suggested by Craig as future work, of skipping over threads that are currently preempted. Finally, Craig sketched a technique to accommodate nested critical sections without requiring a thread to allocate multiple `qnode`s. This technique arranges for the thread to acquire its predecessor's `qnode` when the lock is acquired rather than when it is released, and to maintain a separate thread local stack of pointers to the `qnode`s that must be modified in order to release the locks.
+
+Modifications for a Standard Interface.
+Craig's suggestion for nested critical sections requires that locks be released in the reverse order in which they were acquired. It does not generalize easily to idioms like hand over hand locking, as discussed in Section three point one point two. If we adopt the idea of a head pointer field from the K forty two M C S lock, however, we can devise a previously unpublished C L H variant that serves as a plug in replacement for traditional locks, as shown in Figure four point one four.
+Our code assumes a global array, `thread qnode ptrs`, indexed by thread I D. In practice, this could be replaced by any form of thread local storage, for example, using the P O S I X `pthread getspecific` mechanism. The operation is very similar to that of the original C L H lock.
+The presented C L H lock variant exemplifies a sophisticated queue based spin lock designed for high performance and scalability in multi processor environments. At its core, this lock mechanism avoids the high cache contention typical of simpler test and set spin locks by having each waiting thread spin on a *local* memory location associated with its predecessor in the logical queue, rather than a globally shared lock variable.
+
+The fundamental data structure is the `qnode`, defined as a record containing an `atomic` boolean flag named `succ_must_wait`. This `atomic` type is crucial, guaranteeing that operations on this flag, such as `store` and `load`, are executed atomically, thus preventing data races and ensuring correct visibility across different processor cores. The system maintains an array of `qnode` objects, `initial_thread_qnodes`, potentially pre-allocating a pool for a fixed number of threads. Each thread is associated with a specific `qnode` through the `thread_qnode_ptrs` array, where `thread_qnode_ptrs index self` points to the `qnode` currently used by the executing thread.
+
+The `lock.acquire` method orchestrates the queuing and waiting process. A thread wishing to acquire the lock first identifies its designated `qnode`, labeled `p`, by referencing `thread_qnode_ptrs index self`. It then atomically sets `p`'s `succ_must_wait` flag to `true` using a `store` operation. This action signifies that the successor to this `qnode` in the queue must wait for this `qnode` to complete its critical section. The unspecified memory ordering indicated by `or or` after `true` typically implies a `release` semantic, ensuring that all memory writes performed by the current thread before this point become visible to other threads that later acquire the lock.
+
+The next critical step is `qnode star pred is equal to tail dot swap p, W or or`. This atomic `swap` operation serves two purposes: it atomically places the current thread's `qnode` (`p`) at the tail of the waiting queue, and it simultaneously retrieves the `qnode` that was previously at the tail. This returned `qnode` is assigned to `pred`, representing the immediate predecessor of the current thread in the queue. The `W or or` suggests an acquire release memory ordering, guaranteeing that `p` is correctly enqueued and `pred` is reliably obtained.
+
+Following its enqueueing, the thread enters a spin loop: `while pred arrow succ must wait dot load or or`. Here, the current thread continuously polls its `pred`ecessor's `succ_must_wait` flag. It remains in this loop until the predecessor, upon releasing the lock, sets its `succ_must_wait` flag to `false`. This design minimizes cache invalidations by localizing the spinning activity to a `qnode` that is actively being managed by the predecessor, thereby reducing global bus traffic. The `or or` with `load` signifies an `acquire` semantic, ensuring that memory writes performed by the predecessor (including setting `succ_must_wait` to `false`) become visible to the current thread *before* it proceeds.
+
+A `fence R or or R W` instruction then acts as a full memory barrier, ensuring that all preceding memory operations are globally visible and ordered correctly before the critical section is entered. This is crucial for maintaining memory consistency across the system. Once the spin concludes and the fence is passed, the current thread's `qnode` (`p`) becomes the new `head` of the lock, indicating it is now the lock owner. A highly optimized detail follows: `thread_qnode_ptrs index self is equal to pred`. This line ensures that upon successful acquisition, the current thread reclaims its *predecessor's* `qnode` for its *next* lock acquisition. This mechanism avoids repeated dynamic memory allocations and deallocations, significantly reducing overhead and improving cache locality for subsequent lock operations.
+
+The `lock.release` method is simpler. The current lock owner, represented by `head`, atomically sets its `succ_must_wait` flag to `false` using `head arrow succ must wait dot store false, R W or or`. This action signals its immediate successor, which has been spinning on this very flag, that it can now proceed to acquire the lock. The `R W or or` here implies a `release` semantic, guaranteeing that all memory writes performed within the critical section by the current thread are made visible to the successor before the successor enters its own critical section. The destructor `tilde lock` simply deallocates the initial sentinel `qnode` created when the lock object was instantiated.
+
+The accompanying text elaborates on the broader context and advanced considerations. The C L H lock inherently provides a first come first served fairness property, as noted in the work by Markatos in nineteen ninety one. This ordered acquisition contrasts with non queue based locks, which can suffer from starvation. A significant practical challenge addressed is handling "abandoned nodes," where a thread might crash or be preempted indefinitely while holding a `qnode`. The text suggests mechanisms like marking such nodes as abandoned or implementing timeouts to allow other threads to bypass them, preventing deadlock.
+
+Furthermore, Craig's research pointed towards accommodating nested critical sections without requiring threads to allocate multiple `qnode`s for the same lock. While the presented code snippet shows a single `qnode` per thread for a given lock instance, the `thread_qnode_ptrs index self is equal to pred` mechanism inherently supports `qnode` reuse by allowing a thread to "inherit" its predecessor's `qnode` for its next acquisition. For deeply nested, recursive lock acquisitions, a thread might internally manage a stack of `qnode` pointers, each corresponding to a nested lock acquisition, rather than always reusing the single predecessor's `qnode`.
+
+The modification for a "standard interface" highlights the goal of integrating such high performance locks into conventional programming models. The use of a global array `thread_qnode_ptrs` indexed by a thread identifier is a simplified representation of how `qnode`s are managed. In production systems, thread local storage mechanisms, such as P O S I X `pthread_getspecific`, would be employed to associate each thread with its unique `qnode` or a stack of `qnode`s, ensuring portability and proper isolation of thread specific data. This adaptation allows the C L H lock to serve as a direct "plug in" replacement for traditional, often less performant, mutex implementations, providing its inherent scalability and reduced cache contention benefits to a wider range of concurrent applications.

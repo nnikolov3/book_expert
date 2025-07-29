@@ -1,0 +1,68 @@
+7.3 Monitors 127
+
+Hoare’s original paper contains a concise definition of monitors in terms of semaphores.
+It also notes that a monitor can be used, trivially, to implement a general semaphore, thus
+proving that the two notations are equally powerful. The principal advantage of the monitor
+1s data abstraction: protected variables (fields) cannot be accessed outside the monitor that
+contains them, and mutual exclusion on calls to monitor methods is guaranteed implicitly,
+without the need for explicit acquire (P) and release (V) operations.
+
+To argue that a concurrent data abstraction has been implemented correctly with a mon-
+itor, one typically specifies a monitor invariant—a logical property of the protected data
+that must be true whenever the monitor is unoccupied, and whenever the thread inside is
+changed. Clearly a monitor invariant must always be true initially. It must similarly be true
+on monitor exit, at every call to wait, and (in a Hoare monitor) on every call to signal. In
+our bounded buffer example, an appropriate invariant might be that the full_slots variable
+correctly indicates the number of items in the buffer, and that these items reside in slots
+next_full through next_empty—1 (mod SIZE) of buf. (We also know that threads will be
+waiting on the full_slot condition variable only if full_slots is 0, and on the empty_slot
+condition variable only if full_slots is SIZE, but since the thread queues are generally hidden,
+this information may not be included in the invariant.)
+
+7.3.2 Signal Semantics
+
+In a Hoare monitor, the thread performing a signal operation (the “signaler”) steps out
+of the monitor and into the urgent queue, so the thread performing a wait operation (the
+“signalee”) can execute immediately. The argument for this behavior is that it allows the
+signalee to assume that the condition discovered by the signaler still holds. If the signaler
+were permitted to continue, it might (intentionally or inadvertently) change the state of the
+monitor before leaving in such a way that the condition no longer held. If any other thread
+could enter the monitor between the signaler and the signalee, there would be no way to
+ensure the condition.
+
+Unfortunately, immediate resumption of the signalee implies that the signaler must be
+blocked and then unblocked before continuing execution, entailing two arguably unnecessary
+context switches of the core on which it is executing. An immediate switch also requires
+that the signaler reestablish the monitor invariant before the call to signal; it cannot defer
+this action to code between the signal and the end of the entry. In an attempt to reduce the
+overhead of context switches, and also to relax reestablishment of the monitor invariant, the
+designers of Mesa (Lampson and Redell 1980) chose to define signals as “hints” instead of
+“absolutes.” Mesa dispenses with the urgent queue, and allows a signaling thread to continue
+execution, switching only when it reaches the end of its entry. Code that would be written
+
+if =condition
+cvar.wait()
+
+in a Hoare monitor would be
+Monitors.
+
+Hoare's original paper contains a concise definition of monitors in terms of semaphores. It also notes that a monitor can be used, trivially, to implement a general semaphore, thus proving that the two notations are equally powerful. The principal advantage of the monitor is data abstraction: protected variables, referred to as fields, cannot be accessed outside the monitor that contains them. Furthermore, mutual exclusion on calls to monitor methods is guaranteed implicitly, without the need for explicit acquire P and release V operations.
+
+To argue that a concurrent data abstraction has been implemented correctly with a monitor, one typically specifies a monitor invariant. This is a logical property of the protected data that must be true whenever the monitor is unoccupied, and whenever the thread inside is changed. Clearly, a monitor invariant must always be true initially. It must similarly be true on monitor exit, at every call to wait, and, in a Hoare monitor, on every call to signal. In our bounded buffer example, an appropriate invariant might be that the full slots variable correctly indicates the number of items in the buffer, and that these items reside in slots next full through next empty decrement by one modulo S I Z E of buffer. We also know that threads will be waiting on the full slot condition variable only if full slots is zero, and on the empty slot condition variable only if full slots is S I Z E. However, since the thread queues are generally hidden, this information may not be included in the invariant.
+
+Signal Semantics.
+
+In a Hoare monitor, the thread performing a signal operation, known as the signaler, steps out of the monitor and into the urgent queue. This allows the thread performing a wait operation, known as the signalee, to execute immediately. The argument for this behavior is that it allows the signalee to assume that the condition discovered by the signaler still holds. If the signaler were permitted to continue, it might intentionally Or inadvertently change the state of the monitor before leaving, in such a way that the condition no longer held. If any other thread could enter the monitor between the signaler and the signalee, there would be no way to ensure the condition.
+
+Unfortunately, immediate resumption of the signalee implies that the signaler must be blocked and then unblocked before continuing execution. This entails two arguably unnecessary context switches of the core on which it is executing. An immediate switch also requires that the signaler reestablish the monitor invariant before the call to signal; it cannot defer this action to code between the signal and the end of the entry. In an attempt to reduce the overhead of context switches, and also to relax reestablishment of the monitor invariant, the designers of Mesa, Lampson and Redell, in one thousand nine hundred eighty, chose to define signals as hints instead of absolutes. Mesa dispenses with the urgent queue, and allows a signaling thread to continue execution, switching only when it reaches the end of its entry. Code that would be written as: if the condition is not met, the thread calls cvar dot wait. In a Hoare monitor would be.
+The provided text delves into the fundamental concepts of monitors within the realm of concurrent programming, specifically contrasting the semantics proposed by C. A. R. Hoare with those of the Mesa monitor. At its core, a monitor serves as a high-level synchronization primitive, designed to simplify the management of shared resources and ensure data consistency in multi-threaded environments. It encapsulates shared data and the procedures that operate on that data, guaranteeing mutual exclusion for these procedures. This means only one thread can be actively executing within a monitor procedure at any given time, thereby preventing race conditions on the shared data.
+
+A key conceptual advantage of the monitor abstraction, as highlighted by Hoare's original paper, is its ability to enforce data abstraction. The variables or fields protected by the monitor are inaccessible from outside its scope, and mutual exclusion on calls to monitor methods is guaranteed implicitly. This contrasts sharply with lower-level synchronization mechanisms, such as semaphores, where programmers must explicitly manage acquire, often denoted as P, and release, denoted as V, operations. While Hoare formally proved that monitors can be trivially implemented using general semaphores, and that the two notations are equivalently powerful in terms of what they can express, the monitor's strength lies in its ability to embed synchronization logic directly within the data structure itself, leading to more robust and less error-prone concurrent code.
+
+Integral to the correctness of a monitor is the concept of a "monitor invariant." This is a logical property that describes the consistent state of the protected data. The monitor invariant must invariably hold true whenever the monitor is unoccupied, indicating a quiescent state where no thread is actively modifying the shared data. Furthermore, it must be true immediately upon a thread's entry into the monitor, before any modification begins. Critically, the invariant must also hold just before any call to a `wait` operation on a condition variable, and, in the specific context of a Hoare monitor, immediately prior to any `signal` operation. For instance, in a bounded buffer implementation, a suitable invariant would assert the correct count of items in the buffer, represented by a variable like `full_slots`, and the accurate relative positions of `next_full` and `next_empty` pointers, typically expressed as a modulo arithmetic relationship with the buffer's `SIZE`. While the states of thread queues associated with condition variables like `full_slot` or `empty_slot` are pertinent to the system's overall state, they are usually considered implementation details and are not explicitly included in the monitor invariant, as they are implicitly managed by the monitor's internal logic.
+
+The semantics of the `signal` operation vary significantly between monitor types, with Hoare monitors exhibiting a particular behavior known as "signal and urgent wait." In a Hoare monitor, when a thread performs a `signal` operation on a condition variable, it immediately cedes control of the monitor to a waiting thread, known as the "signalee," which is then moved from the condition queue to an urgent queue. The signaler thread itself is then placed into this urgent queue. The fundamental rationale behind this immediate transfer of control is to ensure that the condition for which the signalee was waiting remains true upon its resumption. If the signaler were permitted to continue execution inside the monitor after signaling, it could potentially alter the monitor's state, inadvertently invalidating the condition that triggered the signal, before the signalee had a chance to execute. By forcing the signaler to step out, the monitor guarantees that the condition holds for the signalee. However, this strict semantic imposes a burden: the signaler must ensure the monitor invariant is re-established before issuing the `signal` call, as it is effectively handing over control of a consistent state.
+
+A recognized drawback of Hoare's signal semantics is the potential for increased overhead due to multiple, arguably unnecessary, context switches. A `signal` operation might entail a switch from the signaler to the signalee, followed by another switch when the signalee completes its critical section or performs a `wait`. To mitigate this overhead and relax the stringent re-establishment requirement for the invariant, the designers of Mesa monitors introduced a different `signal` semantic, treating signals more as "hints" rather than direct transfers of control. In Mesa semantics, a `signal` operation does not immediately preempt the signaler. Instead, the signaler continues its execution within the monitor until it naturally exits, or performs a `wait` operation. The signaled thread is merely made runnable and will contend for the monitor lock like any other thread once it becomes available. This approach avoids the immediate context switch cost.
+
+This relaxation, however, has profound implications for how condition variables are used. Since the signaler continues execution and other threads might acquire the monitor and modify its state before the signaled thread runs, the condition for which the thread was waiting is no longer guaranteed to be true upon return from `wait`. Therefore, a common programming idiom in Mesa monitors is to re-check the condition in a loop after a `wait` operation, as illustrated by the pseudo code `if not condition then cvar.wait()`. This typically expands to `while not condition do cvar.wait()`, ensuring that the thread only proceeds when its required condition is actually met, even if spurious wake-ups or subsequent state changes occur. This design choice represents a trade off between the stronger correctness guarantees of Hoare monitors (where a condition is guaranteed upon return from `wait`) and the performance benefits of reduced context switching overhead in Mesa monitors.

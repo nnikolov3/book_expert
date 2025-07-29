@@ -1,0 +1,70 @@
+8.6 Search Trees 169
+
+Lock-Free B+Trees Braginsky and Petrank (2012) introduced a lock-free balanced B+tree,
+(a tree with fat nodes that contain many keys and child pointers). The design is modular:
+Its nodes are implemented using a lock-free “chunk” mechanism that was previously used
+by the same authors to build linked lists (2011a). Synchronization is based on CAS, and is
+more complex than in the binary trees discussed above.
+
+Trees Using Higher-Level Synchronization Higher-level synchronization constructs,
+which we will explore in Sec. 8.10, have also been used to design many lock-free trees.
+The k-CAS (Harris et al. 2002) construct, for example, allows k addresses to be compared
+and modified atomically. It has been used to implement binary search trees and variants of
+B-trees (see, e.g., Arulraj et al. (2018), Fraser (2003)).
+
+The LLX/ SCX constructs of Brown et al. (2013) have been used to design a template that
+can be followed to produce lock-free implementations of many tree-based data structures, in
+which pointers are directed only from parents to children (i.e., without parent pointers, sibling
+pointers, etc.) (Brown et al. 2014). Examples include a variety of balanced search trees,
+including chromatic trees, relaxed AVL trees, relaxed (a, b)-trees and B-slack trees (Brown
+2017b), as well as weak AVL trees (He and Li 2016). LLX/SCX-based chromatic trees
+containing n keys have been shown by Ko (2020) to have worst-case amortized complexity
+of O(log(n) + c), which is asymptotically optimal (Attiya and Fouren 2017). As of 2023,
+Ko’s is the only amortized complexity result, to our knowledge, for a lock-free balanced
+tree.
+
+Recently, a generalization of k-CAS, called PathCAS (Brown et al. 2022), has been used to
+design many lock-free algorithms, including unbalanced and balanced external and internal
+BSTs, variants of B-trees, skip-lists, hash tables, hash lists, and dynamic data structures for
+graph connectivity.
+
+Blocking Updates with (Mostly) Lock-free Searches Some data structures use locks to
+synchronize updates, avoiding some of the complexity of fully nonblocking synchroniza-
+tion, but try to avoid locking during searches. In read-mostly workloads, this intermedi-
+ate approach can retain some (or even most) of the performance benefits of nonblocking
+progress. Bronson et al. (2010), for example, used techniques from optimistic concurrency
+control in databases to avoid taking locks during searches unless a node being read by the
+search 1s undergoing concurrent modification. Despite having to resort to locking sometimes
+during searches, this is one of the fastest concurrent binary search tree algorithms.
+
+Drachsler et al. (2014) introduced the logical ordering internal BST, which uses locks for
+updates and has lock-free searches. The key idea is to thread the tree by placing all nodes
+on a doubly linked list, ordered by their keys (so each node participates in both a search
+tree and an ordered list). If a search in the tree observes an inconsistent state because of
+concurrent modifications, and therefore ends up at the incorrect node, it can follow pointers
+in the list to find where it ought to be.
+
+Tries with Key Replacement Shafiei (2019) extended the flagging and marking technique
+of the EFRB tree and designed a nonblocking Patricia trie. In contrast to a comparison-
+Eight point six Search Trees.
+
+Lock Free B Plus Trees Braginsky and Petrank (two thousand twelve) introduced a lock free balanced B+ tree, a tree with fat nodes that contain many keys and child pointers. The design is modular. Its nodes are implemented using a lock free chunk mechanism that was previously used by the same authors to build linked lists (two thousand eleven a). Synchronization is based on C A S, and is more complex than in the binary trees discussed above.
+
+Trees Using Higher Level Synchronization Higher level synchronization constructs, which we will explore in Section eight point ten, have also been used to design many lock free trees. The k C A S (Harris et al. two thousand two) construct, for example, allows k addresses to be compared and modified atomically. It has been used to implement binary search trees and variants of B trees (see, e.g., Arulraj et al. two thousand eighteen, Fraser two thousand three).
+
+The L L X S C X constructs of Brown et al. (two thousand thirteen) have been used to design a template that can be followed to produce lock free implementations of many tree based data structures, in which pointers are directed only from parents to children, i.e., without parent pointers, sibling pointers, etc. (Brown et al. two thousand fourteen). Examples include a variety of balanced search trees, including chromatic trees, relaxed A V L trees, relaxed (a, b) trees and B slack trees (Brown two thousand seventeen b), as well as weak A V L trees (He and Li two thousand sixteen). L L X S C X based chromatic trees containing n keys have been shown by Ko (two thousand twenty) to have worst case amortized complexity of O (log n plus c), which is asymptotically optimal (Attiya and Fouren two thousand seventeen). As of two thousand twenty three, K o's is the only amortized complexity result, to our knowledge, for a lock free balanced tree.
+
+Recently, a generalization of k C A S, called Path C A S (Brown et al. two thousand twenty two), has been used to design many lock free algorithms, including unbalanced and balanced external and internal B S Ts, variants of B trees, skip lists, hash tables, hash lists, and dynamic data structures for graph connectivity.
+
+Blocking Updates with (Mostly) Lock Free Searches Some data structures use locks to synchronize updates, avoiding some of the complexity of fully nonblocking synchronization, but try to avoid locking during searches. In read mostly workloads, this intermediate approach can retain some (or even most) of the performance benefits of nonblocking progress. Bronson et al. (two thousand ten), for example, used techniques from optimistic concurrency control in databases to avoid taking locks during searches unless a node being read by the search is undergoing concurrent modification. Despite having to resort to locking sometimes during searches, this is one of the fastest concurrent binary search tree algorithms.
+
+Drachsler et al. (two thousand fourteen) introduced the logical ordering internal B S T, which uses locks for updates and has lock free searches. The key idea is to thread the tree by placing all nodes on a doubly linked list, ordered by their keys (so each node participates in both a search tree and an ordered list). If a search in the tree observes an inconsistent state because of concurrent modifications, and therefore ends up at the incorrect node, it can follow pointers in the list to find where it ought to be.
+
+Tries with Key Replacement Shafiei (two thousand nineteen) extended the flagging and marking technique of the E F R B tree and designed a nonblocking Patricia trie. In contrast to a comparison.
+The section delves into advanced concurrent data structures, specifically focusing on variations of balanced search trees designed for lock-free operations. It begins by introducing Lock Free B+ Trees, a design by Braginsky and Petrank in two thousand twelve. This structure employs "fat nodes" capable of holding multiple keys and child pointers, utilizing a lock-free "chunk" mechanism for synchronization, an approach previously applied to building linked lists. The synchronization in these B+ Trees is fundamentally based on Compare And Swap (CAS) operations, a common atomic primitive for achieving lock-freedom, and is an extension of concepts applied to binary trees.
+
+The discussion then expands to Higher-level Synchronization constructs, which are used to design numerous lock-free trees. A significant development is the K CAS construct, introduced by Harris and others in two thousand two, which allows for K atomic updates simultaneously. This K CAS has been instrumental in implementing binary search trees and their variants. Furthermore, the LLX and SCX constructs, developed by Brown and colleagues in two thousand thirteen, are presented as techniques for creating lock-free data structures, particularly tree-based ones, that do not rely on parent pointers. These constructs facilitate operations that propagate from children to parents, an approach that avoids the need for explicit parent references, simplifying certain concurrent modifications. Examples of trees built using these methods include chromatic trees, relaxed AVL trees, and relaxed B trees, with LLX/SCX-based chromatic trees achieving a worst-case amortized complexity of O of logarithm n plus c, which is considered asymptotically optimal. This amortized complexity analysis is crucial for understanding the average-case performance of these dynamic structures under concurrent access.
+
+The text then addresses Blocking Updates with (Mostly) Lock-free Searches. This strategy acknowledges that some data structures might need locks to synchronize updates while aiming to minimize blocking during search operations. For read-mostly workloads, an intermediate approach can preserve significant performance benefits of nonblocking operations. An example is cited from Bronson and colleagues in two thousand ten, who utilized techniques from optimistic concurrency control in databases to avoid taking locks during searches, unless a node being read is concurrently modified. This strategy is particularly relevant for read-heavy scenarios where update contention is less frequent. The paper by Drachler and others in two thousand fourteen introduced the logical ordering internal BST, a structure that uses locks for updates and offers lock-free search. The core principle here is to order nodes by their keys, ensuring that each node participates in both search and update operations in a consistent manner. If a search encounters an inconsistent state due to concurrent modifications, it can follow pointers to the correct location.
+
+Finally, the section touches upon Tries with Key Replacement, referencing work by Shafiei in two thousand nineteen. This research extended flagging and marking techniques to develop a nonblocking Patricia trie. This contrasts with traditional comparison-based approaches for key replacement in trie structures. The Patricia trie, known for its space efficiency by compressing nodes that have only one child, is adapted here for lock-free concurrency, building upon the foundational principles of concurrent data structures and atomic operations.

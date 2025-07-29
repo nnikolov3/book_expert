@@ -1,0 +1,56 @@
+8.3 Queues and Deques 149
+
+the last iteration of the loop. An enqueue operation is somewhat trickier: it requires a pair
+of updates: one to make the next field of the most recent previously enqueued node point
+to the new node, and one to make the tail pointer point to it. The update to the next pointer
+constitutes the linearization point; the update of the tail is cleanup, and can be performed
+by any thread.
+
+Consistent Snapshots. Prior to its linearization point, enqueue must read both the
+tail pointer and, subsequently, tail.p—next. To ensure that these reads are mutually
+consistent—that no other enqueue linearizes in-between—the code re-reads tail after read-
+ing tail.p— next. Since every change to tail increments tail.c, we can be sure (absent rollover)
+that there was a moment in time at which both locations held the values read, simultaneously.
+A subsequent CAS of tail.p— next will be attempted only if tail.p—next.p is null; given
+the use of counted pointers, the CAS will be successful only if tail. p— next has not changed
+since it was read. Since a node is never removed from the list unless it has a non-null suc-
+cessor (which will become the new dummy node), we can be sure that our new node will be
+linked into the queue only as the successor to an end-of-list node that has not been re-used
+since it was pointed at by tail.
+
+The dequeue operation, for its part, re-reads head after reading tail and head.p— next.
+Since an enqueue operation can move tail farther away from head, but never closer, we
+can be sure, if the values read for head and tail are not equal, that the queue cannot become
+empty until head changes: a successful CAS that expects the original value of head cannot
+cause head to move past tail. Similarly, since a node is never removed from the queue
+without changing head, a successful CAS that expects the original value of head can be
+sure that the previously read value of head.p— next is the right value to install as the new
+head.
+
+Memory Management. Asin the Treiber Stack, Michael and Scott employ a type-preserving
+allocator to ensure that (1) the word occupied by a node’s next pointer is never reused for a
+purpose that might inappropriately exhibit the same bit pattern used for the counted pointer
+and (2) the space occupied by a removed node is never returned to the operating system
+(allowing an access to trigger a segmentation fault). As we shall see in Sec. 8.7, various
+other approaches can also be used for safe memory reclamation.
+
+Over the years, several techniques have been proposed to improve the performance of
+nonblocking queues. Ladan-Mozes and Shavit (2008) effect an enqueue with a single CAS
+by using an MCS-style list in which the operation linearizes at the update of the tail pointer,
+and the forward link is subsequently created with an ordinary store. If a dequeue-ing thread
+finds that the next node has not yet been “linked in” (as may happen if a thread is delayed),
+it must traverse the queue from the tail to fix the broken connection. Hoffman et al. (2007)
+observe that enqueue operations (and likewise dequeue operations) that overlap in time
+can linearize correctly in arbitrary order; they leverage this fact to structure the queue as an
+ordered list of internally unordered “baskets,” whose contents can be accessed concurrently.
+Hendler et al. (2010b) use flat combining (Sec. 5.4) to improve locality in high-contention
+8.3 Queues and Deques 149 The last iteration of the loop. An enqueue operation is somewhat trickier: it requires a pair of updates: one to make the next field of the most recent previously enqueued node point to the new node, and one to make the tail pointer point to it. The update to the next pointer constitutes the linearization point; the update of the tail is cleanup, and can be performed by any thread. Consistent Snapshots. Prior to its linearization point, enqueue must read both the tail pointer and, subsequently, tail dot p arrow next. To ensure that these reads are mutually consistent—that no other subsequence linearizes in between—the code re-reads tail after reading tail dot p arrow next. Since every change to tail increments tail dot c, we can be sure (absent rollover) that there was a moment in time at which both locations held the values read, simultaneously. A subsequent CAS of tail dot p arrow next will be attempted only if tail dot p arrow next dot p is null; given the use of counted pointers, the CAS will be successful only if tail dot p arrow next has not changed since it was read. Since a node is never removed from the list unless it has a non-null successor (which will become the new dummy node), we can be sure that our new node will be linked into the queue only as the successor to an end-of-list node that has not been re-used since it was pointed at by tail. The dequeue operation, for its part, re-reads head after reading tail and head dot p arrow next. Since an enqueue operation can move tail farther away from head, but never closer, we can be sure, if the values read for head and tail are not equal, that the queue cannot become empty until head changes. A successful CAS that expects the original value of head cannot cause head to move past tail. Similarly, since a node is never removed from the queue without changing head, a successful CAS that expects the original value of head can be sure that the previously read value of head dot p arrow next is the right value to install as the new head. Memory Management. As in the Treiber Stack, Michael and Scott employ a type-preserving allocator to ensure that (1) the word occupied by a node's next pointer is never reused for a purpose that might inappropriately exhibit the same bit pattern used for the counted pointer and (2) the space occupied by a removed node is never returned to the operating system (allowing an access to trigger a segmentation fault). As we shall see in Sec. 8.7, various other approaches can also be used for safe memory reclamation. Over the years, several techniques have been proposed to improve the performance of nonblocking queues. Ladan-Mozes and Shavit (2008) effect an enqueue with a single CAS by using an MCS-style list in which the operation linearizes at the update of the tail pointer, and the forward link is subsequently created with an ordinary store. If a dequeueing thread finds that the next node has not yet been linked in (as may happen if a thread is delayed), it must traverse the queue from the tail to fix the broken connection. Hoffman et al. (2007) observe that enqueue operations (and likewise dequeue operations) that overlap in time can linearize correctly in arbitrary order; they leverage this fact to structure the queue as an ordered list of internally unordered "baskets," whose contents can be accessed concurrently. Hendler et al. (2010b) use flat combining (Sec. 5.4) to improve locality in high-contention
+This section delves into the intricacies of concurrent queues and deques, focusing on the critical aspects of operation linearization and memory management in highly contended environments. An enqueue operation, as described, requires a pair of updates: first, to set the next pointer of the previously enqueued node, and second, to advance the tail pointer to the new node. The linearization point for an enqueue is typically after these two updates have successfully completed, ensuring that the operation's effect is atomic from the perspective of other threads.
+
+The subsection on Consistent Snapshots highlights a common challenge in concurrent data structures: ensuring that a snapshot of the queue's state, specifically involving the tail pointer and its successor, remains consistent. For an enqueue operation to be considered consistent relative to its linearization point, it must read both the tail pointer and the tail's next pointer. These reads must be mutually consistent, meaning no other thread's operation should have occurred between these two reads. The text explains that a compare and swap operation on the tail pointer is performed only if the tail's next pointer has not changed since it was read. If this condition holds, the CAS succeeds, and the tail pointer is updated. The use of counted pointers, where the pointer is accompanied by a counter, is a mechanism to detect concurrent modifications. A successful CAS on the tail pointer implies that no other thread has modified the tail in between the read of tail.p and tail.p->next. The critical invariant is that a node is only removed from the list after its successor has been correctly established and the tail pointer has been updated. Therefore, a new node, once linked, will not be de-linked until it has served its purpose as the successor.
+
+The dequeue operation has its own set of challenges. It must re-read the head and tail pointers after reading the head's successor to ensure consistency. If the head and tail are not equal, and the read of the head's successor is valid, the operation can proceed. A successful CAS on the head pointer, predicated on the original value of head, effectively removes the node. The text emphasizes that if an enqueue operation has successfully updated the tail pointer, a dequeue operation can be certain that the head pointer's next value is indeed the correct node to install as the new head.
+
+Memory management in concurrent data structures, particularly for reclaiming memory from removed nodes, is a significant concern. The discussion references approaches similar to those used in the Treiber Stack, where a node's pointer field is never reused until its previous state is safely reclaimed. This prevents race conditions where a thread might access a node that has already been freed or is in the process of being modified by another thread. Such practices are crucial for safe memory reclamation. The text then introduces research by Ladan-Mozes and Shavit, who in two thousand eight, proposed techniques to improve the performance of nonblocking queues. Their work utilizes an MCS-style list where the forward link is subject to modification. If a dequeue operation finds that the next node hasn't been "linked in" yet—perhaps due to thread scheduling delays—it must traverse the queue from the tail to fix the broken link. This demonstrates the complexity of maintaining data structure invariants in the face of unpredictable thread execution.
+
+The text also touches upon the work by Hoffman et al. in two thousand seven, which explored how enqueue and dequeue operations can overlap in time. They structured the queue using an internally ordered list of unordered "baskets." This approach allows for concurrent access to these baskets, improving locality in high-contention scenarios. The mention of Hendler et al. in two thousand ten, specifically their use of "flat combining" as described in Section five point four, suggests a technique for improving performance in high-contention situations by reducing the overhead associated with fine-grained locking or lock-free algorithms. Flat combining typically serializes operations in a single thread's execution context, but allows other threads to contribute their updates to a shared structure, amortizing the cost.

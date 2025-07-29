@@ -1,0 +1,76 @@
+3.3 The Consensus Hierarchy 51
+
+3.3 The Consensus Hierarchy
+
+In Sec. 2.3 we noted that CAS and LL/SC are universal atomic primitives—capable of
+implementing arbitrary single-word fetch_and_® operations. We suggested—implicitly, at
+least—that they are fundamentally more powerful than simpler primitives like TAS, swap,
+FAI, and FAA. Herlihy formalized this notion of relative power in his work on wait-free
+synchronization (1991), previously mentioned in Sec. 3.2.1. The formalization is based on
+the classic consensus problem.
+
+Originally formalized by Fischer, et al. (1985) in a distributed setting, the consensus
+problem involves a set of potentially unreliable threads, each of which “proposes” a value.
+The goal is for the reliable threads to agree on one of the proposed values—a task the authors
+proved to be impossible with asynchronous messages. Herlihy adapted the problem to the
+shared-memory setting, where powerful atomic primitives can circumvent impossibility.
+Specifically, Herlihy suggested that such primitives (or, more precisely, the objects of which
+those primitives are methods) be classified according the number of threads for which they
+can achieve wait-free consensus.
+
+It is easy to see that an object with a TAS method can achieve wait-free consensus for two
+threads:
+
+atomic<bool> L := false
+atomic<int> proposal[2] // initial values immaterial
+agree(i):
+
+proposal[self].store(i, ||[ RW)
+
+if LTAS(|l) returnii
+
+else return proposal[1—self].load(R]|)
+
+Herlihy was able to show that this is the best one can do: TAS objects (even an arbitrary
+number of them) cannot achieve wait-free consensus for more than two threads. Moreover
+
+Consensus and Mutual Exclusion
+
+A solution to the consensus problem clearly suffices for “one-shot” mutual exclusion (a.k.a. leader
+election): each thread proposes its own id, and the agreed-upon value indicates which thread is able
+to enter the critical section. Consensus is not necessary however: the winning thread needs to know
+that it can enter the critical section, but other threads only need to know that they have lost—they
+don’t need to know who won. TAS thus suffices to build a wait-free try lock (one whose acquire
+method returns immediately with a success or failure result) for an arbitrary number of threads.
+
+It 1s tempting to suggest that one might solve the consensus problem using mutual exclusion, by
+having the winner of the competition for the lock write its id into a location visible to the losers. This
+approach, however, cannot be wait free: it fails to bound the number of steps required by a losing
+thread. If the winner acquires the lock and then pauses—or dies—before writing down its id, the
+losers may execute their spin loops an arbitrary number of times. This is the beauty of CAS or LL/SC:
+it allows a thread to win the competition and write down its value in a single indivisible step.
+Three point three The Consensus Hierarchy.
+
+In Section two point three, we noted that C A S and L L slash S C are universal atomic primitives, capable of implementing arbitrary single word fetch and Phi operations. We suggested, implicitly at least, that they are fundamentally more powerful than simpler primitives like T A S, swap, F A I, and F A A. Herlihy formalized this notion of relative power in his work on wait free synchronization, published in nineteen ninety one, previously mentioned in Section three point two point one. The formalization is based on the classic consensus problem.
+
+Originally formalized by Fischer et al. in nineteen eighty five in a distributed setting, the consensus problem involves a set of potentially unreliable threads, each of which proposes a value. The goal is for the reliable threads to agree on one of the proposed values, a task the authors proved to be impossible with asynchronous messages. Herlihy adapted the problem to the shared memory setting, where powerful atomic primitives can circumvent impossibility. Specifically, Herlihy suggested that such primitives, or more precisely, the objects of which those primitives are methods, be classified according to the number of threads for which they can achieve wait free consensus.
+
+It is easy to see that an object with a T A S method can achieve wait free consensus for two threads.
+The code block presents a method for achieving wait free consensus. It declares an atomic boolean variable `L` initialized to false. It also declares an atomic integer array `proposal` of size two, stating that its initial values are immaterial. The function `agree` takes an integer `i` as an argument. Inside `agree`, it first stores the value of `i` into the `proposal` array at an index corresponding to the current self thread, using a R W memory order. Then, it checks if `L`'s T A S method, using a relaxed memory order, returns true. If it does, the function returns `i`. Otherwise, it returns the value loaded from `proposal` array at an index of one minus self, using a relaxed memory order.
+
+Herlihy was able to show that this is the best one can do: T A S objects, even an arbitrary number of them, cannot achieve wait free consensus for more than two threads. Moreover,
+
+Consensus and Mutual Exclusion.
+
+A solution to the consensus problem clearly suffices for one shot mutual exclusion, also known as leader election: each thread proposes its own I D, and the agreed upon value indicates which thread is able to enter the critical section. Consensus is not necessary, however: the winning thread needs to know that it can enter the critical section, but other threads only need to know that they have lost; they do not need to know who won. T A S thus suffices to build a wait free lock, one whose acquire method returns immediately with a success or failure result, for an arbitrary number of threads.
+
+It is tempting to suggest that one might solve the consensus problem using mutual exclusion, by having the winner of the competition for the lock write its I D into a location visible to the losers. This approach, however, cannot be wait free: it fails to bound the number of steps required by a losing thread. If the winner acquires the lock and then pauses, or dies, before writing down its I D, the losers may execute their spin loops an arbitrary number of times. This is the beauty of C A S or L L slash S C: it allows a thread to win the competition and write down its value in a single indivisible step.
+The page delves into the fundamental concept of the Consensus Hierarchy in concurrent programming, a framework largely established by Herlihy. This hierarchy classifies atomic primitives based on their inherent ability to solve the wait free consensus problem for varying numbers of processes. Central to this classification are "universal" atomic primitives, such as Compare And Swap, or C A S, and Load Link / Store Conditional, or L L / S C. These primitives are deemed universal because they can be used to implement any other atomic operation in a wait free manner, and crucially, they can achieve wait free consensus for an arbitrary number of participating threads. This stands in contrast to simpler atomic primitives like Test And Set, or T A S, swap, Fetch And Increment, or F A I, and Fetch And Add, or F A A, which, while useful for specific synchronization tasks, possess a more limited power with respect to the consensus problem, typically unable to guarantee wait freedom for more than a fixed, small number of threads. Herlihy's work, dating back to one thousand nine hundred ninety one, formalized this notion of relative computational power among synchronization primitives, establishing a rigorous basis for understanding their capabilities in shared memory systems.
+
+The wait free consensus problem itself is a cornerstone of distributed and concurrent computing. Originally conceptualized by Fischer and colleagues in one thousand nine hundred eighty five for asynchronous message passing systems, it describes a scenario where multiple potentially unreliable threads each propose a value, and the objective is for all non faulty threads to eventually agree on a single, common value from those proposed. Herlihy ingeniously adapted this problem to the shared memory paradigm, demonstrating how the computational impossibility results previously observed in message passing could be circumvented through the judicious use of powerful atomic operations. The key metric in this hierarchy is the consensus number, which quantifies the maximum number of threads for which a given atomic object can guarantee wait free consensus.
+
+The provided pseudo code block illustrates how a Test And Set, or T A S, object can achieve wait free consensus specifically for two threads. It defines two atomic variables: `L`, an atomic boolean initialized to `false`, which serves as a synchronization flag, and `proposal`, an array of two atomic integers, `proposal index zero` and `proposal index one`, used to store the values proposed by each thread. The `agree` function, taking the proposed value `i` and the current thread's identifier `self` as inputs, orchestrates the consensus protocol. First, the thread stores its proposed value `i` into its designated slot in the `proposal` array via `proposal index self dot store (i, or or R W)`. The `or or R W` indicates a relaxed write ordering, sufficient for the value to be causally related to subsequent operations. The decisive step is `if L dot T A S (or or)`. The `T A S` operation atomically sets `L` to `true` and returns the *original* value of `L` before the modification. If the original value was `false`, it means this thread was the first to successfully acquire the "right to decide," and thus its proposed value `i` becomes the consensus outcome, returned by `return i`. If `T A S` returns `true`, it indicates that `L` was already `true`, implying another thread has already won the race. In this case, the current thread "loses" and must adopt the value chosen by the winning thread, which it retrieves by loading from the other thread's slot in the `proposal` array: `return proposal index one decrement self dot load (R or or)`. The `R or or` here is a relaxed read, as the other thread's value is stable. This protocol guarantees that one thread will deterministically win the `T A S` race, and all threads will agree on that winner's proposed value, ensuring wait freedom for two participants. Herlihy's analysis confirms that Test And Set, or T A S, is precisely powerful enough for two thread consensus, but not more.
+
+The section on Consensus and Mutual Exclusion elaborates on the deep connection between these two fundamental problems in concurrent computing. A solution to the consensus problem, particularly a "one shot" instance, can be directly applied to achieve mutual exclusion, also known as leader election. In mutual exclusion, the primary goal is to ensure that only one thread can access a designated "critical section" of code at any given time. By having each thread propose its unique identifier, the agreed upon value from a consensus protocol can uniquely designate the thread allowed to enter the critical section. Importantly, for mutual exclusion, the stringent requirement of all threads agreeing on a specific value is often relaxed; it is sufficient for the "winning" thread to know it has won, and for "losing" threads to know they have lost.
+
+While Test And Set, or T A S, is capable of building wait free locks where an `acquire` method returns immediately with a success or failure indication, achieving wait free consensus for more than two threads presents a significant hurdle for simpler primitives. A common, yet flawed, approach might involve a winner of a mutual exclusion race writing its identifier to a shared location for others to observe. This strategy fundamentally violates wait freedom. If the winning thread is delayed or fails after acquiring the lock but *before* writing its identifier, a losing thread would be forced to loop indefinitely, or "spin," waiting for that identifier to appear. This unbounded waiting, where a thread's progress is contingent on the arbitrary timing of another, directly contravenes the wait free guarantee. This critical limitation underscores the elegance and necessity of primitives like Compare And Swap, or C A S, and Load Link / Store Conditional, or L L / S C. Their true power lies in their ability to combine the act of competing for consensus and the act of writing the decided value into a single, indivisible atomic operation. This atomicity eliminates the problematic intermediate states, ensuring that all participating threads can conclude their operation in a bounded number of steps, thus achieving robust wait freedom for arbitrary numbers of threads in complex concurrent environments.

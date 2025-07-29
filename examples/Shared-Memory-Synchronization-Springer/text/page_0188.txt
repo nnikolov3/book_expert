@@ -1,0 +1,66 @@
+9.1 Software TM 193
+
+for the reader count, thereby reducing the overhead of read-only transactions while still
+allowing writers to detect the existence of conflicts with one or more earlier readers.
+
+9.1.4 Validation
+
+As described in Sec. 3.1.2, two-phase locking provides a straightforward way to ensure
+serializability. Each transaction, as it runs, acquires a reader-writer lock (in read or write
+mode as appropriate) on the Orec of every location it wishes to access. (This implies eager
+conflict detection.) If an Orec is already held in an incompatible mode, the transaction stalls,
+aborts, or (perhaps) kills the transaction(s) that already hold the lock. (This implies eager
+conflict resolution. To avoid deadlock, a transaction that stalls must do so provisionally;
+if it waits too long it must time out and abort.) If all locks are held from the point of
+their acquisition to the end of the transaction, serializability is ensured. As described in the
+previous subsection, SNZI can be used to reduce the contention and cache misses associated
+with lock updates by readers, at the expense, in a writer, of not being able to identity which
+transactions have already acquired an Orec in read mode. Alternatively, Ramalhete et al.
+(2023) have shown how to avoid metadata conflicts among readers of a given lock while
+still providing complete information for contention management. Like most visible reader
+schemes, their 2PLSF system devotes one bit to each (lock, thread) pair, but it packs these
+into words associated with the threads instead of the locks. Acquiring a write lock now
+
+Composing Already-concurrent Operations
+
+As noted in the chapter introduction, TM allows a correct, sequential data structure to be converted,
+mechanically, into a correct concurrent structure. Given a set of existing concurrent structures—
+ideally with implementations that are not only correct but also very efficient—one might also wish
+to compose operations, mechanically, into atomic transactions. For lock-based structures, two-phase
+locking (2PL—Sec. 3.1.2) provides a natural means of doing so. The principal challenge is the need
+to back out and retry if failure to acquire a lock within a reasonable amount of time suggests the
+possibility of deadlock. Spiegelman et al. (2016) use ideas from STM to develop a methodology
+whereby existing structures can be modified (by hand) to compose with one another seamlessly and
+efficiently via 2PL.
+
+In STM systems, transactional boosting (described in the box on page 196) similarly allows
+programmers to leverage past investments in high-performance data structures, avoiding the need
+for expensive instrumentation in boosted operations.
+
+Several researchers have also explored the possibility of composing operations on existing nonblock-
+ing structures, without the full machinery of STM (Zhang and Dechev 2016; LaBorde et al. 2019;
+Elizarov et al. 2019). As in the algorithms of Sec. 8.6.1, operations typically “announce” them-
+selves by appending descriptors to nodes of a linked data structure. More recently, Cai et al. (2023)
+have presented a technique that increases generality and reduces overhead by instrumenting only
+the linearization points and other “critical” memory accesses of nonblocking operations. A universal
+construction based on those of Sec. 8.10 then effects these accesses together, atomically.
+nine point one Software T M for the reader count, thereby reducing the overhead of read only transactions while still allowing writers to detect the existence of conflicts with one or more earlier readers.
+
+nine point one point four Validation
+
+As described in Section three point one point two, two phase locking provides a straightforward way to ensure serializability. Each transaction, as it runs, acquires a reader writer lock in read or write mode as appropriate on the Orec of every location it wishes to access. This implies eager conflict detection. If an Orec is already held in an incompatible mode, the transaction stalls, aborts, or perhaps kills the transaction(s) that already hold the lock. This implies eager conflict resolution. To avoid deadlock, a transaction that stalls must do so provisionally. If it waits too long, it must time out and abort. If all locks are held from the point of their acquisition to the end of the transaction, serializability is ensured. As described in the previous subsection, S N Z I can be used to reduce the contention and cache misses associated with lock updates by readers, at the expense, in a writer, of not being able to identify which transactions have already acquired an Orec in read mode. Alternatively, Ramalhete et al. two thousand twenty three have shown how to avoid metadata conflicts among readers of a given lock while still providing complete information for contention management. Like most visible reader schemes, their two P L S F system devotes one bit to each lock, thread pair, but it packs these into words associated with the threads instead of the locks. Acquiring a write lock now.
+
+Composing Already concurrent Operations
+
+As noted in the chapter introduction, T M allows a correct, sequential data structure to be converted, mechanically, into a correct concurrent structure. Given a set of existing concurrent structures, ideally with implementations that are not only correct but also very efficient, one might also wish to compose operations, mechanically, into atomic transactions. For lock based structures, two phase locking two P L Section three point one point two provides a natural means of doing so. The principal challenge is the need to back out and retry if failure to acquire a lock within a reasonable amount of time suggests the possibility of deadlock. Spiegelman et al. two thousand sixteen use ideas from S T M to develop a methodology whereby existing structures can be modified by hand to compose with one another seamlessly and efficiently via two P L.
+
+In S T M systems, transactional boosting described in the box on page one hundred ninety six similarly allows programmers to leverage past investments in high performance data structures, avoiding the need for expensive instrumentation in boosted operations.
+
+Several researchers have also explored the possibility of composing operations on existing nonblock ing structures, without the full machinery of S T M Zhang and Dechev two thousand sixteen LaBorde et al. two thousand nineteen Elizarov et al. two thousand nineteen. As in the algorithms of Section eight point six point one, operations typically announce them selves by appending descriptors to nodes of a linked data structure. More recently, Cai et al. two thousand twenty three have presented a technique that increases generality and reduces overhead by instrumenting only the linearization points and other critical memory accesses of nonblocking operations. A universal construction based on Section eight point one zero then effects these accesses together atomically.
+The discussion elaborates on transactional memory systems, focusing on the validation phase and the composition of concurrent operations. In the context of transactional memory, validation is a critical step to ensure serializability, which guarantees that concurrent transactions appear to execute in some sequential order, thus maintaining data consistency. Section nine point one point four, "Validation," delves into techniques for achieving this.
+
+One approach described is two-phase locking, specifically referencing Section three point one point two. This locking protocol enforces serializability by requiring transactions to acquire all necessary locks during a growing phase and then release them all during a shrinking phase. In a reader-writer lock scenario, a transaction would acquire a read lock or a write lock on a data item for every location it accesses. The core of validation involves checking for conflicts. If a transaction attempts to access a location for which an incompatible lock is already held by another transaction—for instance, a writer attempting to access a location currently held by a reader or another writer—a conflict arises. This necessitates a resolution strategy. A common strategy is for the conflicting transaction to abort and retry. The text mentions that if a transaction waits too long, it might time out and abort, a provisionally necessary measure. To mitigate the overhead of acquiring locks for every access, especially in read-heavy workloads, techniques like optimistic concurrency control with validation are employed. The SNZI (Short Non-zero Index) mechanism is mentioned as a way to reduce contention by using lock updates from readers. Furthermore, it's noted that readers might not need to acquire an explicit lock in a read mode if they can identify *which* transactions have already acquired a lock. Ramalhete et al. (two thousand twenty three) proposed methods to avoid metadata conflicts among readers by providing complete information for contention management, enabling a system to use a single bit to represent a lock for a given thread, rather than a more complex lock structure. This approach effectively packs lock information with thread context, thereby facilitating lock acquisition for subsequent write operations.
+
+The section "Composing Already concurrent Operations" addresses the challenge of combining concurrent operations into larger, atomic transactions, a fundamental aspect of building correct and efficient concurrent data structures. Transactional memory (TM) allows for the sequential composition of operations into atomic transactions. While this is straightforward conceptually, practical implementations often require mechanisms to translate these compositions into low-level atomic operations. Two-phase locking, as mentioned earlier, provides a structured approach for this. The principal challenge lies in acquiring locks within a reasonable time frame, as excessive waiting can lead to performance degradation or deadlocks. Spiegelman et al. (two thousand sixteen) explored techniques from transactional memory to enable existing structures to be modified to compose operations, potentially by hand, and to be managed efficiently using two-phase locking.
+
+The text then discusses transactional boosting in Systems Transactional Memory (STM) environments. This technique allows programmers to leverage existing high-performance data structures without the need for expensive instrumentation on every memory access. Instead, instrumentation is applied selectively. Several researchers have investigated composing operations on existing nonblocking data structures, thus avoiding the full machinery of STM. Elizarov et al. (two thousand nineteen) and others have developed techniques where operations effectively "announce" themselves by appending descriptors to nodes of a linked data structure. Cai et al. (two thousand twenty three) recently presented a technique that increases generality and reduces overhead by instrumenting only critical memory accesses, specifically those in nonblocking operations. This approach allows for the construction of a universal atomic operation by grouping these critical accesses together, effectively making them atomic.

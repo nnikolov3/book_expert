@@ -1,0 +1,59 @@
+=
+
+Check for
+updates
+
+Essential Theory
+
+Concurrent algorithms and synchronization techniques have a long and very rich history of
+formalization—far too much to even survey adequately here. Arguably the most accessible
+resource for practitioners is the text of Herlihy et al. (2021). Deeper, more mathematical
+coverage can be found in the text of Schneider (1997). On the broader topic of distributed
+computing (which as noted in the box on Chapter 1 1s viewed by theoreticians as a superset
+of shared-memory concurrency), interested readers may wish to consult the classic text of
+Lynch (1996).
+
+For the purposes of the current monograph, we provide a brief introduction here to
+safety, liveness, the consensus hierarchy, and formal memory models. Safety and liveness
+were mentioned briefly in Sec. 1.4. The former says that bad things never happen; the
+latter says that good things eventually do. The consensus hierarchy explains the relative
+expressive power of hardware primitives like test_and_set (TAS) and compare_and_swap
+(CAS). Memory models explain which writes may be seen by which reads under which
+circumstances; they help to regularize the “out of order” memory references mentioned in
+Sec. 2.2.
+
+3.1 Safety
+
+Most concurrent data structures (“objects”) are adaptations of sequential data structures.
+Each of these, in turn, has its own sequential semantics, typically specified as a set of
+preconditions and postconditions for each of the methods that operate on the structure,
+together with invariants that all the methods must preserve. The sequential implementation
+of an object is considered safe if each method, called when its preconditions are true,
+terminates after a finite number of steps, having ensured the postconditions and preserved
+the invariants.
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 35
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_3
+Essential Theory.
+
+Concurrent algorithms and synchronization techniques have a long and very rich history of formalization, far too much to even survey adequately here. Arguably the most accessible resource for practitioners is the text of Herlihy et al. two thousand twenty one. Deeper, more mathematical coverage can be found in the text of Schneider nineteen ninety seven. On the broader topic of distributed computing, which as noted in the box on Chapter one is viewed by theoreticians as a superset of shared memory concurrency, interested readers may wish to consult the classic text of Lynch nineteen ninety six.
+
+For the purposes of the current monograph, we provide a brief introduction here to safety, liveness, the consensus hierarchy, and formal memory models. Safety and liveness were mentioned briefly in Section one point four. The former says that bad things never happen; the latter says that good things eventually do. The consensus hierarchy explains the relative expressive power of hardware primitives like test and set (T A S) and compare and swap (C A S). Memory models explain which writes may be seen by which reads under which circumstances; they help to regularize the “out of order” memory references mentioned in Section two point two.
+
+Section three point one, Safety.
+
+Most concurrent data structures, referred to as “objects,” are adaptations of sequential data structures. Each of these, in turn, has its own sequential semantics, typically specified as a set of preconditions and postconditions for each of the methods that operate on the structure, together with invariants that all the methods must preserve. The sequential implementation of an object is considered safe if each method, called when its preconditions are true, terminates after a finite number of steps, having ensured the postconditions and preserved the invariants.
+
+The Author(s), under exclusive license to Springer Nature Switzerland A G two thousand twenty four. M. L. Scott and T. Brown, Shared Memory Synchronization, Synthesis Lectures on Computer Architecture. D O I: ten point one zero zero seven slash nine seven eight dash three dash zero three one dash three eight six eight four dash eight underscore three.
+The field of concurrent algorithms and synchronization techniques is characterized by its profound complexity and extensive historical development. Achieving correct and efficient concurrent execution necessitates a deep understanding of formal methods, given that informal approaches often prove inadequate. The foundational principles are extensively formalized in seminal texts, providing the necessary mathematical rigor for practitioners and theoreticians alike.
+
+At its core, concurrent computing addresses the challenge of coordinating multiple computational agents, whether threads or processes, that operate simultaneously. Within this domain, shared memory concurrency represents a critical paradigm where these agents directly access and modify a common memory space. This direct interaction mandates sophisticated synchronization mechanisms to prevent data inconsistencies and race conditions, which arise when multiple threads access shared data without proper coordination, leading to unpredictable outcomes.
+
+A critical aspect of analyzing concurrent systems involves defining and ensuring specific correctness properties. Foremost among these are **safety** and **liveness**. Safety properties guarantee that "bad things never happen," meaning the system always remains in a valid state and avoids erroneous computations or transitions. This is often framed as maintaining system invariants or ensuring that all reachable states are correct. Conversely, **liveness** properties ensure that "good things eventually do," meaning the system makes progress and desired events or computations are ultimately completed. This mitigates issues like deadlock, where processes halt indefinitely waiting for each other, or starvation, where a process never gets the resources it needs.
+
+The theoretical underpinnings of concurrent systems also encompass the **consensus hierarchy** and formal **memory models**. The consensus hierarchy provides a fundamental classification of synchronization primitives based on their computational power, specifically their ability to solve the consensus problem. Primitives higher in this hierarchy, such as **compare and swap**, can implement any lower-level primitive, while the reverse is not true. This hierarchy dictates the expressiveness and limitations of various hardware and software constructs available for concurrent programming. For instance, the **test and set** primitive, a basic atomic read-modify-write operation, occupies a lower level in this hierarchy compared to **compare and swap**. **Test and set** atomically reads a value from a memory location, sets that location to a specific value, typically a binary one, and returns the original content. This is a common building block for simple locks. **Compare and swap**, on the other hand, is a more versatile atomic instruction. It takes an address, an expected value, and a new value. If the content of the memory address matches the expected value, it is updated to the new value; otherwise, the operation fails. The atomicity of both **test and set** and **compare and swap** is paramount in preventing concurrent updates from corrupting shared data.
+
+Formal **memory models** are indispensable for precisely defining the semantics of memory operations in multiprocessor systems. They specify the rules governing when a write operation performed by one processor becomes visible to other processors, and how memory operations may be reordered by the hardware or compiler for performance optimization. Understanding these models is crucial because "out of order" memory references, a common optimization technique where the execution order of memory operations deviates from program order, can lead to unexpected behaviors if not properly managed through explicit memory barriers or fences defined by the chosen memory model. These models range from strong consistency models like sequential consistency, which is intuitive but often expensive, to more relaxed models that allow greater reordering for performance but require programmers to reason more carefully about concurrency.
+
+The concept of **safety** is further elaborated in the context of concurrent data structures, often referred to as "objects." These are adaptations of sequential data structures designed to operate correctly and efficiently when accessed concurrently by multiple threads. Each method exposed by such an object must possess its own **sequential semantics**, meaning its behavior, when viewed in isolation or as part of a single thread's execution, must be well defined. The correctness of these methods is formally specified through **preconditions** and **postconditions**. A precondition defines the state that must be true before a method is invoked for it to behave correctly. A postcondition describes the state that will be true upon the successful completion of the method. Furthermore, all methods must preserve **invariants**, which are properties of the data structure that must hold true before and after any method execution, thereby ensuring the structural and semantic integrity of the object across all concurrent operations. A sequential implementation of such an object is considered safe if, provided its preconditions are met, any method invocation terminates in a finite number of steps, establishes its postconditions, and meticulously preserves all defined invariants, even in a highly concurrent environment. This rigorous approach to formal specification is essential for constructing robust and correct concurrent systems.

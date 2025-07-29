@@ -1,0 +1,90 @@
+4.1 Classical Load/Store-Only Algorithms 63
+
+class lock lock.acquire():
+atomic<bool> choosing[T] := { false... } choosing[self].store(true, ||R)
+atomic<int> number[7] :={0... } int m := 1 + max; c -(numberfi].load(]l))
+lock.release(): number{self].store(m, R|[)
+number]self].store(0, RW||) choosing[self].store(false, W||R)
+forieT
+while choosing][i].load(||R); // spin
+repeat
+
+int t := number]i].load(||R) // spin
+untilt=0or (t,i) > (m, self)
+fence(R||IRW)
+
+Figure 4.2 Lamport’s bakery algorithm. The max operation is not assumed to be atomic. It is,
+however, assumed to read each number field only once.
+
+for special-case code when a thread examines its own number field. Once its own (value,
+thread id) pair is the smallest in the array, a thread knows that it is “first in line,” and can
+enter the critical section.
+
+Synchronizing Instructions in Peterson’s Algorithm
+
+Our code for Peterson’s algorithm employs several explicit synchronizing instructions. (For a
+reminder of our notation, see Table 2.1.) The ||RW fence at the end of acquire is an “acquire fence”:
+it ensures that the lock is held (the preceding spin has completed successfully) before the thread can
+execute any instructions in the critical section (the code that will follow the return). Similarly, the
+RW/|| store in release is a “release access”: it ensures that all instructions in the critical section (the
+code that preceded the call) have completed before the lock is released.
+
+The two synchronizing stores in acquire are needed to ensure the correctness of the lock, which
+depends critically on the order in which these accesses occur. The write to interested[self] must
+precede the write to turn. The latter write must then precede the reads of interested[other] and
+turn. Without the explicit synchronizing accesses, the compiler might reorder loads and stores
+in the assembly language program, or the hardware might allow their effects to occur out of order
+from the other thread’s perspective. As just one example of the trouble that might ensue, suppose
+that threads 0 and 1 execute acquire more or less at the same time, and that thread O sets turn
+first, but thread 0’s write to interested[0] is slow to propagate to thread 1. Then thread 0 may read
+interested[1] = true but turn = 1, allowing it to enter the critical section, while thread 1 reads turn
+= 0 but interested[0] = false, allowing it to enter also.
+
+Though we will not usually present them explicitly, similar arguments for synchronizing instructions
+apply to algorithms throughout the remainder of this monograph. Most lock acquire operations,
+for example, will end with a fence instruction that orders a prior spin with respect to the ordinary
+loads and stores of the upcoming critical section. Most lock release operations will begin with a
+synchronizing store that is ordered with respect to prior ordinary loads and stores.
+
+In general, it can be extremely difficult to determine the minimal set of ordering constraints needed
+for correct behavior. We have made a good-faith effort to do so for the simpler algorithms in this
+monograph. In more complicated cases, including most of the algorithms in Chapter 8, we have
+reverted to the default assumption of full ordering.
+Classical Load Store Only Algorithms.
+
+The lock class defines two atomic arrays: an atomic boolean array named choosing, initialized to false, with a size of T elements, and an atomic integer array named number, initialized to zero, also with a size of T elements.
+
+The lock acquire method performs the following steps: First, it sets the choosing flag for the current thread, referred to as self, to true, using a read fence. Next, it calculates an integer variable m, which is one greater than the maximum value currently in the number array across all threads, using a read fence for each load operation. Then, it stores this calculated value m into the number array for the current thread, using a release fence. After that, it sets the choosing flag for the current thread back to false, using a write and read fence. It then iterates through all threads, i, in the system. Inside the loop, it enters a spin loop, repeatedly checking if thread i's choosing flag is true, using a read fence. It also has an inner repeat loop. Inside this inner loop, it loads thread i's number into a temporary variable t, using a read fence. This inner loop continues until either t is equal to zero, or the pair of t and self is greater than or equal to the pair of m and self.
+
+The lock release method performs one action: It stores zero into the number array for the current thread, using a read and write fence.
+
+Figure four point two depicts Lamport's bakery algorithm. The maximum operation within the algorithm is not atomic. However, it is assumed that each number field is read only once.
+
+For special case code, when a thread examines its own number field, once its own value, thread I D pair is the smallest in the array, a thread knows that it is "first in line," and can enter the critical section.
+
+Synchronizing Instructions in Peterson's Algorithm.
+
+Our code for Peterson's algorithm employs several explicit synchronizing instructions. For a reminder of our notation, see Table two point one. The read write fence at the end of acquire is an "acquire fence": it ensures that the lock is held (meaning the preceding spin has completed successfully) before the thread can execute any instructions in the critical section. The code that will follow the acquire. Similarly, the read write store in release is a "release access": it ensures that all instructions in the critical section, the code that preceded the call, have completed before the lock is released.
+
+The two synchronizing stores in acquire are needed to ensure the correctness of the lock, which depends critically on the order in which these accesses occur. The write to interested index self must precede the write to turn. The latter write must then precede the reads of interested index other and turn. Without the explicit synchronizing accesses, the compiler might reorder loads and stores in the assembly language program, or the hardware might allow their effects to occur out of order from the other thread's perspective. As just one example of the trouble that might ensue, suppose that threads zero and one execute acquire more or less at the same time, and that thread zero sets turn is one. Then thread zero may read interested index zero is slow to propagate to thread one. Then thread one may read interested index one is true but turn is one, allowing it to enter the critical section, while thread one reads turn is zero but interested index zero is false, allowing it to enter also.
+
+Though we will not usually present them explicitly, similar arguments for synchronizing instructions apply to algorithms throughout the remainder of this monograph. Most lock acquire operations, for example, will end with a fence instruction that orders a prior spin with respect to the ordinary loads and stores of the upcoming critical section. Most lock release operations will begin with a synchronizing store that is ordered with respect to prior ordinary loads and stores.
+
+In general, it can be extremely difficult to determine the minimal set of ordering constraints needed for correct behavior. We have made a good faith effort to do so for the simpler algorithms in this monograph. In more complicated cases, including most of the algorithms in Chapter eight, we have reverted to the default assumption of full ordering.
+The discourse before us elucidates fundamental principles of concurrent programming, specifically focusing on mechanisms for achieving mutual exclusion using classical load and store operations, particularly in the context of relaxed memory models prevalent in modern computer architectures. We examine two seminal algorithms: Lamport's Bakery Algorithm and an analysis of synchronizing instructions within Peterson's Algorithm.
+
+Lamport's Bakery Algorithm, depicted in the code structure on the page, offers a software-based approach to mutual exclusion for an arbitrary number of concurrent threads. The core idea simulates a bakery where customers take numbers to be served in order. Each thread attempting to enter a critical section first "takes a number," and the thread with the smallest number is granted access. The algorithm utilizes two shared, atomic arrays: `choosing` and `number`. The `choosing` array, an `atomic` Boolean array, indicates whether a thread is currently in the process of selecting its number. The `number` array, an `atomic` integer array, stores the chosen ticket number for each thread. Both arrays are initialized to their respective default values, `false` for `choosing` and `zero` for `number`.
+
+Let us dissect the `lock.acquire()` method, which governs entry into the critical section. Upon invocation, a thread, referred to as `self`, first sets its `choosing` flag to `true` by executing `choosing index self dot store open parenthesis true, double pipe R close parenthesis`. The `double pipe R` denotes a `Read` memory fence, ensuring that this store operation is globally visible to other threads and that all subsequent reads by this thread occur after this write. Next, the thread computes its ticket number. This involves iterating through all other threads to find the maximum `number` currently held by any of them, then incrementing it by one. The `max` operation over `number index i dot load double pipe R` is conceptually treated as atomic within this algorithm, though in practice, it might involve multiple individual loads. After determining `m`, the thread stores this calculated number into its own `number` slot via `number index self dot store open parenthesis m, double pipe R W close parenthesis`. The `double pipe R W` is a `Read Write` memory fence, ensuring that this store is ordered with respect to both prior and subsequent memory operations, making the chosen number visible and stable before proceeding. Immediately following, the thread sets its `choosing` flag back to `false` using `choosing index self dot store open parenthesis false, W double pipe R close parenthesis`, with a `Write Read` fence to ensure that its `choosing` state is updated before other threads might attempt to read it.
+
+The algorithm's crucial synchronization phase follows, encapsulated within a `for` loop that iterates through all other threads, denoted by `i`. For each other thread `i`, `self` engages in two distinct spin loops. The first loop, `while choosing index i dot load open parenthesis double pipe R close parenthesis`, causes `self` to busy wait as long as thread `i` is in the process of selecting its own number. The `double pipe R` again acts as a `Read` fence, ensuring `self` reads the most current state of `choosing index i`. Once `i` has finished choosing its number, `self` enters the second, more intricate spin loop: `repeat until t is zero or open parenthesis t, i close parenthesis greater than or is equal to open parenthesis m, self close parenthesis`. Here, `t` is continuously loaded from `number index i` using `number index i dot load open parenthesis double pipe R close parenthesis`. This loop ensures that `self` waits until either thread `i` has a ticket number of `zero` (indicating it is not interested in the critical section), or if `i`'s ticket number `t` is strictly greater than `self`'s number `m`, or if `t` is equal to `m` but `i`'s thread I D is greater than `self`'s I D. This compound condition embodies the core fairness and mutual exclusion logic: threads with smaller numbers enter first, and ties are broken by thread I D, preventing deadlock. The `fence open parenthesis R double pipe R W close parenthesis` following this loop ensures all reads and writes involved in the spin complete before `self` potentially enters the critical section. The comments `double slash spin` clearly indicate the busy waiting nature of these loops.
+
+The `lock.release()` method is significantly simpler, consisting of a single atomic store operation: `number index self dot store open parenthesis zero, R double pipe W close parenthesis`. By setting its `number` back to `zero`, `self` signals to all other threads that it has exited the critical section and is no longer contending for access. The `R double pipe W` fence ensures this release operation is ordered correctly, making the updated number visible to other threads attempting to acquire the lock.
+
+It is important to note the commentary that the `max` operation for selecting a number in Lamport's algorithm is not inherently atomic. In a practical implementation, this means the individual reads comprising the `max` might not be simultaneously visible to all threads in a consistent order without further explicit synchronization. This highlights the practical complexities of implementing theoretically correct algorithms on real hardware with relaxed memory models. The concept of "first in line" for a special case where a thread examines its own `number` field emphasizes that if its `value` and `thread id` pair is the smallest in the array, it implicitly holds priority to enter the critical section.
+
+Shifting our focus to the synchronizing instructions within Peterson's Algorithm, the text underscores a critical aspect of modern concurrency: the necessity of explicit memory ordering constraints due to compiler optimizations and hardware reordering of memory operations. While Peterson's Algorithm is elegant for two threads, its correct behavior relies on precise memory visibility. An `acquire` operation acts as an "acquire fence," guaranteeing that all memory operations preceding the `acquire` call (e.g., the spinning phase) are completed and globally visible *before* the thread can proceed with executing instructions within the critical section. Conversely, a `release` operation, such as `double pipe R W` store, functions as a "release fence," ensuring that all memory operations within the critical section *prior* to the `release` call are completed and globally visible *before* the lock itself is relinquished.
+
+The text provides a concrete example of the challenges without such explicit synchronization. Consider two threads, `zero` and `one`, both attempting to enter a critical section using Peterson's. The algorithm typically involves `interested` flags and a `turn` variable. If thread `zero` sets `turn` to `one` and then attempts to read `interested index one`, but its `interested index zero` flag is slow to propagate to thread `one`, or if the compiler or hardware reorders these operations, a dangerous interleaving can occur. For instance, thread `zero` writes to `interested index zero` and sets `turn`, then attempts to read `interested index one` and `turn`. Simultaneously, thread `one` might execute its sequence. Without proper fences, thread `zero`'s write to `interested index zero` might become visible to thread `one` only after thread `one` has already read `turn` as `zero` and `interested index zero` as `false`, leading to both threads incorrectly concluding they can enter the critical section concurrently. This violates mutual exclusion. The example illustrates how `thread zero` might read `interested index one` as `true` but `turn` as `one`, allowing it to enter. Concurrently, if `thread one` reads `turn` as `zero` but `interested index zero` as `false` due to reordering, it could also enter, leading to a race condition. This demonstrates that synchronizing stores are crucial for enforcing the correct order of memory operations, preventing compilers and hardware from reordering them in ways that break the algorithm's logical correctness.
+
+The broader implication is that while theoretical algorithms like Lamport's Bakery and Peterson's offer conceptual solutions to mutual exclusion, their practical implementation on modern processors necessitates a deep understanding of memory consistency models and the judicious application of explicit memory fences. Determining the minimal set of ordering constraints required for correctness in complex scenarios is inherently challenging. For simpler algorithms, it is feasible, but in more intricate systems, developers often default to assuming a stronger "full ordering" memory model, effectively inserting more conservative synchronization barriers, to guarantee correctness at the potential cost of some performance. This pragmatic approach balances the complexity of precise memory model reasoning with the imperative of reliable concurrent execution.

@@ -1,0 +1,58 @@
+=
+
+Check for
+updates
+
+Architectural Background
+
+The correctness and performance of synchronization algorithms depend crucially on archi-
+tectural details of multicore and multiprocessor machines. This chapter provides an overview
+of these details. It can be skimmed by those already familiar with the subject, but should
+probably not be skipped in its entirety: the implications of store buffers and directory-based
+coherence on synchronization algorithms, for example, may not be immediately obvious,
+and the semantics of synchronizing instructions (ordered accesses, memory fences, and
+read-modify-write instructions) may not be universally familiar.
+
+The chapter 1s divided into three main sections. In the first, we consider the implica-
+tions for parallel programs of caching and coherence protocols. In the second, we consider
+consistency—the degree to which accesses to different memory locations can or cannot be
+assumed to occur in any particular order. In the third, we survey the various read-modity-
+write instructions—test_and_set and its cousins—that underlie most implementations of
+atomicity.
+
+2.1 Cores and Caches: Basic Shared-Memory Architecture
+
+Figures 2.1 and 2.2 depict two of the many possible configurations of processors, cores,
+caches, and memories in a modern parallel machine. In a so-called symmetric machine,
+all memory banks are equally distant from every processor core. Symmetric machines are
+sometimes said to have a uniform memory access (UMA) architecture. More common today
+are nonuniform memory access (NUMA) machines, in which each memory bank is associ-
+ated with a processor (or in some cases with a multi-processor node), and can be accessed
+by cores of the local processor more quickly than by cores of other processors.
+
+As feature sizes continue to shrink, the number of cores per processor can be expected
+to increase. As of this writing, the typical desk-side machine has 1-4 processors with 2—16
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 11
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_2
+Architectural Background, two.
+
+The correctness and performance of synchronization algorithms depend crucially on architectural details of multicore and multiprocessor machines. This chapter provides an overview of these details. It can be skimmed by those already familiar with the subject, but should probably not be skipped in its entirety: the implications of store buffers and directory based coherence on synchronization algorithms, for example, may not be immediately obvious, and the semantics of synchronizing instructions, such as ordered accesses, memory fences, and read modify write instructions, may not be universally familiar.
+
+The chapter is divided into three main sections. In the first, we consider the implications for parallel programs of caching and coherence protocols. In the second, we consider consistency, the degree to which accesses to different memory locations can or cannot be assumed to occur in any particular order. In the third, we survey the various read modify write instructions, such as test and set and its cousins, that underlie most implementations of atomicity.
+
+Two point one, Cores and Caches: Basic Shared Memory Architecture.
+
+Figures two point one and two point two depict two of the many possible configurations of processors, cores, caches, and memories in a modern parallel machine. In a so called symmetric machine, all memory banks are equally distant from every processor core. Symmetric machines are sometimes said to have a uniform memory access, or U M A, architecture. More common today are nonuniform memory access, or N U M A, machines, in which each memory bank is associated with a processor, or in some cases with a multi processor node, and can be accessed by cores of the local processor more quickly than by cores of other processors.
+
+As feature sizes continue to shrink, the number of cores per processor can be expected to increase. As of this writing, the typical desk side machine has one to four processors with two to sixteen cores.
+
+The Author(s), under exclusive license to Springer Nature Switzerland A G two thousand twenty four. M. L. Scott and T. Brown, Shared Memory Synchronization, Synthesis Lectures on Computer Architecture, H T T P S colon slash slash D O I dot org slash ten point one zero zero seven slash nine seven eight three zero three one three eight six eight four eight two.
+The correctness and performance of synchronization algorithms in concurrent systems are fundamentally predicated upon the precise architectural characteristics of multicore and multiprocessor machines. These underlying hardware details often introduce complexities that are not immediately intuitive, such as the implications of store buffers, the mechanisms of directory based cache coherence, the necessity of ordered accesses enforced by memory fences, and the behavior of atomic read modify write instructions. These elements are critical for understanding how program behavior translates to observed memory states in a parallel computing environment.
+
+Store buffers are temporary storage units within a processor core that hold write operations before they are committed to a higher level of the memory hierarchy, such as the L three cache or main memory. Their purpose is to decouple the processor's execution pipeline from the latency of memory writes, allowing the C P U to continue processing without stalling. However, this optimization can lead to the reordering of writes from the perspective of other cores, potentially violating program order assumptions if not properly managed. Directory based cache coherence protocols are essential for maintaining a consistent view of shared data across multiple processor caches in a distributed shared memory system. Unlike snooping protocols that broadcast cache events to all other caches, directory based systems maintain a central, or distributed, directory that tracks which caches possess copies of particular memory blocks, ensuring that all modifications are propagated and observed correctly by other cores to prevent data inconsistency.
+
+The concept of memory consistency defines the rules governing the order in which memory operations from multiple processors become visible to one another. Systems may enforce strict sequential consistency, where all operations appear to execute in a single global order, or more relaxed models that permit reordering of certain operations for performance gains. In relaxed consistency models, memory fences, also known as memory barriers, are explicit instructions used by programmers or compilers to enforce ordering constraints on memory operations, ensuring that a specific set of operations completes before another set begins, thereby guaranteeing necessary visibility or ordering for synchronization. Finally, read modify write instructions, such as `test_and_set`, `compare_and_swap`, and `fetch_and_add`, are fundamental atomic primitives. These operations guarantee that a memory location is read, modified, and written back as a single, indivisible unit, preventing race conditions where multiple cores attempt to access and modify the same data concurrently. The atomicity of these operations is crucial for building higher level synchronization constructs like locks and semaphores, ensuring mutual exclusion and preventing data corruption.
+
+Modern computing architectures are primarily characterized by their shared memory models. In a symmetric machine, or a Uniform Memory Access, U M A, architecture, all processors have equal access latency to any location in main memory, and all memory banks are considered equally distant from every processor core. This simplifies programming because memory locality is not a primary concern for performance optimization. However, the scalability of U M A systems is often limited by the bandwidth and contention on the shared bus or interconnect. Conversely, Non-uniform Memory Access, N U M A, machines are more prevalent in larger scale parallel systems. In a N U M A architecture, memory banks are physically distributed and associated with specific processor nodes. A processor can access memory local to its own node much more quickly than memory associated with a different node. While N U M A architectures offer greater scalability, they introduce the challenge of managing data locality; optimal performance requires careful placement of data in memory such that it is primarily accessed by its local processor, minimizing costly remote memory accesses. The ongoing trend towards increasing core counts per processor, where typical desktop machines might feature one to four processors, each incorporating two to sixteen cores, underscores the architectural shift towards N U M A like structures or hybrid designs to accommodate this parallelism efficiently.

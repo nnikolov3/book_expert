@@ -1,0 +1,111 @@
+8.2 Linked Lists 145
+
+bool list.insert(value v):
+if search(v) return false
+node* n := new node(v, (false, CURR.p, 0))
+loop
+// note that CAS is ordered after initialization/update of node
+if PREVp—CAS((false, CURR.p, CURR.c), (false, n, CURR.c+1))
+return true
+if search(v)
+free(n) // node has never been seen by others
+return false
+n—next := (false, CURR.p, 0)
+
+bool list.delete(value v):
+loop
+
+if —~search(v) return false
+
+/[ attempt to mark node as deleted:
+
+if “-CURR.p—next.CAS((false, NEXT.p, NEXT.c), (true, NEXT.p, NEXT.c+1))
+continue /I list has been changed; start over
+
+/[ attempt to link node out of list:
+
+if PREVp—CAS((false, CURR.p, CURR.c), (false, NEXT.p, CURR.c+1))
+free_for_reuse(CURR.p) I] type-preserving
+
+else (void) search(v) // list has been changed; re-scan and clean up deleted node(s)
+
+return true
+
+bool list.lookup(value v):
+return search(v)
+
+Figure 8.5 The H&M lock-free list (externally visible methods). Note in Figure 8.4 that PREVp,
+CURR, and NEXT are thread-private variables changed by list.search.
+
+point is the load of CURR from *PREVp, immediately before the inner loop; if the list is
+non-empty, it is the last dynamic load of NEXT from CURR.p— next at the third line of the
+last iteration of the inner loop. In all these intra-search cases, we don’t know that the method
+has linearized until we inspect the loaded value.
+
+8.2.2 More Recent Linked Lists
+
+One downside of the Harris & Michael algorithm is that operations must restart their searches
+from the head after failing a CAS. To avoid this inefficiency, Fomitchev and Ruppert (2004)
+augmented each list node with a back pointer. When a node is removed from the list, its
+back pointer is set to point to the node just before it. Of course, that previous node might
+also get deleted, but an operation can always follow back pointers until it finds an unmarked
+node—one that has not been deleted. This process eliminates the need to restart from the
+head.
+
+Heller et al. (2005) took a different approach, designing a list whose updates acquire
+fine-grained locks (blocking other updates), but whose searches are wait-free (as opposed
+8 point 2 Linked Lists 145
+
+bool list dot insert open parenthesis value v close parenthesis
+if search open parenthesis v close parenthesis return false
+node asterisk n is equal to new node open parenthesis v comma false comma C U R R dot p comma 0 close parenthesis
+loop
+note that C A S is ordered after initialization update of node
+if P R E V p arrow C A S open parenthesis false comma C U R R dot c comma C U R R dot c plus 1 close parenthesis comma open parenthesis false comma n comma C U R R dot c plus 1 close parenthesis close parenthesis
+return true
+if search open parenthesis v close parenthesis
+free open parenthesis n close parenthesis
+return false
+end if
+end loop
+end function
+bool list dot delete open parenthesis value v close parenthesis
+loop
+if not search open parenthesis v close parenthesis return false
+// attempt to mark node as deleted
+if not C U R R p arrow next is equal to C A S open parenthesis false comma N E X T p comma N E X T c close parenthesis comma open parenthesis true comma N E X T p comma N E X T c plus 1 close parenthesis close parenthesis
+// list has been changed start over
+continue
+end if
+// attempt to link node out of list
+if P R E V p arrow C A S open parenthesis false comma C U R R dot p comma C U R R dot c close parenthesis comma open parenthesis false comma N E X T p comma N E X T c plus 1 close parenthesis close parenthesis
+free for reuse open parenthesis C U R R dot p close parenthesis
+// type preserving
+else void search open parenthesis v close parenthesis
+// list has been changed re scan and clean up deleted node s
+return true
+end if
+end loop
+end function
+bool list dot lookup open parenthesis value v close parenthesis
+return search open parenthesis v close parenthesis
+end function
+
+Figure 8 point 5 The H and M lock free list externally visible methods Note in Figure 8 point 4 that P R E V p C U R R and N E X T are thread private variables changed by list dot search
+
+The point is the load of C U R R from asterisk P R E V p immediately before the inner loop if the list is non empty it is the last dynamic load of N E X T from C U R R dot p arrow next at the third line of the last iteration of the inner loop In all these intra search cases we do not know that the method has linearized until we inspect the loaded value
+
+8 point 2 point 2 More Recent Linked Lists
+
+One downside of the Harris and Michael algorithm is that operations must restart their searches from the head after failing a C A S To avoid this inefficiency Fomitchev and Ruppert 2004 augmented each list node with a back pointer When a node is removed from the list its back pointer is set to point to the node just before it Of course that previous node might also get deleted but an operation can always follow back pointers until it finds an unmarked node one that has not been deleted This process eliminates the need to restart from the head
+
+Heller et al 2005 took a different approach designing a list whose updates acquire fine grained locks blocking other updates but whose searches are wait free as opposed
+This section delves into the implementation of linked lists, specifically focusing on lock-free data structures. A lock-free linked list allows multiple threads to access and modify the list concurrently without relying on traditional locking mechanisms, thus avoiding potential deadlocks and improving scalability.
+
+The presented code snippet illustrates the `insert` and `delete` operations within a lock-free context. The `insert` function, for example, first checks if the value already exists. If not, it allocates a new node. The core of the lock-free mechanism here is the use of Compare And Swap, or C A S, operations. A C A S operation atomically checks if a memory location holds an expected value and, if so, updates it with a new value. In the `insert` operation, a C A S is used to link the newly created node into the list. Specifically, `PREVP→CAS({false, CURR.p, CURR.c+1}, {false, n, CURR.c+1})` attempts to update the current node's pointer and version. The expected value is `{false, CURR.p, CURR.c+1}`, signifying the node is not logically deleted and pointing to the current node. The new value is `{false, n, CURR.c+1}`, meaning the node remains logically present but now points to the new node `n`. If this C A S fails, it implies another thread has modified the list structure, and the operation must retry. The version number `CURR.c+1` is incremented to detect such concurrent modifications.
+
+The `delete` operation employs a similar strategy. It first attempts to mark the node as logically deleted. This is achieved by another C A S operation: `CURR.p→next.CAS({false, NEXT.p, NEXT.c}, {true, NEXT.p, NEXT.c+1})`. Here, the attempt is to change the node's `next` field's logical deletion status from `false` to `true`, atomically incrementing the version. If this succeeds, the node is logically removed. Subsequently, another C A S operation, `PREVP→CAS({false, CURR.p, CURR.c}, {false, NEXT.p, CURR.c+1})`, attempts to physically unlink the logically deleted node by updating the previous node's `next` pointer. The use of version numbers, represented by `CURR.c` and `NEXT.c`, is crucial for ensuring atomicity and detecting interference from other threads. If any C A S operation fails, the entire operation restarts, ensuring correctness in a highly concurrent environment.
+
+The `lookup` function, in contrast, is straightforward, simply returning the result of a search operation.
+
+The text also introduces the concept of "More Recent Linked Lists," highlighting a performance consideration in lock-free algorithms. The Harris & Michael algorithm, a foundational lock-free linked list implementation, requires threads to restart their search if a node is removed from the list while they are traversing. To address this inefficiency, Heller et al. (2005) proposed an approach that augments each list node with a "back pointer." This back pointer points to the preceding node, allowing operations to follow these pointers if a node is deleted. This strategy eliminates the need for immediate restarts when a node is removed, as operations can potentially find the correct predecessor and continue the traversal. The discussion notes that while Heller's approach uses fine-grained locks for updates, its search operations can be wait-free, a desirable property in concurrent systems where guaranteed progress is essential. Wait-free algorithms ensure that every operation completes within a bounded number of steps, regardless of the actions of other threads.

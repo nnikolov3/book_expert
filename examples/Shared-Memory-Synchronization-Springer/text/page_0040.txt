@@ -1,0 +1,67 @@
+3.1 Safety 41
+
+In nonblocking algorithms, in which all possible interleavings must be provably correct
+(Chapter 8), it is common to associate linearization with a specific instruction (a load, store,
+or other atomic primitive) and then argue that any implementation-level memory updates
+that are visible before the linearization point will be recognized by other threads as merely
+preparation, and any that can be seen to occur after it will be recognized as merely cleanup.
+In the nonblocking stack of Figure 2.7, a successful push or pop can be said to linearize at
+its final CAS instruction; an unsuccessful pop (one that returns null) can be said to linearize
+at the load of top.
+
+In a complex method, we may need to identify multiple possible linearization points, to
+accommodate branching control flow. In other cases, the outcome of tests at run time may
+allow us to argue that a method linearized at some point earlier in its execution (an example
+of this sort can be found in Sec. 8.2.1). There are even algorithms in which the linearization
+point of a method is determined by behavior in some other thread. All that really matters
+1s that there be a total order on the linearization points, and that the behavior of operations,
+when considered in that order, be consistent with the object’s sequential semantics.
+
+Given linearizable implementations of objects A and B, one can prove that in every
+possible program execution, the operations on A and B will appear to occur in some single
+total order that is consistent both with program order in each thread and with any other
+ordering that threads are able to observe. In other words, linearizable implementations of
+concurrent objects are composable. Linearizability is therefore sometimes said to be a local
+property (Weihl 1989; Herlihy and Wing 1990): the linearizability of a system as a whole
+depends only on the (local) linearizability of its parts.
+
+Hand-Over-Hand Locking (Lock Coupling). As an example of linearizability achieved
+through fine-grain locking, consider the task of parallelizing a set abstraction implemented
+as a sorted, singly-linked list with insert, remove, and lookup operations. Absent synchro-
+nization, it is easy to see how the list could become corrupted. In Figure 3.1, the code at left
+shows a possible sequence of statements executed by thread 1 in the process of inserting
+a new node containing the value C, and a concurrent sequence of statements executed by
+thread 2 in the process of deleting the node containing the value D. If interleaved as shown
+(with thread 1 performing its last statement between thread 2’s last two statements), these
+two sequences will transform the list at the upper right into the non-list at the lower right,
+in which the node containing C has been lost.
+
+Clearly a global lock—forcing either thread 1 or thread 2 to complete before the other
+starts—would linearize the updates and avoid the loss of C. It can be shown, however, that
+linearizability can also be maintained with a fine-grain locking protocol in which each thread
+holds at most two locks at a time, on adjacent nodes in the list (Bayer and Schkolnick 1977).
+By retaining the right-hand lock while releasing the left-hand and then acquiring the right-
+hand’s successor, a thread ensures that it is never overtaken by another thread during its
+traversal of the list. In Figure 3.1, thread 1 would hold locks on the nodes containing A and
+D until done inserting the node containing C. Thread 2 would need these same two locks
+before removing D. Another thread, performing a lookup operation on C, would need the
+Three point one Safety.
+
+In nonblocking algorithms, in which all possible interleavings must be provably correct, as discussed in Chapter eight, it is common to associate linearization with a specific instruction, such as a load, store, or other atomic primitive. It can then be argued that any implementation-level memory updates visible before the linearization point will be recognized by other threads as merely preparation, and any updates seen to occur after it will be recognized as merely cleanup. In the nonblocking stack shown in Figure two point seven, a successful push or pop operation can be said to linearize at its final C A S instruction. An unsuccessful pop, one that returns null, can be said to linearize at the load of top.
+
+In a complex method, it may be necessary to identify multiple possible linearization points to accommodate branching control flow. In other cases, the outcome of tests at run time may allow us to argue that a method linearized at some point earlier in its execution; an example of this sort can be found in Section eight point two point one. There are even algorithms in which the linearization point of a method is determined by behavior in some other thread. All that really matters is that there is a total order on the linearization points, and that the behavior of operations, when considered in that order, is consistent with the object’s sequential semantics.
+
+Given linearizable implementations of objects A and B, one can prove that in every possible program execution, the operations on A and B will appear to occur in some single total order. This order is consistent both with the program order in each thread and with any other ordering that threads are able to observe. In other words, linearizable implementations of concurrent objects are composable. Linearizability is therefore sometimes said to be a local property, as described by Weihl in nineteen eighty nine, and Herlihy and Wing in nineteen ninety. The linearizability of a system as a whole depends only on the local linearizability of its parts.
+
+Hand over Hand Locking, also known as Lock Coupling, serves as an example of linearizability achieved through fine grain locking. Consider the task of parallelizing a set abstraction implemented as a sorted, singly linked list with insert, remove, and lookup operations. Without synchronization, it is easy to see how the list could become corrupted. In Figure three point one, the code at the left shows a possible sequence of statements executed by thread one in the process of inserting a new node containing the value C, and a concurrent sequence of statements executed by thread two in the process of deleting the node containing the value D. If interleaved as shown, specifically with thread one performing its last statement between thread two’s last two statements, these two sequences will transform the list at the upper right into the non list at the lower right, in which the node containing C has been lost.
+
+Clearly, a global lock, which would force either thread one or thread two to complete before the other starts, would linearize the updates and avoid the loss of C. However, it can be shown that linearizability can also be maintained with a fine grain locking protocol in which each thread holds at most two locks at a time on adjacent nodes in the list, as discussed by Bayer and Scholnick in nineteen seventy seven. By retaining the right hand lock while releasing the left hand lock and then acquiring the right hand’s successor, a thread ensures that it is never overtaken by another thread during its traversal of the list. In Figure three point one, thread one would hold locks on the nodes containing A and D until done inserting the node containing C. Thread two would need these same two locks before removing D. Another thread performing a lookup operation on C would need the
+In the realm of concurrent systems, ensuring correctness amidst numerous possible thread interleavings is a foundational challenge. Nonblocking algorithms, a class of concurrent algorithms, are designed to guarantee system wide progress, meaning a halt in one thread does not impede the progress of others. Achieving provable correctness for such algorithms necessitates a rigorous formal framework, one that can account for the myriad ways operations from different threads might interleave. This often involves associating a specific linearization point with each operation. The linearization point is a conceptual instantaneous moment during an operation's execution where its effect on the shared state becomes globally visible and takes effect atomically. Any memory updates visible before this point are considered preparatory, while those observed afterwards are viewed as cleanup, effectively ensuring that the operation appears as an indivisible action. For instance, in a nonblocking stack, a successful push or pop operation might linearize at the point of its final Compare And Swap instruction, whereas an unsuccessful pop might linearize at the load operation that identifies its failure.
+
+In more complex concurrent methods, the process of identifying these linearization points can become intricate, potentially requiring dynamic run time checks or a determination based on the behavior of other threads. The ultimate goal is to establish a total order of all linearized operations that remains consistent with the object's sequential semantics. This concept of linearizability is powerful because it allows us to prove that in every possible concurrent program execution, the operations appear to occur in some single total order that is consistent with each individual thread's program order and with any other ordering that threads are able to observe. This property, often described as *local* linearizability, implies that the linearizability of a composite system can be reasoned about directly from the linearizability of its constituent parts, a principle that significantly aids in the modular design and verification of complex concurrent data structures, as articulated by the foundational work of Herlihy and Wing.
+
+As a practical illustration of achieving linearizability through fine grain synchronization, consider the technique known as Hand Over Hand Locking, or Lock Coupling. This approach is particularly effective when parallelizing operations on dynamic data structures like a sorted, singly linked list, which supports operations such as insertion, removal, and lookup. Without proper synchronization, concurrent modifications could easily corrupt the list's integrity. While a global lock would trivially ensure correctness by serializing all operations, it would severely limit concurrency. Hand Over Hand Locking offers a more performant alternative by allowing threads to operate on different parts of the list concurrently.
+
+The core mechanism of Hand Over Hand Locking involves a thread acquiring a lock on a successor node before releasing the lock on its current node during list traversal or modification. This ensures that at any given moment, a thread typically holds at most two locks: one on the current node and one on the next node it intends to access or modify. This careful acquisition and release pattern is critical for maintaining the list's structural consistency. It guarantees that as a thread navigates or alters the list, no other thread can break the chain of nodes it is operating upon. By retaining the lock on the current node while acquiring the lock on the successor, a thread prevents any race conditions that might lead to a loss of data or structural corruption, such as when one thread attempts to delete a node that another thread is simultaneously trying to insert or link to.
+
+To elaborate on this through a conceptual scenario similar to what might be depicted in Figure three point one, imagine thread one is inserting a new node with value C, while concurrently thread two is attempting to remove a node with value D from the same list. A simple, unsynchronized interleaving could lead to a situation where if thread one executes its final linking operation *between* thread two's acquisition of a lock on node D and its subsequent removal, the node C might become detached or lost. The Hand Over Hand protocol explicitly prevents this by mandating that thread one, for instance, would need to hold locks on both its predecessor node, say A, and the node that will become C's successor, D, throughout the insertion process. Similarly, thread two, to safely remove D, would be required to acquire locks on the nodes immediately preceding and succeeding D. This locking discipline ensures that the structural integrity of the list is preserved throughout the concurrent operations, providing the strong guarantee of linearizability for these complex list manipulations. Any lookup operation on C by another thread would also necessarily acquire the appropriate locks to traverse the path to C, reinforcing the coordinated access.

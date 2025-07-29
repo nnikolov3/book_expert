@@ -1,0 +1,70 @@
+154 8 Nonblocking Algorithms
+
+cycle. In practice, randomized backoff can be expected to resolve such conflicts quickly and
+efficiently.
+
+To make the deque circular (as indeed it must be if pushes and pops at the two ends are not
+precisely balanced), Herlihy et al. introduce one new dummy null (DN) value. The structural
+invariant is then modified to allow the empty portion of the circular array to contain, in order,
+zero or more RN values, zero or one DN values, and zero or more LN values. At all times,
+however, there must be null values of at least two different kinds—at least one RN or DN, and
+at least one DN or LN. A push_right that finds only one RN value in the array must change
+the adjacent DN value, if any, into an RN first. If there is no adjacent DN, the operation must
+change the leftmost LN, if any, into a DN first. In all cases, changes are made with a pair of
+CASes, the first of which increments a count and the second of which is substantive.
+
+But circularity is not the only option! Graichen et al. (2016) observe that the same two-
+CAS protocol used to manipulate a data value and the adjacent dummy value can also be
+used, in a linked list of arrays, to manipulate a data value at the end of a (non-circular)
+array together with an adjacent pointer to another array. This adapted protocol can then be
+used to add and remove arrays on demand, allowing the now unbounded deque to expand
+or contract at either end.
+
+Work-Stealing Queues
+
+In parallel programming languages and libraries, it is commonplace to distinguish between
+threads, which are often provided by the operating system in rough proportion to the degree
+of hardware parallelism, and rasks, which are logically distinct units of work to be accom-
+plished. Worker threads then execute logical tasks under the direction of a user-level sched-
+uler.
+
+Originally developed for the Cilk programming language (Blumofe etal. 1995, Frigoetal.
+1998), work stealing (Blumofe and Leiserson 1994) has become the scheduling discipline
+of choice for tasks. To minimize contention and maximize locality, the scheduler maintains
+a separate pool of tasks for each worker thread. Upon creation, tasks are inserted into the
+pool of the creating thread and, when the current task completes, a new one 1s chosen from
+this pool. Only when the local pool 1s empty does a thread go looking for work elsewhere.
+Strategies here differ: in the simplest case, the thread chooses a random peer and attempts
+to remove a task from that peer’s pool.
+
+Because tasks may be quite small, it 1s important that insertions and deletions from the
+local pool be very fast. Toward that end, Arora et al. (1998) developed a special-purpose
+deque that is carefully optimized for the work stealing case. It assumes that push_right and
+pop_right operations are performed by a single thread (the local one), and thus need not
+be synchronized with one another. It also assumes that push_left operations never occur.
+Synchronization is required only among pop_left operations and, when a deque is nearly
+empty, between those operations and any concurrent push_right or pop_right operations.
+one hundred fifty four
+
+Nonblocking Algorithms
+
+cycle. In practice, randomized backoff can be expected to resolve such conflicts quickly and efficiently.
+
+To make the deque circular, as indeed it must be if pushes and pops at the two ends are not precisely balanced, Herlihy et al. introduce one new dummy null D N value. The structural invariant is then modified to allow the empty portion of the circular array to contain, in order, zero or more R N values, zero or one D N values, and zero or more L N values. At all times, however, there must be null values of at least two different kinds, at least one R N or D N, and at least one D N or L N. A push right that finds only one R N value in the array must change the adjacent D N value, if any, into an R N first. If there is no adjacent D N, the operation must change the leftmost L N, if any, into a D N first. In all cases, changes are made with a pair of C A S es, the first of which increments a count and the second of which is substantive.
+
+But circularity is not the only option. Graichen et al. (two thousand sixteen) observe that the same two C A S protocol used to manipulate a data value and the adjacent dummy value can also be used, in a linked list of arrays, to manipulate a data value at the end of a non-circular array together with an adjacent pointer to another array. This adapted protocol can then be used to add and remove arrays on demand, allowing the now unbounded deque to expand or contract at either end.
+
+Work-Stealing Queues
+
+In parallel programming languages and libraries, it is commonplace to distinguish between threads, which are often provided by the operating system in rough proportion to the degree of hardware parallelism, and tasks, which are logically distinct units of work to be accomplished. Worker threads then execute logical tasks under the direction of a user-level scheduler.
+
+Originally developed for the Cilk programming language, Blumofe et al. (nineteen ninety five), Frigo et al. (nineteen ninety eight), work stealing has become the scheduling discipline of choice for tasks. To minimize contention and maximize locality, the scheduler maintains a separate pool of tasks for each worker thread. Upon creation, tasks are inserted into the pool of the creating thread and, when the current task completes, a new one is chosen from this pool. Only when the local pool is empty does a thread go looking for work elsewhere. Strategies here differ: in the simplest case, the thread chooses a random peer and attempts to remove a task from that peer's pool.
+
+Because tasks may be quite small, it is important that insertions and deletions from the local pool be very fast. Toward that end, Arora et al. (nineteen ninety eight) developed a special-purpose deque that is carefully optimized for the work stealing case. It assumes that push right and pop right operations are performed by a single thread (the local one), and thus need not be synchronized with one another. It also assumes that push left operations never occur. Synchronization is required only among pop left operations and, when a deque is nearly empty, between those operations and any concurrent push right or pop right operations.
+The text delves into optimizations for nonblocking data structures, specifically circular deques, and introduces the concept of work-stealing queues in parallel programming.
+
+Regarding circular deques, the discussion focuses on maintaining invariants to ensure correctness and efficiency. The core challenge lies in managing the state of the deque, particularly when concurrent operations occur at its ends. To achieve precision in balancing the deque, an invariant is introduced, which is a structural condition that must always hold. This invariant is modified to accommodate a "dummy null" value, allowing the empty portion of the circular array representation to contain this placeholder. The invariant dictates that the array must always contain either zero or one "RN" (presumably Right Node) values, and zero or more "RN" values in total. Crucially, it specifies that at any given time, there must be at least one "RN" or "DN" (presumably Different Node) value present, and if the adjacent "DN" value is modified, the leftmost "RN" must also be updated. This is often accomplished using a compare-and-swap (CAS) operation, which atomically updates a value only if it matches an expected old value. The section then references Graichen et al.'s work from two thousand sixteen, which employed a CAS protocol to manipulate data values and adjacent data values within arrays. This approach was used in a linked list of arrays, where a pointer to another array facilitated manipulation at the end of a non-circular array. This technique allows for dynamic resizing or expansion of the deque by adding or removing arrays as needed.
+
+The text then transitions to the topic of "Work-Stealing Queues," a prevalent paradigm in parallel programming and library design, particularly for managing threads and tasks that leverage hardware parallelism. Worker threads are typically equipped with their own local task queues, managed by a user-level scheduler. The concept of work-stealing, first developed for the Cilk programming language by Blumofe and Leiserson in nineteen ninety-five and further explored by Frigo et al., aims to minimize contention and maximize data locality by distributing tasks efficiently among threads. In a work-stealing system, each worker thread maintains a local pool of tasks. When a worker completes its current task, it draws a new one from its local pool. If the local pool is empty, the thread then attempts to "steal" a task from another thread's pool. The simplest strategy involves randomly selecting a peer thread and attempting to retrieve a task from its queue.
+
+The efficiency of these operations, particularly insertions and deletions from the deque, is paramount for the performance of work-stealing. Arora et al. in nineteen ninety-eight developed a specialized deque optimized for the work-stealing scenario. This optimization assumes that "push right" and "pop right" operations are performed by a single thread, the owner of the deque, and thus do not require synchronization with other threads. Conversely, "push left" operations, which are typically performed by other threads attempting to steal work, and any concurrent "push right" operations are managed with synchronization mechanisms. This design distinction is critical because it isolates the primary thread's operations, reducing contention and improving performance. The implication is that synchronization is only necessary for "pop left" operations when the deque is nearly empty, or for any concurrent "push right" operations. This careful optimization leverages the inherent access patterns in work-stealing to minimize overhead and maximize throughput.

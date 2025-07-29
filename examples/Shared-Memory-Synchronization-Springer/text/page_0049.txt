@@ -1,0 +1,73 @@
+50 3 Essential Theory
+
+Many more stringent definitions of fairness are possible. In particular, strong fairness
+requires that any thread waiting for a condition that is true infinitely often (or a lock that
+1s available infinitely often) eventually executes another program step. In the following
+program fragment, for example, weak fairness admits an execution in which thread 1 spins
+forever, but strong fairness requires thread 2 to notice one of the “windows” in which g 1s
+true, complete its wait, and set f to true, after which thread 1 must notice the change and
+complete:
+
+atomic<bool> f := false, g := false
+
+thread 1: thread 2:
+while —f.load(||W) await (g)
+g.store(true, |W) f.store(true, ||)
+
+g.store(false, ||R)
+
+Strong fairness 1s difficult to truly achieve: it may, for example, require a scheduler to
+re-check every awaited condition whenever one of its constituent variables is changed, to
+make sure that any thread at risk of starving is given a chance to run. Any deterministic
+strategy that considers only a subset of the waiting threads on each state change risks the
+possibility of deterministically ignoring some unfortunate thread every time it is able to run.
+
+Fortunately, statistical “guarantees” typically suffice in practice. By considering a ran-
+domly chosen thread—instead of all threads—when a scheduling decision is required, we
+can drive the probability of starvation arbitrarily low. A truly random choice 1s difficult,
+of course, but various pseudorandom approaches appear to work quite well. At the hard-
+ware level, interconnects and coherence protocols are designed to make it unlikely that a
+“race” between two cores (e.g., when performing near-simultaneous CAS instructions on a
+previously uncached location) will always be resolved the same way. Within the operating
+system, runtime, or language implementation, one can “randomize” the interval between
+checks of a condition using a pseudorandom number generator or even the natural “jitter”
+in execution time of nontrivial instruction sequences on complex modern cores.
+
+Weak and strong fairness address worst-case behavior, and allow executions that still seem
+grossly unfair from an intuitive perspective (e.g., executions in which one thread succeeds a
+million times more often than another). Statistical “randomization,” by contrast, may achieve
+intuitively very fair behavior without absolutely precluding worst-case starvation.
+
+Much of the theoretical groundwork for fairness was laid by Nissim Francez (1986).
+Proofs of fairness are typically based on temporal logic, which provides operators for con-
+cepts like “always” and “eventually.” A brief introduction to these topics can be found
+in the text of Ben-Ari (2006, Chapter4); much more extensive coverage can be found in
+Schneider’s comprehensive work on the theory of concurrency (1997).
+Many more stringent definitions of fairness are possible. In particular, strong fairness requires that any thread waiting for a condition that is true infinitely often, or a lock that is available infinitely often, eventually executes another program step. In the following program fragment, for example, weak fairness admits an execution in which thread one spins forever. But strong fairness requires thread two to notice one of the "windows" in which G is true, complete its wait, and set F to true, after which thread one must notice the change and complete.
+
+The provided code fragment illustrates the interaction between two threads, thread one and thread two, using atomic boolean variables F and G. Both variables are initially set to false. Thread one enters a loop that continues as long as the atomic variable F, when loaded with weak memory ordering, evaluates to false. Inside this loop, thread one first stores true into the atomic variable G with weak memory ordering, and then immediately stores false into G with release memory ordering. Meanwhile, thread two waits until the atomic variable G becomes true. Once G is true, thread two then stores true into the atomic variable F with default memory ordering.
+
+Strong fairness is difficult to truly achieve. It may, for example, require a scheduler to re check every awaited condition whenever one of its constituent variables is changed, to make sure that any thread at risk of starving is given a chance to run. Any deterministic strategy that considers only a subset of the waiting threads on each state change risks the possibility of deterministically ignoring some unfortunate thread every time it is able to run.
+
+Fortunately, statistical "guarantees" typically suffice in practice. By considering a randomly chosen thread, instead of all threads, when a scheduling decision is required, we can drive the probability of starvation arbitrarily low. A truly random choice is difficult, of course, but various pseudorandom approaches appear to work quite well. At the hard ware level, interconnects and coherence protocols are designed to make it unlikely that a "race" between two cores, for example, when performing near simultaneous C A S instructions on a previously uncached location, will always be resolved the same way. Within the O S, system, runtime, or language implementation, one can "randomize" the interval between checks of a condition using a pseudorandom number generator or even the natural "jitter" in execution time of nontrivial instruction sequences on complex modern cores.
+
+Weak and strong fairness address worst case behavior and allow executions that still seem grossly unfair from an intuitive perspective, for example, executions in which one thread succeeds a million times more often than another. Statistical "randomization," by contrast, may achieve intuitively very fair behavior without absolutely precluding worst case starvation.
+
+Much of the theoretical groundwork for fairness was laid by Nissim Francez in one thousand nine hundred eighty six. Proofs of fairness are typically based on temporal logic, which provides operators for concepts like "always" and "eventually." A brief introduction to these topics can be found in the text of Ben Ari, two thousand six, Chapter four. Much more extensive coverage can be found in Schneider’s comprehensive work on the theory of concurrency, one thousand nine hundred ninety seven.
+The concept of fairness within concurrent systems is a fundamental aspect of reliable and predictable execution, particularly in multithreaded or distributed environments. It addresses the challenge of ensuring that all competing processes or threads make progress and do not suffer from indefinite postponement, known as starvation. Multiple definitions of fairness exist, each imposing progressively stronger guarantees.
+
+Weak fairness, for instance, postulates that if a condition for a thread to execute is continuously true, then that thread will eventually be given an opportunity to run. This means that while a thread might repeatedly check a condition that remains true, it will not be permanently ignored. In contrast, strong fairness demands a more rigorous guarantee: if a condition for a thread to execute becomes true infinitely often, then the thread will eventually execute. This subtle but critical distinction ensures that even transient opportunities for execution are not missed indefinitely. For example, if a lock is available infinitely often, strong fairness dictates that a thread waiting for that lock will eventually acquire it.
+
+Consider the provided pseudocode involving two atomic boolean variables, `f` and `g`, initialized to `false`. These atomic types are crucial for ensuring indivisible operations in a concurrent setting, preventing data races and maintaining memory consistency across threads. Thread one enters a spin loop, repeatedly loading the value of `f` with an associated memory order, possibly "weak" or "write related" semantics as suggested by `double pipe W`. The loop continues as long as `f` is `false`. Once `f` transitions to `true`, thread one then performs two consecutive store operations on `g`, first setting it to `true` and then immediately to `false`. Both store operations are annotated with `double pipe R`, which typically signifies "release" semantics, guaranteeing that all prior memory writes by thread one are visible to other threads before `g`'s value is updated. This sequence creates a transient "window" during which `g` is `true`.
+
+Concurrently, thread two executes an `await` operation on `g`, meaning it will pause its execution until `g` becomes `true`. Once thread two observes `g` as `true` and successfully proceeds, it then sets `f` to `true` using a store operation. The `double pipe` annotation here, without an explicit letter, often implies acquire or release semantics, or a default sequentially consistent ordering, crucial for ensuring the visibility of `f`'s update to thread one.
+
+This example starkly illustrates the difference between weak and strong fairness. If thread one, operating in its spin loop, is never able to observe `f` becoming `true` due to a scheduler's repeated preference for other threads, it would starve. Weak fairness would guarantee that if `f` is *constantly* `true`, thread one would eventually break its loop. However, strong fairness is needed to ensure that even if `f` is only momentarily `true` due to thread two's `f.store(true, double pipe)` operation, thread one will eventually *notice* this change and proceed. If thread one perpetually misses the brief "window" when `f` is `true`, it would be a violation of strong fairness, as its condition for progress (negation of `f` being `false`) is met infinitely often.
+
+Achieving strong fairness is considerably challenging for a scheduler, particularly one that operates deterministically. A scheduler aiming for strong fairness would theoretically need to re check every awaited condition whenever one of its constituent variables changes, and guarantee that any thread at risk of starvation is given a chance to run. Such a deterministic strategy becomes computationally prohibitive or impossible in complex systems, as it risks indefinitely ignoring some unfortunate thread.
+
+In practice, statistical "guarantees" often suffice. Instead of ensuring fairness for *all* threads under *all* conditions, schedulers employ mechanisms that drive the probability of starvation arbitrarily low. While a truly random choice is difficult to implement at the hardware level, various pseudorandom approaches are quite effective. These can involve randomizing the interval between checks of a condition using a pseudorandom number generator or leveraging natural jitter in the execution time of non-trivial instruction sequences on modern central processing unit cores.
+
+At the hardware level, interconnects and cache coherence protocols play a crucial role in ensuring that changes to shared memory, such as those to `f` and `g`, are propagated and observed consistently across different cores. For instance, in a scenario involving near simultaneous Compare And Swap instructions on a previously uncached memory location, these protocols determine which core "wins" the race, ensuring a consistent outcome. From a system software perspective, including the operating system, runtime, or language implementation, pseudorandomization can be applied to "randomize" the interval between checks, effectively mitigating the worst-case starvation scenarios.
+
+Weak and strong fairness definitions fundamentally address worst-case behavior. They allow for scenarios that might intuitively seem unfair, such as one thread succeeding a million times more often than another, provided that no thread is permanently denied progress. Statistical randomization, conversely, may achieve intuitively very fair behavior without absolutely precluding worst-case starvation, effectively balancing theoretical rigor with practical performance. The theoretical groundwork for fairness is deeply rooted in temporal logic, which provides formal operators for reasoning about properties like "always" and "eventually," essential for proving the correctness and liveness of concurrent programs.

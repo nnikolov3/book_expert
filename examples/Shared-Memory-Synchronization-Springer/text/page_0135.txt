@@ -1,0 +1,54 @@
+=
+
+Check for
+updates
+
+Nonblocking Algorithms
+
+When devising a concurrent data structure, we typically want to arrange for methods to be
+atomic—most often linearizable (Sec. 3.1.2). Most concurrent algorithms achieve atomicity
+by means of mutual exclusion, implemented using locks. Locks are blocking, however,
+in the formal sense of the word: whether implemented by spinning or rescheduling, they
+admit system states in which a thread is unable to make progress without the cooperation
+of one or more peers. This in turn leads to the problems of inopportune preemption and
+convoys, discussed in Sec. 7.5.2. Locks—coarse-grain locks in particular—are also typically
+conservative: in the course of precluding unacceptable thread interleavings, they tend to
+preclude many acceptable interleavings as well.
+
+We have had several occasions in earlier chapters to refer to nonblocking algorithms, in
+which there is never a reachable state of the system in which some thread is unable to make
+forward progress. In effect, nonblocking algorithms arrange for every possible interleaving
+of thread executions to be acceptable. They are thus immune to inopportune preemption.
+For certain data structures (counters, stacks, queues, linked lists, hash tables—even skip
+lists) they can also outperform lock-based alternatives even in the absence of preemption or
+contention.
+
+The literature on nonblocking algorithms 1s enormous and continually growing. Rather
+than attempt a comprehensive survey here, we will simply introduce a few of the most widely
+used nonblocking data structures, and use them to illustrate a few important concepts and
+techniques. A more extensive and tutorial survey can be found in the text of Herlihy et al.
+(2021). Hakan Sundell’s Ph.D. thesis (2004) and the survey of Moir and Shavit (2005) are
+also excellent sources of background information. Before proceeding here, readers may wish
+to refer back to the discussion of liveness in Sec. 3.2.
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 139
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_8
+Nonblocking Algorithms
+
+When devising a concurrent data structure, we typically want to arrange for methods to be atomic—most often linearizable, as discussed in Section Three point one point two. Most concurrent algorithms achieve atomicity by means of mutual exclusion, implemented using locks. Locks are blocking, however, in the formal sense of the word: whether implemented by spinning or rescheduling, they admit system states in which a thread is unable to make progress without the cooperation of one or more peers. This in turn leads to the problems of inopportune preemption and convoys, discussed in Section Seven point five point two. Locks—coarse grain locks in particular—are also typically conservative: in the course of precluding unacceptable thread interleavings, they tend to preclude many acceptable interleavings as well.
+
+We have had several occasions in earlier chapters to refer to nonblocking algorithms, in which there is never a reachable state of the system in which some thread is unable to make forward progress. In effect, nonblocking algorithms arrange for every possible interleaving of thread executions to be acceptable. They are thus immune to inopportune preemption. For certain data structures, such as counters, stacks, queues, linked lists, and hash tables—even skip lists—they can also outperform lock based alternatives even in the absence of preemption or contention.
+
+The literature on nonblocking algorithms is enormous and continually growing. Rather than attempt a comprehensive survey here, we will simply introduce a few of the most widely used nonblocking data structures, and use them to illustrate a few important concepts and techniques. A more extensive and tutorial survey can be found in the text of Herlihy, Shavit, and Shavit, published in two thousand four, and the survey of Moir and Shavit, published in two thousand five, are also excellent sources of background information. Before proceeding here, readers may wish to refer back to the discussion of liveness in Section Three point two.
+
+The Author(s), under exclusive license to Springer Nature Switzerland AG, two thousand twenty four M. L. Scott and T. Brown, Shared Memory Synchronization, Synthesis Lectures on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8
+The foundational concept explored here is that of nonblocking algorithms, which are a class of concurrent algorithms designed to avoid issues such as deadlock and livelock, often associated with traditional lock-based synchronization mechanisms. When constructing concurrent data structures, the primary goal is typically to achieve atomicity, meaning that operations appear to execute as a single, indivisible unit. Most conventional algorithms accomplish this through mutual exclusion, commonly implemented using locks.
+
+Locks, however, can lead to undesirable behaviors. A thread attempting to acquire a lock might become blocked, either through spinning—repeatedly checking if the lock is available—or by being descheduled by the operating system. If a thread holding a lock is preempted by the system, or if it encounters an error, other threads requiring that lock can be stalled indefinitely. This scenario, where a thread is unable to make progress due to the state of the system or the actions of other threads, is a critical concern. Such blocking can lead to the problems of inopportune preemption and convoys, where a long chain of waiting threads can form, significantly degrading system performance.
+
+Nonblocking algorithms aim to circumvent these issues by ensuring that at least one thread always makes progress. This is often achieved through optimistic approaches, where threads attempt operations without explicit locks, and if a conflict is detected, they retry. The requirement of atomicity remains paramount, and the formal definition of atomicity in this context is often related to linearizability, a strong correctness condition that ensures operations appear to execute instantaneously at some point between their invocation and completion.
+
+While lock-based algorithms are prevalent due to their conceptual simplicity, nonblocking algorithms offer a robust alternative, especially in environments with high contention or where fairness and guaranteed progress are critical. For certain data structures, such as counters, stacks, queues, and linked lists, nonblocking implementations can even outperform their lock-based counterparts, particularly under heavy load. This performance advantage stems from their ability to avoid the overhead and latency associated with lock acquisition and release, and their resilience to thread preemption. Hash tables, and even skip lists, are examples of data structures that have benefited from efficient nonblocking designs.
+
+The field of nonblocking algorithms is a dynamic and extensive area of research. The text references earlier discussions on liveness, a property crucial for concurrent systems, which ensures that some event eventually occurs. The study of nonblocking data structures and algorithms is further supported by significant contributions in the literature, including the work by Herlihy, Shavit, and others, who have provided extensive surveys and foundational theoretical frameworks. Hakan Sundell's Ph.D. thesis and the survey by Moir and Shavit are highlighted as valuable resources for understanding the core concepts and techniques in this domain.

@@ -1,0 +1,66 @@
+5.2 Barrier Algorithms 89
+
+barrier b
+
+in parallel forie 7
+repeat
+// do i's portion of the work of a phase
+b.cycle()
+until terminating condition
+
+The cycle method of barrier b (sometimes called wait, next, or even barrier) forces each
+thread i to wait until all threads have reached that same point in their execution. Calling cycle
+accomplishes two things: it announces to other threads that all work prior to the barrier in
+the current thread has been completed (this is the arrival part of the barrier), and it ensures
+that all work prior to the barrier in other threads has been completed before continuing
+execution in the current thread (this 1s the departure part). To avoid data races, the arrival
+part typically includes a release (RW||) fence or synchronizing store; the departure part
+typically ends with an acquire (||RW) fence.
+
+The simplest barriers, commonly referred to as centralized, employ a small, fixed-size
+data structure, and consume £2 (n) time between the arrival of the first thread and the departure
+of the last. More complex barriers distribute the data structure among the threads, consuming
+®(n) or ®(nlogn) space, but requiring only O (logn) time.
+
+For any maximum number of threads n, of course, log n is a constant, and with hardware
+support it can be a very small constant. Some multiprocessors (e.g., the Cray X/XE/Cascade,
+SGI UV, and IBM Blue Gene series) have exploited this observation to provide special
+constant-time barrier operations (the Blue Gene machines, though, did not have a global
+address space). With a large number of processors, constant-time hardware barriers can
+provide a substantial benefit over log-time software barriers.
+
+In effect, barrier hardware performs a global AND operation, setting a flag or asserting
+a signal once all cores have indicated their arrival. It may also be useful—especially on
+NRC-NUMA machines, to provide a global OR operation (sometimes known as Eureka)
+that can be used to determine when any one of a group of threads has indicated its arrival.
+Eureka mechanisms are commonly used for parallel search: as soon as one thread has found
+a desired element (e.g., in its portion of some large data set), the others can stop looking.
+The principal disadvantage of hardware barriers and Eureka mechanisms is that they are
+difficult to virtualize or share among the dynamically changing processes and threads of a
+multiprogrammed workload.
+
+The first subsection below presents a particularly elegant formulation of the centralized
+barrier. The following three subsections present different log-time barriers; a final subsection
+summarizes their relative advantages.
+Five point two Barrier Algorithms.
+
+The pseudocode describes a barrier synchronization mechanism denoted as barrier 'b'. In this parallel algorithm, for each thread 'i' within a set 'T', the thread repeatedly performs its portion of the work for a phase. After completing its work, it calls the 'b dot cycle' method. This process continues until a specific terminating condition is met.
+
+The cycle method of barrier 'b', sometimes referred to as wait, next, or even barrier, forces each thread 'i' to halt its execution until all participating threads have reached that exact point in their execution. Calling the cycle method achieves two key objectives. First, it signals to other threads that all work performed by the current thread prior to reaching the barrier is complete; this is known as the arrival part of the barrier. Second, it ensures that all work performed by other threads prior to their arrival at the barrier has been completed before the current thread can resume execution; this is known as the departure part. To prevent data races, the arrival part typically involves a release R W or or fence or a synchronizing store operation. Conversely, the departure part typically concludes with an acquire or or R W fence.
+
+The simplest barriers, commonly termed centralized barriers, utilize a small, fixed size data structure. They incur a time cost of Omega of 'n' between the arrival of the first thread and the departure of the last. More sophisticated barriers distribute the data structure across the threads, consuming Theta of 'n' or Theta of 'n' log 'n' space, but requiring only O of log 'n' time.
+
+Regardless of the maximum number of threads 'n', log 'n' behaves as a constant. With the aid of hardware support, this constant can be very small. Certain multiprocessors, such as the Cray X slash X E slash Cascade, S G I U V, and I B M Blue Gene series, have leveraged this principle to offer specialized constant time barrier operations. Notably, the Blue Gene machines, despite this capability, lacked a global address space. When dealing with a large number of processors, constant time hardware barriers offer a significant advantage over software based log time barriers.
+
+In essence, barrier hardware performs a global A N D operation. It sets a flag or asserts a signal once all processing cores have indicated their arrival. It can also be valuable, especially on N R C N U M A machines, to provide a global O R operation, sometimes called Eureka. This operation can be used to determine when any single thread within a group has signaled its arrival. Eureka mechanisms are commonly employed in parallel search scenarios, allowing other threads to cease their search as soon as one thread discovers a desired element, for example, within its allocated portion of a large data set. The primary drawback of hardware barriers and Eureka mechanisms is their inherent difficulty in virtualization or in sharing them among the dynamically changing processes and threads of a multiprogrammed workload.
+
+The first subsection presented below details a particularly elegant formulation of the centralized barrier. The subsequent three subsections introduce different log time barriers, and a final subsection summarizes their comparative advantages.
+The fundamental concept elucidated here is that of a barrier in parallel programming, a critical synchronization primitive ensuring that all participating threads in a concurrent system reach a specific point in their execution before any of them are permitted to proceed. The pseudocode illustrates this as `barrier b`, where `in parallel for i ∈ T` signifies that a set of threads, indexed by `i` within the thread pool `T`, concurrently execute their designated work. Each thread then invokes `b.cycle()`, which acts as the explicit synchronization point. The `repeat until terminating condition` structure implies an iterative, phase-based computation, where each phase concludes with all threads synchronizing at the barrier before the next phase begins, or before the entire parallel execution terminates.
+
+The `cycle` method of a barrier, represented by `b.cycle()`, performs a dual role vital for maintaining correctness in parallel execution. First, it serves as the "arrival" part, where the current thread signals its completion of all preceding work to other threads. This typically involves a memory fence, specifically a release fence or a synchronizing store operation, which ensures that all memory writes performed by the current thread *before* the barrier are visible to other threads *after* they pass the barrier. Second, it embodies the "departure" part, where the current thread waits until all other threads have similarly arrived at the barrier. This waiting phase ensures that the current thread does not proceed until all other threads have completed their preceding work, thereby preventing data races. The departure part often involves an acquire fence or a synchronizing load operation, guaranteeing that any memory writes made by other threads prior to their arrival at the barrier are visible to the current thread upon its departure. This strict ordering of memory operations is crucial for maintaining sequential consistency or other relaxed memory consistency models, preventing erroneous program behavior due to out of order memory access.
+
+The efficiency of barrier implementations is a key consideration, especially concerning their algorithmic complexity. The simplest forms, often termed "centralized barriers," involve a single, shared data structure that all threads access. While simple to implement, these exhibit a time complexity of Omega of `n` for `n` threads between the arrival of the first thread and the departure of the last. This linear dependency arises from contention on the shared data structure, as all `n` threads must individually update or check its state. In contrast, more sophisticated, "distributed barriers" partition the synchronization data structure across the threads or employ tree based structures, leading to improved scalability. These distributed approaches typically consume Theta of `n` or Theta of `n` log `n` space, but crucially, can achieve a much better time complexity of O of log `n`. The logarithmic dependency reflects the hierarchical nature of communication, where threads synchronize in stages, progressively combining their states. For a fixed, practical number of threads, particularly within the domain of many core architectures, this logarithmic `n` term can often be approximated as a constant, leading to extremely fast synchronization.
+
+Beyond software based barriers, specialized hardware support can dramatically reduce synchronization overhead. Multiprocessor systems, such as the Cray X slash X E slash Cascade, S G I U V, and the I B M Blue Gene series, have incorporated dedicated hardware mechanisms for constant time barrier operations. These hardware barriers often do not require a global address space and can provide a substantial performance advantage over software barriers. Operationally, a hardware barrier typically functions by performing a global And operation across all participating cores; once every core has asserted a signal indicating its arrival, the global And yields true, permitting all cores to proceed simultaneously. Conversely, some hardware barrier mechanisms, known as Eureka mechanisms, can implement a global Or operation. This is particularly useful in scenarios like parallel search, where the goal is to terminate as soon as any one thread finds a desired element. Once a single thread signals its discovery via the global Or, all other threads can cease their search, thereby optimizing resource utilization.
+
+Despite their performance benefits, hardware barriers present significant challenges, primarily in their flexibility and virtualization. Unlike software barriers, which can be dynamically allocated and adapted to changing parallel workloads, hardware barriers are often rigid. It becomes difficult to virtualize or efficiently share these fixed hardware resources among dynamically changing processes and threads in a multiprogrammed workload. This inflexibility can lead to underutilization or contention in diverse computing environments where parallel tasks are not static or uniform. The subsequent sections in the referenced text are poised to delve deeper into these practical implementations, detailing an elegant formulation of the centralized barrier and exploring various log time barrier designs, ultimately culminating in a comparative analysis of their respective advantages and disadvantages.

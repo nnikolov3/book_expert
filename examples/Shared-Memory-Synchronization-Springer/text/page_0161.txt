@@ -1,0 +1,69 @@
+8.6 Search Trees 165
+
+parent
+
+Vd
+/ \ / \
+
+(d) replace target using CAS (e) “unlock” parent using CAS
+
+Figure 8.16 EFRB algorithm to perform insert(90). Suppose the thread searches for 90, locating
+the target node where 90 should be inserted, and its parent, and sees that parent is not “locked” by
+another operation. After step (¢) the insert might be helped.
+
+Once parent is “locked,” and the newly created descriptor can be reached from
+parent.update, other threads might help this operation to complete. So, any of the steps
+from this point on could be performed by different helper threads, making it more natural for
+us to think of steps as being performed by the operation, rather than any particular thread.
+The next step 1s to replace the target node with n using CAS. Where traditional locking
+would allow this step to be accomplished with an ordinary store, we have potentially many
+helper threads attempting to perform the step concurrently; we therefore use CAS to ensure it
+happens only once (and specifically while this node is “locked” ). Finally, the operation uses
+CAS to “unlock” parent by changing its update field from (IFlag, desc) to (Clean, desc).
+
+Note that all of the information needed by helpers to perform these last two steps (replac-
+ing target with n and “unlocking” parent) can be found in desc. Helpers do not need
+to perform any other, earlier steps, since prior to these two steps other threads cannot be
+blocked by the insert.
+
+Delete Operation The algorithm for a delete(key) operation begins much as insert(key). It
+first searches for key to determine the target, parent, and also grandparent (or gparent)
+nodes. Let parentUpdate and gparentUpdate be the values read from the update fields of
+parent and gparent, respectively, during the search.
+
+If the search does not find key, delete returns false and is linearized as a lookup(key),
+returning true. Suppose, then, that the search does find key. In this case, the thread would
+like to “lock” gparent and parent, and replace parent and target with the sibling of target,
+removing parent and target from the tree. If gparent or parent are already “locked” by
+eight point six Search Trees
+
+Figure eight point one six E F R B algorithm to perform insert(ninety). Suppose the thread searches for ninety, locating the target node where ninety should be inserted, and its parent, and sees that parent is not “locked” by another operation. After step c the insert might be helped.
+
+The diagram shows a binary search tree with nodes containing numerical values. In diagram (a), labeled "create three new nodes," we see a parent node with value seventy. It has a left child node with value fifty and a right child node with value eighty. The node with value fifty has children with values forty and sixty. The node with value eighty has a right child with value ninety.
+
+Diagram (b), labeled "create new InsertFlag," shows the same tree structure. However, alongside the parent node seventy, there is an "InsertFlag" structure depicted as three connected boxes. Arrows indicate connections from the parent node seventy to the InsertFlag, and from the InsertFlag to the target node ninety.
+
+Diagram (c), labeled "lock parent using CAS," illustrates the process of locking the parent node. The parent node seventy is depicted with an arrow pointing to the first box in the InsertFlag, and the state is described as "state IFlag".
+
+Diagram (d), labeled "replace target using CAS," shows the target node ninety being replaced. An arrow originates from the parent node seventy, points to the second box in the InsertFlag, and then continues to the target node ninety. This action appears to be related to replacing the target.
+
+Diagram (e), labeled "unlock parent using CAS," shows the parent node seventy in a "state Clean" status. An arrow goes from the parent node seventy to the third box in the InsertFlag, and then back to the parent node seventy, suggesting an unlocking operation.
+
+Once parent is “locked,” and the newly created descriptor can be reached from parent dot update, other threads might help this operation to complete. So, any of the steps from this point on could be performed by different helper threads, making it more natural for us to think of steps as being performed by the operation, rather than any particular thread. The next step is to replace the target node with n using C A S. Where traditional locking would allow this step to be accomplished with an ordinary store, we have potentially many helper threads attempting to perform the step concurrently; we therefore use C A S to ensure it happens only once (and specifically while this node is “locked”). Finally, the operation uses C A S to “unlock” parent by changing its update field from IFlag, desc to Clean, desc. Note that all of the information needed by helpers to perform these last two steps (replacing target with n and “unlocking” parent) can be found in desc. Helpers do not need to perform any other, earlier steps, since prior to these two steps other threads cannot be blocked by the insert.
+
+Delete Operation The algorithm for a delete(key) operation begins much as insert(key). It first searches for key to determine the target, parent, and also grandparent (or gparent) nodes. Let parentUpdate and gparentUpdate be the values read from the update fields of parent and gparent, respectively, during the search. If the search does not find key, delete returns false and is linearized as a lookup(key), returning true. Suppose, then, that the search does find key. In this case, the thread would like to “lock” gparent and parent, and replace parent and target with the sibling of target, removing parent and target from the tree. If gparent or parent are already “locked” by
+Figure eight point sixteen illustrates the Epoch Free Record based algorithm, or E F R B, for performing an insert operation in a concurrent data structure, specifically a search tree. The scenario depicts an insertion of the key ninety. The algorithm begins with a thread searching for the position where ninety should be inserted, identifying node seventy as the parent and node eighty as the target.
+
+Panel (a) shows the initial state of the relevant portion of the tree. Node seventy, a circular node, is the parent. It has two children: node fifty, which is also circular, and node eighty, which is a square node, representing the target. Node fifty has children forty and sixty, both square. Node eighty has a child ninety, which is also square.
+
+Panel (b) introduces an `InsertFlag` data structure, conceptually represented as a three-element array, associated with node seventy. This flag is used to coordinate concurrent operations. Here, the `InsertFlag` indicates that operations are in progress. The target node, eighty, is also linked to this flag.
+
+Panel (c) demonstrates the "lock" step on the parent node seventy using a Compare And Swap, or C A S, operation. This C A S operation would atomically update a version or state field within the node to signify it is locked for modification. The diagram shows a thick arrow indicating the C A S operation on node seventy, referencing the `InsertFlag`.
+
+Panel (d) illustrates the replacement of the target node's value, implicitly, by changing its state or linking it to the new node ninety using a C A S operation. This is depicted by a thick arrow from node seventy's `InsertFlag` to the target node eighty, effectively updating it. The `InsertFlag` on parent seventy is shown transitioning to a "clean" state, signifying the completion of this phase of the operation.
+
+Panel (e) shows the final step of "unlocking" the parent node seventy, again using a C A S operation. This is represented by a thick arrow from the parent node seventy, updating its state to clean. The diagram indicates the `InsertFlag` state changes from a locked or in-progress state to a clean state. The text mentions that after step (c), the insert might be helped by other threads.
+
+The accompanying text elaborates on the insertion process. Once the parent node, seventy, is determined to be "unlocked," meaning it's not being modified by another operation that would cause inconsistency, the newly created descriptor for the insertion can be "reached" from `parent.update`. This signifies that the update information is made visible. Other threads can then assist in completing the operation. The steps are described as being performed by different helper threads, making the process more naturally a collective effort rather than a single thread's task. This contrasts with traditional locking mechanisms, where a single thread typically manages the entire modification. The algorithm then uses C A S to ensure the operation's atomicity, specifically to "lock" the parent node. Finally, C A S is used again to "unlock" the parent node, often by changing its update field from an `InsertFlag` to a `Clean` descriptor. Importantly, the information needed by helper threads to perform their tasks, such as the target node and the "unlocking" parent, is available in the preceding steps. Helper threads do not need to re-read these values, and other threads are prevented from interfering with these critical updates.
+
+The text then shifts to the `Delete Operation`. A delete operation for a given key begins by searching for the target node, its parent, and its grandparent. Specific values are captured: `parentUpdate` and `gparentUpdate`, representing the state or update pointers of the parent and grandparent nodes, respectively, at the time of the search. If the key is not found, the deletion operation signals failure and is effectively linearized as a lookup. However, if the key is found, the thread proceeds. The next step involves attempting to "lock" the grandparent node, and then replacing the parent node with its sibling, effectively removing the target node from the tree. This operation is contingent on the grandparent and parent nodes not being "locked" by other concurrent operations. The text implies that if either the grandparent or parent is already locked, the delete operation might fail or require retrying.

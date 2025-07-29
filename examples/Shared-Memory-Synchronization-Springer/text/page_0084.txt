@@ -1,0 +1,58 @@
+=
+
+Check for
+updates
+
+Busy-Wait Synchronization with Conditions
+
+In Chapter 1 we suggested that almost all synchronization serves to achieve either atom-
+icity or condition synchronization. Chapter 4 considered spin-based atomicity. The current
+chapter considers spin-based condition synchronization—iflags and barriers in particular. In
+many cases, spins can be replaced, straightforwardly, with waits on scheduler-based syn-
+chronization queues. We will return to the topic of scheduler-based conditions in Chapter 7.
+
+5.1 Flags
+
+In its simplest form, a flag is Boolean variable, initially false, on which a thread can wait:
+
+class flag
+atomic<bool> f := false
+
+flag.set():
+f.store(true, RW||)
+
+flag.await():
+while —fload(); // spin
+fence(R||RW)
+
+Methods set and await are presumably called by different threads. Code for set consists
+of arelease-annotated store; await ends with an acquire fence. These reflect the fact that one
+typically uses set to indicate that previous operations of the calling thread (e.g., initialization
+of a shared data structure) have completed; one typically uses await to ensure that subsequent
+operations of the calling thread do not begin until the condition holds.
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 87
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_5
+Busy Wait Synchronization with Conditions. Chapter five.
+
+In Chapter one, we suggested that almost all synchronization serves to achieve either atomicity or condition synchronization. Chapter four considered spin based atomicity. The current chapter considers spin based condition synchronization, flags and barriers in particular. In many cases, spins can be replaced straightforwardly with waits on scheduler based synchronization queues. We will return to the topic of scheduler based conditions in Chapter seven.
+
+Five point one. Flags.
+
+In its simplest form, a flag is a Boolean variable, initially false, on which a thread can wait. The code block defines a class named `flag`. Inside this class, an atomic boolean variable `f` is initialized to `false`. The `flag.set` function stores the value `true` into `f` with a `read or write` memory order. The `flag.await` function begins with a `while` loop that continues as long as the loaded value of `f` is `false`. This represents a spin wait. After the `while` loop, a `fence` operation is performed with `read or read write` semantics.
+
+Methods `set` and `await` are presumably called by different threads. Code for `set` consists of a release annotated store, and `await` ends with an acquire fence. These reflect the fact that one typically uses `set` to indicate that previous operations of the calling thread, for example, initialization of a shared data structure, have completed. One typically uses `await` to ensure that subsequent operations of the calling thread do not begin until the condition holds.
+
+The Author(s), under exclusive license to Springer Nature Switzerland A G two thousand twenty four. M. L. Scott and T. Brown, Shared Memory Synchronization, Synthesis Lectures on Computer Architecture, H T T P S colon slash slash D O I dot org slash one zero point one zero zero seven slash nine seven eight dash three dash zero three one dash three eight six eight four dash eight underscore five. Eighty seven.
+Synchronization in concurrent computing is fundamentally about orchestrating the interactions among multiple threads or processes to ensure correctness and maintain data consistency. The page introduces the concept of busy wait synchronization, a class of techniques where a thread repeatedly checks a condition, consuming C P U cycles, rather than yielding its execution time to the operating system scheduler. This approach is often referred to as a spin lock or spin barrier. While it can offer low latency in scenarios where the waiting period is expected to be extremely short, its primary drawback lies in its inefficiency for prolonged waits, as it wastes C P U resources that could otherwise be allocated to productive work. Scheduler based synchronization mechanisms, such as mutexes or condition variables, address this by allowing a waiting thread to enter a sleep state, thereby releasing the C P U.
+
+The core concept presented here is a simple flag mechanism for condition synchronization. This mechanism relies on an `atomic` Boolean variable, denoted as `f`, which is initially set to `false`. The use of `atomic<bool>` is critical, as it guarantees that operations on `f`—specifically, reads and writes—are indivisible and cannot be interleaved by other threads in an unpredictable manner. Without atomicity, concurrent access to `f` could lead to race conditions, where the final state of the flag, or the value observed by a waiting thread, might be inconsistent due to partial updates or reordered operations by the underlying hardware or compiler.
+
+The `flag` class provides two primary methods: `set` and `await`. The `set` method is designed to signal the occurrence of an event or the completion of a task. Within `flag.set()`, the operation `f.store(true, R W or R W)` sets the atomic flag `f` to `true`. The second argument, represented as `R W or R W`, indicates a specific memory ordering constraint, which in this context functions as a `release` store. A `release` store ensures that all memory writes performed by the calling thread *before* this atomic store operation become globally visible to other threads *after* they successfully perform a corresponding `acquire` operation on the same atomic variable. This establishes a critical "happens before" relationship, guaranteeing that changes to shared data made by the setting thread are consistently observed by the waiting thread.
+
+The `await` method is implemented to cause a thread to pause its execution until the flag `f` becomes `true`. This is achieved through a `while` loop that continuously checks the value of `f` using `not f.load()`. This loop constitutes the "spin" or "busy wait" part of the synchronization mechanism. The thread will repeatedly load the value of `f` and continue to loop as long as `f` remains `false`. Once another thread calls `flag.set()`, changing `f` to `true`, the `while` loop condition `not f.load()` will evaluate to `false`, allowing the `await` method to proceed.
+
+Immediately after the spin loop in `flag.await()`, there is a `fence(R or R W)` operation. This `fence`, annotated as an `acquire` fence, serves as a memory barrier. Its purpose is to ensure that all memory reads performed by the calling thread *after* this fence operation are guaranteed to observe memory writes that occurred *before* the `release` store operation in the thread that called `flag.set()`. This pairing of `release` semantics on the store and `acquire` semantics on the fence (or load) is a fundamental pattern in weak memory models to maintain program order and inter-thread visibility of memory operations. Without such fences, a C P U or compiler might reorder memory operations, leading to a situation where the waiting thread observes the flag as `true` but does not yet see the data writes that logically preceded the flag being set. The acquire fence forces these memory operations to be visible and correctly ordered, thus ensuring the integrity of the shared data.
+
+In essence, the `flag.set()` method acts as a release point, publishing the results of prior computations, while `flag.await()` acts as an acquire point, consuming those published results. This busy wait flag is typically used in scenarios where one thread, often an initializer, prepares a shared data structure, and then calls `set()` to signal its completion. Other threads, needing to use this initialized structure, would call `await()` to ensure that the initialization is complete and visible before they begin their own operations. This type of synchronization is particularly relevant in low latency, kernel level, or embedded systems where context switching overhead is undesirable for very short wait times, but it is generally discouraged for longer waits due to its C P U intensive nature.

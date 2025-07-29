@@ -1,0 +1,69 @@
+9.2 HardwareTM 201
+
+and shared states indicate lines that have been read (but not written) in the current transaction.
+Any incoming coherence message requesting shared access to a line in speculative modified
+state constitutes a conflict, as does any request for exclusive access to a speculative line of
+any kind.
+
+Most HTM systems perform eager conflict detection. The TCC proposal of Hammond
+et al. (2004) delayed detection until a transaction was ready to commit. Shriraman et al.
+(2010) proposed to detect conflicts as they occurred but resolve them only at commit time.
+Blue Gene/Q’s TM hardware could in principle be used to construct a lazy system, but its
+software runtime was designed to resolve conflicts eagerly. Even so, it was distinctive in its
+ability to choose, dynamically, which transaction should continue and which should wait or
+abort in the event of a conflict.
+
+In an eager system, the most straightforward response to a conflict (detected via incom-
+ing coherence traffic) is to abort the current transaction. This strategy, known as “responder
+loses,” has the advantage of full compatibility with existing coherence protocols. After abort-
+ing, the local (responding) core can provide the conflicting line to the remote (requesting)
+core in precisely the same way it would on a machine without HTM.
+
+The disadvantage of “responder loses” is the potential for livelock: if the local transaction
+restarts and attempts to access the conflicted line before the remote transaction has com-
+pleted, the roles of requester and responder will be reversed, and the remote transaction will
+abort. Various contention management strategies (e.g., randomized exponential backoff)
+can be used to minimize the problem. In the IBM zEC12 (Jacobi et al. 2012), the coherence
+protocol already included a NAK message, used to (temporarily) refuse to downgrade a
+line for which writeback is currently in progress. The TM system leveraged this message
+to “stiff-arm” requests for a transactional line, in hopes of completing the active transaction
+before the requester tried again. Le et al. suggest that Power 8 arranged for the responder to
+win when its copy of the requested line had been speculatively written (2015, first bullet,
+p. 8:4).
+
+Several proposals for “unbounded” HTM use hardware-implemented Bloom filter signa-
+tures to summarize read and write sets that overflow the cache (Ceze et al. 2006; Yen et al.
+2007; Shriraman et al. 2010). An incoming request from the coherence protocol will trigger
+conflict management not only due to conflict with a speculative line in the local cache but
+also due to conflict with an overflowed line, as captured by the read or write set signature.
+Other proposals control access to overflowed data using page-level memory protections
+(Chuang et al. 2006) or distributed ownership tokens (Bobba et al. 2008).
+
+Potential Causes of Aborts
+
+In all TM systems, transactions must sometimes abort in response to conflicts with other
+transactions. Most HTM systems will also abort a transaction for various other reasons,
+including conflicts due to false sharing, overflow of the capacity or associativity of the spec-
+ulative cache, exceptions (interrupts and faults) of various kinds, and attempts to execute
+9.2 Hardware T M 201 and shared states indicate lines that have been read but not written in the current transaction. Any incoming coherence message requesting shared access to a line in speculative modified state constitutes a conflict, as does any request for exclusive access to a speculative line of any kind.
+
+Most H T M systems perform eager conflict detection. The T C C proposal of Hammond et al. (2004) delayed detection until a transaction was ready to commit. Shriraman et al. (2010) proposed to detect conflicts as they occurred but resolve them only at commit time. Blue Gene/Q's T M hardware could in principle be used to construct a lazy system, but its software runtime was designed to resolve conflicts eagerly. Even so, it was distinctive in its ability to choose, dynamically, which transaction should continue and which should wait or abort in the event of a conflict.
+
+In an eager system, the most straightforward response to a conflict detected via incoming coherence traffic is to abort the current transaction. This strategy, known as "responder loses," has the advantage of full compatibility with existing coherence protocols. After aborting, the local requesting core can provide the conflicting line to the remote requesting core in precisely the same way it would on a machine without H T M.
+
+The disadvantage of "responder loses" is the potential for livelock: if the local transaction restarts and attempts to access the conflicted line before the remote transaction has completed, the roles of requester and responder will be reversed, and the remote transaction will abort. Various contention management strategies, for example, randomized exponential backoff, can be used to minimize the problem. In the I B M z E C12 Jacobi et al. (2012), the coherence protocol already included a N A K message, used to temporarily refuse to downgrade a line for which writeback is currently in progress. The T M system leveraged this message to "stiff arm" requests for a transactional line, in hopes of completing the active transaction before the requester tried again. Le et al. suggest that Power 8 arranged for the responder to win when its copy of the requested line had been speculatively written (2015, first bullet, page eight dot four).
+
+Several proposals for "unbounded" H T M use hardware implemented Bloom filter signatures to summarize read and write sets that overflow the cache C e z e et al. (2006); Yen et al. (2007); Shriraman et al. (2010). An incoming request from the coherence protocol will trigger conflict management not only due to conflict with a speculative line in the local cache but also due to conflict with an overflowed line, as captured by the read or write set signature. Other proposals control access to overflowed data using page level memory protections C h u a n g et al. (2006) or distributed ownership tokens B o b b a et al. (2008).
+
+Potential Causes of Aborts
+
+In all T M systems, transactions must sometimes abort in response to conflicts with other transactions. Most H T M systems will also abort a transaction for various other reasons, including conflicts due to false sharing, overflow of the capacity or associativity of the speculative cache, exceptions, interrupts and faults of various kinds, and attempts to execute.
+This document delves into the intricacies of Hardware Transactional Memory, or H T M, specifically focusing on conflict detection and resolution within transactional systems.  Any incoming coherence messages, such as those indicating a request for shared access to a memory line that has been read but not yet written, or requests for exclusive access to a memory line, can constitute a conflict that necessitates transaction management.
+
+Several prominent H T M systems employ eager conflict detection. The T C C proposal by Hammond et al. in 2004 advocated for delayed detection, deferring conflict resolution until a transaction is ready to commit. In contrast, Shriraman et al. in 2010 proposed a strategy to detect conflicts as they occur and resolve them at commit time. The Blue Gene Q’s T M hardware was designed with a lazy system architecture, allowing software runtime to dynamically choose which transaction should continue and which should abort in the event of a conflict. This approach offers a distinct advantage in its ability to manage conflicts based on runtime conditions.
+
+In an eager system, the most straightforward response to a detected conflict, often characterized by incoming coherence traffic, is to abort the current transaction. This strategy, often termed "responder loss," aligns with full compatibility with existing coherence protocols. The local, or responding, core can provide the conflicting memory line to the remote, or requesting, core in precisely the same manner it would on a machine without H T M. However, a significant disadvantage of this "responder loss" approach is the potential for livelock. Livelock can occur if the local transaction restarts and attempts to access the conflicted memory line before the remote transaction has completed its operations. In such scenarios, the roles of requester and responder can effectively swap, leading to a continuous cycle of aborts and retries. To mitigate this, various contention management strategies are employed, such as randomized exponential backoff. The IBM z E C 12, as detailed by Jacobi et al. in 2012, incorporated a coherence protocol that included logic to handle a N A K message, used to temporarily refuse a downgrade of a memory line when a writeback is currently in progress. This system leveraged this message to manage active transactions, expecting the requester to retry. Le et al. suggest that Power 8 architectures employed a similar mechanism, enabling the requester to reattempt access after the responder had speculatively written the requested line.
+
+Further research has explored strategies for "unbounded" H T M systems, which handle read and write sets that may overflow the cache. Ceze et al. in 2006 and Yen et al. in 2007 proposed using Bloom filter signatures to summarize these sets, allowing for more efficient conflict detection. Shriraman et al. in 2010 examined conflict management strategies, noting that conflicts can also arise from speculative line accesses in the local cache that conflict with an incoming request for an overflowed line. To address this, proposals include using page level memory protections or distributed ownership tokens, as described by Chuang et al. in 2006.
+
+The section "Potential Causes of Aborts" highlights that all transactional memory, or T M, systems must, at times, abort transactions due to various reasons. H T M systems, in particular, can abort transactions due to conflicts, including those stemming from false sharing, overflow of the capacity or associativity of the speculative cache, and exceptions or faults of various kinds.

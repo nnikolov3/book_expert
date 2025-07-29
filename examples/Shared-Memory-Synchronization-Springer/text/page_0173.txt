@@ -1,0 +1,66 @@
+8.7 Safe Memory Reclamation (SMR) 177
+
+a limited form of hazard pointers to protect any nodes it will need to access during helping
+before doing its first CAS. Thus, nodes can be freed only once both the EBR and hazard
+pointer-inspired mechanisms in DEBRA+ say it 1s safe to do so.
+
+Second, there is a question of how to determine whether insert flagged a node before the
+thread was neutralized. One cannot, for example, simply set a thread local bit just before
+performing the CAS to flag a node, since the thread could be neutralized after setting the
+bit but before performing the CAS, in which case, after being neutralized, the thread would
+erroneously call help to finish its own operation, without having flagged a node in the first
+place! Solving this problem requires some creativity and data structure-specific knowledge.
+In EFRB insert, for example, before performing a flagging CAS, a thread can save a pointer
+to its InsertFlag object in its local memory. Then, in the event the thread is neutralized, if it
+finds this pointer in its local memory, it can go ahead and perform the flagging CAS. If the
+flagging CAS was performed before the thread was neutralized, there 1s no harm in repeating
+it, as 1t will simply fail the second time. On the other hand, if the thread did not save a pointer
+to an InsertFlag object in its local memory, then it cannot have done a flagging CAS, so it
+can simply retry. Additional modifications would be needed for delete.
+
+IBR Interval-based reclamation (IBR) (Wen et al. 2018) is another technique that combines
+the strengths of hazard pointers and epoch-based reclamation—namely, bounded garbage
+and high performance. Unlike DEBRA+, it does so without requiring data structure-specific
+recovery code. In IBR, each node has a birth epoch and a retire epoch. The birth epoch is
+the epoch in which the node was allocated; the retire epoch is the epoch in which the node
+was unlinked from the data structure. These two epochs can be used to determine whether
+a specific node existed in a given epoch.
+
+IBR strikes a balance between HPs, in which threads protect precisely the nodes they
+access, and EBR, in which threads protect all nodes in the data structure. In IBR, a thread
+protects all nodes known to have existed in a bounded interval of time. Consequently, unlike
+EBR, in which a stalled thread prevents all nodes from being freed, in IBR a stalled thread
+can prevent only a bounded number of nodes from being freed (specifically, a subset of the
+nodes allocated in the epochs leading up to the stall).
+
+In practice, the overhead of IBR is lower than that of HPs, because rather than announcing
+each node being accessed, a thread need only announce the time interval it is protecting,
+and this interval need not change every time a new node is encountered (since a newly
+encountered node may lie in the interval that is already protected). IBR is easier to use than
+DEBRA+, making it more practical to bound the amount of garbage a stalled thread can
+prevent from freeing. However, DEBRA+ offers a known upper bound on the total amount of
+unreclaimed garbage (and the bound can be tuned as desired), whereas IBR only guarantees
+that such a bound exists (and it may be very large).
+
+NBR More recently, the techniques of DEBRA+ were improved in neutralization-based
+reclamation (NBR) (Singh et al. 2021). Like DEBRA+, NBR bounds garbage and would be
+lock-free in any system with lock-free signals. NBR does not require data structure specific
+recovery code, however, and also works for lock-based data structures (whereas DEBRA+
+A limited form of hazard pointers to protect any nodes it will need to access during helping before doing its first CAS. Thus, nodes can be freed only once both the EBR and hazard pointer inspired mechanisms in DEBRA+ say it is safe to do so.
+
+Second, there is a question of how to determine whether insert flagged a node before the thread was neutralized. One cannot, for example, simply set a thread local bit just before performing the CAS to flag a node, since the thread could be neutralized after setting the bit but before performing the CAS. In which case, after being neutralized, the thread would erroneously call help to finish its own operation, without having flagged a node in the first place. Solving this problem requires some creativity and data structure specific knowledge. In EBR insert, for example, before performing a flagging CAS, a thread can save a pointer to its InsertFlag object in its local memory. Then, in the event the thread is neutralized, if it finds this pointer in its local memory, it can go ahead and perform the flagging CAS. If the flagging CAS was performed before the thread was neutralized, there is no harm in repeating it, as it will simply fail the second time. On the other hand, if the thread did not save a pointer to an InsertFlag object in its local memory, then it cannot have done a flagging CAS, so it can simply retry. Additional modifications would be needed for delete.
+
+IBR Interval-based reclamation (IBR) (Wen et al. 2018) is another technique that combines the strengths of hazard pointers and epoch-based reclamation namely, bounded garbage and high performance. Unlike DEBRA+, it does so without requiring data structure specific recovery code. In IBR, each node has a birth epoch and a retire epoch. The birth epoch is the epoch in which the node was allocated; the retire epoch is the epoch in which the node was unlinked from the data structure. These two epochs can be used to determine whether a specific node existed in a given epoch.
+
+IBR strikes a balance between HPs, in which threads protect precisely the nodes they access, and EBR, in which threads protect all nodes in the data structure. In IBR, a thread protects all nodes known to have existed in a bounded interval of time. Consequently, unlike EBR, in which a stalled thread prevents all nodes from being freed, in IBR a stalled thread can prevent only a bounded number of nodes from being freed specifically, a subset of the nodes allocated in the epochs leading up to the stall.
+
+In practice, the overhead of IBR is lower than that of HPs, because rather than announcing each node being accessed, a thread need only announce the time interval it is protecting, and this interval need not change every time a new node is encountered since a newly encountered node may lie in the interval that is already protected. IBR is easier to use than DEBRA+ making it more practical to bound the amount of garbage a stalled thread can prevent from freeing. However, DEBRA+ offers a known upper bound on the total amount of unreclaimed garbage and the bound can be tuned as desired, whereas IBR only guarantees that such a bound exists and it may be very large.
+
+NBR More recently, the techniques of DEBRA+ were improved in neutralization-based reclamation (NBR) (Singh et al. 2021). Like DEBRA+, NBR bounds garbage and would be lock-free in any system with lock-free signals. NBR does not require data structure specific recovery code, however, and also works for lock-based data structures whereas DEBRA+
+This section delves into safe memory reclamation techniques, specifically addressing the challenges of concurrent data structures. A limited form of hazard pointer usage is described, where nodes are protected before a Compare And Swap, or C A S, operation. This ensures that nodes are not freed until after the C A S is completed, preventing data structure corruption. The text highlights a critical scenario: if a thread is "neutralized"—meaning it is interrupted or stops executing—after setting a flag but before completing a C A S operation, it can lead to erroneous calls to help functions. This problem arises because the neutralized thread might have flagged a node, but due to its interruption, it cannot complete the associated C A S. Solving this requires careful handling of the thread's state and memory.
+
+An approach called "EFRB insert" is discussed, where a thread attempts to save a pointer to its "InsertFlag" object in local memory. If the thread is subsequently neutralized, and it previously saved this pointer, it can safely proceed with the flagging C A S operation. If the thread fails to save the pointer, the C A S will fail, and additional modifications would be necessary for deletion. This mechanism aims to ensure atomicity in operations that involve both flagging and state changes.
+
+The text then introduces "IBR," which stands for Interval Based Reclamation. This technique combines the strengths of hazard pointers and epoch based reclamation, offering high performance without requiring data structure specific code. In I B R, each node is assigned a "birth epoch" and a "retire epoch." The birth epoch signifies when the node was allocated, and the retire epoch indicates when the node was unlinked from the data structure. These epochs are used to determine whether a specific node existed within a given epoch. I B R strikes a balance between hazard pointer based approaches, where threads protect precise nodes, and epoch based methods which protect all nodes within a bounded interval of time. Consequently, unlike some other methods, I B R allows a stalled thread to prevent only a bounded number of nodes from being freed, specifically a subset of nodes allocated within certain epochs leading up to the stall. The overhead of I B R is noted to be lower than that of hazard pointer methods because a thread only needs to announce the time interval it is protecting, rather than updating its protection status every time a new node is encountered. This makes I B R easier to use than other approaches, as it bounds the amount of unreclaimed garbage that a stalled thread might leave. I B R guarantees a known upper bound on this garbage, although this bound can be tuned.
+
+Finally, the section introduces "N B R," or Neutralization Based Reclamation. This technique builds upon the principles of D E B R A plus and was introduced by Singh et al. in twenty twenty one. Like D E B R A plus, N B R uses bounds on garbage collection, but it does so without requiring lock free signals or data structure specific recovery code. Notably, N B R also functions effectively for lock based data structures, unlike D E B R A plus which is primarily designed for lock free systems.

@@ -1,0 +1,67 @@
+5.4 Combining as a General Technique 101
+
+This adaptation is more general than that of the barrier in Sec. 5.3.2; combining funnels allow
+threads to perform their operations at arbitrary times and rates, and to receive individualized
+return values.
+
+One of the most common applications of combining occurs in reduction operations, in
+which the results of some large number of tasks are “folded” together to produce a single
+summary value—e.g., the sum, product, maximum, or minimum of the values computed
+by the tasks. When the combining operation (+, x, max, min) is commutative, individual
+values can be folded into the summary value in any order. When the operation is also
+associative, values can be folded together in a combining tree. In the simple case, all we
+care about is the final result, so values flow only from the leaves to the root. In the more
+general case, in which we want an intermediate result for each individual operation, values
+also flow back from the root to the leaves; in this latter case, the operation (call it @) must be
+reversible: given a, b, and the return value of v @ (a @ b), where v was the original (usually
+unknown) value, we must be able to deduce either v @ a or v @ b.
+
+In some cases, combined operations may eliminate each other. If we are computing a
+global sum, for example (without intermediate results), and if “+3” and “—3” operations
+combine in a tree node, there is really no point in propagating a “40” message up the tree.
+A more compelling example occurs in the case of pushes and pops on an abstract stack.
+Given any stack configuration, a push followed immediately by a pop leaves the same
+configuration afterward, meaning that as long as the pop returns the value provided by the
+push, their location (as a pair) in the overall linearization order of the stack is immaterial
+(Shavit and Touitou 1997). While it 1s tempting to think of a stack as an inherently serial
+structure, with operations taking turns updating a single top-of-stack “hot spot,” elimination
+makes it possible to build a scalable implementation (Shavit and Zemach 2000).
+
+In the general case, when threads combine their operations, one proceeds on behalf of
+both, and the other waits for the first to return. In the more restricted case of elimination, the
+fact that neither thread must wait raises the possibility of a nonblocking implementation.
+The elimination trees of Shavit and Touitou (1997) can be used to build an “almost stack”
+that is nonblocking and, while not linearizable, at least guiescently consistent: individual
+pairs of operations may appear to occur out of order, so long as some operation is active,
+but as soon as the structure is idle, there must be some sequential order that explains the
+results of all completed operations. Subsequent work by Hendler et al. (2004) developed an
+elimination-backoff stack that is both nonblocking and linearizable; we will return to it in
+Sec. 8.9.
+
+In a related special case, Ellen et al. (2007) present a sort of census mechanism to track
+whether any threads are currently in some special state. Their scalable nonzero indicator—
+SNZI (“snazzy )—allows one to query not the actual number of special-state threads, but
+only whether that number 1s zero or nonzero. Their implementation employs a tree in which
+each leaf corresponds to a thread and holds either a O or a 1, depending on the state of the
+thread. Each internal node indicates whether any leaf below it holds a 1. The root is then a
+zero/nonzero indicator for the set of threads as a whole. Changes at a leaf propagate up the
+Section five point four: Combining as a General Technique.
+
+This adaptation is more general than that of the barrier in section five point three point two. Combining funnels allow threads to perform their operations at arbitrary times and rates, and to receive individualized return values.
+
+One of the most common applications of combining occurs in reduction operations, in which the results of some large number of tasks are “folded” together to produce a single summary value, for example, the sum, product, maximum, or minimum of the values computed by the tasks. When the combining operation, such as addition, multiplication, maximum, or minimum, is commutative, individual values can be folded into the summary value in any order. When the operation is also associative, values can be folded together in a combining tree. In the simple case, all we care about is the final result, so values flow only from the leaves to the root. In the more general case, in which we want an intermediate result for each individual operation, values also flow back from the root to the leaves. In this latter case, the operation, which we call circle plus, must be reversible: given a, b, and the return value of v combined with a combined with b, where v was the original, usually unknown, value, we must be able to deduce either v combined with a or v combined with b.
+
+In some cases, combined operations may eliminate each other. If we are computing a global sum, for example, without intermediate results, and if plus three and minus three operations combine in a tree node, there is really no point in propagating a plus zero message up the tree. A more compelling example occurs in the case of pushes and pops on an abstract stack. Given any stack configuration, a push followed immediately by a pop leaves the same configuration afterward, meaning that as long as the pop returns the value provided by the push, their location, as a pair, in the overall linearization order of the stack is immaterial, according to Shavit and Touitou, nineteen ninety seven. While it is tempting to think of a stack as an inherently serial structure, with operations taking turns updating a single top of stack “hot spot”, elimination makes it possible to build a scalable implementation, as described by Shavit and Zemach, two thousand.
+
+In the general case, when threads combine their operations, one proceeds on behalf of both, and the other waits for the first to return. In the more restricted case of elimination, the fact that neither thread must wait raises the possibility of a nonblocking implementation. The elimination trees of Shavit and Touitou, nineteen ninety seven, can be used to build an “almost stack” that is nonblocking and, while not linearizable, at least quiescently consistent: individual pairs of operations may appear to occur out of order, so long as some operation is active, but as soon as the structure is idle, there must be some sequential order that explains the results of all completed operations. Subsequent work by Hendler and others, two thousand four, developed an elimination backoff stack that is both nonblocking and linearizable. We will return to it in section eight point nine.
+
+In a related special case, Ellen and others, two thousand seven, present a sort of census mechanism to track whether any threads are currently in some special state. Their scalable nonzero indicator, S N Z I, pronounced “snazzy”, allows one to query not the actual number of special state threads, but only whether that number is zero or nonzero. Their implementation employs a tree in which each leaf corresponds to a thread and holds either a zero or a one, depending on the state of the thread. Each internal node indicates whether any leaf below it holds a one. The root is then a zero or nonzero indicator for the set of threads as a whole. Changes at a leaf propagate up the tree.
+The concept of combining funnels represents a generalized synchronization primitive, extending beyond traditional barriers to allow threads to coordinate and produce individual return values without strict synchronous coordination. This mechanism is particularly beneficial when threads perform operations at arbitrary times and rates, promoting higher degrees of concurrency compared to the rigid structure of a barrier.
+
+A primary application of combining funnels is in reduction operations, where a large number of computational tasks contribute to a single summary value. Examples include computing the sum, product, maximum, or minimum of a set of values. The fundamental principle here is that if the combining operation, such as addition, multiplication, or finding the maximum or minimum, is both commutative and associative, then individual values can be aggregated in any order, often within a tree-like structure. Commutativity means the order of operands does not affect the result; for example, 'A plus B' is equal to 'B plus A'. Associativity means the grouping of operands does not affect the result; for example, 'open parenthesis A plus B close parenthesis plus C' is equal to 'A plus open parenthesis B plus C close parenthesis'. These properties are critical because they enable parallel decomposition, allowing intermediate results to be computed independently across different processing units and then merged. In the simplest scenario, only the final aggregate result, propagating from the leaves to the root of a combining tree, is necessary. However, in more complex cases where intermediate results for each individual operation are required, values must also flow back from the root to the leaves. This scenario necessitates that the combining operation be reversible. A reversible operation means that, given the result of a combined operation and one of its inputs, the original unknown input can be uniquely deduced. For instance, if 'V circle plus open parenthesis A circle plus B close parenthesis' is known, and 'V' is the original unknown value, one must be able to deduce either 'V circle plus A' or 'V circle plus B'.
+
+In certain instances, combining operations can lead to the elimination of opposing operations, thereby avoiding unnecessary work and reducing contention. A classic example involves incrementing and decrementing operations on a shared counter. If a 'plus three' operation and a 'minus three' operation occur concurrently, they effectively cancel each other out, resulting in a net change of zero. In such a case, there is no need to propagate a 'plus zero' message through the combining tree, as the operations have been locally resolved. A more compelling illustration of elimination occurs with pushes and pops on an abstract stack. In a traditional stack, a push followed immediately by a pop would leave the stack in its original configuration. The key insight of elimination is that these paired operations can effectively cancel each other without ever needing to access the central, shared stack data structure. This means the specific location of the push and pop in the overall linearization order of the stack operations becomes immaterial, as long as the pop returns the value provided by the preceding push. While a stack is inherently a serial data structure, prone to becoming a "hot spot" under heavy contention, the technique of elimination allows for highly concurrent and scalable implementations.
+
+When threads employ elimination to combine their operations, one thread might proceed on behalf of both, while the other waits for the first to return. This approach can lead to nonblocking implementations, overcoming the common issue where threads must wait for access to a shared resource. Elimination trees, as described by Shavit and Touitou in one thousand nine hundred ninety seven, leverage this principle to construct what is termed an "almost stack." These structures are designed to be nonblocking. However, they might not be strictly linearizable, a strong consistency model requiring that all operations appear to occur instantaneously in some sequential order. Instead, they often achieve quiescent consistency, meaning that the system behaves linearly when it is idle, but operations might appear to occur out of order while the system is active. Subsequent research by Hendler and colleagues in two thousand four further refined this concept by developing an elimination-backoff stack, which successfully achieves both nonblocking execution and linearizability, a significant advancement in concurrent data structure design.
+
+In a related special case, Ellen and others, in two thousand seven, introduced a consensus mechanism based on combining trees to track whether any threads are in a specific "special state." This is referred to as a scalable nonzero indicator, or S N Z I, which allows a system to query not the exact count of special-state threads, but merely whether that number is zero or nonzero. The implementation leverages a tree structure where each leaf node is associated with a specific thread and holds either a zero or a one, depending on the thread's state. Each internal node in the tree then computes a logical 'Or' of the values from its child nodes, indicating whether any leaf below it holds a one. This aggregation propagates upwards, so the root node effectively provides a global binary indicator for the entire set of threads. Changes at a leaf node, representing a thread entering or exiting the special state, propagate efficiently up the tree, updating the aggregate state without requiring global synchronization. This architecture provides a highly scalable method for distributed state detection, avoiding single points of contention typical of centralized approaches.

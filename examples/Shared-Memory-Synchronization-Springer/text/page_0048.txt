@@ -1,0 +1,78 @@
+3.2 Liveness 49
+
+We shall often want stronger guarantees. In a wait-free algorithm, we might hope for a
+static bound, across all invocations, on the number of steps required to complete an operation.
+In a blocking algorithm, we might hope for a bound on the number of competing operations
+that may complete before a given thread makes progress. If threads repeatedly invoke a
+certain set of operations, we might even wish to bound the ratio of their “success” rates.
+These are only a few of the possible ways in which “fairness” might be defined. Without
+dwelling on particular definitions, we will consider algorithms in subsequent chapters whose
+behavior ranges from potentially very highly skewed (e.g., test_and_set locks that avoid
+starvation only when there are periodic quiescent intervals, when the lock is free and no
+thread wants it), to strictly first-come, first-served (e.g., locks in which a thread employs a
+wait-free protocol to join a FIFO queue). We will also consider intermediate options, such
+as locks that deliberately balance locality (for performance) against uniformity of service to
+threads.
+
+In any practical system, forward progress relies on the assumption that any continually
+unblocked thread will eventually execute another program step. Without such minimal fair-
+ness within the implementation, a system could be “correct” without doing anything at all!
+Significantly, even this minimal fairness depends on scheduling decisions at multiple sys-
+tem levels—in the hardware, the operating system, and the language runtime—all of which
+ensure that runnable threads continue to run.
+
+When threads may block for mutual exclusion or condition synchronization, we shall
+In most cases want to insist that the system display what is known as weak fairness. This
+property guarantees that any thread waiting for a condition that 1s continuously true (or
+a lock that 1s continuously available) eventually executes another program step. Without
+such a guarantee, program behavior may be highly unappealing. Imagine a web server, for
+example, that never accepts requests from a certain client connection if requests are available
+from any other client.
+
+In the following program fragment, weak fairness precludes an execution in which
+thread 1 spins forever: thread 2 must eventually notice that f is false, complete its wait,
+and set f to true, after which thread 1 must notice the change to f and complete:
+
+atomic<bool> f := false
+
+thread 1: thread 2:
+await f.load(]|) await —f.load(||)
+f.store(true)
+
+Here we have used the notation await (condition) as shorthand for
+
+while —condition
+// spin
+fence(R||[RW)
+
+with the additional understanding that any memory accesses required to evaluate condition
+are marked as synchronizing reads.
+We shall often want stronger guarantees. In a wait free algorithm, we might hope for a static bound, across all invocations, on the number of steps required to complete an operation. In a blocking algorithm, we might hope for a bound on the number of competing operations that may complete before a given thread makes progress. If threads repeatedly invoke a certain set of operations, we might even wish to bound the ratio of their “success” rates. These are only a few of the possible ways in which “fairness” might be defined. Without dwelling on particular definitions, we will consider algorithms in subsequent chapters whose behavior ranges from potentially very highly skewed, for example, test and set locks that avoid starvation only when there are periodic quiescent intervals, when the lock is free and no thread wants it, to strictly first come, first served, for example, locks in which a thread employs a wait free protocol to join a F I F O queue. We will also consider intermediate options, such as locks that deliberately balance locality for performance against uniformity of service to threads.
+
+In any practical system, forward progress relies on the assumption that any continually unblocked thread will eventually execute another program step. Without such minimal fairness within the implementation, a system could be “correct” without doing anything at all. Significantly, even this minimal fairness depends on scheduling decisions at multiple system levels: in the hardware, the O S, and the language runtime, all of which ensure that runnable threads continue to run.
+
+When threads may block for mutual exclusion or condition synchronization, we shall in most cases want to insist that the system display what is known as weak fairness. This property guarantees that any thread waiting for a condition that is continuously true, or a lock that is continuously available, eventually executes another program step. Without such a guarantee, program behavior may be highly unappealing. Imagine a web server, for example, that never accepts requests from a certain client connection if requests are available from any other client.
+
+In the following program fragment, weak fairness precludes an execution in which thread one spins forever. Thread two must eventually notice that F is false, complete its wait, and set F to true, after which thread one must notice the change to F and complete.
+
+The pseudocode describes the interaction between two threads and an atomic boolean variable. An atomic boolean variable, named F, is initialized to false.
+Thread one is defined as: await F dot load parenthesis or or parenthesis.
+Thread two is defined as: await not F dot load parenthesis or or parenthesis, followed by F dot store parenthesis true parenthesis.
+
+Here we have used the notation await parenthesis condition parenthesis as shorthand for the following loop: while not condition, the thread spins. This spin loop includes a fence operation with R or R W memory ordering. This is with the additional understanding that any memory accesses required to evaluate condition are marked as synchronizing reads.
+The discourse here centers on the critical properties of concurrent systems, specifically the concept of liveness. Liveness refers to the guarantee that a system or its components will eventually make progress or reach a desired state. It stands in contrast to safety properties, which assert that undesirable states are never reached.
+
+The foundational principle discussed is the distinction between various progress guarantees in algorithms. A *wait free* algorithm offers the strongest liveness guarantee: every operation is guaranteed to complete within a static, bounded number of steps, irrespective of the execution speed or state of other concurrent operations. This means that no thread can ever be indefinitely delayed by another thread, avoiding issues such as starvation. In contrast, *blocking algorithms* typically provide weaker guarantees, where a thread might be delayed indefinitely if another thread holds a necessary resource or is stalled. The goal in such cases is often to bound the number of competing operations that might prevent a given thread from making progress, or even to define and bound fairness metrics such as the ratio of success rates among competing threads. Practical implementations often grapple with finding a balance between localized performance optimizations, which might lead to highly skewed behavior, and uniform service distribution, which enhances fairness across threads. Low level primitives like `test and set` locks, for instance, are known to be susceptible to starvation without additional fairness mechanisms. Techniques such as First In First Out queues can be employed to mitigate these issues by ensuring a more equitable allocation of resources.
+
+The text emphasizes that for any practical system, *forward progress* is a fundamental expectation: any thread that is continually unblocked will eventually execute another program step. This minimal level of fairness is not inherent but depends crucially on scheduling decisions made at multiple levels of the system hierarchy. These include the underlying hardware architecture and its memory consistency model, the operating system's scheduler, and even the language runtime's thread management policies. Without these layers actively ensuring at least minimal fairness, a system could theoretically be "correct" in terms of safety but cease to make any meaningful progress, leading to a deadlocked or starved state.
+
+A specific type of liveness guarantee introduced is *weak fairness*. This property applies to situations involving mutual exclusion or condition synchronization. Weak fairness guarantees that if a condition for which a thread is waiting becomes continuously true, that thread will eventually be scheduled and execute a program step. This is a crucial distinction, as it addresses scenarios where a resource might be perpetually available, yet a waiting thread never acquires it due to an unfair scheduler or an unforeseen interaction. For example, without weak fairness, a web server might unfairly service requests from only a specific client connection indefinitely, ignoring other available requests.
+
+The provided program fragment illustrates the concept of weak fairness using atomic operations and spin waiting.
+An `atomic <bool>` variable, named `f`, is initialized to `false`. Atomic variables are fundamental building blocks for concurrent programming, ensuring that operations on them, such as loads and stores, appear to occur instantaneously without being interleaved with other operations. This property is vital for maintaining data integrity in shared memory environments.
+`thread one` contains an `await f dot load or or` statement. This signifies that `thread one` will continuously check the value of `f` until it becomes `true`.
+Conversely, `thread two` first executes `await not f dot load or or`, which causes it to spin until `f` is observed as `false`. Once this condition is met, `thread two` proceeds to execute `f dot store true`.
+The `await` notation, as further clarified, is a shorthand for a busy waiting or spin loop structure. Specifically, `await condition` expands to `while not condition`, implying that the thread repeatedly evaluates the `condition` in a loop. Within this spin loop, a `fence` instruction, specifically `fence R or or R W`, is employed. A memory fence, or memory barrier, is a non-executable instruction that enforces an ordering constraint on memory operations. The `R or or R W` specifies that this fence synchronizes both read operations (`R`) and read and write operations (`R W`). In relaxed memory models, where compilers and processors can reorder memory accesses for performance, explicit fences are essential to ensure that changes made by one thread become visible to other threads in a predictable order.
+The phrase "any memory accesses required to evaluate condition are marked as synchronizing reads" is critical. It implies that the `f dot load or or` operation within the `await` loop is not a simple, relaxed load but one that includes synchronization semantics, typically an `acquire` operation, which ensures that all prior writes by other threads that `released` data are now visible to the current thread.
+
+The significance of this example lies in demonstrating how weak fairness guarantees liveness. If weak fairness holds, the described execution in which `thread one` spins forever, never observing `f` becoming `true`, is precluded. This implies that `thread two` must eventually be scheduled, observe `f` as `false`, execute its `f dot store true` operation, and this write must eventually become visible to `thread one`. Consequently, `thread one` will eventually observe `f` as `true`, exit its `await` loop, and make progress. This guarantees that despite the use of busy-waiting, a pattern often prone to starvation, both threads ultimately complete their intended tasks due to the system-level guarantee of weak fairness on condition variables.

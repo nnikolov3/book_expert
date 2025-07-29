@@ -1,0 +1,71 @@
+p) 1 Introduction
+
+Synchronization 1s the art of precluding interleavings that we consider incorrect. In a
+distributed (i.e., message-passing) system, synchronization is subsumed in communication:
+if thread 7, receives a message from 77, then in all possible execution interleavings, all the
+events performed by T prior to its send will occur before any of the events performed by 7»
+after its receive. In a shared-memory system, however, things are not so simple. Instead of
+exchanging messages, threads with shared memory communicate implicitly through loads
+and stores. Implicit communication gives the programmer substantially more flexibility in
+algorithm design, but it requires separate mechanisms for explicit synchronization. Those
+mechanisms are the subject of this monograph.
+
+Significantly, the need for synchronization arises whenever operations are concurrent,
+regardless of whether they actually run in parallel. This observation dates from the earliest
+work 1n the field, led by Edsger Dijkstra (1965, 1968a, 1968b) and performed in the early
+1960s. If a single processor core context-switches among concurrent operations at arbitrary
+times, then while some interleavings of the underlying events may be less probable than they
+are with truly parallel execution, they are nonetheless possible, and a correct program must
+be synchronized to protect against any that would be incorrect. From the programmer’s
+perspective, a multiprogrammed uniprocessor with preemptive scheduling is no easier to
+program than a multicore or multiprocessor machine.
+
+A few languages and systems guarantee that only one thread will run at a time, and that
+context switches will occur only at well defined points in the code. The resulting execution
+model is sometimes referred to as “cooperative” multithreading. One might at first expect it to
+simplify synchronization, but the benefits tend not to be significant in practice. The problem
+1s that potential context-switch points may be hidden inside library routines, or in the methods
+of black-box abstractions. Absent a programming model that attaches a true or false “may
+cause a context switch” tag to every method of every system interface, programmers must
+protect against unexpected interleavings by using synchronization techniques analogous to
+those of truly concurrent code.
+
+As it turns out, almost all synchronization patterns in real-world programs (i.e., all concep-
+tually appealing constraints on acceptable execution interleaving) can be seen as instances
+of either atomicity or condition synchronization. Atomicity ensures that a specified sequence
+of instructions participates in any possible interleavings as a single, indivisible unit—that
+
+Distribution
+
+At the level of hardware devices, the distinction between shared memory and message passing disap-
+pears: we can think of a memory cell as a simple process that receives load and store messages from
+more complicated processes, and sends value and ok messages, respectively, in response. While
+theoreticians often think of things this way (the annual PODC [Symposium on Principles of Dis-
+tributed Computing] and DISC [International Symposium on Distributed Computing] conferences
+routinely publish shared-memory algorithms), systems programmers tend to regard shared memory
+and message passing as fundamentally distinct. This monograph covers only the shared-memory
+case.
+Synchronization is the art of precluding interleavings that we consider incorrect. In a distributed, that is, message passing, system, synchronization is subsumed in communication: if thread T sub two receives a message from T sub one, then in all possible execution interleavings, all the events performed by T sub one prior to its send will occur before any of the events performed by T sub two after its receive. In a shared memory system, however, things are not so simple. Instead of exchanging messages, threads with shared memory communicate implicitly through loads and stores. Implicit communication gives the programmer substantially more flexibility in algorithm design, but it requires separate mechanisms for explicit synchronization. Those mechanisms are the subject of this monograph.
+
+Significantly, the need for synchronization arises whenever operations are concurrent, regardless of whether they actually run in parallel. This observation dates from the earliest work in the field, led by Edsger Dijkstra, nineteen sixty five, nineteen sixty eight A, nineteen sixty eight B, and performed in the early nineteen sixties. If a single processor context switches among concurrent operations at arbitrary times, then while some interleavings of the underlying events may be less probable than they are with truly parallel execution, they are nonetheless possible, and a correct program must be synchronized to protect against any that would be incorrect. From the programmer’s perspective, a multiprogrammed uniprocessor with preemptive scheduling is no easier to program than a multicore or multiprocessor machine.
+
+A few languages and systems guarantee that only one thread will run at a time, and that context switches will occur only at well defined points in the code. The resulting execution model is sometimes referred to as "cooperative" multithreading. One might at first expect it to simplify synchronization, but the benefits tend not to be significant in practice. The problem is that potential context switch points may be hidden inside library routines, or in the methods of black box abstractions. Absent a programming model that attaches a true or false "may cause a context switch" tag to every method of every system interface, programmers must protect against unexpected interleavings by using synchronization techniques analogous to those of truly concurrent code.
+
+As it turns out, almost all synchronization patterns in real world programs, that is, all conceptually appealing constraints on acceptable execution interleaving, can be seen as instances of either atomicity or condition synchronization. Atomicity ensures that a specified sequence of instructions participates in any possible interleavings as a single, indivisible unit—that
+
+Distribution
+
+At the level of hardware devices, the distinction between shared memory and message passing disappears: we can think of a memory cell as a simple process that receives load and store messages from more complicated processes, and sends value and ok messages, respectively, in response. While theoreticians often think of things this way, the annual P O D C, Symposium on Principles of Distributed Computing, and D I S C, International Symposium on Distributed Computing, conferences routinely publish shared memory algorithms, systems programmers tend to regard shared memory and message passing as fundamentally distinct. This monograph covers only the shared memory case.
+Synchronization, at its core, represents the art and science of precluding undesirable interleavings of operations within concurrent or parallel systems. These undesirable interleavings are those that would lead to incorrect program states or outcomes. In essence, the fundamental challenge of concurrency is managing the temporal relationships between events executed by multiple computational agents, such as threads or processes, to ensure that their combined behavior remains consistent with a specified correctness criterion.
+
+Consider a distributed system, typically characterized by a message-passing communication model. In such an architecture, synchronization is inherently subsumed within the communication protocol itself. For instance, if a thread designated as T two receives a message from thread T one, a strong causality is established. This implies that in any conceivable execution interleaving, all events performed by T one prior to its message dispatch must logically precede any events performed by T two after its receipt of that message. This inherent ordering guarantee, often formalized through concepts like Lamport's "happens before" relation, significantly simplifies reasoning about program correctness by establishing a clear causal chain of events across different processing units.
+
+In stark contrast, shared-memory systems present a more intricate challenge for synchronization. Here, communication between threads occurs implicitly through their direct access to and manipulation of shared data structures in memory via load and store operations. While this implicit communication paradigm offers substantial flexibility in algorithm design, it simultaneously removes the built-in ordering guarantees found in message-passing systems. Consequently, shared-memory paradigms necessitate the deployment of explicit synchronization mechanisms, such as locks, semaphores, or atomic operations, to enforce specific orderings and mutual exclusion, thereby preventing race conditions and ensuring data consistency.
+
+It is critical to understand that the imperative for synchronization arises whenever operations are logically concurrent, irrespective of whether they are physically executed in parallel on separate processor cores or interleaved on a single C P U through context switching. This foundational insight, widely attributed to pioneering work by Edsger Dijkstra in the one nine six zero s, underscores that even a single processor, through rapid context switching among concurrent operations, can generate a vast number of potential interleavings. While some of these interleavings might be less probable in practice than those observed in truly parallel execution, they remain possible. A correct program, therefore, must be robustly synchronized to defend against any logically incorrect interleaving that could manifest. From the perspective of a programmer, managing concurrency on a multiprogrammed uniprocessor with preemptive scheduling presents synchronization complexities that are fundamentally equivalent to those encountered on a multicore or multiprocessor machine.
+
+Some programming languages and operating systems employ a cooperative multithreading model, where threads voluntarily yield control or context switches are restricted to well-defined points within the code. One might intuitively expect this model to simplify synchronization by providing finer control over interleavings. However, in practical scenarios, this simplification often proves illusory. The challenge stems from the fact that potential context switch points can be obscured within opaque library routines or encapsulated within black box abstractions. Without a precise programming model that explicitly tags every method or system interface with its potential to cause a context switch, programmers are compelled to apply comprehensive synchronization techniques analogous to those required for truly concurrent execution, to safeguard against unforeseen and incorrect interleavings.
+
+Upon closer examination, nearly all sophisticated synchronization patterns observed in real world programs, representing conceptually appealing constraints on acceptable execution interleaving, can be decomposed into fundamental instances of either atomicity or condition synchronization. Atomicity ensures that a designated sequence of instructions executes as a single, indivisible, and uninterruptible unit. This means that from the perspective of other concurrent operations, the atomic block either completes entirely and instantaneously, or it does not appear to have executed at all, thereby maintaining data integrity across critical sections. Condition synchronization, on the other hand, involves delaying a thread's progress until a specific logical condition is met, often implemented using wait/notify mechanisms or barriers, ensuring correct data flow and coordination between dependent tasks.
+
+Interestingly, at the lowest stratum of hardware device design, the conceptual distinction between shared memory and message passing often blurs. A memory cell, for instance, can be abstractly modeled as a minimalist process that responds to "load" messages by returning its stored value, and to "store" messages by updating its state and sending an "ok" acknowledgment. This perspective, where even shared memory access is viewed as a form of inter process communication, is frequently adopted by theoreticians in the fields of distributed computing and principles of distributed computing, who routinely publish research on shared memory algorithms within this message passing framework. Conversely, systems programmers, operating at a higher level of abstraction, tend to regard shared memory and message passing as distinct communication paradigms, each with its unique set of challenges and optimal design patterns for building robust and performant software systems. This divergence highlights the different levels of abstraction and modeling choices that influence how concurrency is approached in theory versus practice.

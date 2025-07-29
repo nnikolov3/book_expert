@@ -1,0 +1,62 @@
+8 1 Introduction
+
+1.4 Safety and Liveness
+
+Whether based on spinning or blocking, a correct implementation of synchronization
+requires both safety and liveness. Informally, safety means that bad things never happen:
+we never have two threads in a critical section for the same lock at the same time; we never
+have all of the threads in the system blocked. Liveness means that good things eventually
+happen: if lock L is free and at least one thread is waiting for it, some thread eventually
+acquires it; if queue Q 1s nonempty and at least one thread 1s waiting to remove an element,
+some thread eventually does.
+
+A bit more formally, for a given program and input, running on a given system, safety
+properties can always be expressed as predicates P on reachable system states S—that is,
+VS[P(S)]. Liveness properties require at least one extra level of quantification: VS[P(S) —
+AT[Q(T)]], where T 1s a subsequent state in the same execution as S, and Q is some other
+predicate on states. From a practical perspective, liveness properties tend to be harder than
+safety to ensure—or even to define; from a formal perspective, they tend to be harder to
+prove.
+
+Livelock freedom is one of the simplest liveness properties. It insists that threads not
+execute forever without making forward progress. In the context of locking, this means that
+if L is free and thread T has called L.acquire(), there must exist some bound on the number
+of instructions T' can execute before some thread acquires L. Starvation freedom is stronger.
+Again in the context of locks, it insists that if every thread that acquires L eventually releases
+it, and if 7 has called L.acquire(), there must exist some bound on the number of instructions
+T can execute before acquiring L itself. Still stronger notions of fairness among threads can
+also be defined; we consider these briefly in Sec. 3.2.2.
+
+Multiple Meanings of “Blocking”
+
+“Blocking” is another word with more than one meaning. In this chapter, we are using it in an imple-
+mentation-oriented sense, as a synonym for “de-scheduling” (giving the underlying kernel thread or
+hardware core to another user or kernel thread). In a similar vein, it is sometimes used in a “systems”
+context to refer to an operation (e.g., a “blocking” I/O request) that waits for a response from some
+other system component. In Chapter 3, we will use it in a more formal sense, as a synonym for “unable
+to make forward progress on its own.” To a theoretician, a thread that is spinning on a condition that
+must be made true by some other thread is just as “blocked” as one that has given up its kernel thread
+or hardware core, and will not run again until some other thread tells the scheduler to resume it.
+Which definition we have in mind should usually be clear from context.
+Whether based on spinning or blocking, a correct implementation of synchronization requires both safety and liveness. Informally, safety means that bad things never happen: we never have two threads in a critical section for the same lock at the same time; we never have all of the threads in the system blocked. Liveness means that good things eventually happen: if lock L is free and at least one thread is waiting for it, some thread eventually acquires it; if queue Q is nonempty and at least one thread is waiting to remove an element, some thread eventually does.
+
+A bit more formally, for a given program and input, running on a given system, safety properties can always be expressed as predicates P on reachable system states S—that is, for all S such that P of S is true. Liveness properties require at least one extra level of quantification: for all S such that P of S implies there exists T such that Q of T, where T is a subsequent state in the same execution as S, and Q is some other predicate on states. From a practical perspective, liveness properties tend to be harder than safety to ensure—or even to define; from a formal perspective, they tend to be harder to prove.
+
+Livelock freedom is one of the simplest liveness properties. It insists that threads not execute forever without making forward progress. In the context of locking, this means that if L is free and thread T has called L dot acquire open parenthesis close parenthesis, there must exist some bound on the number of instructions T can execute before some thread acquires L. Starvation freedom is stronger. Again in the context of locks, it insists that if every thread that acquires L eventually releases it, and if T has called L dot acquire open parenthesis close parenthesis, there must exist some bound on the number of instructions T can execute before acquiring L itself. Still stronger notions of fairness among threads can also be defined; we consider these briefly in Section three point two point two.
+
+Blocking is another word with more than one meaning. In this chapter, we are using it in an implementation oriented sense, as a synonym for de scheduling, which means giving the underlying kernel thread or hardware core to another user or kernel thread. In a similar vein, it is sometimes used in a systems context to refer to an operation, for example, a blocking I O request, that waits for a response from some other system component. In Chapter three, we will use it in a more formal sense, as a synonym for unable to make forward progress on its own. To a theoretician, a thread that is spinning on a condition that must be made true by some other thread is just as blocked as one that has given up its kernel thread or hardware core, and will not run again until some other thread tells the scheduler to resume it. Which definition we have in mind should usually be clear from context.
+In the realm of concurrent systems, ensuring correctness necessitates the careful consideration of two fundamental classes of properties: safety and liveness. These concepts are paramount whether one employs spinning or blocking mechanisms for synchronization.
+
+Safety properties are invariants that assert "bad things never happen." For instance, in a critical section protected by a lock, a safety property dictates that at no point in time will two distinct threads concurrently occupy the critical section associated with the same lock. Another example of a safety property is that the system as a whole should never become entirely blocked, meaning all threads are simultaneously waiting indefinitely for resources. These properties are typically easier to define and verify, often by ensuring that certain predicates hold true across all reachable states of the system. Formally, a safety property can be expressed as "for all states *S* reachable during an execution, a predicate *P(S)* is true." This universal quantification over system states makes them akin to proving invariants.
+
+Conversely, liveness properties address the concept of "good things eventually happening." They guarantee progress within a system. For example, if a lock *L* is available, a thread *T* waiting to acquire it will eventually succeed. Similarly, if a queue *Q* is not empty and a thread is waiting to extract an element, that thread will eventually manage to remove an element from the queue. From a formal perspective, liveness properties are inherently more complex to define and prove than safety properties. They often involve existential quantification over future states, stating that "for all initial states *S*, if predicate *P(S)* holds, then there exists a subsequent state *S prime* such that predicate *Q(S prime)* holds." This temporal nature, involving the eventual realization of a condition, is what distinguishes them.
+
+One of the simplest and most crucial liveness properties is livelock freedom. This property asserts that threads will not execute indefinitely without making forward progress. In the context of locks, it means that if a lock *L* is free and a thread *T* invokes `L.acquire()`, there must be some bounded number of instructions that *T* can execute before some other thread successfully acquires *L*. This prevents a situation where threads repeatedly attempt an operation, fail, and retry without ever making actual progress.
+
+A stronger notion of liveness is starvation freedom. Starvation freedom builds upon livelock freedom by introducing a fairness guarantee. It insists that if a thread *T* attempts to acquire a lock *L*, and *L* is eventually released by its current owner, then *T* will eventually be the one to acquire *L*. Even more rigorously, if *T* calls `L.acquire()` and some thread eventually acquires *L*, then *T* itself must eventually acquire *L*. This ensures that no single thread is perpetually denied access to a resource while other threads continuously gain access, a common problem in poorly designed concurrent systems.
+
+The term "blocking" itself carries multiple meanings depending on the context within computer science. In an implementation oriented sense, particularly concerning operating system kernel threads, "blocking" is synonymous with "de scheduling." When a thread encounters a wait condition, it gives up its C P U context, and its state is saved by the scheduler. This allows the C P U to be utilized by other runnable threads. The blocked thread will only be resumed when the condition it is waiting for is met, typically signaled by another thread or an interrupt.
+
+Within a broader "systems" context, "blocking" often refers to an operation, such as a blocking I O request, where the initiating component or thread waits for a response from another system component. For example, a read operation on a disk might cause the calling thread to block until the data is retrieved. This aligns with the de scheduling interpretation at the kernel level.
+
+However, to a theoretician, the definition of "blocked" is more precise. A thread that is actively spinning on a condition, repeatedly checking a flag in a loop without yielding the C P U, is not considered "blocked." This is because it is still consuming computational resources. A thread is only truly "blocked" in the theoretical sense if it has relinquished its kernel thread, effectively ceding C P U time, and relies solely on the operating system scheduler to resume its execution when the necessary condition is met. The distinction between busy waiting and true blocking is crucial for understanding performance and fairness implications in concurrent programming.

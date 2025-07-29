@@ -1,0 +1,72 @@
+158 8 Nonblocking Algorithms
+
+rehashing for high load factors by requiring inserts to reorganize keys in a way that reduces
+probing. The algorithm uses a multi-location compare-and-swap (Sec. 8.10) to atomically
+insert a key and possibly shift a sequence of keys to different buckets in the table.
+
+Another wait-free resizable hash table, by Fatourou et al. (2018), relies on a powerful
+wait-free universal construction. We will discuss such constructions in Sec. 8.10; briefly,
+they can be used to automatically transform a sequential object into a concurrent one. The
+universal construction 1s used to implement each bucket of the hash table as a concurrent
+object. This allows buckets to be accessed independently as long as resizing is not needed.
+The universal construction is also used to resize the table while synchronizing accesses to
+buckets to ensure linearizability.
+
+An alternative to resizing, which avoids a heavyweight table expansion routine altogether,
+1s to store the hash table buckets at the leaves of a trie (Prokopec et al. 2012). This approach
+allows individual buckets to be expanded or contracted as needed (by splitting or joining
+nodes). It might be expected to increase lookup times, as the tree must be traversed to locate
+the appropriate bucket, but the authors prove that expected time can be kept constant by
+cashing pointers to buckets (or to nearby nodes) in a hash table that captures the two densest
+levels of the tree (Prokopec 2018).
+
+8.5 Skip Lists
+
+Implementations of sets and dictionaries with O (log n) search time are commonly based on
+trees but, as we shall see in Sec. 8.6, these are notoriously difficult to parallelize, particularly
+in a nonblocking fashion. A skip list (Pugh 1990) is an alternative structure that uses ran-
+domness rather than rebalancing to achieve expected logarithmic time. While nonblocking
+skip lists are still quite complex, they are substantially simpler than nonblocking trees.
+
+All the nodes in a skip list appear on a single, sorted, “level 0” list. With probability
+p (typically 155), each node also appears on a level 1 list. In general, a node on a level i
+list appears on a level i + 1 list with probability p. All nodes with a given key are linked
+together in a “tower.” Searching begins by traversing the high-level lists, a process that
+naturally “skips” over many nodes, moving down towers to “zero in” on the correct location
+using the lower-level lists.
+
+Fraser (2003) 1s credited with the first nonblocking skip list implementation. Variants
+of this implementation were developed by Doug Lea, who added them to the standard
+concurrency library for Java (as the ConcurrentSkipListSet and ConcurrentSkipListMap)
+in December 2006. Herlihy et al. (2021, Sec. 14.4) describe a further refinement.
+
+Concurrently with Fraser’s work, Fomitchev developed a lock-free skip list that appeared
+in his master’s thesis (Fomitchev 2003), published just two months after Fraser’s technical
+report. Techniques introduced by Fomitchev and Ruppert (2004) subsequently led to a lock-
+free binary search tree by Ellen et al. (2010a) that we will discuss in Sec. 8.6.1.
+one hundred fifty eight
+
+eight Nonblocking Algorithms
+
+rehashing for high load factors by requiring inserts to reorganize keys in a way that reduces probing. The algorithm uses a multi location compare and swap, as described in Section eight point ten, to atomically insert a key and possibly shift a sequence of keys to different buckets in the table.
+
+Another wait free resizable hash table, by Fatourou et al. two thousand nineteen, relies on a powerful wait free universal construction. We will discuss such constructions in Section eight point ten. Briefly, they can be used to atomically transform a sequential object into a concurrent one. The universal construction is used to implement each bucket of the hash table as a concurrent object. This allows buckets to be accessed independently as long as resizing is not needed. The universal construction is also used to resize the table while synchronizing accesses to buckets to ensure linearizability.
+
+An alternative to resizing, which avoids a heavyweight table expansion routine altogether, is to store the hash table buckets at the leaves of a trie, as described by Prokopec et al. two thousand twelve. This approach allows individual buckets to be expanded or contracted as needed, by splitting or joining nodes. It might be expected to increase lookup times, as the tree must be traversed to locate the appropriate bucket, but the authors prove that expected time can be kept constant by cashing pointers to buckets, or to nearby nodes, in a hash table that captures the two densest levels of the tree, as described by Prokopec two thousand eighteen.
+
+eight point five Skip Lists
+
+Implementations of sets and dictionaries with O logarithm n search time are commonly based on trees, but as we shall see in Section eight point six, these are notoriously difficult to parallelize, particularly in a nonblocking fashion. A skip list, as described by Pugh nineteen ninety, is an alternative structure that uses random access rather than rebalancing to achieve expected logarithmic time. While nonblocking skip lists are still quite complex, they are substantially simpler than nonblocking trees.
+
+All the nodes in a skip list appear on a single sorted level zero list. With probability p, typically one half, each node also appears on a level one list. In general, a node on a level i list appears on a level i plus one list with probability p. All nodes with a given key are linked together in a tower. Searching begins by traversing the high level lists, a process that naturally skips over many nodes, moving down towers to zero in on the correct location using the lower level lists.
+
+Fraser two thousand three is credited with the first nonblocking skip list implementation. Variants of this implementation were developed by Doug Lea, who added them to the standard concurrency library for Java, the ConcurrentSkipListSet and ConcurrentSkipListMap, in December two thousand six. Herlihy et al. two thousand twenty one, Section fourteen point four, describe a further refinement.
+
+Concurrently with Fraser's work, Fomichev developed a lock free skip list that appeared in his master's thesis, Fomichev two thousand three, published just two months after Fraser's technical report. Techniques introduced by Fomichev and Ruppert two thousand four subsequently led to a lock free binary search tree by Ellen et al. two thousand ten a, that we will discuss in Section eight point six point one.
+The text delves into advanced techniques for achieving nonblocking data structures, specifically focusing on hash tables and skip lists, in the context of concurrent programming.
+
+The initial paragraphs discuss strategies for enhancing hash table performance and robustness under high load factors in a concurrent environment. One approach described involves re-hashing, which requires inserts to perform multi-location compare-and-swap operations. This allows for the atomic shifting of a sequence of keys to different buckets. A wait-free resizable hash table, attributed to Fatourou et al., offers a powerful construction for transforming sequential hash tables into concurrent ones. This method is particularly effective because it allows individual buckets to be accessed independently, eliminating the need for table resizing. An alternative to this resizing approach is to store the hash table buckets at the leaves of a trie. This structure allows individual buckets to be expanded or contracted dynamically. While this might increase lookup times as the tree must be traversed to find the appropriate bucket, the authors demonstrate that the expected time to locate buckets, or nearby nodes, in such a hash table can remain constant by using "caching" pointers to buckets at various levels of the tree.
+
+The section then transitions to "Skip Lists," introducing them as an alternative to balanced trees for implementing sets and dictionaries, offering O(log n) search time complexity. Skip lists are described as notoriously difficult to parallelize using traditional locking mechanisms, but they can be implemented in a nonblocking fashion. A skip list, as conceptualized by Pugh in 1990, is a probabilistic data structure that uses random decisions to achieve expected logarithmic time complexity for operations. While conceptually complex, skip lists are considered substantially simpler than nonblocking trees. The fundamental structure of a skip list involves nodes appearing on multiple levels. A node present in a skip list appears on a single, sorted, "level zero" list. With a given probability, typically one half, a node also appears on a level one list. More generally, a node on a level i list also appears on a level i plus one list with probability p. All nodes with a given key are linked together, forming what is referred to as a "tower." Searching in a skip list commences by traversing the highest level list and then descending through the towers to lower levels, effectively "skipping" over many nodes until the target key or the appropriate insertion point is found in the correct location.
+
+The text then highlights the historical development of nonblocking skip list implementations. Fraser is credited with the first nonblocking skip list implementation, with variants of this work being developed by Doug Lea, who incorporated them into the standard Java concurrency library in December 2006. Herlihy et al., in their 2021 publication (Section 14.4), further describe such implementations. Concurrently with Fraser's work, Fomitchev developed a lock-free skip list that was published in his master's thesis in 2003. This was followed by a publication in 2004 by Fomitchev and Ruppert, which subsequently informed a lock-free binary search tree technique introduced by Ellen et al. in 2010, a technique slated for discussion in a later section.

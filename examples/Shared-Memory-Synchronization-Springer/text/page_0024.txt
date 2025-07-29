@@ -1,0 +1,67 @@
+2.2 Memory Consistency 25
+
+Table 2.3 Illustrative examples of ordering and inter-thread communication.
+delaying loads until stores have occurred in another thread
+atomic<int> x,y :=0,0
+atomic<bool> flag := false
+
+thread 1:
+repeat // busy wait on flag
+done := flag.load(lIR) // cannot be reordered after x.load or y.load
+until done
+x.load(]|) // must return 1
+y.load(l|) // must return 2
+thread 2:
+x.store(1, I) // cannot be reordered after flag.store
+y.store(2, II) // cannot be reordered after flag.store
+
+flag.store(true, W||)
+
+arguing that stores were not observed by another thread
+atomic<int> x,y :=0,0
+atomic<bool> flag := false
+
+thread 1:
+x.load(]|) // cannot be reordered after flag.store
+y.load(]|) // cannot be reordered after flag.store
+
+flag.store(true, RI)
+
+thread 2:
+flag.load(||W) // cannot be reordered after x.store or y.store,
+x.store(1, I) // so if thread 2 sees flag = true,
+y.store(2, ||) // then thread 1 must have seen x=0 and y=0
+
+We will refer to hardware-level memory models in the SPARC/x86/z camp using the
+SPARC term 7SO (Total Store Order). We will refer to the other machines as “more relaxed.”
+On TSO machines, W||R orderings (W|| on a load, ||R on a store, or a W||R fence) should
+be enforced with appropriate machine instructions; other annotations can be elided from our
+code. On more relaxed machines, all annotations (explicit and implicit) must be enforced
+with appropriate machine instructions. It should be emphasized that there are significant
+differences among machines within a given camp—in the default ordering, the available
+synchronizing instructions, and the details of corner cases. A full explanation is well beyond
+what we can cover here. For a taste of the complexities involved, see the Ph.D. theses of Adve
+Two point two Memory Consistency
+
+Table two point three provides illustrative examples of ordering and inter thread communication.
+
+The first scenario describes delaying loads until stores have occurred in another thread. Initially, atomic integers `x` and `y` are initialized to zero, and an atomic boolean `flag` is initialized to false.
+
+In thread one, a `repeat` loop begins. Inside the loop, a variable `done` is assigned the value loaded from `flag` with acquire semantics. This acts as a busy wait on the `flag`. The loop continues `until done` is true. After the loop, `x` is loaded with relaxed ordering, which must return the value one. Then `y` is loaded with relaxed ordering, which must return the value two. Comments indicate that these loads, `x dot load` or `y dot load`, cannot be reordered before the preceding `flag dot load` operation.
+
+In thread two, the value one is stored to `x` with relaxed ordering. Then the value two is stored to `y` with relaxed ordering. A comment indicates that these stores cannot be reordered after the subsequent `flag dot store` operation. Finally, `true` is stored to `flag` with release semantics.
+
+The second scenario is for arguing that stores were not observed by another thread. The initial state is the same: atomic integers `x` and `y` are initialized to zero, and an atomic boolean `flag` is initialized to false.
+
+In thread one, `x` is loaded with relaxed ordering. A comment indicates that this load, and the subsequent `y dot load`, cannot be reordered before the `flag dot store`. Then `y` is loaded with relaxed ordering. Finally, `true` is stored to `flag` with R memory ordering. This notation is unusual for a store and might imply a specific, stronger memory consistency or a custom ordering.
+
+In thread two, `flag` is loaded with acquire semantics. A comment notes that this operation cannot be reordered after the `x dot store` or `y dot store` operations that follow. It also states that if thread two sees `flag` is true, then thread one must have seen `x` is equal to zero and `y` is equal to zero. Following this, the value one is stored to `x` with relaxed ordering, and the value two is stored to `y` with relaxed ordering.
+
+We will refer to hardware level memory models in the S P A R C, x eighty six, and Z camp using the S P A R C term T S O, which stands for Total Store Order. We will refer to the other machines as "more relaxed." On T S O machines, write followed by two vertical bars on a load, or two vertical bars R on a store, or a write followed by two vertical bars and R fence should be enforced with appropriate machine instructions. Other annotations can be elided from our code. On more relaxed machines, all annotations, both explicit and implicit, must be enforced with appropriate machine instructions. It should be emphasized that there are significant differences among machines within a given camp. In the default ordering, the available synchronizing instructions, and the details of corner cases. A full explanation is well beyond what we can cover here. For a taste of the complexities involved, see the P H D theses of Adve.
+The page delves into the profound complexities of memory consistency models, a foundational topic in concurrent programming and computer architecture. It illustrates how different hardware memory models, ranging from strict ones like Total Store Order to more relaxed variants, dictate the visibility and ordering of memory operations across multiple threads or processor cores. Understanding these models is paramount for designing correct and performant concurrent software, as apparent sequential execution in source code does not always translate directly to the actual order observed by hardware.
+
+The first illustrative example, labeled "delaying loads until stores have occurred in another thread," showcases the use of atomic variables and explicit memory ordering annotations to ensure data consistency. We observe the initialization of two atomic integer variables, `x` and `y`, to zero, and an atomic boolean flag to false. Thread one enters a busy wait loop, continuously attempting to load the value of `flag` using an `acquire` semantic, denoted by `flag.load(||R)`. This `acquire` operation acts as a memory barrier, ensuring that any subsequent memory operations performed by thread one, specifically the loads of `x` and `y`, cannot be reordered to occur before this `flag` load. Simultaneously, thread two performs a sequence of operations: it stores the value one to `x` and two to `y`, both using relaxed memory orderings as indicated by `||`. Crucially, after these stores, thread two updates the `flag` to true with a `release` semantic, `flag.store(true, W||)`. This `release` operation guarantees that all memory operations *preceding* it in thread two's execution, which include the stores to `x` and `y`, become visible to any other thread that subsequently performs an `acquire` on the same `flag`. Consequently, when thread one's `flag.load(||R)` finally observes `true`, a `happens-before` relationship is established between thread two's stores to `x` and `y` and thread one's subsequent loads of `x` and `y`. This guarantees that thread one will correctly read `one` for `x` and `two` for `y`, demonstrating how acquire release semantics provide the necessary synchronization to ensure data visibility and prevent stale reads across threads, even in systems where hardware might otherwise reorder operations for performance.
+
+The second example, titled "arguing that stores were not observed by another thread," highlights a subtle pitfall in concurrent programming under weakly ordered memory models. Similar to the first scenario, `x` and `y` are atomic integers initialized to zero, and `flag` is an atomic boolean initialized to false. In this case, thread one first loads `x` and `y` using relaxed ordering (`x.load(||)` and `y.load(||)`), then sets the `flag` to true with a `release` semantic (`flag.store(true, R||)`). In contrast, thread two enters a busy wait loop, loading `flag` with an `acquire` or `consume` semantic (`flag.load(||W)`) until it evaluates to true. After the flag is observed as true, thread two then proceeds to store `one` to `x` and `two` to `y`. The critical assertion in the commentary is: "so if thread two sees flag = true, then thread one must have seen x = 0 and y = 0". This statement reveals that despite the synchronization through the `flag`, there is no guarantee that thread one's *initial loads* of `x` and `y` would ever observe the values written by thread two. This is because thread one's loads of `x` and `y` occur *before* its own `flag.store`, and more significantly, *before* thread two performs its stores to `x` and `y`. The `release` semantic on thread one's `flag.store` ensures that any *prior writes* by thread one are visible, but thread one performs no writes to `x` or `y` itself. The `acquire` semantic on thread two's `flag.load` ensures that any *subsequent loads* by thread two will see prior writes, but it does not retroactively force thread one's earlier loads to see thread two's later writes. This scenario underscores that acquire release synchronization primarily establishes a directed `happens-before` relationship for data dependency related to the synchronized variable, not a full sequential consistency across all operations or threads. It illustrates a common misunderstanding where developers might implicitly assume a stronger memory model than what is actually provided by the hardware or programming language constructs without additional explicit fences.
+
+The concluding paragraph provides essential context on hardware memory models. It distinguishes between Total Store Order, abbreviated as `T S O`, as found in S P A R C and x eighty six architectures, and "more relaxed" memory models. Total Store Order offers a relatively strong ordering guarantee where writes from a single processor become visible to other processors in the order they were issued by that processor, and a processor always observes its own writes immediately. However, even under `T S O`, certain reorderings can occur, necessitating careful use of memory barriers or synchronization primitives. For "more relaxed" machines, the default reordering capabilities of processors and compilers are much greater, which can significantly enhance performance but introduce complex challenges for concurrent correctness. On such systems, explicit memory annotations, often referred to as memory barriers or fences, are indispensable. The text refers to specific types like `W||R` on a load, `||R` on a store, or a general `W||R` fence. These annotations correspond to instructions that force the processor to complete prior memory operations before proceeding with subsequent ones, thereby enforcing the necessary ordering and visibility. The passage emphasizes that while some annotations might be implicitly handled on `T S O` machines, on more relaxed architectures, all required ordering must be explicitly enforced through precise machine instructions. This highlights the substantial differences in default ordering guarantees and the availability of synchronizing instructions across various processor architectures, a topic so intricate that a comprehensive understanding often necessitates deep dives into specialized Ph.D. level research.

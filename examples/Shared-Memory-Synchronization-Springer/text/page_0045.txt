@@ -1,0 +1,91 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+46 3 Essential Theory
+
+Table 3.1 Properties of standard ordering criteria. * Quiescent consistency enforces real-time order
+only across intervals of inactivity.
+SC = sequential consistency; L = linearizability; S = serializability;
+SS = strict serializability; QC = quiescent consistency.
+SC L S SS QC
+
+Equivalent to a sequential order + −⊦−⊦−⊦ −⊦
+Respects program order in each thread + + + + —
+Consistent with other ordering (“real time”) — −⊦−−⊦ ≭
+Can touch multiple objects atomically −−−⊦−⊦ −
+Local: reasoning based on individual objects only — + — — +
+
+To avoid confusion, it should be noted that we have been using the term “composability”
+to mean that we can merge (compose) the orders of operations on separate objects into a sin-
+gle mutually consistent order. In the database and TM communities, “‘composability” means
+that we can combine (compose) individual atomic operations into larger, still atomic (i.e.,
+serializable) operations. We will return to this second notion of composability in Chapter 9.
+It 1s straightforward to provide in a system based on speculation; it is invariably supported
+by databases and transactional memory. It cannot be supported, in the general case, by con-
+servative locking strategies. Somewhat ironically, linearizability might be said to facilitate
+composable orders by disallowing composable operations.
+
+3.2 Liveness
+
+Safety properties—the subject of the previous section—ensure that bad things never happen:
+threads are never deadlocked; atomicity is never violated; invariants are never broken. To say
+that code 1s correct, however, we generally want more: we want to ensure forward progress.
+Just as we generally want to know that a sequential program will produce a correct answer
+eventually (not just fail to produce an incorrect answer), we generally want to know that
+invocations of concurrent operations will complete their work and return.
+
+An object method 1s said to be blocking (in the theoretical sense described in the box on
+page 8) if there 1s some reachable state of the system in which a thread that has called the
+method will be unable to return until some other thread takes action. Lock-based algorithms
+are inherently blocking: a thread that holds a lock precludes progress on the part of any other
+thread that needs the same lock. Liveness proofs for lock-based algorithms require not only
+that the code be deadlock-free, but also that critical sections be free of infinite loops, and
+that all threads continue to execute.
+
+A method is said to be nonblocking if there is no reachable state of the system in which
+an invocation of the method will be unable, on its own, to complete its execution and return.
+Table three point one outlines properties of standard ordering criteria. An asterisk indicates that quiescent consistency enforces real time order only across intervals of inactivity. The table defines S C as sequential consistency, L as linearizability, S as serializability, S S as strict serializability, and Q C as quiescent consistency.
+
+The data presents the applicability of five properties across these five consistency models. For the property 'equivalent to a sequential order', sequential consistency, linearizability, serializability, strict serializability, and quiescent consistency all show a plus, indicating this property applies to all of them.
+
+Regarding 'respects program order in each thread', sequential consistency, linearizability, serializability, and strict serializability show a plus, while quiescent consistency shows a minus, meaning it does not respect program order in each thread.
+
+For 'consistent with other ordering, or real time', sequential consistency shows a minus, linearizability shows a plus, serializability shows a minus, strict serializability shows a plus, and quiescent consistency shows an asterisk, indicating its special condition related to intervals of inactivity.
+
+Concerning 'can touch multiple objects atomically', sequential consistency, linearizability, and quiescent consistency show a minus, while serializability and strict serializability show a plus, signifying their ability to handle multiple objects atomically.
+
+Finally, for 'local, reasoning based on individual objects only', sequential consistency, serializability, and strict serializability show a minus, whereas linearizability and quiescent consistency show a plus, indicating that reasoning for them can be based on individual objects only.
+
+To avoid confusion, it should be noted that we have been using the term 'composability' to mean that we can merge, or compose, the orders of operations on separate objects into a single mutually consistent order. In the database and T M communities, 'composability' means that we can combine, or compose, individual atomic operations into larger, still atomic, that is, serializable, operations. We will return to this second notion of composability in Chapter nine. It is straightforward to provide in a system based on speculation; it is invariably supported by databases and transactional memory. It cannot be supported, in the general case, by conservative locking strategies. Somewhat ironically, linearizability might be said to facilitate composable orders by disallowing composable operations.
+
+three point two Liveness
+
+Safety properties - the subject of the previous section - ensure that bad things never happen: threads are never deadlocked; atomicity is never violated; invariants are never broken. To say that code is correct, however, we generally want more: we want to ensure forward progress. Just as we generally want to know that a sequential program will produce a correct answer eventually, not just fail to produce an incorrect answer, we generally want to know that invocations of concurrent operations will complete their work and return.
+
+An object method is said to be blocking, in the theoretical sense described in the box on page eight, if there is some reachable state of the system in which a thread that has called the method will be unable to return until some other thread takes action. Lock based algorithms are inherently blocking: a thread that holds a lock precludes progress on the part of any other thread that needs the same lock. Liveness proofs for lock based algorithms require not only that the code be deadlock free, but also that critical sections be free of infinite loops, and that all threads continue to execute.
+
+A method is said to be nonblocking if there is no reachable state of the system in which an invocation of the method will be unable, on its own, to complete its execution and return.
+The provided page delves into fundamental concepts of concurrent and distributed systems, specifically memory consistency models, the composability of operations, and the crucial properties of safety and liveness.
+
+Central to understanding concurrent execution is the notion of consistency, as meticulously detailed in the table titled, "Properties of standard ordering criteria". This table presents five distinct ordering criteria, each representing a specific memory consistency or transaction isolation model. Moving from left to right across the table, we encounter Sequential Consistency, Linearizability, Serializability, Strict Serializability, and Quiescent Consistency. Each column in this table enumerates a particular consistency model, while each row describes a critical property that may or may not be upheld by that model.
+
+Sequential Consistency, abbreviated as S C, is the most intuitive of these models, stipulating that the result of any execution is the same as if the operations of all processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program. The table indicates with a plus sign that S C is indeed "Equivalent to a sequential order" and "Respects program order in each thread". However, it does not guarantee consistency with other ordering, such as real time, nor does it inherently support operations that "Can touch multiple objects atomically", meaning an individual S C operation is typically confined to a single memory location. Reasoning under S C is not strictly local, as global reordering can occur.
+
+Linearizability, denoted by L, is a stronger consistency model. It mandates that every operation appears to take effect instantaneously at some point between its invocation and its completion. This stricter definition ensures that an operation not only appears in some global sequential order but also respects real time. Thus, the table shows L as equivalent to a sequential order, respecting program order, and consistent with other ordering including real time. It can also operate atomically on multiple objects. Despite its strong guarantees, linearizability typically implies non-local reasoning due to the global real time constraint.
+
+Serializability, represented by S, is predominantly a concept from database theory, referring to the property that a schedule of concurrent transactions produces the same results as some sequential execution of those transactions. It is equivalent to a sequential order for transactions, but unlike S C or linearizability, it does not inherently respect program order within individual threads across multiple operations that constitute a transaction. This distinction is crucial: serializability focuses on the equivalence of transaction outcomes, not necessarily the precise timing or intra-thread ordering of individual read or write operations within those transactions. It intrinsically supports operations that can touch multiple objects atomically, which is the very definition of a transaction. Reasoning about serializability is not local to individual objects but requires considering the entire transaction.
+
+Strict Serializability, or S S, augments serializability with a real time constraint. It ensures that if one transaction commits before another begins, then its serial execution must precede the other's. The table therefore shows S S as equivalent to a sequential order, respecting program order, and consistent with real time, while also supporting atomic operations on multiple objects. Similar to linearizability, this strong real time coupling makes reasoning non-local.
+
+Finally, Quiescent Consistency, abbreviated Q C, is a weaker model that enforces real time order only across intervals of inactivity. The asterisk in the table against "Consistent with other ordering" for Q C signifies this specific condition, where ordering is only guaranteed when the system is quiet, meaning no operations are pending or in progress. Q C is equivalent to a sequential order and can respect program order, but its real time consistency is conditional. It does not inherently support atomic operations across multiple objects and allows for local reasoning based on individual objects.
+
+The discussion then transitions to the concept of "composability," particularly in the context of concurrent operations. In distributed systems and transactional memory environments, composability refers to the ability to combine individual, atomic or serializable operations into larger units that maintain their overall atomicity or serializability. This is a non-trivial challenge. While individual operations might guarantee certain consistency properties, their arbitrary composition does not automatically extend these guarantees to the composite operation. For instance, combining two individually linearizable operations does not necessarily yield a linearizable composite operation without careful design. The text highlights that systems relying on speculation, such as some transactional memory implementations, find it difficult to support composable operations without resorting to more conservative locking strategies, which can limit concurrency. Conversely, a seemingly strong property like linearizability, while ensuring individual atomic operations, does not inherently facilitate the arbitrary composition of such operations into larger atomic units without explicit mechanisms.
+
+The subsequent section introduces the critical concept of "Liveness," which, alongside "safety properties," forms the bedrock of correctness in concurrent system design. Safety properties dictate that "bad things never happen," ensuring that the system always remains in a valid state. Examples include the absence of deadlocks, the preservation of atomicity for critical operations, and the maintenance of system invariants. While safety guarantees that nothing incorrect occurs, liveness ensures that "good things eventually happen," focusing on the forward progress of the system. This includes ensuring that programs eventually produce results, operations complete, and threads continue to make progress rather than becoming stalled indefinitely.
+
+A method in a concurrent system is termed "blocking" if its execution can lead to a state where the thread invoking it is unable to proceed until some other thread performs a specific action. This often arises when a thread attempts to acquire a shared resource, such as a lock, that is currently held by another thread. In such scenarios, the calling thread enters a waiting state, suspending its execution. Lock based algorithms, by their very nature, are often inherently blocking because they rely on threads waiting for exclusive access to shared resources. Such blocking can lead to several undesirable outcomes, including deadlocks, where multiple threads are perpetually waiting for each other, and starvation, where a thread repeatedly loses contention for a resource and is never able to make progress. To mitigate these risks, liveness proofs are crucial for lock based algorithms. These proofs mathematically demonstrate that the algorithms are free of infinite loops and deadlocks, and that critical sections will eventually be entered, ensuring ongoing progress.
+
+In contrast, a method is considered "nonblocking" if there is no reachable state in which its invocation would prevent it from completing its execution and returning, irrespective of the actions or failures of other threads. Nonblocking algorithms, typically built upon atomic primitives like compare and swap operations, ensure that at least one thread makes progress, even in the face of contention or the failure of other threads. This offers stronger guarantees for system robustness and availability, as the failure of one thread does not halt the progress of others. The theoretical underpinnings of nonblocking paradigms involve sophisticated techniques to manage shared state without relying on mutual exclusion locks, thereby enhancing concurrency and fault tolerance.

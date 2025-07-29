@@ -1,0 +1,56 @@
+190 9 Transactional Memory
+
+may choose to validate immediately after every shared read; such a system is said to
+preserve opacity (Guerraoui and Kapatka 2008). A more optimistic system may delay
+validation until the program is about to execute a “dangerous” operation; such a system is
+said to be sandboxed (Dalessandro and Scott 2012) and to tolerate “zombie” transactions,
+which are doomed to abort but have not yet realized this fact (Scott 2014).
+
+Contention management — To resolve conflicts among transactions, we must choose
+which of the contenders should continue and which should abort or wait. (Waiting may be
+a viable option if the transaction that continues 1s a reader, working with the original value
+of the conflicting datum, and we allow it to finish before the writer continues. Waiting
+may also be viable if there is a possibility that the transaction that continues may ulti-
+mately fail to commit.) If certain atomic blocks frequently access the same data, we may
+wish to alter system scheduling to reduce the likelihood that those blocks will execute
+concurrently. We may also wish to make choices, over time, that ensure some measure of
+fairness (Sec. 3.2.2) among transactions or threads. These concerns are all issues of live-
+ness (Sec. 3.2). In some systems—particularly those with eager conflict resolution—it
+may be useful, from a software engineering perspective, to separate liveness from safety
+(correctness) concerns, and address it in a separate contention management module.
+
+With the exception of progress guarantees, we will discuss each of these design space
+dimensions in its own subsection below. Readers who are interested in exploring the alterna-
+tives may wish to download the RSTM suite (RSTM 2023), which provides a wide variety
+of interchangeable STM “back ends” for C++.
+
+The design space dimensions are largely but not fully orthogonal. When transactions
+conflict, there 1s no way for a writer to defer to a reader it cannot see: invisible readers
+reduce the flexibility of contention management. In a similar vein, private undo logs (not
+visible to other threads) cannot be used in a nonblocking system, and private access logs
+cannot be used for eager conflict resolution. Perhaps most important, there 1s no obvious way
+to combine in-place update (undo logs) with lazy conflict resolution: Suppose transaction
+A reads x, transaction B writes x (speculatively, in place), and transaction A is the first to
+complete. Without knowing whether A’s read occurred before or after B’s write, we have
+no way of knowing whether it is safe to commit A.
+
+9.1.2 Buffering of Speculative State
+
+Transactions mediate access to shared data, but they may also access thread-private data. On
+an abort, these private data may need to be rolled back. In principle, one could treat all data
+as shared, but this would induce unnecessary overhead in the private case. Variables that are
+declared within the lexical scope of an atomic block require no load/store instrumentation:
+because their lifetimes are bounded by that of the transaction (and their storage is typically
+beyond the value of the stack pointer that will be restored on abort), there is nothing to
+Ninety eighty nine Transactional Memory may choose to validate immediately after every shared read; such a system is said to preserve opacity Guerroui and Kapalka 2008. A more optimistic system may delay validation until the program is about to execute a dangerous operation; such a system is said to be sandboxed Dalessandro and Scott 2012 and to tolerate zombie transactions, which are doomed to abort but have not yet realized this fact Scott 2014. Contention management – To resolve conflicts among transactions, we must choose which of the contenders should continue and which should abort or wait. Waiting may be a viable option if the transaction that continues is a reader, working with the original value of the conflicting data, and we allow it to finish before the writer continues. Waiting may also be viable if there is a possibility that the transaction that continues may ultimately fail to commit. If certain atomic blocks frequently access the same data, we may wish to alter system scheduling to reduce the likelihood that those blocks will execute concurrently. We may also wish to make choices, over time, that ensure some measure of fairness Sec. three point two point two among transactions or threads. These concerns are all issues of liveness Sec. three point two. In some systems – particularly those with eager conflict resolution – it may be useful, from a software engineering perspective, to separate liveness from safety correctness concerns, and address it in a separate contention management module.
+
+With the exception of progress guarantees, we will discuss each of these design space dimensions in its own subsection below. Readers who are interested in exploring the alternatives may wish to download the R S T M suite R S T M 2023, which provides a wide variety of interchangeable S T M back ends for C++. The design space dimensions are largely but not fully orthogonal. When transactions conflict, there is no way for a writer to defer to a reader it cannot see; invisible readers reduce the flexibility of contention management. In a similar vein, private undo logs not visible to other threads cannot be used in a nonblocking system, and private access logs cannot be used for eager conflict resolution. Perhaps most important, there is no obvious way to combine in place update undo logs with lazy conflict resolution: Suppose transaction A reads x, transaction B writes x speculatively, in place, and transaction A is the first to complete. Without knowing whether A's read occurred before or after B's write, we have no way of knowing whether it is safe to commit A.
+
+Nine point one point two Buffering of Speculative State Transactions mediate access to shared data, but they may also access thread private data. On an abort, these private data may need to be rolled back. In principle, one could treat all data as shared, but this would induce unnecessary overhead in the private case. Variables that are declared within the lexical scope of an atomic block require no load store instrumentation; because their lifetimes are bounded by that of the transaction and their storage is typically beyond the value of the stack pointer that will be restored on abort, there is nothing to
+The text delves into aspects of transactional memory, particularly concerning validation strategies, contention management, and the concept of speculative state. One approach to validation involves delaying it until after every shared read, a strategy termed "optimistic." In contrast, a "pessimistic" system might defer validation until the program is about to execute a potentially problematic operation, often referred to as a "dangerous" operation, and may tolerate "zombie" transactions that have not yet realized their failure.
+
+Contention management in transactional memory systems addresses the critical decision of which contending transactions should proceed and which should abort. A waiting strategy can be viable if the transaction that is waiting is a reader and the conflicting transaction is a writer, allowing the writer to complete first. Alternatively, waiting might be acceptable if the transaction is expected to fail imminently. The system might also dynamically adjust behavior to reduce the likelihood of contention, potentially by altering transaction scheduling. These considerations are fundamental to achieving both liveliness, ensuring progress, and safety, guaranteeing correctness, especially in systems with eager conflict resolution. Separating liveliness concerns from safety is a key design challenge.
+
+The design space of transactional memory offers various dimensions, often explored through different software transactional memory, or S T M, implementations. For instance, the R S T M suite is mentioned as providing interchangeable "back ends" for C++. The dimensionality of this design space is largely, though not entirely, orthogonal. A scenario where a writer defers to a reader, and the reader cannot see the writer's updates, presents a challenge. This inability to perceive the writer's intermediate state leads to "invisible readers." In nonblocking systems, private undo logs, which store the state needed to revert changes, and private access logs, used for tracking reads and writes, cannot directly resolve such conflicts. The problem is further compounded when considering the need to combine in place updates with lazy conflict resolution. If transaction A reads a variable, and then transaction B writes to the same variable, followed by transaction A committing, determining whether A's read preceded B's write is crucial for ensuring that the commit is safe.
+
+Section nine point one point two introduces the concept of "Buffering of Speculative State." Transactions typically access shared data but may also access thread private data, which might need to be rolled back if the transaction aborts. In principle, all data accessed could be treated as transactional. However, variables that are the target of read or store instrumentation require special handling. Their storage is typically bounded by the scope of the transaction itself. If an atomic block requires no load or store instrumentation beyond what is already managed by the transaction, it implies that the state involved is inherently managed, such as the stack pointer, which will be restored upon an abort. This implies that the memory operations within such blocks are implicitly part of the transactional context.

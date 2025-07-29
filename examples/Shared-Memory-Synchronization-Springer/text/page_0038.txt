@@ -1,0 +1,110 @@
+3.1 Safety 39
+
+As a simple if somewhat contrived example, consider a replicated integer object, in
+which threads read their local copy (without synchronization) and update all copies under
+protection of a lock:
+
+lock L
+atomic<int> A[7] := {0}
+
+void put(int v): int get():
+L.acquire() return A[self].load(]|)
+forie T
+Ali].store(v, |)
+L.release()
+
+(Throughout this monograph, we use 7 to represent the set of thread ids. For the sake of
+convenience, we assume the thread ids in 7 can be used to index into arrays.)
+
+Because of the lock, put operations are totally ordered. Further, because a get operation
+performs only a single (atomic) access to memory, it is easily ordered with respect to all
+puts—after those that have updated the relevant element of A, and before those that have
+not. It 1s straightforward to identify a total order on operations that respects these constraints
+and that is consistent with program order in each thread. In other words, our counter is
+sequentially consistent.
+
+On the other hand, consider what happens if we have two counters—call them X and Y.
+Because get operations can occur “in the middle of” a put at the implementation level, we
+can imagine a scenario in which threads 7'3 and 7'4 perform gets on X and Y while both
+objects are being updated—and see the updates in opposite orders:
+
+local values of shared objects
+
+Tl 172 T3 T4
+XY | XY | XY | XY
+
+initially 00 00 00 00
+T'1 begins X.put(1) 10 10 00 00
+T?2 begins Y.put(1) 11 11 01 00
+
+T3: X.get() returns O 11 11 01 00
+T3: Y.get() returns 1 11 11 01 00
+T'1 finishes X.put(1) 11 11 11 10
+T4: X.get() returns 1 11 11 11 10
+T4: Y.get() returns O 11 11 11 10
+T2 finishes Y.put(1) 11 11 11 11
+
+At this point, the put to Y has happened before the put to X from 7'3’s perspective, but
+after the put to X from T4’s perspective. To solve this problem, we might require the
+implementation of a shared object to ensure that updates appear to other threads to happen
+at some single point in time.
+
+But this is not enough. Consider a software emulation of the hardware write buffers
+described in Sec. 2.2.1. To perform a put on object X, thread 7 inserts the desired new
+Section three point one, Safety.
+
+As a simple, if somewhat contrived, example, consider a replicated integer object, in which threads read their local copy without synchronization and update all copies under protection of a lock. The code defines a lock named L and an atomic array of integers, A, indexed by thread I Ds, initialized to zero. The `put` function takes an integer value `v`. It first acquires lock L. Then, for each thread I D `i` in the set T, it stores the value `v` into the atomic array A at index `i`, with a sequential consistency memory order. Finally, it releases lock L. The `get` function returns an integer. It loads and returns the value from the atomic array A at the calling thread's own index, `self`, also with a sequential consistency memory order.
+
+Throughout this monograph, we use T to represent the set of thread I Ds. For the sake of convenience, we assume the thread I Ds in T can be used to index into arrays.
+
+Because of the lock, `put` operations are totally ordered. Furthermore, because a `get` operation performs only a single atomic access to memory, it is easily ordered with respect to all `puts`, after those that have updated the relevant element of A, and before those that have not. It is straightforward to identify a total order on operations that respects these constraints and that is consistent with program order in each thread. In other words, our counter is sequentially consistent.
+
+On the other hand, consider what happens if we have two counters, call them X and Y. Because `get` operations can occur "in the middle of" a `put` at the implementation level, we can imagine a scenario in which threads T three and T four perform `get` operations on X and Y while both objects are being updated, and see the updates in opposite orders.
+
+The table titled "local values of shared objects" illustrates the observed states of two shared counters, X and Y, across four different threads: T one, T two, T three, and T four, over a sequence of events. Each thread maintains its own local view of the X and Y values.
+
+Initially, all four threads, T one, T two, T three, and T four, observe X as zero and Y as zero.
+
+When T one begins the X.put one operation, T one and T two update their local view of X to one, while Y remains zero. T three and T four still observe X as zero and Y as zero.
+
+When T two begins the Y.put one operation, T one and T two update their local view of Y to one, while X remains one. T three updates its local view of Y to one, while X remains zero. T four continues to observe X as zero and Y as zero.
+
+When T three performs X.get() and it returns zero, the observed values for all threads remain unchanged from the previous state. T one and T two see X as one and Y as one. T three sees X as zero and Y as one. T four sees X as zero and Y as zero.
+
+When T three performs Y.get() and it returns one, the observed values for all threads remain unchanged from the previous state. T three confirms its view of Y as one.
+
+When T one finishes the X.put one operation, the visibility of X's update propagates further. T one, T two, and T three now all observe X as one and Y as one. T four updates its view of X to one, but Y remains zero.
+
+When T four performs X.get() and it returns one, the observed values remain unchanged. T four confirms its view of X as one.
+
+When T four performs Y.get() and it returns zero, the observed values remain unchanged. T four confirms its view of Y as zero.
+
+When T two finishes the Y.put one operation, the update to Y becomes globally visible. Now, all four threads, T one, T two, T three, and T four, observe both X and Y as one.
+
+At this point, the `put` to Y has happened before the `put` to X from T three's perspective, but after the `put` to X from T four's perspective. To solve this problem, we might require the implementation of a shared object to ensure that updates appear to other threads to happen at some single point in time. But this is not enough. Consider a software emulation of the hardware write buffers described in Section two point two point one. To perform a `put` on object X, thread T inserts the desired new.
+The provided text and accompanying execution trace illuminate fundamental challenges in concurrent programming, specifically concerning memory consistency and the visibility of shared state across multiple processing threads. At its core, the problem revolves around ensuring that threads observe updates to shared data in a coherent and predictable manner, even when underlying hardware optimizations might reorder memory operations.
+
+The initial code segment presents a simplified model of a replicated integer object, designed to maintain multiple thread local copies of a value, represented by an array 'A' indexed by thread I D. The `put` method aims to update all these copies, while the `get` method retrieves a thread's local copy. The critical technical elements here are the `lock L` and the use of `atomic` operations. The `lock L` enforces mutual exclusion, meaning only one thread can execute the critical section within the `put` method at any given time. This guarantees that the loop which iterates through all thread I Ds and performs `A index i dot store` operations is itself atomic with respect to other `put` operations. The `store` operation is described as having release semantics, typically denoted by a `memory_order_release` fence, which ensures that all preceding memory operations within the thread become visible to other threads before the `store` itself completes. Similarly, the `get` method uses `A index self dot load`, implying acquire semantics, typically `memory_order_acquire`. This ensures that any memory operations made visible by a preceding `release` operation from another thread are now visible to the current thread before the `load` completes. This combination of acquire and release semantics, along with the global lock for `put` operations, is generally sufficient to establish sequential consistency for the `put` operations themselves, meaning all `put` operations appear to execute in some single global order, consistent with program order.
+
+However, the text immediately highlights a subtle but profound issue: while `put` operations are sequentially consistent, `get` operations are not synchronized via the same global lock. This opens the door to inconsistent views of shared data, particularly when considering composite states involving multiple distinct shared objects, here denoted as X and Y. The problem arises because `get` operations can interleave with `put` operations, and a `get` might observe a partial or reordered state if memory consistency is relaxed.
+
+The table titled "local values of shared objects" provides a detailed execution trace that precisely illustrates this problem. The table is structured with columns representing the local memory views of four threads—T one, T two, T three, and T four—each observing the values of shared objects X and Y. Each row marks a discrete step in the interleaved execution of these threads.
+
+Initially, all threads observe X and Y as `zero zero`.
+The first significant event is `T one begins X dot put one`. This is reflected in T one's view, which updates its local X to `one`, becoming `one zero`.
+Concurrently, `T two begins Y dot put one`. T two's view updates to `zero one`.
+Now, the critical inconsistency emerges. `T three: X dot get returns zero`. At this point, T three reads its local copy of X and sees `zero`. Crucially, this means T one's ongoing `put` operation to X, which started earlier, has not yet been fully propagated and become visible to T three, or T three's local cache has not been updated.
+Immediately after, `T three: Y dot get returns one`. T three then reads its local copy of Y and sees `one`. This indicates that T two's `put` operation to Y *has* become visible to T three.
+The observation by T three is `X is zero` and `Y is one`. This demonstrates a reordering from an intuitive global perspective: T three sees the update to Y before the update to X, even though T one's `put` to X began before T two's `put` to Y.
+
+The trace continues with `T one finishes X dot put one`. This marks the completion of T one's write to all local copies of X. At this stage, T three still observes `zero one`, and T four still observes `zero zero`, even though the `put` operation on X by T one has completed globally from T one's perspective.
+Then, `T four: X dot get returns one`. T four now observes X as `one`, indicating that T one's update to X is visible to T four.
+However, `T four: Y dot get returns zero`. T four observes Y as `zero`. This is the inverse of T three's observation: T four sees the update to X but *not* to Y. This strongly confirms the reordering. T three sees `Y then X` (or rather, `Y updated, X not`), while T four sees `X then Y` (or rather, `X updated, Y not`). This is a classic violation of sequential consistency for a multi-object state. No single global ordering of events can explain both T three's and T four's observations if X and Y are part of a shared, consistent state.
+
+Finally, `T two finishes Y dot put one`. After this, all local views eventually converge to `one one`, indicating that both `put` operations have completed and their effects have propagated.
+
+This scenario highlights the distinction between strong consistency models, like sequential consistency or linearizability, and more relaxed models often employed by modern hardware for performance. Sequential consistency demands that the result of any execution is the same as if all operations by all processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program. The observed behavior, where T three sees Y updated but X not, and T four sees X updated but Y not, definitively breaks this model for the composite object (X, Y).
+
+The underlying technical principle contributing to this reordering is often the presence of hardware write buffers and the compiler's or processor's ability to reorder memory operations to improve performance, as long as program order dependencies within a single thread are preserved. Even with atomic operations, the propagation of writes to different memory locations (X and Y) can occur out of order from the perspective of other cores unless explicit memory barriers or fences are used to enforce a specific global ordering. The standard `acquire` and `release` semantics on atomic operations guarantee ordering between the atomic operation itself and other memory operations *within the same thread*, or between corresponding `release` and `acquire` operations across threads, but they do not necessarily impose a total global order across operations on different, unrelated memory locations unless stronger fence types are used or if X and Y were accessed via a single atomic composite operation.
+
+In essence, the example demonstrates that ensuring the consistency of a shared state composed of multiple variables requires more than just making individual variable accesses atomic or protecting them with simple locks. It necessitates a deep understanding of memory consistency models and potentially the use of explicit memory synchronization primitives like full memory barriers to ensure that all writes by one thread become visible to all other threads in a consistent, globally observable order, thereby preventing observers from seeing an incoherent or partially updated view of the overall system state.

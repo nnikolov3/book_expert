@@ -1,0 +1,71 @@
+9.3 Challenges 215
+
+e Identify loads and stores that are certain to access private variables, and refrain from
+instrumenting them (Shpeisman et al. 2007). (This task 1s rather tricky: if an access may
+touch either a shared datum or a private datum, then it must be instrumented. If the
+system uses redo logs, then any other accesses to the same private datum must also be
+instrumented, to ensure that a transaction always sees its own writes.)
+
+e For strings of successive accesses, infer the minimum number of synchronizing instruc-
+tions required to maintain sequential consistency (Spear et al. 2009b).
+
+More exotic optimizations may also be possible. Olszewski et al. (2007) have proposed
+dynamic binary rewriting to allow arbitrary library routines to be instrumented on the fly,
+and called from within transactions. More ambitiously, if subroutine foo is often called inside
+transactions, there may be circumstances in which some subset of its arguments are known
+to be private, or to have already been logged. To exploit these circumstances, a compiler
+may choose to generate a custom clone of foo that elides instrumentation for one or more
+parameters.
+
+As of this writing, compilers have been developed for transactional extensions to a vari-
+ety of programming languages, including Java (Adl-Tabatabai et al. 2006), C# (Harris et al.
+2006), C (Wang et al. 2007), C++ (Afek et al. 2010; Free Software Foundation 2012),* Clo-
+jure (Hickey 2022), and Haskell (HaskellWiki 2012; Yates and Scott 2019). Language-level
+semantics are currently the most mature in Clojure and Haskell. Among more “mainstream”
+languages, C++ is likely to be the first to incorporate TM extensions into the language
+standard (Boehm et al. 2021).
+
+9.3.4 Debugging and Performance Tuning
+
+TM also raises significant issues for debugging and for performance analysis and tuning.
+The most obvious issue for debugging is the tension between the desire on the one hand to
+support debugging at the level of statements or machine instructions and, on the other hand,
+the need for transactions to effect their memory updates as a single indivisible operation.
+
+Zyulkyarov et al. (2011, 2010) propose to differentiate, explicitly, between debugging
+an application, debugging the code inside atomic blocks, and debugging the TM implemen-
+tation. For the first task, transactions should appear to be atomic. When single-stepping, for
+example, they should execute “all at once.” For the second task, the debugger should ensure
+that threads other than the one in the transaction are quiescent, and that the values of all
+variables not under modification by the transaction should appear to be consistent. The third
+task 1s then akin to conventional debugging of library and runtime code.
+
+Without new tools, programmers are likely to find it very difficult to debug transactional
+programs—in effect, a conventional debugger supports only the third of the TM debugging
+
+* Intel also developed a prototype edition of its ICC compiler with software transactional memory
+support in 2010, but it was discontinued.
+nine point three Challenges. two one five. Identify loads and stores that are certain to access private variables, and refrain from instrumenting them (Shpeisman et al. two thousand seven). This task is rather tricky: if an access may touch either a shared datum or a private datum, then it must be instrumented. If the system uses redo logs, then any other accesses to the same private datum must also be instrumented, to ensure that a transaction always sees its own writes. For strings of successive accesses, infer the minimum number of synchronizing instructions required to maintain sequential consistency (Spear et al. two thousand nine b).
+
+More exotic optimizations may also be possible. Olszewski et al. (two thousand seven) have proposed dynamic binary rewriting to allow arbitrary library routines to be instrumented on the fly, and called from within transactions. More ambitiously, if subroutine foo is often called inside transactions, there may be circumstances in which some subset of its arguments are known to be private, or to have already been logged. To exploit these circumstances, a compiler may choose to generate a custom clone of foo that elides instrumentation for one or more parameters.
+
+As of this writing, compilers have been developed for transactional extensions to a variety of programming languages, including Java (Adl Tabatabai et al. two thousand six), C# (Harris et al. two thousand six), C (Wang et al. two thousand seven), C++ (Afek et al. two thousand ten; Free Software Foundation two thousand twelve), and Haskell (Haskell Wiki two thousand twelve; Yates and Scott two thousand nineteen). Language level semantics are currently the most mature in Clojure and Haskell. Among more mainstream languages, C++ is likely to be the first to incorporate TM extensions into the language standard (Boehm et al. two thousand one).
+
+nine point three point four Debugging and Performance Tuning.
+
+TM also raises significant issues for debugging and for performance analysis and tuning. The most obvious issue for debugging is the tension between the desire on the one hand to support debugging at the level of statements or machine instructions and, on the other hand, the need for transactions to effect their memory updates as a single indivisible operation. Zyulkyarov et al. (two thousand eleven, two thousand ten) propose to differentiate, explicitly, between debugging an application, debugging the code inside atomic blocks, and debugging the TM implementation. For the first task, transactions should appear to be atomic. When single stepping, for example, they should execute "all at once." For the second task, the debugger should ensure that threads other than the one in the transaction are quiescent, and that the values of all variables not under modification by the transaction should appear to be consistent. The third task is then akin to conventional debugging of library and runtime code.
+
+Without new tools, programmers are likely to find it very difficult to debug transactional programs—in effect, a conventional debugger supports only the third of the TM debugging
+
+Intel also developed a prototype edition of its ICC compiler with software transactional memory support in two thousand ten, but it was discontinued.
+The challenges in transactional memory systems extend to instrumentation, which involves modifying code or binaries to add tracking mechanisms. A primary difficulty is identifying loads and stores that access private variables, which must be carefully instrumented to ensure correctness. If a datum is private, any access to it necessitates instrumentation. If the system uses redo logs, these logs must also be instrumented to guarantee that a transaction consistently observes its own modifications. For sequences of accesses, inferring the minimal set of synchronizing instructions to maintain sequential consistency is crucial, as described by Spear et al. in two thousand nine.
+
+More advanced optimization techniques can involve dynamic binary rewriting, enabling arbitrary library routines to be executed within transactions. This approach presents unique challenges. For instance, if a subroutine is called from within a transaction, and some of its arguments are known to be private or have already been logged, a compiler might generate a custom clone of that subroutine that bypasses instrumentation for those specific parameters. Such optimizations are contingent on the compiler's ability to accurately infer these conditions.
+
+The development of compilers with transactional memory extensions is an active area of research. Compilers have been created for various programming languages, including Java, as documented by Adl Tabatabai and colleagues in two thousand seven, and C++, with contributions from Afek et al. in two thousand ten and the Free Software Foundation in two thousand twelve. C# also has transactional memory support, as detailed by Harris et al. in two thousand thirteen. Furthermore, Hickey in two thousand twenty-two and Yates and Scott in two thousand nineteen have explored transactional memory in Haskell. Clojure and Haskell are noted for their maturity in this domain, with C++ being a likely candidate to be the first mainstream language to integrate transactional memory extensions into its standard, building upon work such as that by Boehm et al. in two thousand and twenty-one.
+
+Section nine point three point four delves into debugging and performance tuning for transactional memory systems. Transactional memory introduces significant complexities for both debugging and performance analysis. A core tension exists between the desire to support debugging, which often involves examining program state at fine granularities, and the need for transactions to commit as indivisible operations. The need to effectively manage memory updates as atomic units poses a challenge for typical debugging paradigms.
+
+Researchers like Zyulkyarov and collaborators in two thousand eleven and two thousand ten proposed methods to differentiate and explicitly handle debugging within atomic blocks, and to debug the transactional memory implementation itself. The primary challenge in debugging is ensuring that transactions appear atomic, meaning they execute "all at once" from the perspective of other threads. For a debugger to effectively single step through a transaction, it must guarantee that threads external to the transaction do not observe the transaction's intermediate states, and that all modifications made by the transaction appear consistent. This is akin to conventional debugging of library and runtime code.
+
+A significant hurdle is that without specialized tools, programmers often find it exceedingly difficult to debug transactional programs. This difficulty arises because conventional debuggers typically only support the debugging of transactional memory operations, not the underlying transactional mechanisms. Intel, for example, developed a prototype version of its ICC compiler with software transactional memory support in two thousand ten, but this project was later discontinued. This highlights the ongoing challenges in providing robust and accessible debugging capabilities for transactional memory environments.

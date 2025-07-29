@@ -1,0 +1,67 @@
+=
+
+Check for
+updates
+
+Practical Spin Locks
+
+The mutual exclusion problem was first identified in the early 1960s. Dijkstra attributes the
+first 2-thread solution to Theodorus Dekker (Dijkstra 1968b). Dijkstra himself published
+an n-thread solution in 1965 [CACM]. The problem has been intensely studied ever since.
+Taubenfeld (2008) provides a summary of significant historical highlights. Ben-Ari (2006,
+Chaps. 3, 4, 5) presents a bit more detail. Much more extensive coverage can be found in
+Taubenfeld’s encyclopedic text (Taubenfeld 2006).
+
+Through the 1960 and 70s, attention focused mainly on algorithms in which the only
+atomic primitives were assumed to be load and store. Since the 1980s, practical algorithms
+have all assumed the availability of more powerful atomic primitives, though interest in
+load/store-only algorithms continues in the theory community.
+
+We present a few of the most important load/store-only spin locks in the first subsection
+below. In Sec. 4.1.1 we consider simple locks based on test_and_set (TAS) and fetch_and_
+increment (FAI). In Sec. 4.3 we turn to queue-based locks, which scale significantly better
+on large machines. In Sec.4.4 we consider extensions of the basic acquire-release API.
+Finally, in Sec. 4.5, we consider additional techniques to reduce unnecessary overhead.
+
+4.1 Classical Load/Store-Only Algorithms
+Peterson’s Algorithm
+
+The simplest known 2-thread spin lock (Figure 4.1) 1s due to Peterson (1981). The lock 1s
+represented by a pair of Boolean variables, interested[self] and interested[other] (initially
+false), and a integer turn that is either O or 1. To acquire the lock, thread i indicates its
+interest by setting interested[self] and then waiting until either (a) the other thread is not
+interested or (b) turn is set to the other thread, indicating that thread i set it first.
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 61
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_4
+
+4
+Chapter Four: Practical Spin Locks
+
+The mutual exclusion problem was first identified in the early nineteen sixties. Dijkstra attributes the first two thread solution to Theodorus Dekker, referenced as Dijkstra nineteen sixty eight b. Dijkstra himself published an n thread solution in nineteen sixty five in A C M. The problem has been intensely studied ever since. Taubenfeld, two thousand eight, provides a summary of significant historical highlights. Ben Ari, two thousand six, in Chapters three, four, and five, presents a bit more detail. Much more extensive coverage can be found in Taubenfeld’s encyclopedic text, Taubenfeld two thousand six.
+
+Through the nineteen sixties and nineteen seventies, attention focused mainly on algorithms in which the only atomic primitives were assumed to be load and store. Since the nineteen eighties, practical algorithms have all assumed the availability of more powerful atomic primitives, though interest in load slash store only algorithms continues in the theory community.
+
+We present a few of the most important load slash store only spin locks in the first subsection below. In Section four point one point one, we consider simple locks based on test and set, or T A S, and fetch and increment, or F A I. In Section four point three, we turn to queue based locks, which scale significantly better on large machines. In Section four point four, we consider extensions of the basic acquire release A P I. Finally, in Section four point five, we consider additional techniques to reduce unnecessary overhead.
+
+Section four point one: Classical Load slash Store Only Algorithms
+
+Peterson’s Algorithm
+
+The simplest known two thread spin lock, as shown in Figure four point one, is due to Peterson, nineteen eighty one. The lock is represented by a pair of Boolean variables, specifically interested index self index and interested index other index, which are initially false, and an integer turn that is either zero or one. To acquire the lock, thread eye indicates its interest by setting interested index self index. It then waits until either, A, the other thread is not interested, or B, the turn is set to the other thread, indicating that thread eye set it first.
+
+This content is copyrighted by The Author s, under exclusive license to Springer Nature Switzerland A G two thousand twenty four. It is from Shared Memory Synchronization, Synthesis Lectures on Computer Architecture, by M. L. Scott and T. Brown. The D O I is H T T P S colon slash slash D O I dot org slash ten point one zero zero seven slash nine seven eight dash three dash zero three one dash three eight six eight four dash eight underscore four.
+The page discusses the fundamental problem of mutual exclusion in concurrent computing and various approaches to achieving it, specifically focusing on spin locks. The mutual exclusion problem, first articulated in the early nineteen sixties, addresses the challenge of ensuring that multiple concurrent threads or processes can safely access a shared resource or "critical section" of code without interfering with each other. If multiple threads were allowed to modify shared data simultaneously, it could lead to data corruption or inconsistent states. The initial solutions, such as Dekker's algorithm and Dijkstra's work, demonstrated how mutual exclusion could be achieved even with very basic atomic memory operations like load and store. This historical context is vital, as it underpins the theoretical foundations of concurrency control.
+
+Through the nineteen sixties and seventies, research concentrated on algorithms constructed solely from these fundamental load and store primitives. However, with the advent of more sophisticated computer architectures in the nineteen eighties, hardware-supported atomic operations became widely available, leading to more efficient and scalable synchronization mechanisms. Despite this, the theoretical principles derived from load/store only algorithms remain relevant for understanding the core challenges of distributed shared memory and cache coherence.
+
+The document outlines a structured exploration of practical spin locks, which are a type of lock where a thread attempting to acquire a lock continuously checks if the lock is available, typically by repeatedly executing a small loop, rather than yielding the C P U. This "busy waiting" approach is efficient for short critical sections where contention is low, as it avoids the overhead of context switching inherent in blocking mechanisms.
+
+Section four point one point one is dedicated to simple locks built upon atomic primitives like `test_and_set` and `fetch_and_increment`. The `test_and_set` (T A S) operation is a hardware instruction that atomically reads a memory location, writes a non-zero value (typically one) to it, and returns the original value. If the returned value was zero, the lock was successfully acquired; otherwise, it was already held. This single, indivisible operation prevents race conditions during lock acquisition. Similarly, `fetch_and_increment` (F A I) is an atomic operation that reads a memory location, increments its value by one, and returns the original value. It is commonly used for implementing counters or ticket locks, where threads acquire a ticket number to determine their turn for entering a critical section. These atomic primitives are crucial for building efficient and correct concurrent data structures and algorithms.
+
+Section four point three then introduces queue based locks. While simple spin locks can suffer from high cache coherence traffic and poor scalability on large multi-processor systems due to many threads repeatedly attempting to modify the same lock variable, queue based locks mitigate this by having each waiting thread spin on a unique, local memory location. When a thread releases a lock, it signals the next thread in the logical queue to acquire it. This distributed spinning reduces contention on a single shared variable, significantly improving performance and scalability, particularly on systems with a large number of cores.
+
+Section four point four delves into extensions of the basic acquire-release A P I. This A P I defines specific memory ordering semantics. An `acquire` operation acts as a memory barrier, ensuring that all memory operations subsequent to the acquire by the acquiring thread are visible to other threads only after the acquire completes. Conversely, a `release` operation ensures that all memory operations prior to the release by the releasing thread are visible to other threads before the release completes. This guarantees that data modified within a critical section is consistently observed by other threads that subsequently acquire the lock, preventing issues like stale data reads across different processor caches. This strict ordering is a cornerstone of modern relaxed memory models, providing a balance between performance and correctness.
+
+The page then introduces Peterson's Algorithm, a classic software based solution for the two-thread mutual exclusion problem. This algorithm is notable because it relies exclusively on standard load and store instructions, without requiring any special atomic hardware operations. Peterson's algorithm employs two shared variables: a pair of Boolean flags, `interested index self` and `interested index other`, indicating a thread's intent to enter the critical section, and an integer `turn` variable, which acts as a tie-breaker. When a thread, say thread `i`, wishes to enter the critical section, it first sets its own `interested index i` flag to true, signaling its intent. It then sets the `turn` variable to the other thread's identifier, effectively giving the other thread priority. Finally, thread `i` enters a busy waiting loop, spinning as long as the other thread is `interested index other` `and and` the `turn` variable is `is equal to` the other thread's identifier. This structure ensures that if both threads simultaneously attempt to enter the critical section, the last one to set the `turn` variable will yield, allowing the other thread to proceed. Once a thread exits the critical section, it resets its `interested` flag to false. Peterson's algorithm is a celebrated example because it provably satisfies the three essential properties of a mutual exclusion algorithm: mutual exclusion (only one thread in the critical section at a time), progress (no thread is indefinitely blocked if the critical section is empty), and bounded waiting (every thread that wants to enter the critical section will eventually get to do so). Its ingenuity lies in achieving these properties using only simple memory accesses, which was a significant theoretical advancement.

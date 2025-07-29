@@ -1,0 +1,61 @@
+16 2 Architectural Background
+
+in time. In addition to temporal and spatial locality, it is therefore important for parallel
+programs to exhibit good thread locality: as much possible, a given datum should be accessed
+by only one thread at a time.
+
+Coherence misses may sometimes occur when threads are accessing different data, if those
+data happen to lie in the same cache block. This false sharing can often be eliminated—
+yielding a major speed improvement—if data structures are padded and aligned to occupy an
+integral number of cache lines. For busy-wait synchronization algorithms, it is particularly
+important to minimize the extent to which different threads may spin on the same location—
+or locations in the same cache block. Spinning with a write on a shared location—as we
+did in the test_and_set lock of Sec. 1.3, is particularly deadly: each such write leads to
+interconnect traffic proportional to the number of other spinning threads. We will consider
+these issues further in Chapter 4.
+
+2.2 Memory Consistency
+
+On a single-core machine, it is relatively straightforward to ensure that instructions appear
+to complete in execution order. Ideally, one might hope that a similar guarantee would apply
+to parallel machines—that memory accesses, system-wide, would appear to constitute an
+interleaving (in execution order) of the accesses of the various cores. For several reasons,
+this sort of sequential consistency (Lamport 1979) imposes nontrivial constraints on perfor-
+mance. Most real machines implement a more relaxed (i.e., potentially inconsistent) memory
+model, in which accesses by different threads, or to different locations by the same thread,
+may appear to occur “out of order” from the perspective of threads on other cores. When
+consistency 1s required, programmers (or compilers) must employ special synchronizing
+instructions that are more strongly ordered than other, “ordinary” instructions, forcing the
+local core to wait for various classes of potentially in-flight events. Synchronizing instruc-
+tions are an essential part of synchronization algorithms on any non-sequentially consistent
+machine.
+
+2.2.1 Sources of Inconsistency
+
+Inconsistency is a natural result of common architectural features. In an out-of-order pro-
+cessor, for example—one that can execute instructions in any order consistent with (thread-
+local) data dependences—a write must be held in the reorder buffer until all instructions that
+precede it in program order have completed. Likewise, since almost any modern processor
+can generate a burst of store instructions faster than the underlying memory system can
+absorb them, even writes that are logically ready to commit may need to be buffered for
+many cycles. The structure that holds these writes is known as a store buffer.
+In time. In addition to temporal and spatial locality, it is therefore important for parallel programs to exhibit good thread locality: as much as possible, a given datum should be accessed by only one thread at a time.
+
+Coherence misses may sometimes occur when threads are accessing different data, if those data happen to lie in the same cache block. This false sharing can often be eliminated—yielding a major speed improvement—if data structures are padded and aligned to occupy an integral number of cache lines. For busy wait synchronization algorithms, it is particularly important to minimize the extent to which different threads may spin on the same location—or locations in the same cache block. Spinning with a write on a shared location—as we did in the test and set lock of Section one point three, is particularly deadly: each such write leads to interconnect traffic proportional to the number of other spinning threads. We will consider these issues further in Chapter four.
+
+Memory Consistency
+
+On a single core machine, it is relatively straightforward to ensure that instructions appear to complete in execution order. Ideally, one might hope that a similar guarantee would apply to parallel machines—that memory accesses, system wide, would appear to constitute an interleaving, in execution order, of the accesses of the various cores. For several reasons, this sort of sequential consistency, Lamport one thousand nine hundred seventy nine, imposes nontrivial constraints on performance. Most real machines implement a more relaxed, that is, potentially inconsistent, memory model, in which accesses by different threads, or to different locations by the same thread, may appear to occur “out of order” from the perspective of threads on other cores. When consistency is required, programmers, or compilers, must employ special synchronizing instructions that are more strongly ordered than other, “ordinary” instructions, forcing the local core to wait for various classes of potentially in flight events. Synchronizing instructions are an essential part of synchronization algorithms on any non-sequentially consistent machine.
+
+Sources of Inconsistency
+
+Inconsistency is a natural result of common architectural features. In an out of order processor, for example—one that can execute instructions in any order consistent with thread local data dependencies—a write must be held in the reorder buffer until all instructions that precede it in program order have completed. Likewise, since almost any modern processor can generate a burst of store instructions faster than the underlying memory system can absorb them, even writes that are logically ready to commit may need to be buffered for many cycles. The structure that holds these writes is known as a store buffer.
+The optimization of parallel programs fundamentally hinges upon the principle of locality, encompassing both temporal and spatial dimensions. Temporal locality suggests that a data item accessed at one point in time is likely to be accessed again soon, while spatial locality implies that data items located near each other in memory are likely to be accessed together. In a multi-threaded execution environment, this concept extends to what is known as thread locality, where the ideal scenario dictates that a specific datum should be exclusively accessed by only one thread at any given moment. This minimizes the overhead associated with cache coherence protocols and interprocessor communication.
+
+A significant performance impediment in multi-core systems arises from coherence misses. These occur when multiple threads attempt to access, and particularly modify, data that resides within the same cache block. Even if these threads are accessing logically distinct data elements, if those elements happen to reside within the same physical cache block, the cache coherence protocol will treat the entire block as shared, leading to invalidations across caches. This phenomenon is termed false sharing. False sharing can be effectively mitigated through careful data structure design, specifically by ensuring that independent data structures are padded and aligned to occupy integral numbers of cache lines. This prevents unrelated data from sharing the same cache block, thereby eliminating unnecessary coherence traffic. The impact of false sharing is particularly severe in busy-wait synchronization algorithms, where threads repeatedly check a shared flag. If this flag shares a cache line with other unrelated data, modifications by other threads to that unrelated data can cause the cache line containing the flag to be invalidated, forcing the busy-waiting thread to re-fetch it from memory or another cache, despite the flag itself not having changed. This leads to a substantial increase in interconnect traffic, which is proportional to the number of other threads participating in the spinning. A classic example is the `test_and_set` operation on a shared location, where constant reads and writes can severely degrade performance due to excessive cache invalidations and memory bus contention.
+
+Memory consistency models define the rules for how memory operations appear to be ordered to different processors in a multi-core system. On a single core machine, the ordering of instructions is inherently sequential, simplifying the programmer's view. However, transitioning to parallel machines introduces complexities, as the interleaved execution of memory accesses across multiple cores can lead to unexpected behavior if not properly managed. The strongest and most intuitive memory model is sequential consistency, as articulated by Lamport in one nine seven nine. This model guarantees that the result of any execution is the same as if the operations of all processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program. Unfortunately, enforcing strict sequential consistency imposes nontrivial constraints on performance, as it limits the extent to which processors can reorder operations and hide memory latencies.
+
+Consequently, most real machines implement more relaxed, and thus potentially inconsistent, memory models. In these architectures, memory accesses may appear to occur "out of order" from the perspective of individual threads or when viewed across different cores. This means that a write performed by one core might not immediately be visible to another core, or even to a subsequent read by the same core, without specific architectural guarantees. To ensure correctness on these non-sequentially consistent machines, programmers or compilers must explicitly employ special synchronization instructions. These instructions, often referred to as memory fences or barriers, force the local core to wait for various classes of potentially in-flight memory events to complete before subsequent operations are allowed to proceed. These synchronizing instructions are an essential component of synchronization algorithms on any machine that deviates from a sequentially consistent memory model.
+
+The root of memory inconsistency often lies in common architectural features designed to enhance performance. Modern processors, known as out of order processors, are engineered to execute instructions in an order different from their program order, whenever data dependencies permit. For instance, a write operation must be held in a reorder buffer until all instructions preceding it in program order have completed their execution and can be committed. This allows the processor to make progress on independent instructions while waiting for long-latency operations. Furthermore, memory systems introduce another layer of complexity: a processor can generate a burst of store instructions far faster than the underlying memory system can absorb them. To prevent the processor from stalling on every write, a dedicated hardware structure known as a store buffer is employed. This buffer temporarily holds writes, allowing the processor to continue execution without waiting for the writes to propagate through the entire memory hierarchy. However, the presence of a store buffer means that a write operation, once placed in the buffer, is logically complete from the perspective of the initiating core but may not yet be visible to other cores or even to a subsequent load from the same core, depending on whether the architecture implements load forwarding from the store buffer. This discrepancy in visibility across cores or even within the same core can lead to situations where program behavior deviates from the expected sequential execution order, necessitating the explicit use of memory barriers or synchronization primitives to enforce the desired memory ordering.

@@ -1,0 +1,67 @@
+134 7 Synchronization and Scheduling
+
+(a) (b) (0)
+
+Figure 7.5 Parallel task graphs for programs based on a fork and join, b spawn and sync, and ¢
+parallel enumeration (split-merge).
+
+forall (i=1:n)
+
+Ali] = exprl
+
+B[i] = expr2
+
+Cli] = expr3
+end forall
+
+contains (from a semantic perspective) a host of implicit barriers: All instances of exprl
+are evaluated first, then all writes are performed to A, then all instances of expr? are
+evaluated, followed by all writes to B, and so forth. A good compiler will elide any barriers
+it can prove to be unneeded.
+
+In contrast to unstructured fork-join parallelism, in which a thread may be created—
+or its completion awaited—at any time, series-parallel programs always generate properly
+nested groups of tasks. The difference is illustrated in Figure 7.5. With fork and join (a),
+tasks may join their parent out of order, join with a task other than the parent, or terminate
+without joining at all. With spawn and sync (b), the parent launches tasks one at a time, but
+rejoins them as a group. In split-merge parallelism (c), we think of the parent as dividing
+into a collection of children, all at once, and then merging together again later. While less
+flexible, series-parallel execution leads to clearer source code structure. Assuming that tasks
+do not conflict with each other, there is also an obvious equivalence to serial execution.
+For debugging purposes, series-parallel semantics may even facilitate the construction of
+efficient race detection tools, which serve to identify unintended conflicts (Raman et al.
+2012; Lu et al. 2014).
+
+Recognizing the host of different patterns in which parallel threads may synchronize,
+Shirako et al. (2008) have developed a barrier generalization known as phasers. Threads
+can join (register with) or leave a phaser dynamically, and can participate as signalers,
+waiters, or both. Their signal and wait operations can be separated by other code to effect a
+fuzzy barrier (Sec.5.3.1). Threads can also, as a group, specify a statement to be executed,
+atomically, as part of a phaser episode. Finally, and perhaps most importantly, a thread that is
+registered with multiple phasers can signal or wait at all of them together when it performs a
+134 7 Synchronization and Scheduling
+
+Figure 7.5 Parallel task graphs for programs based on a fork and join, b spawn and sync, and c parallel enumeration (split-merge).
+
+forall (i=1:n)
+A[i] = expr1
+B[i] = expr2
+C[i] = expr3
+end forall
+
+contains (from a semantic perspective) a host of implicit barriers: All instances of expr1 are evaluated first, then all writes are performed to A, then all instances of expr2 are evaluated, followed by all writes to B, and so forth. A good compiler will elide any barriers it can prove to be unneeded.
+
+In contrast to unstructured fork join parallelism, in which a thread may be created—or its completion awaited—at any time, series parallel programs always generate properly nested groups of tasks. The difference is illustrated in Figure 7.5. With fork and join (a), tasks may join their parent out of order, join with a task other than the parent, or terminate without joining at all. With spawn and sync (b), the parent launches tasks one at a time, but rejoins them as a group. In split merge parallelism (c), we think of the parent as dividing into a collection of children, all at once, and then merging together again later. While less flexible, series parallel execution leads to clearer source code structure. Assuming that tasks do not conflict with each other, there is also an obvious equivalence to serial execution. For debugging purposes, series parallel semantics may even facilitate the construction of efficient race detection tools, which serve to identify unintended conflicts (Raman et al. 2012; Lu et al. 2014).
+
+Recognizing the host of different patterns in which parallel threads may synchronize, Shirako et al. (2008) have developed a barrier generalization known as phasers. Threads can join (register with) or leave a phaser dynamically, and can participate as signalers, waiters, or both. Their signal and wait operations can be separated by other code to effect a fuzzy barrier (See 5.3.1). Threads can also, as a group, specify a statement to be executed atomically, as part of a phaser episode. Finally, and perhaps most importantly, a thread that is registered with multiple phasers can signal or wait at all of them to perform a
+The presented material delves into parallel programming paradigms, specifically focusing on task graphs and synchronization mechanisms. Figure 7.5 illustrates three distinct parallel task graph structures, labeled (a), (b), and (c), representing different approaches to organizing parallel computations. Diagram (a) depicts a "fork and join" pattern, where a single task branches into multiple subtasks, and these subtasks must all complete before the parent task can proceed. This is a fundamental construct for achieving data parallelism or divide-and-conquer strategies.
+
+Diagram (b) illustrates a "spawn and sync" pattern. Here, a parent task spawns new tasks, but the synchronization point, or "sync," is explicitly managed. This implies that the parent might not wait for all spawned tasks to finish before continuing its own execution, or there might be specific dependencies that trigger synchronization. This offers more flexibility in managing the task lifecycle compared to a strict fork-join.
+
+Diagram (c) shows a "split-merge" pattern, which is particularly relevant for algorithms that recursively divide a problem into subproblems, solve them in parallel, and then combine their results. This structure inherently involves synchronization points at the merge stage, ensuring that all subproblem results are available before the final aggregation.
+
+The accompanying pseudocode demonstrates a parallel loop construct, `forall (i=1:n)`. Within this loop, three expressions, `expr1`, `expr2`, and `expr3`, are assigned to elements of arrays A, B, and C, respectively, indexed by `i`. From a semantic perspective, this loop implies that all computations of `expr1` are performed, followed by all computations of `expr2`, and then `expr3`. A sophisticated compiler could potentially eliminate any implicit synchronization barriers if it can prove that such barriers are unnecessary, for instance, if the expressions do not depend on each other.
+
+The text further contrasts "unstructured fork-join parallelism" with structured approaches. In unstructured parallelism, tasks might join out of order, or a task might join with a task other than its direct parent, leading to a more complex control flow. The diagrams show that structured fork-join (a) involves a parent spawning tasks that eventually rejoin the parent. Spawn and sync (b) shows a similar structure, emphasizing the explicit synchronization. Split-merge (c) visualizes the division of work and subsequent recombination, highlighting how the parent's execution is segmented into phases. The flexibility of series-parallel execution, where tasks can be nested and executed in various combinations, is discussed as leading to clearer source code structures. However, it also notes that assuming tasks are independent can lead to issues if there are hidden dependencies, potentially resulting in race conditions.
+
+The discussion then introduces the concept of "phasers," a generalization of barrier synchronization developed by Shirako and colleagues. Phasers allow threads to register as either "signalers" or "waiters." A thread can dynamically join or leave a phaser, and the signal and wait operations can be separated. This is particularly useful for implementing fuzzy barriers, where the strict synchronization requirements of traditional barriers are relaxed. Threads participating in a phaser episode can specify a particular phase to synchronize on, and a thread that is registered with multiple phasers can signal or wait across all of them atomically. This atomicity is crucial for maintaining consistency in complex concurrent scenarios. The reference to "efficient race detection tools" by Raman et al. and Lu et al. underscores the practical importance of managing concurrency and identifying potential data races in parallel programs.

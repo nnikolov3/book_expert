@@ -1,0 +1,54 @@
+92 5 Busy-Wait Synchronization with Conditions
+
+Threads
+SQESSSN
+
+Figure 5.3 Communication pattern for the dissemination barrier (adapted from Hensgen et al.
+(1988)).
+
+combining tree barrier, as modified by Mellor-Crummey and Scott (1991b) to incorporate
+sense reversal and to replace the fetch_and_® instructions of the second combining tree
+with simple reads (since no real information is returned).
+
+Simulations by Yew et al. (1987) show that a software combining tree can significantly
+decrease contention for reduction variables, and Mellor-Crummey and Scott (1991b) confirm
+this result for barriers. At the same time, the need to perform (typically expensive) fetch_
+and_® operations at each node of the tree induces substantial constant-time overhead. On
+an NRC-NUMA machine, most of the spins can also be expected to be remote, leading
+to potentially unacceptable contention. The barriers of the next two subsections tend to
+work much better in practice, making combining tree barriers mainly a matter of historical
+interest. This said, the notion of combining—broadly conceived—has proven useful in the
+construction of a wide range of concurrent data structures. We will return to the concept
+briefly in Sec. 5.4.
+
+5.2.3 The Dissemination Barrier
+
+Building on earlier work on barriers (Brooks 1986) and information dissemination (Han and
+Finkel 1988; Alon et al. 1987), Hensgen et al. 1988 describe a dissemination barrier that
+reduces barrier latency by eliminating the separation between arrival and departure. The
+algorithm proceeds through [log, n] (unsynchronized) rounds. In round k, each thread i
+signals thread (i + 2%) mod 7. The resulting pattern (Figure 5.3), which works for arbitrary
+n (not just a power of 2), ensures that by the end of the final round every thread has heard—
+directly or indirectly—from every other thread.
+
+Code for the dissemination barrier appears in Figure 5.4. The algorithm uses alternating
+sets of variables (chosen via parity) in consecutive barrier episodes, avoiding interference
+without requiring two separate spins in each round. It also uses sense reversal to avoid
+Figure five point three illustrates the communication pattern for a dissemination barrier across six threads, labeled zero through five, over three rounds: round zero, round one, and round two. In round zero, information is passed between adjacent threads; for instance, thread zero sends to thread one, and thread one sends to thread two. In round one, threads communicate with a two-thread offset; for example, thread zero sends to thread two, and thread one sends to thread three. In round two, the offset increases to four threads, with thread zero sending to thread four, and thread one sending to thread five. This pattern visually represents how each thread `i` signals thread `i plus two to the power of k modulo n` in round `k`, ensuring widespread information dissemination.
+
+A combining tree barrier, as modified by Mellor Crummey and Scott in nineteen ninety one B, incorporates sense reversal and replaces the fetch and Fi instructions of the second combining tree with simple reads, since no real information is returned. Simulations by Yew and others in nineteen eighty seven show that a software combining tree can significantly decrease contention for reduction variables. Mellor Crummey and Scott in nineteen ninety one B confirm this result for barriers. Concurrently, the necessity of performing typically expensive fetch and Fi operations at each node of the tree introduces substantial constant time overhead. On an N R C Numa machine, most of the spins are expected to be remote, leading to potentially unacceptable contention. The barriers discussed in the next two subsections tend to perform much better in practice, rendering combining tree barriers primarily a matter of historical interest. However, the broader concept of combining has proven useful in constructing a wide range of concurrent data structures. We will revisit this concept briefly in section five point four.
+
+Section five point two point three, The Dissemination Barrier.
+
+Building on earlier work concerning barriers by Brooks in nineteen eighty six and information dissemination by Han and Finkel in nineteen eighty eight, as well as Alon and others in nineteen eighty seven, Hensgen and others in nineteen eighty eight describe a dissemination barrier. This barrier reduces latency by eliminating the separation between arrival and departure. The algorithm progresses through log base two n unsynchronized rounds. In round k, each thread `i` signals thread `i incremented by two to the power of k, modulo n`. This resulting pattern, illustrated in figure five point three, functions for any arbitrary n, not solely powers of two. It ensures that by the conclusion of the final round, every thread has received information, either directly or indirectly, from every other thread.
+
+The code for the dissemination barrier is presented in figure five point four. This algorithm employs alternating sets of variables, selected based on parity, for consecutive barrier episodes. This design prevents interference without necessitating two distinct spins in each round. Additionally, it utilizes sense reversal to prevent.
+The concept of busy wait synchronization, particularly through the use of barriers, is fundamental to the efficient execution of parallel programs on multiprocessor architectures. Barriers serve as critical synchronization points where multiple threads must collectively arrive before any are permitted to proceed. This mechanism ensures data consistency and proper ordering of computation across parallel execution phases.
+
+The diagram illustrates a communication pattern inherent in a specific type of distributed barrier, known as a dissemination barrier. Spatially, this pattern is depicted across multiple rounds of communication. Along the horizontal axis, we observe six distinct vertical lines, each representing a "Thread," numerically indexed from zero to five. Vertically, the progression of synchronization is delineated into "round zero," "round one," and "round two." In round zero, each thread engages in communication with its immediate neighbor, displaced by a distance of one unit. For instance, thread zero communicates with thread one, thread one with threads zero and two, and so forth, as indicated by bidirectional arrows. Advancing to round one, the communication stride doubles, with threads now signaling partners at a distance of two units; thread zero communicates with thread two, thread one with thread three, and this pattern continues across the threads. By round two, the communication distance doubles again, with thread zero signaling thread four, and thread one signaling thread five. This systematic doubling of the communication stride in each successive round is the hallmark of the dissemination process.
+
+The underlying principle of the dissemination barrier is to propagate the arrival information of each thread throughout the entire set of participating threads in a logarithmically bounded number of steps. Specifically, for N threads, the barrier completes in `log base two N` rounds. In each round `k`, a given thread `i` sends a signal to thread `(i + two to the power of k) modulo N`. This modular arithmetic ensures that the communication wraps around the thread indices, allowing the pattern to work effectively for any number of threads, not just powers of two. The significance of this logarithmic complexity lies in its scalability: as the number of threads increases, the synchronization overhead grows very slowly, making it highly efficient for large parallel systems. By the conclusion of the final round, every thread has received direct or indirect confirmation of every other thread's arrival at the barrier point, thereby guaranteeing that all threads are synchronized and can safely proceed to the next computational phase. This distributed signaling strategy inherently reduces contention compared to centralized barrier designs, where all threads might vie for access to a single shared flag or counter.
+
+Evolutionary improvements in barrier designs, such as the combining tree barrier proposed by Mellor-Crummey and Scott, aimed to further optimize synchronization performance. Early versions of these barriers often relied on expensive atomic operations, such as `fetch and Phi` instructions, which are read-modify-write primitives. While powerful, these operations can induce substantial contention, particularly on Non Uniform Memory Access, or N U M A, architectures where remote memory accesses are significantly slower and coherence protocols introduce additional overhead. The modification to replace these expensive atomic operations with simpler read operations for disseminating information represented a significant advancement, effectively reducing contention for shared reduction variables. On N U M A machines, the cost of spinning on a remote memory location can be prohibitively high, leading to unacceptable performance degradation. Therefore, designs that minimize remote memory access and central contention points are critical.
+
+The dissemination barrier algorithm, building upon seminal work in the late nineteen eighties, directly addresses barrier latency by streamlining the synchronization process. Unlike some older barrier implementations that might involve distinct phases for thread arrival and subsequent departure, the dissemination barrier integrates these, leading to a more efficient and tightly coupled synchronization. The algorithm's `log base two N` unsynchronized rounds provide a predictable and efficient means for all threads to achieve global consensus. A crucial optimization employed in the implementation of dissemination barriers is the use of alternating sets of variables across successive barrier episodes, commonly achieved through "sense reversal." This technique allows the barrier to be reused without the explicit reinitialization of shared variables. Instead of resetting a flag to a default value, the expected value of the flag is flipped for each new barrier phase. For example, if threads wait for a flag to be 'true' in one barrier execution, they might wait for it to be 'false' in the subsequent one. This avoids global write operations to reset the barrier state, which would otherwise introduce a new source of contention and overhead, thereby enhancing the barrier's efficiency and scalability for repeated synchronization points within a parallel application.

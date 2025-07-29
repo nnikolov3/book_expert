@@ -1,0 +1,81 @@
+7.2 Semaphores 123
+
+The code for insert and remove is highly symmetric. An initial P operation delays the
+calling thread until it can claim the desired resource (a full or empty slot). A subsequent
+brief critical section, protected by the binary mutex semaphore, updates the contents of the
+buffer and the appropriate index atomically. Finally, a V operation on the complementary
+condition semaphore indicates the availability of an empty or full slot, and unblocks an
+appropriate waiting thread, if any.
+
+Given the scheduler infrastructure outlined in Sec. 7.1, the implementation of semaphores
+1s straightforward. Each semaphore is represented internally by an integer counter and a
+queue for waiting threads. The P operation disables signals and acquires the scheduler spin
+lock. It then checks to see whether the counter is positive. If so, it decrements it; if not, it
+adds itself to the queue of waiting threads and calls reschedule. Either way (immediately
+or after subsequent wakeup), it releases the scheduler lock, reenables signals, and returns.
+(Note that the reschedule operation, if called, will release the scheduler lock and reenable
+signals after pulling a new thread off the ready list.
+
+Binary and Counting Semaphores
+
+Counting semaphores obviously subsume binary semaphores: given a counting semaphore, we can
+always choose to initialize it to either 0 or 1, and then perform P and V operations in alternating
+pairs. As it turns out, we can also build counting semaphores from binary semaphores. Barz (1983)
+suggests the following implementation:
+
+class general_sem
+int count =...
+binary_sem mutex :=1
+binary_sem gate := min(1, count)
+
+general_sem.P(): general_sem.V():
+gate.P() mutex.P()
+mutex.P() +4-count
+——count if count =1
+if count >0 gate.V()
+gate.V() mutex.V()
+mutex.V()
+
+The gate binary semaphore serves to serialize P operations. So long as count remains positive, each
+P “occupies” the gate briefly and then opens it for its successor. A P that drops the count to zero
+leaves the gate closed; a V that makes it positive again reopens the gate.
+
+The mutual implementability of binary and counting semaphores implies that the two mechanisms
+are equally powerful. Because their implementations in terms of underlying scheduler primitives are
+comparable in speed, time, and code size, most systems provide the counting version. A few provide
+the binary version as well, with extra code to enforce a mutual exclusion-style use pattern: if the
+program attempts to perform two V operations in a row, a run-time error is announced.
+The code for insert and remove is highly symmetric. An initial P operation delays the calling thread until it can claim the desired resource, which can be a full Or empty slot. A subsequent brief critical section, protected by the binary mutex semaphore, updates the contents of the buffer And the appropriate index atomically. Finally, a V operation on the complementary condition semaphore indicates the availability of an empty Or full slot, And unblocks an appropriate waiting thread, if any.
+
+Given the scheduler infrastructure outlined in Section seven point one, the implementation of semaphores is straightforward. Each semaphore is represented internally by an integer counter And a queue for waiting threads. The P operation disables signals And acquires the scheduler spin lock. It then checks to see whether the counter is positive. If so, it decrements it; if not, it adds itself to the queue of waiting threads And calls reschedule. Either way, immediately Or after subsequent wakeup, it releases the scheduler lock, reenables signals, And returns. Note that the reschedule operation, if called, will release the scheduler lock And reenable signals after pulling a new thread off the ready list.
+
+**Binary And Counting Semaphores**
+
+Counting semaphores obviously subsume binary semaphores: given a counting semaphore, we can always choose to initialize it to either zero Or one, And then perform P And V operations in alternating pairs. As it turns out, we can also build counting semaphores from binary semaphores. Barz, nineteen eighty three, suggests the following implementation:
+
+The code defines a class named general semaphore. It includes an integer variable called count, which is initialized to an unspecified value. It also contains a binary semaphore named mutex, initialized to one, And another binary semaphore named gate, initialized to the minimum of one And the current count.
+
+The P operation for the general semaphore class is defined as follows: First, it calls the P operation on the gate semaphore. Then, it calls the P operation on the mutex semaphore. It then decrements the count variable by one. If count is greater than zero, it calls the V operation on the gate semaphore. Finally, it calls the V operation on the mutex semaphore.
+
+The V operation for the general semaphore class is defined as follows: First, it calls the P operation on the mutex semaphore. It then increments the count variable by one. If count is equal to one, it calls the V operation on the gate semaphore. Finally, it calls the V operation on the mutex semaphore.
+
+The gate binary semaphore serves to serialize P operations. So long as count remains positive, each P operation briefly occupies the gate And then opens it for its successor. A P operation that drops the count to zero leaves the gate closed; a V operation that makes it positive again reopens the gate.
+
+The mutual implementability of binary And counting semaphores implies that the two mechanisms are equally powerful. Because their implementations in terms of underlying scheduler primitives are comparable in speed, time, And code size, most systems provide the counting version. A few provide the binary version as well, with extra code to enforce a mutual exclusion style use pattern: if the program attempts to perform two V operations in a row, a run time error is announced.
+Semaphores represent a foundational synchronization primitive within concurrent programming paradigms, designed to manage access to shared resources and facilitate inter-process or inter-thread communication. At their core, semaphores are integer variables, accessible only through two atomic operations: `P` and `V`. The `P` operation, often derived from the Dutch *probeer* for "to test" or *passeren* for "to pass," attempts to acquire a resource. It decrements the semaphore's internal count. If the count becomes negative after this decrement, it signifies that no resources are available, and the calling thread is blocked, placed into a waiting queue associated with the semaphore. Conversely, if the count remains non-negative, the thread proceeds, having successfully acquired a resource. The `V` operation, from *verhoog* meaning "to increment" or *vrijgeven* meaning "to release," releases a resource. It increments the semaphore's count. If there are threads blocked in the waiting queue, one of them is unblocked, signaling resource availability. These operations must be atomic to prevent race conditions that could lead to incorrect synchronization.
+
+Consider the common pattern of managing a shared buffer through `insert` and `remove` operations. Such operations typically exhibit a high degree of symmetry. An initial `P` operation for `insert` would delay the calling thread until an empty slot in the buffer is available, while for `remove`, it would await a full slot. Subsequent operations involve a brief, critical section, protected by a binary mutex semaphore, ensuring that updates to the buffer's contents and its associated index occur atomically. Finally, a `V` operation on a complementary condition semaphore indicates the availability of an empty or full slot, potentially unblocking a waiting thread.
+
+The underlying scheduler infrastructure for implementing semaphores is conceptually straightforward. Each semaphore is typically represented by an integer counter and a queue to hold references to threads that are currently blocked, awaiting a resource. When a `P` operation is invoked, the thread first acquires a scheduler spin lock to ensure exclusive access to the scheduler's internal data structures. It then checks the semaphore's internal counter. If the counter is positive, it signifies an available resource. The counter is then decremented by one, the scheduler lock is released, and the thread continues execution. If the counter is not positive, indicating no available resources, the thread adds itself to the semaphore's waiting queue, releases the scheduler lock, and initiates a `reschedule` operation, yielding the processor to another ready thread. Upon subsequent wake up, the thread reacquires the scheduler lock, reenables interrupts if they were disabled, and returns. Similarly, a `V` operation first acquires the scheduler lock, increments the semaphore's counter. If there are threads in the waiting queue, one thread is chosen, unblocked, removed from the queue, and placed on the ready list. The scheduler lock is then released, and a `reschedule` operation may be invoked if the unblocked thread should now run.
+
+Semaphores are broadly categorized into binary semaphores and counting semaphores. A binary semaphore, sometimes called a mutex, can only hold values of zero or one, typically initialized to one to allow initial access or zero to delay it. It effectively controls access to a single, mutually exclusive resource. Counting semaphores, on the other hand, can hold any non negative integer value, making them suitable for managing a pool of multiple identical resources. A key theoretical insight is that counting semaphores can subsume binary semaphores, meaning any synchronization problem solvable with binary semaphores can also be solved with counting semaphores, and vice versa. This mutual implementability underscores their equivalent expressive power.
+
+An illustrative implementation for constructing a counting semaphore from binary semaphores, based on the work by Barz in nineteen eighty three, utilizes a combination of a counter and two binary semaphores. The `class general_sem` defines an integer variable `count` to track the number of available resources. It also includes two binary semaphores: `mutex`, initialized to one, which provides mutual exclusion for protecting the `count` variable, and `gate`, initialized to `min` of `one` and the initial `count`, which serves a more subtle role in serializing `P` operations.
+
+Let us analyze the `general_sem.P()` method. The first action is `gate.P()`. This operation attempts to acquire the `gate` semaphore. This is a critical step for serialization, controlling how many `P` operations can "enter" the logic that decrements the `count`. Immediately following this, `mutex.P()` is invoked, acquiring the `mutex` semaphore to ensure atomic access to the `count` variable. The `count` is then decremented by one. At this juncture, a conditional check `if count greater than zero` is performed. If `count` is still positive after being decremented, it implies that a resource was successfully acquired without exhausting the supply, and therefore, the `gate.V()` operation is immediately called, releasing the `gate` semaphore for another `P` operation to acquire. This ensures that as long as resources are plentiful, the `gate` is only held momentarily. Finally, `mutex.V()` is called, releasing the lock on the `count` variable. If, however, `count` becomes zero or negative after decrementing, the `gate.V()` operation within the `P` method is *not* executed. In this scenario, the `P` operation effectively holds the `gate` semaphore and implicitly becomes blocked, awaiting a `V` operation to release the `gate` or make resources available.
+
+Now, consider the `general_sem.V()` method. It begins by acquiring the `mutex` semaphore via `mutex.P()` to protect the `count` variable. The `count` is then incremented by one, indicating that a resource has been released. The crucial condition here is `if count is equal to one`. This specific check ensures that `gate.V()` is called only when the `count` transitions from zero to one. This is the precise moment when a resource becomes available *after* a period of depletion. By releasing `gate` at this specific point, a single `P` operation that might have been blocked waiting for `gate` or for `count` to become positive can now proceed. Finally, `mutex.V()` is called to release the lock on `count`.
+
+The `gate` binary semaphore's role is thus to serialize the `P` operations in a very specific manner. As long as the `count` of available resources remains positive, each `P` operation briefly occupies the `gate` and then immediately reopens it for the next successor. However, if a `P` operation causes the `count` to drop to zero or below, it leaves the `gate` closed. Subsequently, a `V` operation is responsible for re-opening the `gate`, but only when it makes the `count` positive again, specifically when it reaches `one` from a zero or negative state. This intricate interaction ensures that `P` operations are appropriately throttled when resources are scarce.
+
+While binary and counting semaphores are mutually implementable and thus possess equivalent theoretical power, their practical implementations can differ significantly in performance characteristics such as execution speed, latency, and memory footprint, including code size. Most contemporary operating systems provide direct support for counting semaphores due to their generality and convenience. The Barz implementation, which constructs counting semaphores from binary ones, requires careful adherence to a specific usage pattern to ensure correctness. For instance, the design implies that if a program attempts to perform two `V` operations consecutively without an intervening `P` operation that depletes the count to zero or below, a run time error could occur. This is because the `if count is equal to one` condition in the `V` method would not be met for the second `V` operation, preventing `gate.V()` from being called and potentially leaving the `gate` semaphore in an unexpected state if it was already released, or violating the binary semaphore's invariants by attempting to increment it beyond its maximum value of one. Such edge cases highlight the subtle complexities inherent in building higher-level synchronization primitives from lower-level ones.

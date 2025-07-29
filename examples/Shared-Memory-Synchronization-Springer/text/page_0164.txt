@@ -1,0 +1,66 @@
+168 8 Nonblocking Algorithms
+
+Ellen et al. (2014) improved this result in a surprisingly simple variant of the EFRB tree.
+Rather than searching again from the root, the idea is to have an operation search from a
+nearby ancestor. Since the tree does not contain any parent pointers, each thread pushes the
+nodes it visits during a traversal into a thread-local stack. This stack can then be used by an
+operation to find a suitable ancestor from which to continue the search. This simple change
+improved the worst-case amortized time complexity to O (h + ¢) per operation (replacing
+the multiplicative contention term above with an additive term).
+
+Practical Performance Complexity results like the above are, unfortunately, few and far
+between. It 1s much more common for researchers working on concurrent data structures
+to implement their algorithms and then make performance claims based on benchmarks on
+real systems. A rigorous experimental performance comparison of concurrent BSTs can be
+found in a study by Arbel-Raviv et al. (2018).
+
+8.6.2 Other Advances in Nonblocking Trees
+
+Helping without Descriptors Natarajan and Mittal (2014) showed that a lock-free external
+BST could be implemented without using descriptor objects. The key ideas were to flag
+pointers, rather than nodes, and to have helpers infer the steps that they should perform
+by inspecting the fields of nearby nodes, rather than referring to a descriptor. Intuitively,
+descriptors are unnecessary if the information needed to facilitate helping can be found
+elsewhere. The resulting algorithm performs fewer memory allocations and fewer CAS
+instructions than the EFRB BST.
+
+Lock-free Internal BSTs Howley and Jones (2012) used techniques similar to those of the
+EFRB BST, but implemented an internal BST (the HJ tree). In so doing, they had to tackle
+the difficult two-child deletion case, in which a key must be relocated. Their solution was
+to (1) flag both the node u whose key should be deleted and the successor v whose key will
+be relocated; (2) copy v’s key into u; (3) unflag u; and (4) delete v. In contrast to the EFRB
+tree, where searches did not help other operations, a search for key k in the HJ tree must help
+any relocation it encounters, in order to determine whether k is the moving key. Searches
+also remember the last ancestor whose right child they followed. Intuitively, that ancestor 1s
+the predecessor pred of the final node that the search will visit, so if k is relocated after the
+search visits pred, then k can be found by looking at pred.’
+
+Ramachandran and Mittal (2015) combined the techniques of the HJ tree and the Natara-
+jan and Mittal tree, introducing a descriptor-free internal BST that flags edges instead of
+nodes.
+
+7 Technically, if k is subsequently deleted, or moved again, then it cannot be found by looking at pred;
+to handle this possibility, the algorithm has a mechanism to determine whether pred has changed
+since the search visited it, in which case the search will restart.
+Ellen at al. two thousand fourteen improved this result in a surprisingly simple variant of the EFRB tree. Rather than searching again from the root, the idea is to have an operation search from a nearby ancestor. Since the tree does not contain any parent pointers, each thread pushes the nodes it visits during a traversal into a thread local stack. This stack can then be used by an operation to find a suitable ancestor from which to continue the search. This simple change improved the worst case amortized time complexity to O of H plus C per operation, replacing the multiplicative contention term above with an additive term.
+
+Practical Performance Complexity results like the above are, unfortunately, few and far between. It is much more common for researchers working on concurrent data structures to implement their algorithms and then make performance claims based on benchmarks on real systems. A rigorous experimental performance comparison of concurrent BSTs can be found in a study by Arbel Raviv at al. two thousand eighteen.
+
+Eight point six point two Other Advances in Nonblocking Trees
+
+Helping without Descriptors Natarajan and Mittal two thousand fourteen showed that a lock free external BST could be implemented without using descriptor objects. The key ideas were to flag pointers, rather than nodes, and to have helpers infer the steps that they should perform by inspecting the fields of nearby nodes, rather than referring to a descriptor. Intuitively, descriptors are unnecessary if the information needed to facilitate helping can be found elsewhere. The resulting algorithm performs fewer memory allocations and fewer C A S instructions than the EFRB BST.
+
+Lock free Internal BSTs Howley and Jones two thousand twelve used techniques similar to those of the EFRB BST, but implemented an internal BST, the H J tree. In so doing, they had to tackle the difficult two child deletion case, in which a key must be relocated. Their solution was to flag both the node U whose key should be deleted and the successor V whose key will be relocated, copy V's key into U, unflag U, and delete V. In contrast to the EFRB tree, where searches did not help other operations, a search for key K in the H J tree must help any relocation it encounters in order to determine whether K is the moving key. Searches also remember the last ancestor whose right child they followed. Intuitively, that ancestor is the predecessor pred of the final node that the search will visit, so if K is relocated after the search visits pred, then K can be found by looking at pred.
+
+Ramachandran and Mittal two thousand fifteen combined the techniques of the H J tree and the Natarajan and Mittal tree, introducing a descriptor free internal BST that flags edges instead of nodes.
+
+Technically, if K is subsequently deleted, or moved again, then it cannot be found by looking at pred. To handle this possibility, the algorithm has a mechanism to determine whether pred has changed since the search visited it, in which case the search will restart.
+The presented text discusses advancements in nonblocking algorithms, specifically focusing on binary search trees. It begins by referencing the work of Ellen at al. (2014), who proposed a variant of the EFRB tree. This approach enhances the search operation by eliminating the need for parent pointers. Instead, during traversal, each thread utilizes a thread-local stack. This stack then serves as a mechanism to resume the search from a suitable ancestor node, thereby avoiding redundant traversal from the root. This optimization leads to an amortized time complexity of O(h + c) for operations, where h represents the height of the tree and c is an additive term. The text also notes that practical performance complexity analysis for concurrent data structures is less common, with many researchers relying on benchmarks for real systems. A study by Arbel Raviv at al. (2018) is cited for its rigorous experimental performance comparison of concurrent binary search trees.
+
+Section 8.6.2 delves into "Other Advances in Nonblocking Trees." It first highlights the contribution of Natarajan and Mittal (2014) who demonstrated how a lock-free external binary search tree could be implemented without relying on descriptor objects. Their key innovation involved using flags to indicate necessary steps, allowing helper threads to infer the progress of operations without explicit descriptors. This approach reduces memory allocations and atomic operations, specifically compare-and-swap operations, compared to the original EFRB tree.
+
+Following this, the text discusses "Lock-free Internal BST" implementations, specifically referencing the work of Howley and Jones (2012) who introduced the H J tree. They addressed the challenging scenario of a two-child deletion case where a key must be relocated. Their solution involved a multi-step process: first, flagging both the node to be deleted and its successor to indicate relocation; second, copying the successor's key into the node marked for deletion; third, unflagging the node; and finally, deleting the successor. To manage these concurrent modifications and ensure correctness, searches need to assist in these relocation operations. When a search encounters a node that has undergone relocation, it must identify the moving key and determine whether it's the correct key to be relocated. This is achieved by remembering the last ancestor whose right child was followed during the traversal. If the search visits a node that is supposed to be the predecessor of the target node, and this predecessor has been relocated, the search must restart.
+
+The text also mentions the work of Ramachandran and Mittal (2015), who combined techniques to introduce a descriptor-free internal binary search tree that uses flags on edges instead of nodes.
+
+A footnote clarifies a technical detail regarding node deletion. It states that if a key 'k' is subsequently deleted or moved, the algorithm must have a mechanism to detect this. This is crucial for handling cases where the search has already visited the node. In such situations, the search needs to determine if the predecessor has changed to correctly continue the operation. If the predecessor has indeed changed, the search will restart from the root.

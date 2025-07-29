@@ -1,0 +1,71 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+140 8 Nonblocking Algorithms
+
+class counter int counter.increase(int v):
+atomic<int> c int old, new
+int counter.get(): repeat ∙−
+↾⋅⊖↥∪↾⋅∩∁⋅∣∘∂↺≺∏≽ ∘∣∁∣⋅−∁⋅∣∘∂∁∣≺∏⋟
+⊓⊖⋁∨∶∶∘∣∁∣⊹⋁
+void counter.set(int v): until c.CAS(old, new, ||)
+c.store(v, ||) return old
+
+Figure 8.1 A single-word atomic counter, implemented with CAS. If updates to the counter are to
+be seen in consistent order by all threads, the store in set and the CAS in increase must both be write
+atomic.
+
+8.1 Single-Location Structures
+
+The simplest nonblocking algorithms use the CAS and LL/SC-based fetch_and_® con-
+structions of Sec. 2.3 to implement methods that update a single-word object. An atomic
+counter (accumulator) object, for example, might be implemented as shown in Figure 8.1.
+Reads (get) and writes (set) can use ordinary loads and stores, though the stores must be
+write atomic to avoid causality loops. Updates similarly require that fetch_and_ ® instruc-
+tions be write atomic. Note that in contrast to the lock algorithms of Chapter 4, we have
+chosen not to avail ourselves of the default RW||RW ordering on synchronizing instructions.
+This 1s appropriate, for example, in programs that only look at the value of a counter at the
+end of the computation. If calls to get, set, or increase need to be ordered with respect to
+preceding or following operations in the calling thread—that 1s, if they need to be not only
+atomic but also linearizable—then the programmer will need to insert explicit fences.
+
+8.1.1 The Treiber Stack
+
+Slightly more complicated than a single-word counter is the lock-free stack of Sec. 2.3.1,
+originally published by Treiber (1986) for the IBM System/370, and very widely used
+today. Code for this stack is repeated here as Figure 8.2. As discussed in the earlier section,
+a sequence count has been embedded in the top-of-stack pointer to avoid the ABA prob-
+lem. Without this count (or some other ABA solution (Jayanti and Petrovic 2003, Michael
+20044a)), the stack would not function correctly.
+
+Write Atomicity In any algorithm based on mutual exclusion or reader-writer locks, lin-
+earizability is trivially ensured by the order of updates to the lock. With seqlocks or RCU,
+as noted in Secs. 6.2 and 6.3, write atomicity 1s needed to ensure that readers see updates
+in consistent order. In a similar way, any updates in a nonblocking data structure that might
+otherwise appear inconsistent to other threads (whether in read-only operations or in por-
+tions of more general operations) will need to be write atomic. In the specific case of the
+Eight Nonblocking Algorithms.
+
+Class counter, atomic int c. Int counter dot get, return c dot load. Void counter dot set v, c dot store v.
+
+Int counter dot increase v. Int old, new. Repeat. Old is equal to c dot load. New is equal to old plus v. Until c dot CAS old, new. Return old.
+
+Figure eight point one. A single word atomic counter, implemented with C A S. If updates to the counter are to be seen in consistent order by all threads, the store in set and the C A S in increase must both be write atomic.
+
+Eight point one Single Location Structures.
+
+The simplest nonblocking algorithms use the C A S and L L S C based fetch and phi constructs of Section two point three to implement methods that update a single word object. An atomic counter accumulator object, for example, might be implemented as shown in Figure eight point one. Reads get and writes set can use ordinary loads and stores, though the stores must be write atomic to avoid causality loops. Updates similarly require that fetch and phi instructions be write atomic. Note that in contrast to the lock algorithms of Chapter four, we have chosen not to avail ourselves of the default R W phi R W ordering on synchronizing instructions. This is appropriate, for example, in programs that only look at the value of a counter at the end of the computation. If calls to get, set, or increase need to be ordered with respect to preceding or following operations in the calling thread, that is, if they need to be not only atomic but also linearizable, then the programmer will need to insert explicit fences.
+
+Eight point one point one The Treiber Stack.
+
+Slightly more complicated than a single word counter is the lock free stack of Section two point three point one, originally published by Treiber nineteen eighty six for the I B M System three seventy, and very widely used today. Code for this stack is repeated here as Figure eight point two. As discussed in the earlier section, a sequence count has been embedded in the top of stack pointer to avoid the A B A problem. Without this count or some other A B A solution Jayanti and Petrovic two thousand three, Michael two thousand four a, the stack would not function correctly.
+
+Write Atomicity. In any algorithm based on mutual exclusion or reader writer locks, linearizability is trivially ensured by the order of updates to the lock. With seqlocks or R C U, as noted in Secs. six point two and six point three, write atomicity is needed to ensure that readers see updates in consistent order. In a similar way, any updates in a nonblocking data structure that might otherwise appear inconsistent to other threads whether in read only operations or in portions of more general operations will need to be write atomic. In the specific case of the
+The provided text delves into the realm of nonblocking algorithms, a crucial area in concurrent programming that aims to avoid the deadlocks and performance bottlenecks associated with traditional locking mechanisms. It begins by illustrating the implementation of a single-word atomic counter using the Compare And Swap, or C A S, primitive. The code snippet depicts a `counter` class with an atomic integer member `c`. The `get` operation simply loads the current value, while the `set` operation stores a new value. The `increase` operation is where the C A S primitive is central. It reads the current value of `c` into `old`, computes a `new` value by adding the increment `v` to `old`, and then attempts to atomically update `c` to `new` only if its current value is still `old`. If the C A S fails, meaning another thread modified `c` between the read and the C A S attempt, the operation repeats until successful. This retry loop is the hallmark of many nonblocking algorithms. The figure caption emphasizes that all updates to this atomic counter must be performed atomically to ensure consistent ordering across threads.
+
+The text then transitions to Section 8.1, "Single Location Structures," which broadly discusses algorithms that operate on single memory locations using primitives like C A S or Load-Linked/Store-Conditional (L L / S C). It reiterates that atomic operations, such as loads and stores, are essential for preventing causality violations, particularly in update operations. The text notes that while reads and writes can often use ordinary load and store instructions, updates necessitate atomic operations. It contrasts this with lock-based algorithms, suggesting that in certain contexts, specifically when only observing the value of a counter at the end of a computation without requiring strict ordering with preceding or following operations, explicit memory fences might not be necessary. However, to guarantee linearization, which means that operations appear to occur instantaneously at some point between their invocation and completion, stricter ordering might be required.
+
+Section 8.1.1 introduces "The Treiber Stack," a lock-free stack implementation. It references the original work by Treiber in 1986 for the I B M System thirty-seven, highlighting its widespread use. The stack employs a top-of-stack pointer and a sequence count embedded within it. This sequence count is vital to avoid the A B A problem, a common pitfall in nonblocking data structures. The A B A problem occurs when a memory location's value changes from A to B and then back to A before a thread can perform a C A S operation. If the thread only checks for A, the C A S might incorrectly succeed, leading to corrupted state. Without the sequence count or an alternative A B A solution, such as the one proposed by Jayanti and Petrovic in two thousand three, the stack would not function correctly.
+
+The discussion then moves to "Write Atomicity," explaining its importance in ensuring that updates to shared data structures are perceived as single, indivisible operations by other threads. In algorithms relying on mutual exclusion or reader-writer locks, write atomicity is implicitly handled by the lock mechanism itself, ensuring that a critical section is executed by only one thread at a time. However, in nonblocking algorithms, achieving write atomicity requires explicit mechanisms. The text states that any updates to a nonblocking data structure must be write atomic to maintain consistency. If threads see updates in a consistent order, typically dictated by the causal order of operations, this maintains the integrity of the shared state. The importance of write atomicity is further underscored by its role in ensuring that modifications to a data structure are either fully applied or not applied at all from the perspective of other threads, preventing partial or inconsistent views of the data. This principle is critical for maintaining the correctness of concurrent computations, especially when dealing with complex data structures and operations that involve multiple memory accesses.

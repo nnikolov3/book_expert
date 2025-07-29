@@ -1,0 +1,86 @@
+78 4 Practical Spin Locks
+
+type status = atomic<lock*>
+status ts[7] :={null... }
+
+class lock
+atomic<status*> tail := null
+
+lock.acquire():
+status* pred := tail.swap(&ts[self], ||R)
+
+if pred =£ null
+while pred—load(||) # this; // spin
+pred—store(null, R}|) // handshake
+
+fence(R||RW)
+
+lock.release():
+if —tail. CAS(&ts[self], null, RW||)
+ts[self].store(this, R||R)
+while ts[self].load(|]) # null; ~~ // spin
+
+Figure 4.15 The Hemlock algorithm. Array ts need not be contiguous, so long as each thread can
+easily find the address of its own status word.
+
+4.3.4 Which Spin Lock Should | Use?
+
+On modern machines, there is little reason to consider load/store-only spin locks, except per-
+haps as an optimization in programs with highly asymmetric access patterns (see Sec. 4.5.3
+below).
+
+Table 4.1 summarizes the tradeoffs among fetch_and_ ®-based spin locks. Absolute per-
+formance will vary with the machine and workload, and 1s difficult to quantify here. For
+small numbers of threads—single digits, say—both the test_and_set lock with exponential
+backoff and the ticket lock with proportional backoff tend to work quite well. The ticket
+lock is fairer, but this can actually be a disadvantage in some situations (see the discussion
+of locality-conscious locking in Sec. 4.5.1 and of inopportune preemption in Sec. 7.5.2).
+
+The problem with both test_and_set and ticket locks is their brittle performance as
+the number of contending threads increases. In any application in which lock contention
+may be a bottleneck—even rarely—it makes sense to use a queue-based lock. Here the
+choice between MCS and CLH locks depends on architectural features and costs. The MCS
+lock 1s generally preferred on an NRC-NUMA machine: the CLH lock can be modified
+to avoid remote spinning, but the extra level of indirection requires additional fetch_and_
+® operations on each lock transfer. For machines with global cache coherence, either lock
+can be expected to work well. Given the absence of dummy nodes, space needs are lower
+for MCS locks, but performance may be better (by a small constant factor) for CLH locks
+on some machines. If threads hold only a single lock at a time, or perhaps a small constant
+number of locks, the Hemlock is fast, space efficient, and highly scalable. It also employs a
+standard interface.
+Practical Spin Locks
+
+Figure four point one five presents the Hemlock algorithm. The code defines a `status` type as an atomic pointer to a `lock` object. An array named `t s` of size T is initialized with `null` values for status words. The `lock` class contains an atomic `tail` pointer, initialized to `null`, which points to a `status` object.
+
+The `acquire` function for the lock performs the following steps: First, a `status` pointer named `pred` is assigned the result of atomically swapping the `tail` pointer with the address of `t s index self`, using `or or R` memory ordering. Next, an `if` condition checks if `pred` is not equal to `null`. If `pred` is not `null`, a `while` loop is entered, spinning as long as the value loaded from `pred` using `or or` memory ordering is not equal to `this` (the current lock object). This is described as a spin operation. After the spin, `pred`'s target is stored with `null` using `R or or` memory ordering, which is described as a handshake. Finally, a `fence` instruction with `R or or R W` ordering is executed.
+
+The `release` function for the lock performs the following steps: An `if` condition checks if an atomic compare and swap operation on `tail` fails. This operation attempts to replace the value at `t s index self` with `null`, using `R W or or` memory ordering. The `~` symbol indicates a logical NOT, so the condition is true if the C A S fails. If the C A S fails, `t s index self` is stored with `this` (the current lock object) using `R or or R` memory ordering. A `while` loop is then entered, spinning as long as the value loaded from `t s index self` using `or or` memory ordering is not equal to `null`. This is also described as a spin operation.
+
+The caption for Figure four point one five states that the `t s` array in the Hemlock algorithm need not be contiguous, as long as each thread can easily find the address of its own status word.
+
+**Four point three point four Which Spin Lock Should I Use?**
+
+On modern machines, there is little reason to consider load and store only spin locks, except perhaps as an optimization in programs with highly asymmetric access patterns. This is further discussed in Section four point five point three.
+
+Table four point one summarizes the tradeoffs among fetch and Phi based spin locks. Absolute performance will vary with the machine and workload, and is difficult to quantify here. For small numbers of threads, typically single digits, both the test and set lock with exponential backoff and the ticket lock with proportional backoff tend to work quite well. The ticket lock is fairer, but this can actually be a disadvantage in some situations. For further discussion, refer to locality conscious locking in Section four point five point one and inopportune preemption in Section seven point five point two.
+
+The problem with both test and set and ticket locks is their brittle performance as the number of contending threads increases. In any application in which lock contention may be a bottleneck, even rarely, it makes sense to use a queue based lock. Here, the choice between M C S and C L H locks depends on architectural features and costs. The M C S lock is generally preferred on an N R C dash N U M A machine. While the C L H lock can be modified to avoid remote spinning, the extra level of indirection requires additional fetch and Phi operations on each lock transfer. For machines with global cache coherence, either lock can be expected to work well. Given the absence of dummy nodes, space needs are lower for M C S locks, but performance may be better, by a small constant factor, for C L H locks on some machines. If threads hold only a single lock at a time, or perhaps a small constant number of locks, the Hemlock algorithm is fast, space efficient, and highly scalable. It also employs a standard interface.
+The provided diagram illustrates the Hemlock algorithm, a sophisticated queue based spin lock designed to enhance performance and scalability in multi processor systems by minimizing cache contention. At its core, the algorithm utilizes atomic operations on pointers and a per thread status array to manage access to a shared resource.
+
+The `status` type is defined as an `atomic` pointer to a `lock` object, indicating that the pointer itself is manipulated atomically. An array named `ts`, indexed by `T` (representing a thread identifier), holds these `status` pointers, initialized to `null`. This array serves as a distributed queue or a per thread slot for synchronization. The `lock` class contains an `atomic` pointer named `tail`, also initialized to `null`, which points to the last element in the conceptual queue of waiting threads.
+
+Let us dissect the `lock.acquire()` method. A thread attempting to acquire the lock first executes `status` `pred` `is` `tail.swap(and ts index self, or or R)`. This is a crucial atomic `swap` operation. The `tail` pointer is atomically exchanged with the address of the current thread's entry in the `ts` array, `and ts index self`. The return value, the *old* value of `tail`, is stored in `pred`. The `or or R` denotes relaxed memory ordering, allowing the processor and compiler to reorder non dependent memory operations around this atomic instruction for performance, while ensuring the atomicity of the `swap` itself. Effectively, this operation enqueues the current thread by updating `tail` to point to its `ts` entry, and `pred` now points to the thread that was previously at the tail of the queue, its immediate predecessor.
+
+If `pred` is not `null`, it signifies that there was a predecessor thread in the queue, meaning the lock is currently held or another thread is waiting ahead. The current thread then enters a `while` loop: `while pred arrow load(or or) is not equal to this;`. This is the spinning phase. The thread continuously loads the value from the memory location pointed to by `pred` (its predecessor's `ts` entry) with relaxed memory ordering. It spins until that loaded value becomes `this`, which is the address of its own `ts` entry. This mechanism constitutes a "handshake": the predecessor, upon releasing the lock, will write the current thread's `ts` address into its own `ts` entry, signaling to the current thread that it is now its turn to acquire the lock. This design is fundamental to queue based locks, as it ensures threads spin on distinct, often local, cache lines, reducing global bus contention that plagues simple `test_and_set` locks.
+
+Once the spin loop terminates, the current thread has successfully acquired the lock. It then performs `pred arrow store(null, or or R)`. This instruction writes `null` to its predecessor's `ts` entry, again with relaxed memory ordering. This action effectively cleans up the predecessor's slot in the `ts` array, indicating it is no longer part of the active lock queue. Finally, a `fence(RW)` memory barrier is executed. This fence enforces a strong ordering guarantee, ensuring that all prior memory operations (loads and stores) within the critical section become globally visible before any subsequent operations are allowed to proceed. This is vital for maintaining cache coherence and ensuring that modifications made within the critical section are correctly synchronized across all processors.
+
+The `lock.release()` method begins with an atomic `C A S` operation: `if not tail.CAS(and ts index self, null, R W or or)`. This instruction attempts to atomically compare the current value of `tail` with `and ts index self`. If they are equal (meaning the current thread is the only one in the queue and thus the `tail`), `tail` is atomically updated to `null`. The `R W or or` indicates a strong read write memory ordering if the `C A S` succeeds. If this `C A S` operation is successful, it implies no other threads are waiting for the lock, and the lock is simply released.
+
+However, if the `C A S` fails, it means `tail` was *not* equal to `and ts index self` when the `C A S` was attempted. This condition indicates that another thread has already entered the queue (i.e., executed its `tail.swap` operation) *after* the current thread acquired the lock. In this scenario, the current thread must signal its successor. It does this by performing `ts index self dot store(this, R or or R)`. This writes the current thread's own `ts` entry address into its own `ts` entry. This is the other half of the "handshake" mechanism, signaling to the successor thread (which is spinning on `pred arrow load` of this thread's `ts` entry) that it can now proceed. The `R or or R` indicates relaxed ordering, as the `fence` in the acquire path already established the necessary visibility. The subsequent `while ts index self dot load(or or) is not equal to null;` loop is a further cleanup or synchronization step for the releasing thread. It spins until its own `ts` entry is set back to `null` by the thread that eventually acquires the lock and cleans up its predecessor's slot. This confirms that the lock transfer is complete and its `ts` slot is cleared for future use.
+
+Transitioning to the broader discussion of spin lock selection, the choice of a spin lock implementation is heavily dependent on the specific machine architecture and the workload characteristics, particularly the level of contention. For scenarios with a small number of threads, basic `test_and_set` locks, often augmented with exponential backoff to reduce bus traffic, or ticket locks, which ensure fairness by serving threads in arrival order, can perform adequately. However, ticket locks can be suboptimal in `N U M A` (Non Uniform Memory Access) architectures or under preemption, as a thread might spin on a remote memory location or delay others if it's preempted while holding a ticket.
+
+The primary challenge with simpler locks like `test_and_set` and ticket locks is their brittle performance under increasing contention. As more threads vie for the same lock, the constant cache line invalidations and memory bus contention escalate dramatically, leading to a performance bottleneck. This fundamental issue necessitates the use of queue based locks like M C S (Mellor Crummey Scott) or C L H (Craig, Landin, Hagersten) locks. These designs cleverly decouple the spinning from a single shared variable by having each waiting thread spin on a *local* memory location, or in the case of C L H, on its *predecessor's* memory location.
+
+On `N R C N U M A` machines, which exhibit varying memory access latencies based on proximity to the processor, C L H locks are generally preferred over M C S. While M C S locks promote local spinning, their queue management might require additional `fetch_and_Phi` operations or introduce an extra level of indirection to ensure global cache coherence, which can incur remote memory accesses and associated penalties. C L H locks, including variations like Hemlock, can be more effectively optimized to avoid remote spinning, allowing threads to only spin on cache lines that are local to their processor. Furthermore, C L H designs often exhibit lower space requirements, especially when threads typically hold only a single lock at a time, making them more memory efficient than M C S locks which typically require a dedicated Q node per waiting thread. The Hemlock algorithm, as presented, embodies the principles of a fast, space efficient, and highly scalable queue based spin lock due to its distributed spinning and judicious use of atomic operations with precise memory ordering, making it well suited for modern multi core and `N U M A` systems.

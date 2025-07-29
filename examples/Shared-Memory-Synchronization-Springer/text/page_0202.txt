@@ -1,0 +1,60 @@
+9.2 HardwareTM 207
+
+Hardware/Software TM Codesign
+
+In hardware-assisted STM, atomicity remains a program-level property, built on multiple
+(non-atomic) hardware-level operations. To maximize performance, one would presumably
+prefer to implement atomicity entirely in hardware. If hardware transactions are sometimes
+unsuccessful for reasons other than conflicts, and if fallback to a global lock is not considered
+acceptable, the challenge then becomes to devise a fallback mechanism that interoperates
+correctly with hardware transactions.
+
+One possible approach is to design the hardware and software together. Kumar et al.
+(2006) propose an HTM to complement the object-cloning DSTM of Herlihy et al. (2003b).
+Baugh et al. (2008) assume the availability of fine-grain memory protection (Zhou et al.
+2004), which they use in software transactions to force aborts in conflicting hardware trans-
+actions. A more common approach assumes that the hardware is given, and designs software
+to go with it.
+
+Best-Effort Hybrid TM
+
+An HTM implementation 1s termed “best effort” if it makes no guarantees of completion,
+even in the absence of conflicts, and makes no assumptions about the nature of software trans-
+actions that might be running concurrently. All of the commercial HTM systems discussed in
+Sec. 9.2.1—with the exception of constrained transactions in z TM—fit this characterization.
+
+If “spurious” aborts are common enough to make fallback to a global lock unattractive,
+one 1s faced with a generalization of the problem that arose in that simpler case: how do
+we ensure mutual isolation between the hardware and software code paths? In Sec.9.2.2
+we arranged for each hardware transaction to subscribe to the fallback lock—either at the
+beginning of the transaction or, with sandboxing, at the end. This arrangement ensured that
+a hardware transaction would always abort when a software transaction (implemented as a
+critical section, which could not, itself, abort) was active. For hybrid TM, we should like
+to do better—to enable significant concurrency not only among nonconflicting hardware
+transactions but also with respect to concurrent software transactions.
+
+A hardware transaction, of course, will abort automatically if a concurrent software
+transaction writes—either eagerly or at commit time—a location that the hardware has
+written or read. But this is not enough. If hardware transaction H executes in the middle
+of software transaction S—perhaps when § is stalled—then H may see inconsistent state.
+Conversely, H may perform writes that subsequently cause § to see inconsistent state. We
+must detect such conflicts.
+
+Perhaps the most straightforward solution, suggested by Damron et al. (2006), is to
+add extra instructions to the code of hardware transactions, so they inspect and update
+software metadata. Hardware transactions can then determine whether reads are mutually
+compatible, and software transactions can validate as they would in an all-software system.
+Unfortunately, while hardware transactions need not re-validate at commit time (as software
+transactions must), the metadata operations they still must perform have significant run-time
+Nine point two Hardware T M. Two hundred seven. Hardware S O Codesign. In hardware assisted T M, atomicity remains a program level property, built on multiple non atomic hardware level operations. To maximize performance, one would presumably prefer to implement atomicity entirely in hardware. If hardware transactions are sometimes unsuccessful for reasons other than conflicts, and if fallback to a global lock is not considered acceptable, the challenge then becomes to devise a fallback mechanism that interoperates correctly with hardware transactions. One possible approach is to design the hardware and software together. Kumar et al. two thousand six propose an H T M to complement the object cloning D S T M of Herlihy et al. two thousand three b. Baugh et al. two thousand eight assume the availability of fine grain memory protection. Zhou et al. two thousand four, which they use in software transactions to force aborts in conflicting hardware transactions. A more common approach assumes that the hardware is given, and designs software to go with it. Best Effort Hybrid T M. An H T M implementation is termed best effort if it makes no guarantees of completion, even in the absence of conflicts, and makes no assumptions about the nature of software transactions that might be running concurrently. All of the commercial H T M systems discussed in Section Nine point two point one, with the exception of constrained transactions in T M, fit this characterization. If spurious aborts are common enough to make fallback to a global lock unattractive, one is faced with a generalization of the problem that arose in that simpler case. How do we ensure mutual isolation between the hardware and software code paths? In Section Nine point two point two, we arranged for each hardware transaction to subscribe to the fallback lock either at the beginning of the transaction or with sandboxing, at the end. This arrangement ensured that a hardware transaction would always abort when a software transaction implemented as a critical section, which could not itself abort was active. For hybrid T M, we should like to do better to enable significant concurrency not only among non conflicting hardware transactions but also with respect to concurrent software transactions. A hardware transaction, of course, will abort automatically if a concurrent software transaction writes either eagerly or at commit time, a location that the hardware has written or read. But this is not enough. If a hardware transaction H executes in the middle of software transaction S, perhaps when S is stalled, then H may see inconsistent state. Conversely, H may perform writes that subsequently cause S to see inconsistent state. We must detect such conflicts. Perhaps the most straightforward solution, suggested by Damron et al. two thousand six, is to add extra instructions to the code of hardware transactions, so they inspect and update software metadata. Hardware transactions can then determine whether reads are mutually compatible, and software transactions can validate as they would in an all software system. Unfortunately, while hardware transactions need not re validate at commit time as software transactions must, the metadata operations they still must perform have significant run time.
+This section delves into the design of transactional memory systems, focusing on a hybrid approach that merges hardware and software implementations. The core challenge in transactional memory, particularly in hardware-assisted variants, is ensuring atomicity for operations that span multiple memory accesses. When transactions are implemented entirely in hardware, achieving maximal performance is desirable. However, hardware transactions can fail for various reasons beyond simple conflicts, such as exceeding resource limits or encountering external events. In such scenarios, a fallback mechanism to a software-based transactional memory system is often necessary. The critical design consideration then becomes creating a seamless and efficient interoperation between the hardware and software components.
+
+A cited approach by Kumar et al. proposes a hybrid transactional memory system that complements object-cloning D S T M, which is a software transactional memory technique. This work, along with that of Baugh et al., explores leveraging fine-grain memory protection and software transactional mechanisms to induce transaction aborts when conflicts are detected. The underlying assumption in some of these hybrid designs is that the hardware provides the transactional capabilities, and the software is responsible for managing certain aspects, such as aborting transactions when necessary.
+
+The concept of "best effort" hybrid transactional memory is introduced. A system is considered "best effort" if it guarantees no explicit completion guarantees, and makes no assumptions about the nature of concurrent software transactions that might be running. Commercial hybrid transactional memory systems often embody this "best effort" philosophy, particularly in how they handle constrained transactions. The rationale behind this approach is that forcing a fallback to a global lock, which is a coarser-grained synchronization mechanism, is often undesirable due to its performance implications.
+
+When considering the interplay between hardware and software transactions, a key design problem arises: how to ensure mutual isolation between hardware transactions and software transactions, especially when they interact through shared code paths. One strategy involves arranging for each hardware transaction to "subscribe" to the potential aborts of software transactions. This subscription could occur at the beginning of the transaction or via a sandboxing mechanism at its end. This is particularly relevant for hybrid transactional memory where the system should ideally allow non-conflicting hardware and software transactions to proceed concurrently without interference.
+
+A hardware transaction, denoted by H, can either eagerly commit its operations or commit them at a designated commit time. The challenge arises when a hardware transaction H executes concurrently with a software transaction S. If H performs writes that are visible to S, and S is stalled or waiting, H might operate on an inconsistent state from S's perspective. This can lead to situations where H may perceive inconsistent states. Therefore, a crucial requirement is that the system must be able to detect such conflicts effectively.
+
+A suggested, straightforward solution to this problem involves embedding additional instructions within the code of hardware transactions. These instructions allow software transactions to inspect and update metadata. This metadata helps determine whether read operations are mutually consistent, similar to how it would be handled in an all-software transactional memory system. While hardware transactions might not need to re-validate their read sets at commit time as software transactions do, they still perform metadata operations that require careful management. This metadata-driven validation is essential for maintaining the integrity of concurrent operations in a hybrid system.

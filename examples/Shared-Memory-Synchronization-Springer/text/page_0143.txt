@@ -1,0 +1,65 @@
+8.3 Queues and Deques 147
+
+head tail
+
+CAS (dequeue) CAS 2 (enqueue)
+
+CAS 1
+
+dummy node
+(enqueue)
+
+Figure 8.7 Operation of the M&S queue. After appropriate preparation (“snapshotting’), dequeue
+reads a value from the second node in the list, and updates head with a single CAS to remove the old
+dummy node. In enqueue, two CASes are required: one to update the next pointer in the previous
+final node; the other to update tail.
+
+8.3 Queues and Deques
+
+8.3.1 The Michael and Scott (M&S) Queue
+
+Queues are substantially more difficult than stacks to implement in a nonblocking fashion.
+The most commonly used solution is due to Michael and Scott (1996, 1998). It appears
+In most operating systems, and in a wide variety of run-time systems. The authors report
+that it rivals or exceeds the performance of lock-based alternatives on all machines they
+tested. Like the Treiber stack, the M&S queue is lock free but not wait free: it precludes
+livelock, but admits the possibility of starvation. A single enqueue and a single dequeue
+can proceed concurrently on a nonempty queue, without interfering with one another. If
+multiple enqueues or multiple dequeues are active concurrently, one of each is guaranteed
+to complete in a bounded number of steps; the others back out and retry.
+
+An illustration of the M&S queue appears in Figure 8.7. Code appears in Figure 8.8.
+Where the Treiber stack expected a node to be passed to push and returned from pop, we
+have written enqueue to expect (and dequeue to return) a simple value. We assume the
+existence of a distinguished error value | that will be returned on any attempt to dequeue
+an item from an empty queue. One could, of course, return a separate status code or throw
+an exception instead.
+
+To avoid special cases found in prior algorithms, the M&S queue always keeps a “dummy”
+node at the head of the queue. The first real item 1s the one in the node, if any, that follows
+the dummy node. As each item is dequeued, the old dummy node is reclaimed, and the
+node in which the dequeued item was located becomes the new dummy node.
+
+To understand the behavior of the queue, it helps to consider its linearization points—to
+identify instructions such that whenever the linearization point of operation A precedes the
+linearization point of operation B, we will know that operation A, as a whole, linearizes
+before operation B.
+
+A successful dequeue operation linearizes straightforwardly at the CAS that moves the
+head pointer. An unsuccessful dequeue (one that returns 1) linearizes at the load of n in
+Queues and Deques. The Michael and Scott M and S Queue. Queues are substantially more difficult than stacks to implement in a nonblocking fashion. The most commonly used solution is due to Michael and Scott nineteen ninety six, nineteen ninety eight. It appears in most operating systems, and in a wide variety of run time systems. The authors report that it rivals or exceeds the performance of lock based alternatives on all machines they tested. Like the Treiber stack, the M and S queue is lock free but not wait free. It precludes livelock, but admits the possibility of starvation. A single enqueue and a single dequeue can proceed concurrently on a non-empty queue, without interfering with one another. If multiple enqueues or multiple dequeues are active concurrently, one of each is guaranteed to complete in a bounded number of steps. The others back out and retry. An illustration of the M and S queue appears in Figure eight point seven. Code appears in Figure eight point eight. Where the Treiber stack expected a node to be passed to push and returned from pop, we have written enqueue to expect and dequeue to return a simple value. We assume the existence of a distinguished error value bottom that will be returned on any attempt to dequeue an item from an empty queue. One could, of course, return a separate status code or throw an exception instead. To avoid special cases found in prior algorithms, the M and S queue always keeps a dummy node at the head of the queue. The first real item is the one in the node, if any, that follows the dummy node. As each item is dequeued, the old dummy node is reclaimed, and the node in which the dequeued item was located becomes the new dummy node. To understand the behavior of the queue, it helps to consider its linearization points to identify instructions such that whenever the linearization point of operation A precedes the linearization point of operation B, we will know that operation A, as a whole, linearizes before operation B. A successful dequeue operation linearizes straightforwardly at the C A S that moves the head pointer. An unsuccessful dequeue one that returns bottom linearizes at the load of n in the head pointer.
+The Michael and Scott queue, often referred to as the M and S queue, is a prominent example of a lock-free data structure designed for concurrent environments. Unlike lock-based queues that rely on mutual exclusion primitives to protect shared data, lock-free structures guarantee that at least one thread will make progress in a finite number of steps, even in the presence of multiple concurrent operations. This nonblocking property is typically achieved through the use of hardware-supported atomic operations, such as compare-and-swap, or C A S.
+
+The M and S queue is implemented as a singly linked list with a dummy node at the head. This design choice simplifies the logic for handling empty and single-element queues, as operations always have at least one node to work with. The queue maintains two pointers: head and tail. The head pointer points to the dummy node, while the tail pointer points to the last actual element in the queue.
+
+Enqueue operations involve adding a new node to the tail of the list. A thread attempting to enqueue first allocates a new node and sets its value. Then, it reads the current tail pointer and attempts to link the new node to the end of the list. This is typically done using a C A S operation on the next pointer of the node currently pointed to by tail. If the C A S succeeds, the thread then attempts to advance the tail pointer to the newly added node, again using a C A S operation. The key challenge here is managing concurrent updates to the tail pointer. If another thread successfully enqueues an element and advances the tail pointer before the current thread attempts to advance it, the current thread's C A S operation to advance the tail will fail, requiring a retry.
+
+Dequeue operations, conversely, involve removing a node from the head of the list. A thread attempting to dequeue first reads the current head and tail pointers. It then reads the node pointed to by head's next pointer, which represents the first actual element in the queue. The value of this first element is then returned. The critical atomic step is to update the head pointer to this first element using a C A S operation. A special condition arises when the queue is empty or contains only a single element. In the M and S queue, a dummy node is always present. When a dequeue operation is attempted on a queue with a single element (which is the first node after the dummy node), the dequeue operation involves advancing the head pointer to bypass the first element, effectively making the dummy node the head again and the first element the new tail. If the tail pointer has also moved to the first element, it must also be updated to the dummy node.
+
+Figure Eight point Seven illustrates the operation of the M and S queue. Specifically, it shows the atomic steps involved. For a dequeue operation, a thread first reads the head and then the node following the head. It then attempts to update the head pointer using a C A S operation to point to the next node in the list, effectively removing the old first node. For an enqueue operation, a thread creates a new node and attempts to link it to the end of the list by performing a C A S on the next pointer of the current tail node. Following a successful linking, it attempts to advance the tail pointer to the new node. The diagram shows two C A S operations for enqueue: C A S two updates the tail's next pointer, and C A S one potentially updates the tail pointer itself. Similarly, dequeue operations require careful management of the head pointer, often involving a C A S to update the head to the next node. The diagram highlights that after appropriate preparation, which involves "snapshotting" the head and tail pointers and validating them, a dequeue operation requires one C A S to remove the old dummy node. In the enqueue operation, one C A S is used to update the next pointer of the current tail, and another C A S is used to update the tail pointer itself to the newly added node.
+
+The M and S queue is designed to be lock-free and avoids the possibility of livelock, although starvation is theoretically possible, meaning a thread might repeatedly fail to complete its operation. The implementation ensures that if a single enqueue and a single dequeue are active concurrently, one of them is guaranteed to complete in a bounded number of steps. If multiple enqueues or dequeues are active, their completion times can vary, but the system as a whole continues to make progress.
+
+A crucial aspect of understanding the correctness of concurrent data structures like the M and S queue is the concept of linearization. Linearization is a property that ensures that concurrent operations on a data structure behave as if they were executed atomically and sequentially in some serial order. For the M and S queue, each operation is assigned a linearization point, which is a specific point in its execution that corresponds to its abstract sequential behavior. For example, a successful enqueue operation is often linearized at the point where the new node's next pointer is successfully updated. A successful dequeue operation is linearized at the point where the head pointer is successfully updated to point to the next node.
+
+To understand the behavior of the queue, it is helpful to consider linearization points. For instance, when a thread attempts to enqueue an item and another thread attempts to dequeue, the order in which their respective C A S operations complete determines the linearized order of the operations. A successful dequeue that moves the head pointer effectively removes the first element. An unsuccessful dequeue, one that fails to update the head pointer perhaps because another dequeue or an enqueue modified the list concurrently, returns a special value, often denoted as bottom or null, indicating that the operation did not complete as intended. This failure might require the thread to retry the operation. The M and S queue's design, particularly the use of the dummy node and the careful sequencing of C A S operations, ensures that these operations can be effectively linearized, providing a correct and efficient concurrent queue implementation.

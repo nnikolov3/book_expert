@@ -1,0 +1,91 @@
+106 6 Read-Mostly Atomicity
+
+class rw_lock
+atomic<(short, short, bool)> n := (0, 0, false)
+// high half of word counts active readers; low half counts waiting writers,
+Il except for low bit, which indicates whether a writer is active
+const int base, limit, multiplier =... /[ tuning parameters
+
+rw_lock.writer_acquire():
+int delay := base
+loop
+(short ar, short ww, bool aw) := n.load(||)
+ifaw =falseand ar=20 /[ no active writer or readers
+if n.CAS((ar, ww, false), (ar, ww, true), ||) break
+I] else retry
+else if n.CAS((ar, ww, aw), (ar, ww+1, aw),
+// I'm registered as waiting
+loop // spin
+(ar, ww, aw) := n.load()
+if aw = false and ar = 0 /l no active writer or readers
+if n.CAS((ar, ww, false), (ar, ww—1, true), ||) break outer loop
+pause(delay) // exponential backoff
+delay := min(delay x multiplier, limit)
+I] else retry
+fence(R||RW)
+
+rw_lock.writer_release():
+fence(RW||W)
+short ar, wr; bool aw
+repeat // fetch-and-phi
+(ar, ww, aw) := n.load(||)
+until n.CAS((ar, ww, aw), (ar, ww, false),
+
+)
+
+)
+
+rw_lock.reader_acquire():
+loop
+(short ar, short ww, bool aw) := n.load(||)
+if ww = 0 and aw = false
+if n.CAS((ar, 0, false), (ar+1, 0, false),
+// else spin
+pause(ww x base) // proportional backoff
+fence(R||R)
+
+rw_lock.reader_release():
+fence(R||W)
+short ar, ww; bool aw
+repeat // fetch-and-phi
+(ar, ww, aw) := n.load(]|)
+until n.CAS((ar, ww, aw), (ar—1, ww, aw),
+
+) break
+
+)
+
+Figure 6.2 A centralized writer-preference reader-writer lock, with proportional backoff for readers
+and exponential backoff for writers.
+The provided code defines a reader writer lock mechanism.
+
+The `rw_lock` class contains an atomic variable `n` initialized to a tuple of zero, zero, and false. The high half of this atomic word counts active readers, while the low half counts waiting writers. The third component, `aw`, indicates whether a writer is currently active. The class also uses constant integers `base`, `limit`, and `multiplier` as tuning parameters for its backoff strategies.
+
+The `rw_lock.writer_acquire()` method is used by a writer to obtain the lock. It initializes a `delay` variable with the value of `base`. The method then enters a loop. Inside the loop, it loads the current state of the atomic variable `n` into local variables `ar` for active readers, `ww` for waiting writers, and `aw` for active writer status. If `aw` is equal to false and `ar` is equal to zero, meaning there are no active writers or readers, it attempts a compare and swap operation on `n`. It tries to change `n` from its current state of `ar`, `ww`, and `false` to `ar`, `ww`, and `true`. If this operation succeeds, the loop breaks, indicating the writer has acquired the lock. If the initial attempt fails, it enters an `else retry` path. Here, it checks if it can register itself as a waiting writer by attempting another compare and swap operation. It tries to change `n` from its current state of `ar`, `ww`, and `aw` to `ar`, `ww increment by one`, and `aw`. If this succeeds, the writer is now registered as waiting. The code then enters an inner spin loop. Inside this inner loop, it loads the current state of `n`. It then checks if `aw` is equal to false and `ar` is equal to zero, indicating no active writer or readers. If this is true, it attempts a compare and swap to acquire the lock and decrement the waiting writer count, changing `n` from `ar`, `ww`, and `false` to `ar`, `ww decrement by one`, and `true`. If this succeeds, it breaks out of the outer loop. If the lock is not available, the method pauses for the duration of `delay`, implementing an exponential backoff. The `delay` value is then updated to be the minimum of `delay multiplied by multiplier` or `limit`. After successfully acquiring the lock, a `fence` operation is performed with `R` or `R W` memory ordering.
+
+The `rw_lock.writer_release()` method is used by a writer to release the lock. It starts with a `fence` operation using `R V` or `W` memory ordering. It then enters a `repeat` loop described as `fetch and phi`. Inside the loop, it loads the current state of `n` into `ar`, `ww`, and `aw`. The loop continues until a compare and swap operation on `n` succeeds, changing `n` from its current state of `ar`, `ww`, and `aw` to `ar`, `ww`, and `false`, thereby setting the active writer status to false.
+
+The `rw_lock.reader_acquire()` method is used by a reader to obtain the lock. It enters a loop. Inside the loop, it loads the current state of `n` into `ar`, `ww`, and `aw`. If `ww` is equal to zero and `aw` is equal to false, meaning there are no waiting writers and no active writers, it attempts a compare and swap operation on `n`. It tries to change `n` from its current state of `ar`, `zero`, and `false` to `ar increment by one`, `zero`, and `false`, effectively incrementing the active reader count. If this operation succeeds, the loop breaks, indicating the reader has acquired the lock. If the condition is false or the compare and swap fails, it enters an `else spin` path. Here, the code pauses for a duration calculated as `ww multiplied by base`, implementing a proportional backoff strategy. After successfully acquiring the lock, a `fence` operation is performed with `R` or `R` memory ordering.
+
+The `rw_lock.reader_release()` method is used by a reader to release the lock. It starts with a `fence` operation using `R` or `W` memory ordering. It then enters a `repeat` loop described as `fetch and phi`. Inside the loop, it loads the current state of `n` into `ar`, `ww`, and `aw`. The loop continues until a compare and swap operation on `n` succeeds, changing `n` from its current state of `ar`, `ww`, and `aw` to `ar decrement by one`, `ww`, and `aw`, thereby decrementing the active reader count.
+
+Figure six point two illustrates a centralized writer preference reader writer lock, which utilizes proportional backoff for readers and exponential backoff for writers.
+The provided code snippet delineates the implementation of a reader writer lock mechanism, specifically one that exhibits a writer preference strategy, integrated with contention management via proportional and exponential backoff. This is a fundamental building block in concurrent programming, crucial for ensuring data consistency and integrity in multi threaded environments where multiple agents might attempt to access or modify shared resources simultaneously.
+
+At its core, the lock's state is encapsulated within a single atomic variable, named 'n', which is a composite structure of three short integers and a boolean value: `<active readers, waiting writers, active writer present>`. This clever packing of state into a single atomic type is a critical optimization. It allows for atomic updates to multiple interdependent pieces of information using a single Compare And Swap, or C A S, operation. The high half of the word represents the count of active readers, denoted as 'ar'. The low half of the word stores the number of waiting writers, labeled 'w w'. Finally, the least significant bit, indicated by the boolean 'a w', signals whether an active writer currently holds the lock. Initializing 'n' to `<zero, zero, false>` signifies that initially, there are no active readers, no waiting writers, and no active writer.
+
+Let us dissect the `writer_acquire` operation. A writer attempts to gain exclusive access. The process begins with an outer loop that continuously tries to acquire the lock. Inside this loop, the current state of 'n' is loaded atomically. The primary condition for a writer to proceed is that no active writer is present, indicated by 'a w' being false, And no active readers are present, meaning 'a r' is zero. If this condition is met, the writer attempts an atomic Compare And Swap operation to transition the 'a w' flag from false to true, thereby signifying its acquisition of the lock. Crucially, this C A S operation only succeeds if 'a r' and 'w w' have remained unchanged during the attempt. If successful, the writer breaks from the loop.
+
+However, if the initial attempt fails because either an active writer exists Or there are active readers, the writer then attempts to register itself as a waiting writer. This is achieved by another C A S operation that tries to increment the 'w w' count while keeping 'a r' and 'a w' unchanged. If this registration succeeds, the writer enters an inner spin loop. Within this inner loop, it repeatedly checks the lock's state. When the condition of no active writer And no active readers is finally met, the writer performs a crucial C A S operation. This operation attempts to acquire the lock by setting 'a w' to true, but simultaneously, it decrements its own 'w w' count, effectively transitioning itself from a waiting writer to an active writer. If this C A S succeeds, the writer breaks out of both the inner and outer loops, having successfully acquired the lock.
+
+Should any of these acquisition or registration attempts fail, indicating contention, the writer employs an exponential backoff strategy. The `pause` function introduces a delay, which is then increased for the next retry by multiplying it with a configurable `multiplier`, up to a defined `limit`. This exponential growth in delay helps mitigate the "thundering herd" problem, preventing multiple contending threads from simultaneously hammering the atomic variable and wasting C P U cycles. Before exiting the `writer_acquire` method, a `fence R or R W` memory barrier is invoked. This ensures that all memory operations performed by the writer before this point are globally visible before any subsequent operations are reordered. It enforces strong ordering guarantees, preventing the compiler or processor from reordering instructions in a way that could lead to data inconsistencies.
+
+The `writer_release` operation is comparatively simpler. It begins with a `fence R V or W` memory barrier. This is vital to ensure that all modifications made by the writer while holding the lock are fully committed and visible to all other processors or threads before the lock is released. Subsequently, a `repeat until C A S` loop is used to atomically set the 'a w' flag back to false, indicating that no writer is now active. This operation does not alter the 'a r' or 'w w' counts, maintaining the integrity of the lock's state.
+
+Turning to the `reader_acquire` operation, readers seek shared access. This method also uses a continuous loop. Similar to writers, the current state of 'n' is loaded atomically. However, the condition for a reader to acquire the lock is different: there must be no waiting writers, meaning 'w w' is zero, And no active writer, meaning 'a w' is false. This strictly enforces the writer preference policy; readers will be blocked if writers are queued or currently active. If this condition is met, the reader attempts a C A S operation to atomically increment the 'a r' count, signifying an additional active reader. This C A S specifically expects 'w w' to be zero and 'a w' to be false, ensuring that no writer has intervened since the state was last read. If successful, the reader acquires the lock and exits the loop.
+
+If the conditions are not met, the reader enters a spin phase, but with a different backoff mechanism. Instead of exponential backoff, readers employ a proportional backoff strategy. The `pause` duration is proportional to the number of waiting writers, `w w`, multiplied by a base constant. This is a deliberate design choice; it encourages readers to back off more significantly when there are many writers waiting, further reinforcing the writer preference and reducing contention for writers. A `fence R or R` memory barrier ensures that reads performed after acquiring the lock are not reordered before the lock acquisition itself, maintaining sequential consistency for read operations.
+
+Finally, the `reader_release` operation, like its writer counterpart, starts with a `fence R or W` memory barrier. This ensures that all data read by the reader while holding the lock is correctly perceived as having been read from a consistent state before the lock is relinquished. The release itself is performed via a `repeat until C A S` loop that atomically decrements the 'a r' count, signifying one less active reader. The 'w w' and 'a w' components are preserved during this atomic update.
+
+In summary, this reader writer lock exemplifies sophisticated concurrency control. It employs a fine grained atomic state representation, leverages the power of Compare And Swap operations for optimistic, non blocking synchronization where possible, and strategically integrates both exponential and proportional backoff mechanisms to manage contention effectively. The careful placement of memory fences is paramount, guaranteeing correct memory visibility and ordering across multiple processors, which is fundamental to the correctness and robustness of any concurrent system. This design prioritizes writers, ensuring that they are not unduly starved by a continuous stream of readers, a common challenge in high throughput read mostly scenarios.

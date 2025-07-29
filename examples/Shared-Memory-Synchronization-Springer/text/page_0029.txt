@@ -1,0 +1,88 @@
+30 2 Architectural Background
+
+1: word fetch_and_®(function ®, atomic<word> *w):
+2 word old, new
+
+3 repeat
+
+4: old := w—load(||)
+
+5: new := ®(old)
+
+6 until w—LL(]|) = old and w— SC(new, R||)
+
+7 return old
+
+In effect, this code uses LL and SC at line 6 to emulate CAS. Note that unlike the imple-
+mentation from CAS, in the implementations from LL/SC, we have used explicit ordering
+annotations to prevent the SC from being reordered before the preceding LL. Such reordering
+could prevent forward progress, as an SC performed before an LL should fail.
+
+2.3.1 The ABA Problem
+
+While both CAS and LL/SC appear in algorithms in the literature, the former is quite a bit
+more common—perhaps because its semantics are self-contained, and do not depend on the
+implementation-oriented side effect of cache-line tagging. That said, CAS has one significant
+disadvantage from the programmer’s point of view—a disadvantage that LL /SC avoids.
+
+Ordering Constraints for Fetch-and-® from CAS or LL /SC
+
+At first glance, it might seem surprising that there are no memory ordering constraints specified for
+fetch-and-® from CAS. The reader might wonder: What if ® (old) is hoisted before the load? Since
+the load would not have occurred yet, the value of argument old would need to be speculated by
+the processor. If the speculated value does not match the contents of w, then the subsequent CAS
+will fail and no harm will be done. However, one could imagine that the speculated value is actually
+correct and the CAS succeeds. In this case, too, no harm is done, since the result is the same as it
+would be if the load and ® were performed in program order. A similar argument can be made in the
+event that the CAS is hoisted before the load.
+
+In fetch-and-® from LL/SC, however, we add ordering constraints to prevent the SC from being
+hoisted before the LL. Unlike CAS(old, ...), SC does not verify that w contains the appropriate old
+value, so the above argument fails.
+
+It is also worth mentioning that implementations of synchronization primitives like fetch_and_®
+are used in the context of a larger program, where one must think about whether additional ordering
+constraints, beyond those needed to simply implement fetch_and_®, are needed to implement the
+desired program semantics. Just as we allow ordering constraints to be specified for synchronizing
+instructions, it may be helpful to allow them to be specified for fetch_and_®. One might then, for
+example, write fetch_and_ ® (®, x, RW||). To facilitate this usage, an implementation of fetch_and_&
+would need to incorporate the desired ordering constraints. In the case of RW||RW, the ordering
+constraint could be added to the atomic load instruction, but then the associated overhead would be
+incurred on every iteration of the loop. Arguably better is to begin and end the routine with appropriate
+fences.
+The function `fetch and Phi` takes a function `Phi` and an atomic word pointer `w` as input, and returns a word. Inside the function, two variables, `old` and `new`, are declared as type `word`. The function then enters a loop. In each iteration, the variable `old` is assigned the value loaded from `w` with no explicit ordering specified. The variable `new` is then assigned the result of applying the function `Phi` to the `old` value. The loop continues until `w` performs a Load Link operation with no explicit ordering specified, and its result is equal to `old`, and `w` performs a Store Conditional operation with the value `new` and `Release ordering`, which succeeds. Finally, the function returns the `old` value.
+
+In effect, this code uses L L and S C at line six to emulate C A S. Note that unlike the implementation from L L slash S C, we have used explicit ordering annotations to prevent the S C from being reordered before the preceding L L. Such reordering could prevent forward progress, as an S C performed before an L L should fail.
+
+### two point three point one The A B A Problem
+
+While both C A S and L L slash S C appear in algorithms in the literature, the former is quite a bit more common—perhaps because its semantics are self contained, and do not depend on the implementation oriented side effect of cache line tagging. That said, C A S has one significant disadvantage from the programmer’s point of view—a disadvantage that L L slash S C avoids.
+
+### Ordering Constraints for Fetch and Phi from C A S or L L slash S C
+
+At first glance, it might seem surprising that there are no memory ordering constraints specified for fetch and Phi from C A S. The reader might wonder: What if Phi of old is hoisted before the load? Since the load would not have occurred yet, the value of argument old would need to be speculated by the processor. If the speculated value does not match the contents of `w`, then the subsequent C A S will fail and no harm will be done. However, one could imagine that the speculated value is actually correct and the C A S succeeds. In this case, too, no harm is done, since the result is the same as it would be if the load and Phi were performed in program order. A similar argument can be made in the event that the C A S is hoisted before the load.
+
+In fetch and Phi from L L slash S C, however, we add ordering constraints to prevent the S C from being hoisted before the L L. Unlike C A S of old, S C does not verify that `w` contains the appropriate old value, so the above argument fails.
+
+It is also worth mentioning that implementations of synchronization primitives like fetch and Phi are used in the context of a larger program, where one must think about whether additional ordering constraints, beyond those needed to simply implement fetch and Phi, are needed to implement the desired program semantics. Just as we allow ordering constraints to be specified for synchronizing instructions, it may be helpful to allow them to be specified for fetch and Phi. One might then, for example, write fetch and Phi of Phi, `x`, Read Write followed by Read Write, to facilitate this usage. An implementation of fetch and Phi would need to incorporate the desired ordering constraints. In the case of Read Write followed by Read Write, the ordering constraint could be added to the atomic load instruction, but then the associated overhead would be incurred on every iteration of the loop. Arguably better is to begin and end the routine with appropriate fences.
+The provided text delves into the intricacies of atomic operations crucial for concurrent programming, specifically focusing on the Load Linked, Store Conditional, or L L / S C, instruction pair and the Compare And Swap, or C A S, primitive. It also illuminates the subtle yet significant A B A problem, which arises in lock free algorithms.
+
+The initial code snippet presents a function named `fetch_and_Phi`, designed to perform an atomic read-modify-write operation. This function takes an arbitrary function, denoted as `Phi`, and a pointer `w` to an atomic word. An atomic word ensures that operations on it are indivisible and appear to occur instantaneously with respect to other concurrent operations. The function begins by declaring two local variables, `old` and `new`, to hold intermediate values. A `repeat` loop encapsulates the core logic, reflecting a common pattern in lock free programming where operations might fail due to contention and require retrying.
+
+Within this loop, line four executes `old is w arrow load parallel parallel`. This represents a Load Linked instruction. The fundamental principle of a Load Linked is to load the current value from the memory location pointed to by `w` into `old` and, critically, establish a monitor or reservation on that memory location. Any subsequent modification to this monitored location by another processor would invalidate this monitor. Following this, line five calculates `new is Phi(old)`, which applies the given function `Phi` to the `old` value, deriving the desired updated value. This computation occurs locally and is not yet visible to other processors.
+
+Line six presents the `until w arrow L L parallel parallel is equal to old and w arrow S C(new, R parallel parallel)` condition. This line is central to the atomic update. The Store Conditional, or S C, instruction `w arrow S C(new, R parallel parallel)` attempts to write the `new` value back to the memory location `w`. This write operation succeeds only if the monitor established by the preceding Load Linked on line four is still active and the memory location has not been modified by any other processor in the interim. The `R parallel parallel` annotation likely signifies a Release memory ordering, ensuring that any memory operations preceding this Store Conditional are made visible to other processors before the Store Conditional completes. The peculiar `w arrow L L parallel parallel is equal to old` clause within the `until` condition seems to be a conceptual representation of checking if the initial `old` value, as read by Load Linked, is still the current value at `w` before the Store Conditional attempts its update. In essence, the entire condition evaluates to true if the atomic update successfully takes place, typically indicated by the Store Conditional succeeding. If the Store Conditional fails, perhaps because another processor modified `w` or the monitor was lost, the loop repeats, fetching the current value again and retrying the operation. Finally, line seven returns the `old` value that was initially read by the Load Linked instruction.
+
+As the text clarifies, this combination of Load Linked and Store Conditional instructions effectively emulates a Compare And Swap, or C A S, operation. A C A S instruction is a single, atomic primitive that takes a memory address, an expected old value, and a new value. It atomically compares the current value at the address with the expected old value. If they match, it replaces the current value with the new value; otherwise, it does nothing. Both C A S and L L / S C are cornerstones of lock free algorithms, allowing multiple threads to operate on shared data without using traditional locks, thereby potentially improving concurrency and avoiding deadlocks.
+
+A critical consideration in multi processor systems is memory ordering. Modern processors employ aggressive out of order execution and speculative execution to maximize performance. This means instructions might not execute in the exact program order. For L L / S C pairs, this reordering can be problematic. The text notes that explicit ordering annotations are necessary to prevent the Store Conditional from being reordered before its corresponding Load Linked. If a Store Conditional were to execute prematurely, before the Load Linked has established its monitor, it would likely fail or, worse, lead to incorrect behavior or a livelock situation where a thread repeatedly fails to make progress.
+
+Section two point three point one introduces `The A B A Problem`, a well known pitfall in lock free programming that primarily affects C A S based algorithms. The text states that C A S is often preferred over L L / S C due to its simpler, self contained semantics, which do not depend on the subtle micro architectural side effects like cache line tagging used by L L / S C implementations. However, it also points out that C A S has a significant disadvantage that L L / S C inherently avoids: the A B A problem.
+
+The A B A problem occurs when a memory location's value changes from `A` to `B` and then back to `A` again, all between a thread reading `A` and then attempting a C A S operation based on that `A`. Because C A S only compares the current value to the *expected* value (which is `A`), it would mistakenly succeed, believing no change occurred, even though the state has, in fact, undergone intermediate modifications. This can corrupt the logical integrity of complex data structures, such as lock free stacks or queues, even if the value itself appears to be the same.
+
+The text further explores ordering constraints, particularly for `fetch_and_Phi`. It discusses what happens if the `Phi` function call, which computes the `new` value, is "hoisted" or reordered by the processor to execute before the `old` value is loaded. In a C A S context, if the speculated `old` value (used for `Phi`) does not match the actual value at the time of the C A S, the C A S operation will simply fail, and the loop will retry, preventing harm. However, the text then makes a nuanced claim regarding the A B A problem, stating that if the speculated value is correct and C A S succeeds, "no harm is done, since the result is the same as it would be if the load and Phi were performed in program order." This statement is context specific and assumes that the `Phi` function's behavior is such that the intermediate state change (the `B` in A B A) does not affect the final logical outcome. In many general purpose lock free algorithms, this is not true, and the A B A problem remains a critical concern, requiring solutions like double word C A S or version counters.
+
+In contrast, for L L / S C implementations of `fetch_and_Phi`, explicit memory ordering constraints are added to prevent the Store Conditional from being reordered before the Load Linked. The crucial distinction highlighted is that the raw Store Conditional instruction itself does not verify the `old` value against a specific `expected` value, unlike C A S. Its success merely indicates that the monitored location hasn't been modified since the Load Linked. This means that if `Phi(old)` were speculatively executed based on an invalid or hoisted `old` value, the Store Conditional might still succeed if no other processor interfered, leading to incorrect results if not carefully managed through explicit ordering or other mechanisms.
+
+The discussion concludes by emphasizing that synchronization primitives are used within larger programs, necessitating careful consideration of broader memory ordering constraints beyond those intrinsic to the primitive itself. It suggests that allowing explicit memory ordering annotations, such as Read Write memory ordering, for higher level primitives like `fetch_and_Phi` could be beneficial for programmers. However, incorporating these constraints directly into atomic instructions within a retry loop could incur significant performance overhead on every iteration. An arguably superior strategy, when applicable, is to strategically place memory fences or barriers at the beginning and end of the entire atomic routine, rather than within the retry loop, to amortize the cost of these expensive operations and ensure correct global memory visibility without excessively penalizing common retry paths.

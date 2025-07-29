@@ -1,0 +1,57 @@
+9.1 Software TM 195
+
+of committed writer transactions, and elide validation whenever the count has not changed.
+NOrec uses the global sequence lock to effect the same optimization.
+
+Time-Based Validation
+
+By validating its previous reads immediately after reading a new location x, transaction T
+ensures that even if x has been modified very recently, all of 7’s work so far 1s still valid,
+because the other locations have not been modified since they were originally read. An
+alternative approach, pioneered by the TL2 system of Dice et al. (2006), is to verify that the
+newly read location x has not been modified since T' began execution. That is, instead of
+ensuring that all of 7s work so far is correct as of the current moment, we ensure that it
+1s correct as of Ts start time. To implement this approach, TL2 employs a global “clock™
+(actually, just a global count of committed transactions). It then augments each Orec with a
+version number that specifies the value of the global clock as of the most recent write to any
+location covered by the Orec. At the beginning of each transaction, TL2 reads and remembers
+the global clock. On each read, it verifies that the version number in the corresponding Orec
+1s less than or equal to the remembered clock value. If not, the transaction aborts.
+
+If a read-only transaction completes its execution successfully, we know its behavior 1s
+correct as of its start time. No additional work is necessary; it trivially commits. A writer
+transaction, however, must validate its read set. It locks the Orecs of all locations it wishes
+to write, atomically increments the global clock, checks the version numbers of (the Orecs
+of) all locations it has read, and verifies that all are still less than its start time (so the
+covered locations have not been modified since). If it is unable to acquire any of the Orecs
+for the write set, or if any of the Orecs for the read set have too-recent version numbers, the
+transaction aborts. Otherwise, it writes back the values in its redo log and writes the (newly
+incremented) global clock value into each locked Orec. By colocating the lock and version
+number in a single word, TL2 arranges for these writes to also unlock the Orecs.
+
+When a transaction 7" in TL2 reads a location x that has been modified since Ts start
+time, the transaction simply aborts. Riegel et al. (2006) observe, however, that just as a
+writer transaction must validate its reads at commit time, effectively “extending” them to
+its completion time, a reader or writer transaction can update its reads incrementally. If T
+began at time #1, but x has been modified at time t, > #1, T can check to see whether any
+previously read location has been modified since 1. If not, 7" can pretend it began at time #,
+instead of #1, and continue. This extensible timestamp strategy is employed in the TinySTM
+system of Felber et al. (2008), which has invisible readers but eager conflict detection. It 1s
+also used in SwissTM (Dragojevi€ et al. 2009), with mixed conflict detection, and NOrec
+(Dalessandro et al. 2010c¢), with lazy detection.
+
+Bloom Filters as an Alternative to Read Logs
+While NOrec is easily described as a single-Orec STM system with value-based validation,
+its inspiration came not from Orec-based systems but from an earlier system known as
+Nine point one Software T M. One hundred ninety five. Of committed writer transactions, and elide validation whenever the count has not changed. N Orec uses the global sequence lock to effect the same optimization. Time Based Validation. By validating its previous reads immediately after reading a new location X, transaction T ensures that even if X has been modified very recently, all of T's work so far is still valid, because the other locations have not been modified since they were originally read. An alternative approach, pioneered by the T L two system of Dice et al. (two thousand six), is to verify that the newly read location X has not been modified since T began execution. That is, instead of ensuring that all of T's work so far is correct as of the current moment, we ensure that it is correct as of T's start time. To implement this approach, T L two employs a global clock (actually, just a global count of committed transactions). It then augments each Orec with a version number that specifies the value of the global clock as of the most recent write to any location covered by the Orec. At the beginning of each transaction, T L two reads and remembers the global clock. On each read, it verifies that the version number in the corresponding Orec is less than or equal to the remembered clock value. If not, the transaction aborts. If a read only transaction completes its execution successfully, we know its behavior is correct as of its start time. No additional work is necessary; it trivially commits. A writer transaction, however, must validate its read set. It locks the Orecs of all locations it wishes to write, atomically increments the global clock, checks the version numbers of (the Orecs of) all locations it has read, and verifies that all are still less than its start time (so the covered locations have not been modified since). If it is unable to acquire any of the Orecs for the write set, or if any of the Orecs for the read set have too recent version numbers, the transaction aborts. Otherwise, it writes back the values in its redo log and writes the (newly incremented) global clock value into each locked Orec. By colocating the lock and version number in a single word, T L two arranges for these writes to also unlock the Orecs. When a transaction T in T L two reads a location X that has been modified since T's start time, the transaction simply aborts. Riegel et al. (two thousand six) observe, however, that just as a writer transaction must validate its reads at commit time, effectively extending them to its completion time, a reader or writer transaction can update its reads incrementally. If T began at time t sub one, but X has been modified at time t sub two greater than t sub one, T can check to see whether any previously read location has been modified since t sub two. If not, T can pretend it began at time t sub two instead of t sub one, and continue. This extensible timestamp strategy is employed in the T i n y S T M system of Felber et al. (two thousand eight), which has invisible readers but eager conflict detection. It is also used in S w i s s T M (Dragojevic et al. two thousand nine), with mixed conflict detection, and N Orec (Dalessandro et al. two thousand ten c), with lazy detection. Bloom Filters as an Alternative to Read Logs. While N Orec is easily described as a single Orec S T M system with value based validation, its inspiration came not from Orec based systems but from an earlier system known as.
+The text discusses techniques for optimizing transaction processing in software transactional memory systems, focusing on two key areas: time-based validation and bloom filters as an alternative to read logs.
+
+The initial paragraph mentions that N Orec uses global sequence locks to elide validation for committed writer transactions when the count has not changed, implying an optimization strategy to avoid redundant checks by leveraging a global state indicator.
+
+The section on Time-Based Validation introduces an alternative approach, pioneered by the T L two system, to ensure the validity of transaction reads. This method, attributed to Dice et al. in two thousand six, aims to guarantee that a transaction's work is current by verifying that a newly read location has not been modified since the transaction began execution. The core principle is to establish the correctness of reads based on the transaction's start time. To achieve this, the T L two system employs a global "clock," which essentially represents a global version number for committed transactions. Each time a transaction reads a location, it associates that read with a version number that corresponds to the most recent write to that location, as identified by the global clock. At the commencement of each transaction, it reads and remembers the current global clock value. Subsequently, for every read operation, the transaction verifies that the version number of the read data is less than or equal to its remembered clock value.
+
+If a read-only transaction completes its execution successfully, its behavior is considered correct, and no further validation is needed. For transactions that involve writes, however, validation becomes more complex. Such transactions must validate their read sets. They achieve this by locking the Orec records for all locations they intend to write to. Atomically, they increment the global clock and write back the values from their redo logs, associating these writes with the new, incremented clock value. This process effectively timestamps the writes.
+
+The validation process is further elaborated: when a transaction T performs a read on location x at time t sub one, and then later attempts to read x again at time t sub two, and if location x has been modified at a time t sub three greater than t sub one, the transaction must then verify if the modification occurred at or after t sub two. If x was modified at or after t sub two, the transaction can effectively "extend" its start time to t sub two for the purpose of read validation. If, however, x was modified between t sub one and t sub two, and the transaction needs to check for modifications since t sub two, and if no such modifications are found, it can proceed. This extensible timestamp strategy, as employed in the Tiny S T M system by Felber et al. in two thousand eight, supports invisible readers and eager conflict detection. It has also been utilized in S W I S S T M by Dragojević et al. in two thousand nine, featuring mixed conflict detection and lazy detection.
+
+The text then transitions to the topic of Bloom Filters as an Alternative to Read Logs. It suggests that while N Orec is primarily described as a single Orec S T M system with value-based validation, its conceptual inspiration may stem from Orec-based systems, but more broadly from systems that use bloom filters. This implies that bloom filters can serve as a more efficient mechanism for tracking read sets compared to traditional read logs, potentially reducing overhead and improving performance in transactional memory systems.

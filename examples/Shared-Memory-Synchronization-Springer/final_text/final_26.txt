@@ -1,0 +1,52 @@
+
+The discussion begins with an algorithm known as the A B P algorithm, which is both simple and clever in its design. This algorithm is notable for its very low constant time overhead in typical scenarios, making it highly efficient and widely adopted in practice. However, it comes with two important limitations.
+
+First, the A B P algorithm uses a bounded array to manage tasks. This means that the number of tasks that can be stored in the deque at any given time is limited by the size of the array. Once the array is full, no more tasks can be added until space becomes available.
+
+Second, when tasks are stolen from the deque using a pop left operation, the space occupied by those tasks cannot be reclaimed until the deque is completely empty. This is because the left end index of the array only resets to zero when the local thread performing pop right operations reaches that end. This behavior can lead to inefficient memory usage, especially when tasks are frequently stolen from the deque.
+
+To address these limitations, Chase and Lev proposed an extension to the A B P algorithm. Their approach treats the array as circular, which eliminates the need to reset the left end index when the deque becomes empty. This circular design allows the array to wrap around, making more efficient use of available space. Additionally, their extension allows the array to be resized when it becomes full, similar to how an extensible hash table dynamically increases its capacity. This resizing capability ensures that the deque can accommodate more tasks as needed, avoiding the limitations of a fixed-size array.
+
+Hendler and Shavit introduced another extension to the A B P algorithm, aimed at improving performance when workloads are unevenly distributed. In their version, a thread can steal up to half of the elements from a peer's deque in a single operation. This approach helps balance the workload more effectively, especially in scenarios where some threads are overloaded while others are underutilized.
+
+Beyond these extensions, many additional variations and alternatives to the A B P algorithm have been proposed in the research literature. Work stealing remains an active area of study, with ongoing efforts to improve the efficiency and scalability of concurrent task scheduling.
+
+The conversation then shifts to hash tables, focusing on a nonblocking hash table design introduced by Michael. This design uses external chaining, where each bucket in the hash table points to a linked list. This structure allows for efficient lookup, insertion, and deletion operations without the need for mutual exclusion locks, which can introduce performance bottlenecks in concurrent systems.
+
+One challenge with this approach is that the size of the hash table cannot be determined in advance. To address this, the hash table must be extensible, meaning it can dynamically increase its capacity as needed. To manage concurrency during resizing operations, a single sequence lock is used to coordinate ordinary lookup, insert, and delete operations. However, resizing itself is treated as a writer operation, which can block other operations until it completes.
+
+To reduce the blocking caused by resizing, the technique of read copy update, or R C U, is proposed. R C U allows lookup operations to proceed concurrently with resizing, ensuring that readers can continue accessing the hash table while the resizing process is underway. The memory used by the old table is only reclaimed once all readers have finished their operations. However, insert and delete operations must still wait for the resizing to complete before proceeding.
+
+Shalev and Shavit describe an ideal scenario in which resizing operations are nonblocking, allowing all other operations to continue without interruption. Their algorithm achieves this by distributing the cost of resizing across multiple insert, delete, and lookup operations. This ensures that each individual operation maintains an expected constant time complexity, even during resizing.
+
+The underlying principle of their approach involves organizing data within buckets using sorted lists. The order of these lists is determined by a specific attribute of the nodes, such as the bitwise representation of a hash key. For example, a hash function that generates values between zero and two to the power of n minus one can be used to determine the bucket index. The order of the nodes within the bucket is based on the binary representation of their hash keys.
+
+To further optimize access to these lists, the algorithm uses lazily initialized buckets. This means that buckets are only created when they are needed, allowing the indexing mechanism to dynamically adjust based on the number of elements in the hash table. This dynamic adjustment helps reduce memory overhead and improves performance, especially when the number of buckets can grow exponentially.
+
+This leads to the concept of a nonblocking, extensible Sieve and Search, or S and S, hash table. The core idea is to manage dynamic resizing and concurrent access without relying on traditional locking mechanisms, which can become performance bottlenecks. In this design, shaded nodes represent dummy nodes, which act as markers or placeholders in the linked lists that form the buckets. These dummy nodes help maintain the structure of the hash table during resizing operations.
+
+White nodes, on the other hand, represent data nodes that contain actual keys. Each data node is associated with a hash value, which determines its placement within the hash table. The hash table is initially configured with a certain number of bits used for hashing, which determines the number of buckets. For example, if two bits are used, the hash table will have four buckets, indexed from zero to three.
+
+When a new data node is inserted, it is placed in the appropriate bucket based on its hash value. For instance, a node with a hash value of nine would be inserted into bucket one, positioned between nodes with hash values seventeen and five. This placement ensures that the linked list within the bucket remains ordered.
+
+As the number of elements grows, the hash table can dynamically increase its capacity. This expansion is indicated by using more bits for hashing, which effectively doubles the number of conceptual buckets. For example, if the hash table initially uses two bits, it can be expanded to use three bits, doubling the number of buckets from four to eight.
+
+When a new node with a hash value of twenty one is inserted, it is placed in bucket five, which is determined by computing twenty one modulo two to the power of three. Similarly, a search for a node with a hash value of thirty would map to bucket six, which may require initializing additional buckets recursively.
+
+The algorithm ensures that during resizing, all old buckets continue to point to the correct locations, and new buckets are properly initialized. This is achieved through careful bit manipulation, which allows the hash table to maintain consistency even as it grows. The S and S hash table can only increase in size, as it does not provide a mechanism for reducing the number of buckets.
+
+This limitation is addressed by Liu and colleagues, who introduced two new resizable hashing algorithms. Their approach involves implementing each bucket as a freezable set, which allows operations to freeze a bucket and prevent further modifications during insertion or deletion. An auxiliary data structure, such as a list or array, is used to index the buckets, and a collaborative helping mechanism is employed to resize the auxiliary structure.
+
+Other advanced hashing techniques, such as hopscotch hashing, have also been implemented in a lock free manner. These techniques outperform traditional probing-based methods and offer improved performance in concurrent environments.
+
+The discussion then turns to skip lists, which are an alternative to balanced trees for implementing sets and dictionaries. Skip lists provide an expected logarithmic time complexity for search, insert, and delete operations. They are conceptually simpler than nonblocking trees and can be implemented in a nonblocking fashion.
+
+In a skip list, nodes appear on multiple levels, with each node present in a level zero list. With a certain probability, typically one half, a node also appears on higher levels. This structure allows for efficient searching by skipping over many nodes at higher levels before descending to lower levels for precise location.
+
+Recent improvements to skip lists include replacing towers with wheels that contain multiple keys, enhancing memory locality and reducing the height of the list. Other approaches involve using background threads to lazily construct towers, improving insertion speed at the cost of temporary search performance degradation.
+
+The text also explores search trees, particularly the challenges of implementing efficient lock-free algorithms for binary search trees. Unlike linked lists, which have well-established lock-free implementations, binary search trees are more complex due to the need to maintain the search tree property in a concurrent environment.
+
+One approach to simplifying concurrent binary search trees is the use of external trees, where keys are stored in leaf nodes, and internal nodes serve as routing nodes. This design streamlines deletion operations, as keys are always located in leaves. Lock-free locks are used to manage concurrent updates, ensuring that operations are applied in a controlled and non-blocking manner.
+
+Overall, the discussion highlights the importance of efficient and scalable data structures in concurrent and parallel computing systems, emphasizing the need for nonblocking algorithms that can handle dynamic growth and high levels of concurrency.

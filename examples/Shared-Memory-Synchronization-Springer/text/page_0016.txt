@@ -1,0 +1,70 @@
+2.2 Memory Consistency 17
+
+// initially x =y = 0
+thread 1: thread 2:
+
+1: x:=1 1. y:=1
+2: i=y At 2: jJi=Xx
+// finally i=j=20
+
+Figure 2.3 An apparent ordering loop.
+
+When executing a load instruction, a core checks the contents of its reorder and store
+buffers before forwarding a request to the memory system. This check ensures that the core
+always sees its own recent writes, even if they have not yet made their way to cache or
+memory. At the same time, a load that accesses a location that has not been written recently
+may make its way to memory before logically previous instructions that wrote to other
+locations. This fact is harmless on a uniprocessor, but consider the implications on a parallel
+machine, as shown in Figure 2.3. If the write to Xx is delayed in thread 1’s store buffer, and
+the write to y is similarly delayed in thread 2’s store buffer, then both threads may read a
+zero at line 2, suggesting that line 2 of thread 1 executes before line 1 of thread 2, and line 2
+of thread 2 executes before line 1 of thread 1. When combined with program order (line 1
+in each thread should execute before line 2 in the same thread), this gives us an apparent
+“ordering loop,” which “should” be logically impossible.
+
+Similar problems can occur deeper in the memory hierarchy. A modern machine can
+require several hundred cycles to service a miss that goes all the way to memory. At each
+step along the way (core to LL1, ..., L3 to bus, ...) pending requests may be buffered in a
+queue. If multiple requests may be active simultaneously (as is common, at least, on the
+global interconnect), and if some requests may complete more quickly than others, then
+memory accesses may appear to be reordered. So long as accesses to the same location (by
+the same thread) are forced to occur in order, single-threaded code will run correctly. On a
+multiprocessor, however, sequential consistency may again be violated.
+
+On a NUMA machine, or a machine with a topologically complex interconnect, differing
+distances among locations provide additional sources of circular ordering. If variable x in
+Figure 2.3 1s close to thread 2 but far from thread 1, and y is close to thread 1 but far
+from thread 2, the reads on line 2 can easily complete before the writes on line 1, even if
+all accesses are inserted into the memory system in program order. With a topologically
+complex interconnect, the cache coherence protocol itself may introduce variable delays—
+e.g., to dispatch invalidation requests to the various locations that may need to change the
+state of a local cache line, and to collect acknowledgments. Again, these differing delays
+may allow line 2 of the example—in both threads—to complete before line 1.
+
+In all the explanations of Figure 2.3, the ordering loop results from reads bypassing
+writes—executing in-order (write-then-read) from the perspective of the issuing core, but
+out of order (read-then-write) from the perspective of the memory system—or of threads on
+Two point two Memory Consistency.
+
+Figure two point three, titled 'An apparent ordering loop', depicts a scenario involving two threads and their interaction with shared variables x and y, and local variables i and j. Initially, both x is equal to zero and y is equal to zero. Thread one consists of two operations: first, line one assigns the value one to variable x; second, line two assigns the value of variable y to variable i. Thread two also consists of two operations: first, line one assigns the value one to variable y; second, line two assigns the value of variable x to variable j. The diagram includes crossed arrows between the threads. Specifically, an arrow points from thread one's assignment of x to thread two's assignment of j, and another arrow points from thread two's assignment of y to thread one's assignment of i. A large question mark is positioned where these arrows cross, signifying an inquiry or problem related to the concurrent execution order. The final state indicated is that both i is equal to zero and j is equal to zero, implying a specific, potentially unexpected, execution outcome for the loop.
+
+When executing a load and instruction, a core checks the contents of its reorder and store buffers before forwarding a request to the memory system. This check ensures that the core always sees its own recent writes, even if they have not yet made their way to cache or memory. At the same time, a load that accesses a location that has not been written recently may make its way to memory before logically previous instructions that wrote to other locations. This fact is harmless on a uniprocessor, but consider the implications on a parallel machine, as shown in Figure two point three. If the write to x is delayed in thread one's store buffer, and the write to y is similarly delayed in thread two's store buffer, then both threads may read a zero at line two, suggesting that line two of thread one executes before line one of thread two, and line two of thread two executes before line one of thread one. When combined with program order, line one in each thread should execute before line two in the same thread, this gives us an apparent "ordering loop," which "should" be logically impossible.
+
+Similar problems can occur deeper in the memory hierarchy. A modern machine can require several hundred cycles to service a miss that goes all the way to L one, L two, L three to bus, and so on. Pending requests may be buffered in a queue. If multiple requests may be active simultaneously, as is common, at least, on the global interconnect, and if some requests may complete more quickly than others, then memory accesses may appear to be reordered. So long as accesses to the same location by the same thread are forced to occur in order, single threaded code will run correctly. On a multiprocessor, however, sequential consistency may again be violated.
+
+On a N U M A machine, or a machine with a topologically complex interconnect, differing distances among locations provide additional sources of circular ordering. If variable x in Figure two point three is close to thread two but far from thread one, and y is close to thread one but far from thread two, the reads on line two can easily complete before the writes on line one, even if all accesses are inserted into the memory system in program order. With a topologically complex interconnect, the cache coherence protocol itself may introduce variable delays, for example, to dispatch invalidation requests to the various locations that may need to change the state of a local cache line, and to collect acknowledgments. Again, these differing delays may allow line two of the example, in both threads, to complete before line one.
+
+In all the explanations of Figure two point three, the ordering loop results from reads bypassing writes, executing in order (write then read) from the perspective of the issuing core, but out of order (read then write) from the perspective of the memory system, or of threads on.
+Memory consistency represents a foundational challenge in the design and operation of modern parallel computing systems. It defines the rules governing the order in which memory operations, specifically reads and writes, appear to complete to different processors in a multi-core or multi-processor system. Without strong consistency guarantees, the intuitive behavior of programs written for a single processor can break down when executed concurrently.
+
+Figure two point three illustrates a classic example of such an anomaly, often referred to as an "apparent ordering loop" or the "store buffer forwarding problem." The diagram presents a two-thread scenario. Initially, variables x and y are both set to zero. Thread one, on the left, executes two sequential instructions: first, it assigns the value one to variable x; second, it reads the value of variable y and assigns it to variable i. Concurrently, Thread two, positioned on the right, also executes two instructions: it first assigns the value one to variable y; and then it reads the value of variable x, assigning it to variable j. The diagram visually represents the inter-thread dependencies with two crossing arrows. One arrow emanates from the write to x in Thread one and points towards the read of x in Thread two. Conversely, another arrow originates from the write to y in Thread two and points towards the read of y in Thread one. A large question mark centered between these arrows signifies the counterintuitive final state where both i and j are observed to be zero, even though both x and y were written to one by the respective threads. This outcome suggests that each thread read the initial zero value of the other thread's variable before the other thread's write operation became visible.
+
+The technical concepts underpinning this phenomenon reside deep within the microarchitecture of a processor core and the broader memory hierarchy. When a core executes a load instruction, it first checks its internal reorder and store buffers. This check is crucial because it ensures that the core can immediately see its own recent writes, even if those writes have not yet propagated to the cache or main memory. This mechanism is known as store-to-load forwarding or load bypassing. However, a load that accesses a location not recently written by the same core may have its memory request proceed before a logically previous instruction that wrote to a different memory location has fully completed and made its data globally visible. While harmless in a uniprocessor context, where the single thread of execution dictates a strict program order, this reordering introduces significant implications on parallel machines.
+
+In the specific scenario of Figure two point three, if the write to x by Thread one is delayed in Thread one's private store buffer, and similarly, the write to y by Thread two is delayed in Thread two's private store buffer, then a problematic interleaving can occur. Both threads might read a value of zero for the other thread's variable at their respective line two. For instance, Thread one's line two, which reads y, might execute before Thread two's line one, which writes to y. Concurrently, Thread two's line two, which reads x, might execute before Thread one's line one, which writes to x. This situation, where both i and j are observed to be zero, creates an "apparent ordering loop," which fundamentally contradicts the principle of sequential consistency, where the outcome of any parallel execution should be equivalent to some interleaving of operations from a single total order. This is a clear violation of program order when viewed from a global perspective, as line two appears to complete before line one in the *other* thread.
+
+Similar issues can manifest deeper within the memory hierarchy due to variable latencies and buffering. A modern memory system can take hundreds of cycles to service a cache miss that traverses through multiple levels of cache, such as L one, L two, and L three, eventually reaching the main system bus. Memory requests can be buffered at various stages: within the core, in the cache controllers, within the global interconnect, and at the memory controller. If multiple requests are active simultaneously, some may complete more quickly than others due to path contention, varying distances, or cache line states. Consequently, memory accesses to *different* locations may appear to be reordered from a global perspective, even though accesses to the *same* memory location are typically forced to occur in order by cache coherence protocols, ensuring correctness for single-threaded code. On a multiprocessor, however, this global reordering violates sequential consistency.
+
+Furthermore, on a Non Uniform Memory Access, or N U M A, machine, or any system with a topologically complex interconnect, the physical distances among memory locations introduce additional sources of circular ordering challenges. Consider variable x in Figure two point three. If it is physically located close to Thread one but far from Thread two, and variable y is close to Thread two but far from Thread one, the writes to these variables may experience different latencies. The reads on line two of each thread could then easily complete before the corresponding writes on line one of the other thread have become globally visible. With such a topologically complex interconnect, the cache coherence protocol itself may introduce variable delays, for example, to dispatch invalidation requests to the various cache locations that hold stale copies of data and to collect acknowledgements. These differing delays can allow line two of the example in both threads to complete before line one.
+
+In essence, the apparent ordering loop observed in Figure two point three arises from a combination of microarchitectural optimizations and memory system complexities. It highlights how reads can bypass prior writes from the perspective of the issuing core (an example of a "read-then-write" reordering from the core's perspective), or how writes can be delayed relative to subsequent reads by other cores from the memory system's perspective. Understanding these subtle reordering phenomena is critical for designing correct and performant parallel algorithms and hardware-software interfaces.

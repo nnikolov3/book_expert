@@ -1,0 +1,67 @@
+200 9 Transactional Memory
+
+but such mechanisms seem unlikely to make their way into commercial systems anytime
+soon.
+
+In addition to the state of memory, a TM system must consider the state of in-core
+resources—registers in particular. In most HTM systems, tx_begin checkpoints all or most
+of the registers, and restores them on abort. In a few systems (including Blue Gene/Q and
+the Azul Vega processors (Click 2019)), software must checkpoint the registers prior to
+tx_begin, and restore them manually on abort.
+
+Access Tracking and Conflict Resolution
+
+By far the most common way to identify conflicts in an HTM system is to leverage the
+existing cache coherence protocol. Consider a basic MESI protocol of the sort described in
+Sec. 2.1.2. Suppose, in addition to the tag bits used to indicate whether a line 1s modified,
+exclusive, shared, or invalid, we add an additional speculative bit. The speculative modified
+state indicates a line that has been written in the current transaction; the speculative exclusive
+
+Buffering in the Cache
+
+Though most commercial HTM implementations buffer speculative updates (and tag speculative
+reads) in the cache hierarchy, they do so in different ways. Azul’s implementation was entirely in the
+(private) L1 caches; its shared L2 was oblivious to speculation. Blue Gene/Q, by contrast, kept its
+buffering and tags in a 32 MB L2 cache, with very little support from the L1 caches (each of which is
+shared by as many as 4 threads). In so-called “short-running” mode, a transaction needed to bypass
+the L1 on every access (suffering an L1 miss penalty), so that speculative accesses could be tracked
+in the L2, and loads could see the stores. Alternatively, in “long-running” mode, the operating
+system would flush the LL1 at the beginning of a transaction, and then manipulate virtual-to-physical
+mappings so that separate threads used separate physical addresses in the L1 (the bits in which these
+addresses differed were stripped by hardware on the L1-to-L2 path).
+
+The zEC12 took yet another approach. It tracked and buffered speculative accesses in the L1, but
+both the L1 and L2 were normally write-through. To hide speculative stores from the L2 and L3,
+designers introduced a 64-cache line (8 KB) gathering store cache on the L1-to-L2 path. During
+a transaction, stores were held in the gathering cache until commit time; stores that targeted the
+same cache line were coalesced. Given that the L3 was shared by 6 cores, each of which could (in
+bursts) execute two stores (and 5 other instructions) per cycle at 5.5 GHz, the gathering cache served
+the important additional function of reducing incoming bandwidth to the L3, even during normal
+operation.
+
+Like the Azul machines, Intel’s Haswell processor and its successors perform access tracking and
+update buffering in the L1 cache, at cache line granularity. Conflicts are detected using the existing
+coherence protocol. Intriguingly, speculative loads (but not stores) that exceed the capacity or asso-
+ciativity of the LL1 cache are summarized in a hardware structure (widely assumed to be some sort of
+Bloom filter) that is then checked against incoming coherence requests. As a result, Intel’s machines
+can often accommodate transactions with very large read sets. The IBM Power 8 buffered speculative
+state in the L2 cache, with a separate set of 64 tags that were dynamically associated with speculative
+lines.
+Two hundred. Nine Transactional Memory. But such mechanisms seem unlikely to make their way into commercial systems anytime soon. In addition to the state of memory, a T M system must consider the state of in core resources—registers in particular. In most H T M systems, tx begin checkpoints all or most of the registers and restores them on abort. In a few systems (including Blue Gene/Q and the Azul Vega processors (Click two thousand nineteen)), software must checkpoint the registers prior to tx begin, and restore them manually on abort.
+
+Access Tracking and Conflict Resolution. By far the most common way to identify conflicts in an H T M system is to leverage the existing cache coherence protocol. Consider a basic M E S I protocol of the sort described in Sec. two point one point two. Suppose, in addition to the tag bits used to indicate whether a line is modified, exclusive, shared, or invalid, we add an additional speculative bit. The speculative modified state indicates a line that has been written in the current transaction; the speculative exclusive state indicates a line that has been written in the current transaction.
+
+Buffering in the Cache. Though most commercial H T M implementations buffer speculative updates (and tag speculative reads) in the cache hierarchy, they do so in different ways. Azul's implementation was entirely in the (private) L one caches; its sharing was oblivious to speculation. Blue Gene/Q, by contrast, kept its buffering and tags in a thirty two K B L two cache, with very little support from the L one caches (each of which is shared by as many as four threads). In so called "short running" mode, a transaction needed to bypass the L one on every access (suffering an L one miss penalty), so that speculative accesses could be tracked but not committed. In "long running" mode, the operating system would flush the L one at the beginning of a transaction, and then manipulate virtual to physical mappings so that separate threads used separate physical addresses in the L one (the bits in which these addresses differed were stripped by hardware on the L one to L two path).
+
+The z E C twelve took yet another approach. It tracked and buffered speculative accesses in the L one, but both the L one and L two were normally write through. To hide speculative stores from the L two and L three, designers introduced a sixty four K B cache line (eight K B) gathering store cache on the L one to L two path. During a transaction, stores were held in the gathering cache until commit time; stores that targeted the same cache line were coalesced. Given that the L three was shared by six cores (and five other instructions) per cycle at five point five gigahertz, the gathering cache served the important additional function of reducing incoming bandwidth to the L three, even during normal operation.
+
+Like the Azul machines, Intel's Haswell processor and its successors perform access tracking and update buffering in the L one cache, at cache line granularity. Conflicts are detected using the existing cache coherence protocol. Intriguingly, speculative loads (but not stores) that exceed the capacity or associativity of the L one cache are summarized in a hardware structure (widely assumed to be some sort of Bloom filter) that is then checked against incoming coherence requests. As a result, Intel's machines can often accommodate transactions with very large read sets. The IBM Power eight buffered speculative state in the L two cache, with a separate set of sixty four tags that were dynamically associated with speculative lines.
+Transactional memory systems require mechanisms to manage the state of in-core resources, such as registers, to facilitate transaction commits or rollbacks. In many transactional memory implementations, a crucial operation involves checkpointing these registers at the beginning of a transaction, often referred to as `tx_begin`. Upon a transaction abort, these saved register states are restored. Some systems, like certain configurations of the Azul Vega processors, delegate this checkpointing and restoration responsibility to software. This approach necessitates explicit instructions within the program to save register states before a transaction and to reload them if the transaction fails.
+
+A primary challenge in transactional memory is effectively tracking memory accesses and resolving conflicts, particularly in systems employing existing cache coherence protocols. A common strategy to identify conflicts is to augment the cache coherence states, such as those defined by the M E S I protocol, with an additional `speculative` bit. This bit indicates whether a cache line has been modified speculatively within the current transaction. When a cache line is accessed speculatively, its corresponding tag might be marked as `speculative modified`, `speculative shared`, or `speculative invalid`. This explicit tagging allows the system to distinguish between regular memory operations and speculative ones, enabling finer-grained conflict detection.
+
+The implementation of speculative buffering within the cache hierarchy can vary significantly across different transactional memory systems. In many commercial transactional memory implementations, speculative updates and their associated tag information are buffered within the caches. For instance, Azul's transactional memory implementation buffers these speculative updates directly in the L one cache. In contrast, systems like Blue Gene/Q buffer speculative operations in the L two cache, with limited support for the L one caches, which are typically designed to handle speculative accesses with very little overhead, such as a small miss penalty. In a "short-running" mode, speculative updates might be directly visible to the L one cache. Alternatively, in a "long-running" mode, the operating system might manage the mapping of virtual to physical addresses, and the L one cache might hold these mappings, with separate threads handling different physical addresses, and the L one to L two path being managed by hardware.
+
+The zEC12 processor adopts a distinct approach to handling speculative accesses. It tracks and buffers speculative operations that would normally be write-through to the L two and L three caches. To mitigate the overhead of speculative loads, designers introduced a sixty-four-byte cache line. During a transaction, stores to the same cache line are coalesced. This coalescing, even for bursts of operations, allows the gathering cache to serve multiple stores per cycle, effectively reducing incoming bandwidth to the L three cache, even under normal operating conditions.
+
+Intel's Haswell processor and its successors incorporate speculative access tracking and buffering at the cache line granularity, within the L one cache itself. Conflicts are primarily detected for speculative loads, though not for speculative stores, by leveraging the existing cache coherence protocol. The associativity of the L one cache is critical here, and it is summarized in a hardware structure, often akin to a Bloom filter, which is checked against incoming coherence requests. This design aims to accommodate transactions with extensive read sets. For example, the I B M Power eight processor buffers speculative operations within the L two cache, utilizing a separate set of sixty-four tags that are dynamically managed, thereby handling speculative updates associated with such operations.

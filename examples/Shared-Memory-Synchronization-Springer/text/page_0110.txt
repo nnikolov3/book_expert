@@ -1,0 +1,68 @@
+6.2 Sequence Locks 113
+
+data races, a straightforward fix is to label all read locations atomic; this will prevent the
+compiler from reordering accesses, and cause it to issue special instructions that prevent
+the hardware from reordering them either. This solution is overly conservative, however: it
+inhibits reorderings that are clearly acceptable within idempotent read-only critical sections.
+Boehm (2012) explores the data-race issue in depth, and describes other, less conservative
+options.
+
+A related ordering issue arises from the fact that readers do not modify the state of a
+seqlock. Because they only read it, on some machines their accesses will not be globally
+ordered with respect to writer updates. If threads inspect multiple seqlock-protected data
+structures, a situation analogous to the IRIW example of Figure 2.4 can occur: threads 2
+and 3 see updates to objects X and Y, but thread 2 thinks that the update to X happened first,
+while thread 3 thinks that the update to Y happened first. To avoid causality loops, writers
+must update the seqlock using sequentially consistent (write-atomic) synchronizing stores.
+
+Together, the problems of inconsistency and data races are subtle enough that seqlocks are
+best thought of as a special-purpose technique, to be employed by experts in well constrained
+circumstances, rather than as a general-purpose form of synchronization. That said, seqlock
+usage can be safely automated by a compiler that understands the nature of speculation.
+Dalessandro et al. (2010a) describe a system (in essence, a minimal implementation of
+transactional memory) in which (1) a global sequence lock serializes all writer transactions,
+(2) fences and reader_validate calls are inserted automatically where needed, and (3) local
+state 1s checkpointed at the beginning of each reader transaction, for restoration on abort. A
+follow-up paper (Dalessandro et al. 2010c¢) describes a more concurrent system, in which
+writer transactions proceed speculatively, and a global sequence lock serializes only the
+write-back of buffered updates. We will return to the subject of transactional memory in
+Chapter 9.
+
+6.3 Read-Copy Update
+
+Read-copy update, more commonly known simply as RCU (McKenney et al. 2001; McKen-
+ney 2004), 1s a synchronization strategy originally developed for use within the operating
+system kernel (McKenney et al. 2020, retrospective), and subsequently extended to user
+space as well (Desnoyers et al. 2012). RCU attempts to drive the overhead of reader syn-
+chronization as close to zero as possible, at the expense of potentially very high overhead
+for writers. Instances of the strategy typically display the following four main properties:
+
+No shared updates by readers. As in a sequence lock, readers modify no shared metadata
+before or after performing an operation. While this makes them invisible to writers, it
+avoids the characteristic cache misses associated with locks. To ensure a consistent view
+of memory, readers may need to execute R||R fences on some machines, but these are
+typically much cheaper than a cache miss.
+Six point two, Sequence Locks.
+
+Data races, a straightforward fix is to label all read locations atomic; this will prevent the compiler from reordering accesses, and cause it to issue special instructions that prevent the hardware from reordering them either. This solution is overly conservative, however: it inhibits reorderings that are clearly acceptable within idempotent read only critical sections. Boehm, two thousand twelve, explores the data race issue in depth, and describes other, less conservative options.
+
+A related ordering issue arises from the fact that readers do not modify the state of a seq lock. Because they only read it, on some machines their accesses will not be globally ordered with respect to writer updates. If threads inspect multiple seq lock protected data structures, a situation analogous to the I R I W example of Figure two point four can occur: threads two and three see updates to objects X and Y, but thread two thinks that the update to X happened first, while thread three thinks that the update to Y happened first. To avoid causality loops, writers must update the seq lock using sequentially consistent, write atomic, synchronizing stores.
+
+Together, the problems of inconsistency and data races are subtle enough that seq locks are best thought of as a special purpose technique, to be employed by experts in well constrained circumstances, rather than as a general purpose form of synchronization. That said, seq lock usage can be safely automated by a compiler that understands the nature of speculation. Dalessandro et al., two thousand ten a, describe a system, in essence a minimal implementation of transactional memory, in which one, a global sequence lock serializes all writer transactions, two, fences and reader underscore validate calls are inserted automatically where needed, and three, local state is checkpointed at the beginning of each reader transaction, for restoration on abort. A follow up paper, Dalessandro et al., two thousand ten c, describes a more concurrent system, in which writer transactions proceed speculatively, and a global sequence lock serializes only the write back of buffered updates. We will return to the subject of transactional memory in Chapter nine.
+
+Six point three, Read copy Update.
+
+Read copy update, more commonly known simply as R C U, McKenney et al. two thousand one; McKenney two thousand four, is a synchronization strategy originally developed for use within the operating system kernel, McKenney et al. two thousand twenty, retrospective, and subsequently extended to user space as well, Desnoyers et al. two thousand twelve. R C U attempts to drive the overhead of reader synchronization as close to zero as possible, at the expense of potentially very high overhead for writers. Instances of the strategy typically display the following four main properties:
+
+No shared updates by readers. As in a sequence lock, readers modify no shared metadata before or after performing an operation. While this makes them invisible to writers, it avoids the characteristic cache misses associated with locks. To ensure a consistent view of memory, readers may need to execute R or or R fences on some machines, but these are typically much cheaper than a cache miss.
+The discussion centers on advanced synchronization primitives in concurrent computing, particularly addressing the challenges of data consistency and performance in multi-threaded environments where compilers and hardware engage in instruction reordering.
+
+The initial concept explored is the mitigation of data races through stringent ordering. A straightforward approach to prevent compilers from reordering memory accesses and to compel hardware to issue specific instructions that inhibit reordering is to label all read locations as atomic. This ensures that memory operations appear to execute instantaneously and in an indivisible manner with respect to other threads. While effective in preventing certain data races, this solution is inherently conservative because it unnecessarily inhibits reorderings that would be acceptable within idempotent read only critical sections, which by definition can be safely re-executed without adverse effects. Such broad application of atomic labeling imposes performance penalties far beyond what is strictly necessary for correctness.
+
+A more nuanced problem arises from the behavior of readers in a concurrent system, specifically within what are termed "sequence locks" or "seqlocks". Unlike traditional locks where readers acquire shared access, in seqlocks, readers do not modify the state of the data. However, even if they only read, their accesses might not be globally ordered with respect to writer updates across all processing elements or memory hierarchies. This can lead to subtle inconsistencies. For instance, if threads are inspecting multiple seqlock protected data structures, a scenario analogous to the I R I W, or "independent reads of independent writes," memory model example, can occur. Consider a case where thread two and thread three observe updates to objects X and Y. If thread two perceives that the update to X happened first, while thread three thinks the update to Y happened first, it represents a causality loop violation. To prevent such anomalies, writers using seqlocks must enforce sequentially consistent, or write atomic, synchronization for their stores. This ensures that all modifications by writers are globally ordered and visible consistently to all threads.
+
+The inherent problems of inconsistency and data races, though subtle, are profound enough that seqlocks are considered a specialized technique to be employed by experts within specific, well constrained circumstances, rather than as a general purpose synchronization mechanism. This limited applicability underscores the nature of speculation in complex systems. One implementation of sequence locks in a transactional memory context describes a system where a global sequence lock serializes all writer transactions. Furthermore, memory fences and reader validation calls are automatically inserted where needed to enforce ordering, and the local state of a reader is checkpointed at the beginning of each transaction, enabling restoration upon an abort. This design contrasts with more general concurrent systems where writer transactions proceed speculatively, and a global sequence lock specifically serializes only the write back phase of buffered updates, reflecting a delicate balance between performance and consistency guarantees.
+
+Moving to another critical synchronization paradigm, "Read Copy Update," or R C U, stands as a fundamental synchronization strategy primarily developed for use within operating system kernels and later extended to user space. The foundational principle behind R C U is to minimize the synchronization overhead for readers, ideally driving it to near zero, at the expense of potentially higher overhead for writers. This design choice represents a crucial trade off in concurrent system design, optimizing for read heavy workloads.
+
+R C U's effectiveness stems from four main properties. First, readers do not modify any shared metadata. This characteristic is pivotal because it eliminates the need for readers to acquire locks or participate in complex cache coherence protocols related to write contention, thereby significantly reducing their overhead. Second, reader operations are invisible to writers during the update process. This is typically achieved by writers creating a new copy of the data structure, modifying the copy, and then atomically publishing a pointer to the new copy. This allows concurrent readers to continue operating on the old version of the data without interference until their read operation completes. Third, to ensure a consistent view of memory, readers may need to execute read read fences on certain machine architectures. These fences act as memory barriers, ensuring that all prior reads complete before subsequent reads commence, thereby maintaining program order visibility for readers even in weakly ordered memory models. Despite the necessity of these fences on some platforms, their cost is typically much lower than the performance penalties incurred from cache misses, which are often associated with traditional lock based synchronization mechanisms due to cache line invalidations and contention. This makes R C U a highly efficient solution for workloads characterized by many readers and infrequent writers.

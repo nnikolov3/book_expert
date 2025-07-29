@@ -1,0 +1,57 @@
+9.3 Challenges 213
+
+be implemented on HTM systems (e.g., Power TM and recent Intel RSX) that allow
+nontransactional loads inside transactions.
+
+e safe futures (Sec. 7.4.2) (Welc et al. 2005), which abort and roll back their continuation
+in the event of conflict, and can thus be used in languages with side effects, without
+changing program semantics. Like ordered speculation, safe futures can be implemented
+with an HTM system that supports nontransactional loads inside transactions.
+
+9.3.3 Implementation
+
+The discussion of STM in Sec. 9.1 conveys some sense of the breadth of possible implemen-
+tation strategies. It is far from comprehensive, however. Drawing inspiration from database
+systems, several groups have considered multi-version STM systems, which increase the
+success rate for long-running read-only transactions by keeping old versions of modified
+data (Riegel et al. 2006; Cachopo and Rito-Silva 2006; Perelman et al. 2011; Lu and Scott
+2013; Wei et al. 2023). Instead of requiring that all loaded values be correct as of commit
+time (and then aborting every time a location in the read set is updated by another transac-
+tion), multi-version TM systems arrange for a reader to use the values that were current as
+of its start time, and thus to “commit in the past.” To increase concurrency, it is conceivable
+that TM might also adopt the ability of some database systems to forward updates from
+one (still active) transaction to another, making the second dependent on the first (Ramadan
+et al. 2008).
+
+Privatization
+Informally, a transaction is said to privatize a data structure X if, prior to the transaction,
+X may be accessed by more than one thread, but after the transaction program logic guar-
+antees that X is private to some particular thread. The canonical example of privatization
+arises with shared containers through which threads pass objects to one another. In a pro-
+gram with such a container, the convention may be that once an object has been removed
+from the container, it “belongs” to the thread that removed it, which can safely operate on
+it without any synchronization. If the thread returns the object to the same or a different
+container at a later time, it 1s said to publish the object. Publication of most shared objects
+also occurs at creation time: a thread typically allocates an object and initializes it before
+making it visible (publishing it) to other threads. Prior to publication, no synchronization is
+required. Dalessandro et al. (2010b) have observed that privatization is semantically equiv-
+alent to locking—it renders a shared object temporarily private. Publication is equivalent to
+unlocking—it makes the private object shared again.
+
+In their usual form, publication and privatization are race-free idioms, at least at the
+level of the programming model: any accesses by different threads are always ordered by an
+intervening transaction. Unfortunately, in many STM systems, privatization is not race-free
+Challenges 213 be implemented on H T M systems, for example, Power T M and recent Intel R S X, that allow non transactional loads inside transactions. Safe futures, section seven point four, which abort and roll back their continuation in the event of conflict, and can thus be used in languages with side effects, without changing program semantics. Like ordered speculation, safe futures can be implemented with an H T M system that supports non transactional loads inside transactions.
+
+Implementation
+
+The discussion of S T M in section nine point one conveys some sense of the breadth of possible implementation strategies. It is far from comprehensive; however, drawing inspiration from database systems, several groups have considered multi version S T M systems, which increase the success rate for long running read only transactions by keeping old versions of modified data, Riegel at al., two thousand six; Cachopo and Rito Silva, two thousand six; Perelman et al., two thousand eleven; Lu and Scott, two thousand thirteen; Wei et al., two thousand twenty three. Instead of requiring that all loaded values be correct as of commit time, and then aborting every time a location in the read set is updated by another transaction, multi version T M systems arrange for a reader to use the values that were current as of its start time, and thus to commit in the past. To increase concurrency, it is conceivable that T M might also adopt the ability of some database systems to forward updates from one, still active, transaction to another, making the second dependent on the first, Ramadan et al., two thousand eight.
+
+Privatization
+
+Informally, a transaction is said to privatize a data structure X if, prior to the transaction, X may be accessed by more than one thread, but after the transaction, program logic guarantees that X is private to some particular thread. The canonical example of privatization arises with shared containers through which threads pass objects to one another. In a program with such a container, the convention may be that once an object has been removed from the container, it belongs to the thread that removed it, which can safely operate on it without any synchronization. If the thread returns the object to the same or a different container at a later time, it is said to publish the object. Publication of most shared objects also occurs at creation time; a thread typically allocates an object and initializes it before making it visible, publishing it, to other threads. Prior to publication, no synchronization is required. Dalessandro et al., two thousand ten b, have observed that privatization is semantically equivalent to locking; it renders a shared object temporarily private. Publication is equivalent to unlocking; it makes the private object shared again. In their usual form, publication and privatization are race free idioms, at least at the level of the programming model; any accesses by different threads are always ordered by an intervening transaction. Unfortunately, in many S T M systems, privatization is not race free.
+The discussion of transactional memory systems presents challenges, particularly concerning the implementation of nontransactional loads within transactions. One such challenge is the concept of "safe futures," as described in Section 7.4. These are mechanisms that allow for the abortion and rollback of transactional continuations, even when they involve side effects or have already interacted with the external environment. Safe futures enable languages to use transactional constructs for managing side effects, offering a degree of ordered speculation, similar to how nontransactional loads can be supported within transactional contexts.
+
+Section 9.3.3 delves into implementation strategies for Software Transactional Memory, or S T M, systems, drawing inspiration from database systems. It highlights the effectiveness of multi-version S T M systems in handling long-running, read-only transactions by maintaining historical versions of modified data. This approach allows read-only transactions to access data as it was at the start of the transaction, or even to utilize versions committed in the past, thereby avoiding the need to fetch the absolute latest values. For concurrency control, especially to increase the rate at which transactions can commit, some systems may permit database systems to forward updates from a later state to an earlier one. This strategy is particularly relevant when a transaction's state depends on a prior transaction, creating a dependency where the second transaction is effectively synchronized with the outcome of the first.
+
+The concept of privatization is introduced as a method to make a data structure private to a specific thread. This occurs when a transaction, say X, accesses a data structure that was previously shared among multiple threads, and then ensures that X is the sole accessor to that structure. A common scenario for privatization is when threads pass objects through containers. In such cases, once an object is removed from a container by a thread, it is considered to "belong" to that thread, and subsequent operations on it do not require synchronization. The act of making an object accessible to others is termed "publishing." Privatization can also occur at creation time, where a thread allocates an object and initializes it before making it visible to other threads. Dalessandro and colleagues have observed that privatization can render a shared object temporarily private, and publication is the process of making that private object accessible again. Both publication and privatization are considered race-free idioms, meaning accesses from different threads are ordered by an intervening transaction. However, in many S T M systems, privatization is not inherently race-free, implying that careful implementation is required to guarantee its correctness in concurrent environments. This relates to the broader challenge of ensuring semantic equivalence between privatizing operations and traditional locking mechanisms, where privatization effectively acts as a substitute for explicit locking.

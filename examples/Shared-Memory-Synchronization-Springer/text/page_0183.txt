@@ -1,0 +1,53 @@
+188 9 Transactional Memory
+
+9.1 Software TM
+
+If two TM implementations provide the same functionality—one in hardware and the other
+in software—the hardware version will almost certainly be faster. Software implementations
+have other advantages, however: they can run on legacy hardware, they are more flexible
+(extensible), and they can provide functionality that is considered too complex to implement
+in hardware. As of 2023, commercial hardware TM 1s limited to relatively simple “best
+effort” systems from Intel, IBM, and Arm. The majority of research over the past 20 years
+has taken place in a software context.
+
+9.1.1 Dimensions of the STM Design Space
+
+The variety of STM designs has proven to be something of a surprise: researchers in the early
+2000s did not anticipate how large the design space would be. Principal design dimensions
+include the following:
+
+Progress guarantees — Most of the early universal constructions were nonblocking, and
+many of the original STM systems were likewise. The OSTM (object-based STM) of
+Fraser’s thesis work was lock free (Fraser 2003; Fraser and Harris 2007); several other
+systems have been obstruction free (Herlihy et al. 2003b; Harris and Fraser 2003; Marathe
+et al. 2005; Marathe et al. 2006; Marathe and Moir 2008; Tabba et al. 2009). Over time,
+however, most groups have moved to blocking implementations in order to obtain better
+expected-case performance.
+
+Buffering of speculative updates — To be able to roll back aborted transactions, a TM sys-
+tem must maintain both the old and new versions of speculatively modified data. The two
+most common options are sometimes referred to as “undo logging” (Harris et al. 2006;
+Saha et al. 2006a), in which changes are made “in place,” but old values are buffered
+for write-back on abort, and “redo logging” (Harris and Fraser 2003; Dice et al. 2006),
+in which new values are buffered for write-back on commit. In either case, a secondary
+decision must be made regarding the granularity (byte, word, cache line, object) at which
+to buffer changes. In a system with redo logs, load instructions must be modified to
+first check the redo log, to make sure the transaction sees its own writes. Some object-
+based systems use a third, “cloning” option, in which multiple copies of a language-level
+object are globally visible, and threads choose among them based on metadata that tracks
+commits and aborts (Herlihy et al. 2003b; Fraser and Harris 2007; Marathe et al. 2005;
+Marathe et al. 2006; Tabba et al. 2009).
+
+Access tracking and conflict resolution — When two transactions conflict, a TM system
+must ensure that they do not both commit. Some systems are eager: they notice as soon
+as a location already accessed in one transaction is accessed in a conflicting way by a
+One hundred eighty eight. Nine Transactional Memory. Nine point one Software T M. If two T M implementations provide the same functionality, one in hardware and the other in software, the hardware version will almost certainly be faster. Software implementations have other advantages; however, they can run on legacy hardware, they are more flexible extensible, and they can provide functionality that is considered too complex to implement in hardware. As of two thousand twenty three, commercial hardware T M is limited to relatively simple best effort systems from Intel, I B M, and Arm. The majority of research over the past twenty years has taken place in a software context. Nine point one point one Dimensions of the S T M Design Space. The variety of S T M designs has proven to be something of a surprise; researchers in the early two thousand s did not anticipate how large the design space would be. Principal design dimensions include the following. Progress guarantees. Most of the early universal constructions were nonblocking, and many of the original S T M systems were likewise. The O S T M object based S T M of Fraser's thesis work was lock free Fraser two thousand three; Fraser and Harris two thousand seven; several other systems have been obstruction free Herlihy et al. two thousand three b; Harris and Fraser two thousand three; Marathe et al. two thousand five; Marathe and Moir two thousand eight; Tabba et al. two thousand nine. Over time, however, most groups have moved to blocking implementations in order to obtain better expected case performance. Buffering of speculative updates. To be able to roll back aborted transactions, a T M system must maintain both the old and new versions of speculatively modified data. The two most common options are sometimes referred to as undo logging Harris et al. two thousand six; Saha et al. two thousand six a, in which changes are made in place, but old values are buffered for write back on abort, and redo logging Harris and Fraser two thousand three; Dice et al. two thousand six, in which new values are buffered for write back on commit. In either case, a secondary decision must be made regarding the granularity byte, word, cache line, object at which to buffer changes. In a system with redo logs, load instructions must be modified to first check the redo log, to make sure the transaction sees its own writes. Some object based systems use a third cloning option, in which multiple copies of a language level object are globally visible, and threads choose among them based on metadata that tracks commits and aborts Herlihy et al. two thousand three b; Fraser and Harris two thousand seven; Marathe et al. two thousand six; Marathe et al. two thousand five; Tabba et al. two thousand nine. Access tracking and conflict resolution. When two transactions conflict, a T M system must ensure that they do not both commit. Some systems are eager, they notice as soon as a location already accessed in one transaction is accessed in a conflicting way by a.
+This document delves into the realm of software transactional memory, contrasting its implementation with hardware transactional memory. While hardware solutions, such as those offered by Intel, A M D, and Arm, are generally faster due to direct hardware support, software transactional memory (S T M) offers greater flexibility. This flexibility arises from its ability to run on legacy hardware and its capacity to support functionalities deemed too complex for hardware implementation. The research landscape in the past two decades has largely focused on software-based transactional memory systems.
+
+The discussion then elaborates on the key dimensions of the S T M design space, identifying several crucial aspects that early S T M designers considered.
+
+First, *Progress guarantees* are examined. Many of the initial universal transactional memory constructions were nonblocking. The OST M, which is object based transactional memory, as proposed by Fraser and Harris in two thousand seven, was lock free. Subsequently, other systems built upon this, such as those by Herlihy et al. in two thousand three B and Harris and Fraser in two thousand three, also aimed for obstruction freedom. Later developments, including those by Marathe and Moir in two thousand eight and Tabba et al. in two thousand nine, saw a shift towards blocking implementations, often to achieve better expected case performance.
+
+Second, *Buffering of speculative updates* is discussed. A transactional memory system must maintain both the old and new versions of speculatively modified data. The two prevalent approaches for this buffering are "undo logging" and "redo logging". In undo logging, which is often referred to as a "fast path" in some systems (Harris et al. two thousand six), old values are buffered. This is seen in systems that allow for write back on abort. Conversely, redo logging, as detailed by Harris and Fraser in two thousand three and Dice et al. in two thousand six, buffers new values for write back on commit. In both scenarios, a secondary mechanism is employed to manage the granularity of these buffered updates, whether at the byte, word, cache line, or object level. Systems employing redo logs often require load instructions to check the redo log, ensuring that the transaction correctly observes its own writes. Furthermore, some object based systems implement a "cloning" option, where multiple copies of a language level object are made visible. Threads then select among these copies based on metadata that tracks commits and aborts, as explored by Herlihy et al. in two thousand three B, Fraser and Harris in two thousand seven, and Marathe et al. in two thousand five and two thousand six.
+
+Third, *Access tracking and conflict resolution* are addressed. When two transactions attempt to access the same data, a conflict arises. S T M systems are categorized as "eager" or "lazy" based on how they detect and resolve these conflicts. Eager systems detect a conflict as soon as a data location accessed in one transaction is subsequently accessed in a conflicting manner by another transaction. This often involves mechanisms to track read and write sets for each transaction. Lazy systems, on the other hand, defer conflict detection until the transaction attempts to commit. The choice between eager and lazy conflict detection involves trade-offs in terms of performance and complexity, impacting the efficiency of rollbacks and retries. The mechanism of conflict detection and resolution is fundamental to maintaining the atomicity and isolation properties of transactional memory.

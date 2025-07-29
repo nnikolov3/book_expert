@@ -1,0 +1,63 @@
+1.2 Condition Synchronization 5
+
+Whether atomicity is achieved through coarse-grain locking, programmer-managed fine-
+grain locking, or some form of transactional memory, the intent is that atomic regions appear
+to be indivisible. Put another way, any realizable execution of the program—any possible
+interleaving of its machine instructions—must be indistinguishable from (have the same
+externally visible behavior as) some execution in which the instructions of each atomic
+operation are contiguous in time, with no other instructions interleaved among them. As we
+shall see in Chapter 3, there are several possible ways to formalize this requirement, most
+notably linearizability and several variants of serializability.
+
+1.2 Condition Synchronization
+
+In some cases, atomicity 1s not enough for correctness. Consider, for example, a program
+containing a work queue, into which “producer” threads place tasks they wish to have
+performed, and from which “consumer” threads remove tasks they plan to perform. To
+preserve the structural integrity of the queue, we shall need each insert or remove operation
+to execute atomically. More than this, however, we shall need to ensure that a remove
+operation executes only when the queue 1s nonempty and (if the size of the queue is bounded)
+an insert operation executes only when the queue 1s nonfull:
+
+Q.insert(data d): data Q.remove():
+atomic atomic
+await —Q.full() await —=Q.empty()
+// put d in next empty slot // return data from next full slot
+
+In the synchronization literature, a concurrent queue (of whatever sort of objects) 1s
+sometimes called a bounded buffer; it is the canonical example of mixed atomicity and
+condition synchronization. As suggested by our use of the await condition notation above
+(notation we have not yet explained how to implement), the conditions in a bounded buffer
+can be specified at the beginning of the critical section. In other, more complex operations,
+a thread may need to perform nontrivial work within an atomic operation before it knows
+what condition(s) it needs to wait for. Since another thread will typically need to access (and
+modify!) some of the same data in order to make the condition true, a mid-operation wait
+needs to be able to “break” the atomicity of the surrounding operation in some well-defined
+way. In Chapter 7 we shall see that some synchronization mechanisms support only the
+simpler case of waiting at the beginning of a critical section; others allow conditions to
+appear anywhere inside.
+
+In many programs, condition synchronization is also useful outside atomic operations—
+typically as a means of separating “phases” of computation. In the simplest case, suppose
+that a task to be performed in thread B cannot safely begin until some other task (data
+structure initialization, perhaps) has completed in thread A. Here B may spin on a Boolean
+flag variable that is initially false and that is set by A to true. In more complex cases, it is
+common for a program to go through a series of phases, each of which is internally parallel,
+Whether atomicity is achieved through coarse grain locking, programmer managed fine grain locking, or some form of transactional memory, the intent is that atomic regions appear to be indivisible. Put another way, any realizable execution of the program—any possible interleaving of its machine instructions—must be indistinguishable from having the same externally visible behavior as some execution in which the instructions of each atomic operation are contiguous in time, with no other instructions interleaved among them. As we shall see in Chapter three, there are several possible ways to formalize this requirement, most notably linearizability and several variants of serializability.
+
+In some cases, atomicity is not enough for correctness. Consider, for example, a program containing a work queue, into which producer threads place tasks they wish to have performed, and from which consumer threads remove tasks they plan to perform. To preserve the structural integrity of the queue, we shall need each insert or remove operation to execute atomically. More than this, however, we shall need to ensure that a remove operation executes only when the queue is non empty and if the size of the queue is bounded, an insert operation executes only when the queue is non full.
+
+The following describes the functionality of a queue’s insert and remove operations. For the Q dot insert function, which takes data `d` as input, the operation is atomic. It first waits until the condition `not Q dot full` is met, then it puts the data `d` into the next empty slot. For the Q dot remove function, which returns data, the operation is also atomic. It waits until the condition `not Q dot empty` is met, then it returns data from the next full slot.
+
+In the synchronization literature, a concurrent queue of whatever sort of objects is sometimes called a bounded buffer. It is the canonical example of mixed atomicity and condition synchronization. As suggested by our use of the await condition notation above, the conditions in a bounded buffer can be specified at the beginning of the critical section. The notation itself has not yet been explained in terms of implementation. In other, more complex operations, a thread may need to perform nontrivial work within an atomic operation before it knows what condition or conditions it needs to wait for. Since another thread will typically need to access and modify some of the same data in order to make the condition true, a mid operation wait needs to be able to break the atomicity of the surrounding operation in some well defined way. In Chapter seven, we shall see that some synchronization mechanisms support only the simpler case of waiting at the beginning of a critical section, while others allow conditions to appear anywhere inside.
+
+In many programs, condition synchronization is also useful outside atomic operations, typically as a means of separating phases of computation. In the simplest case, suppose that a task to be performed in thread B cannot safely begin until some other task, such as data structure initialization, has completed in thread A. Here, thread B may spin on a Boolean flag variable that is initially false and that is set by thread A to true. In more complex cases, it is common for a program to go through a series of phases, each of which is internally parallel.
+The foundational concept of atomicity in concurrent systems dictates that certain operations or sequences of instructions must appear to execute instantaneously and indivisibly from the perspective of all other threads or processes. This property is crucial for maintaining data consistency in shared memory environments. Atomicity can be achieved through various mechanisms, such as coarse grain locking, where large sections of code are protected by a single lock, or through finer grain programmer managed locks that guard smaller critical sections. An alternative approach involves transactional memory, which aims to provide atomicity by allowing optimistic execution and rolling back changes if conflicts are detected. The overarching intent behind any of these methods is to ensure that what we define as atomic regions within a program always appear as if they completed without any interleaved operations from other threads. This leads to the correctness criterion of linearizability, which states that any observable execution of a concurrent program must be indistinguishable from some sequential execution where each atomic operation takes effect instantaneously at a point between its invocation and completion. This implies that the internal machine instructions of each atomic operation must execute contiguously in time, without any interference from other operations.
+
+While atomicity is a necessary condition for correctness in many concurrent scenarios, it is often insufficient on its own. Consider the classic producer consumer problem, where data is placed into a work queue by producer threads and removed by consumer threads. To preserve the structural integrity and invariant properties of this queue, such as its capacity limits, both insertion and removal operations must execute atomically. However, merely guaranteeing atomicity does not prevent a producer from attempting to insert data into a full queue, or a consumer from trying to remove data from an empty queue. This necessitates an additional layer of synchronization known as condition synchronization. An insert operation, for instance, should only proceed when the queue is not full, and a remove operation should only proceed when the queue is not empty.
+
+This conditional execution requirement is illustrated by the provided pseudo code for `Q.insert` and `Q.remove`. For `Q.insert(data d)`, the entire operation is enclosed within an `atomic` block, ensuring its indivisibility. Before the actual data insertion, there is an `await not Q.full()` statement. The `await` primitive signifies a conditional wait. The thread executing this insert operation will block and yield its C P U until the condition `Q.full()` evaluates to false, meaning the queue is no longer full. Once the queue has space, the thread resumes and the data `d` is placed into the next empty slot. Similarly, for `data Q.remove()`, also within an `atomic` block, the thread first executes `await not Q.empty()`. This ensures that the removal operation only proceeds when the queue is not empty. If the queue is empty, the thread blocks until data becomes available. Once the condition is met, the thread retrieves data from the next full slot. These `await` constructs are crucial as they prevent busy waiting, allowing the C P U to be used by other threads while a thread waits for its required condition to be met.
+
+In the literature of concurrent programming, a concurrent queue, particularly one with a finite capacity, is often referred to as a bounded buffer. It serves as a canonical example demonstrating the interplay between atomicity and condition synchronization. The conditions governing insertions and removals, such as the buffer not being full or not being empty, must be specified precisely at the entry point of the critical section. More complex operations on such data structures might require a thread to perform nontrivial work within an atomic operation before it can determine what specific conditions it needs to wait for. Furthermore, if one thread needs to access and potentially modify some of the same data that another thread is currently operating on, a mid operation wait might be necessary. Some synchronization mechanisms, however, might only support waiting at the beginning of a critical section, which limits their applicability. More flexible mechanisms are required to allow conditions to be checked and waited upon at arbitrary points within an atomic region. As explored in a subsequent discussion, Chapter seven will delve deeper into the mechanisms that support this more flexible approach to condition synchronization.
+
+Beyond ensuring data structure integrity, condition synchronization is also widely used for orchestrating the distinct phases of a computation, even outside the context of shared data structures like queues. In its simplest form, imagine a scenario where a task to be performed in thread B cannot safely commence until some prior task, such as a specific data structure initialization, has completed in thread A. This can be managed using a simple Boolean flag variable that is initially set to false. Thread A sets this flag to true upon completion of its task, while thread B repeatedly checks or `spins` on this flag until it becomes true. In more complex scenarios, a program might progress through a series of phases, each of which is internally parallel, and synchronization points using conditional waits are essential to ensure correct phase transitions.

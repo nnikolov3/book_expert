@@ -1,0 +1,76 @@
+179
+
+based approaches. The techniques in Free Access were further improved in Version-based
+Reclamation (VBR) (Sheffi et al. 2021) to allow both reads and writes to proceed using
+epoch-based techniques, rather than HP techniques.
+
+More detailed surveys of SMR algorithms can be found in the work of Brown (2017a)
+and ?. The former has more extensive coverage of SMR algorithms; the latter includes more
+recent algorithms and discusses, in detail, the compatibility of SMR algorithms with popular
+data structures.
+
+8.8 Dual Data Structures
+
+Under even the weakest notion of nonblocking progress, a thread must be able to complete
+an operation in a bounded number of steps in the absence of activity in other threads. This
+implies that the operation must be total; that is, it must be valid and well defined given any
+consistent state of the data structure, with no nontrivial preconditions. In defining operations
+on containers (stacks, queues, etc.), we have assumed that a remove (pop, dequeue)
+operation on an empty container returns a special null or L value to indicate its failure.
+
+But this is often not what we want. In many algorithms, a thread that encounters an empty
+container (or a full bounded container, or an account with insufficient funds, or ...) really
+needs to wait (using condition synchronization) for activity in some other thread to make
+the needed precondition true.
+
+How do we reconcile the need for condition synchronization with the desire for non-
+blocking progress? The obvious option is to spin:
+
+datum v
+repeat
+Vv :=my_containerremove()
+
+untilv #£= L
+
+In addition to wasting cycles and increasing contention (as spinning often does), this
+option has the additional disadvantage that when a new datum is finally inserted into an
+empty container, the thread that gets to remove it will be determined, more or less acciden-
+tally, by the underlying scheduler, rather than by the code of the data structure’s methods.
+To bring the choice under data structure control and, optionally, avoid the use of spinning,
+Scherer and Scott (2004) developed the notion of nonblocking dual data structures.
+
+In addition to data, a dual data structure may also hold reservations. When an operation
+discovers that a precondition does not hold, it inserts a reservation, with the expectation that
+some subsequent operation (in another thread) will notify it when the precondition holds.
+The authors describe a formal framework in which both the initial insertion of a reservation
+and the eventual successful completion of an operation (once the precondition holds) are
+nonblocking and linearizable, and any intermediate activity (spinning or blocking) results in
+only a constant number of remote memory operations, and thus can be considered harmless.
+179
+
+based approaches. The techniques in Free Access were further improved in Version-based Reclamation (VBR) (Sheffi et al. 2021) to allow both reads and writes to proceed using epoch-based techniques, rather than H P techniques. More detailed surveys of S M R algorithms can be found in the work of Brown (2017a) and?. The former has more extensive coverage of S M R algorithms; the latter includes more recent algorithms and discusses, in detail, the compatibility of S M R algorithms with popular data structures.
+
+8.8 Dual Data Structures
+
+Under even the weakest notion of nonblocking progress, a thread must be able to complete an operation in a bounded number of steps in the absence of activity in other threads. This implies that the operation must be total; that is, it must be valid and well defined given any consistent state of the data structure, with no nontrivial preconditions. In defining operations on containers (stacks, queues, etc.), we have assumed that a remove (pop, dequeue) operation on an empty container returns a special null or $\perp$ value to indicate its failure. But this is often not what we want. In many algorithms, a thread that encounters an empty container (or a full bounded container, or an account with insufficient funds, or ...) really needs to wait (using condition synchronization) for activity in some other thread to make the needed precondition true.
+
+How do we reconcile the need for condition synchronization with the desire for nonblocking progress? The obvious option is to spin:
+
+datum v
+
+repeat
+
+v is equal to my_container.remove()
+
+until v is not equal to $\perp$
+
+In addition to wasting cycles and increasing contention (as spinning often does), this option has the additional disadvantage that when a new datum is finally inserted into an empty container, the thread that gets to remove it will be determined, more or less acci-dentally, by the underlying scheduler, rather than by the code of the data structure’s methods. To bring the choice under data structure control and, optionally, avoid the use of spinning, Scherer and Scott (2004) developed the notion of nonblocking dual data structures. In addition to data, a dual data structure may also hold reservations. When an operation discovers that a precondition does not hold, it inserts a reservation, with the expectation that some subsequent operation (in another thread) will notify it when the precondition holds. The authors describe a formal framework in which both the initial reservation of a reservation and the eventual successful completion of an operation (once the precondition holds) are nonblocking and linearizable, and any intermediate activity (spinning or blocking) results in only a constant number of remote memory operations, and thus can be considered harmless.
+The text discusses advancements in Version-based Reclamation, or VBR, techniques, as presented by Sheffi et al. in 2021. These methods aim to enable concurrent read and write operations without the need for hardware prefetching, or HP techniques. It also references the work of Brown, specifically a 2017 publication, which provides a more comprehensive review of SMR algorithms. The latter publication delves into the compatibility of SMR algorithms with common data structures.
+
+Section 8.8 introduces the concept of Dual Data Structures, focusing on the challenges of nonblocking progress in concurrent operations. When an operation is attempted on a data structure that is not in a valid state, or where a precondition is not met, progress might be hindered. The text posits that for operations like removal from containers, such as stacks or queues, the operation must be considered "total." This means it should be valid and well-defined under any circumstances, including attempts to remove elements from an empty container. A typical approach to signal failure in such scenarios is by returning a special null or bottom symbol, denoted as $\bot$.
+
+However, the scenario becomes more complex when a thread encounters an empty container or an account with insufficient funds, leading to a need for condition synchronization. The question arises as to how to achieve condition synchronization without blocking progress. A straightforward, albeit potentially inefficient, approach is "spinning." This involves repeatedly checking a condition until it is met. The pseudocode illustrates this with a loop: `datum v repeat v := my_container.remove() until v != $\bot$`. This means a variable `v` is repeatedly assigned the result of `my_container.remove()` until `v` is not equal to $\bot$, indicating a successful removal.
+
+The primary drawback of spinning is the consumption of CPU cycles and the potential for increased contention, especially when the data structure is frequently accessed or modified. A significant disadvantage arises when a new datum is finally inserted into an otherwise empty container. A thread that was spinning and successfully removes the datum might, due to the scheduler's interleaving of operations, inadvertently remove the newly inserted item. This behavior, occurring more or less accidentally based on the scheduler's timing, is a consequence of the data structure's methods not adequately handling synchronization.
+
+To mitigate these issues, research by Scherer and Scott, cited as 2004, introduced the notion of nonblocking dual data structures. These structures are designed to avoid the performance penalties associated with spinning and to provide a more robust approach to concurrent operations. Their work proposes a formal framework for managing concurrent data structures. In this framework, when an operation encounters a precondition that is not met, it can insert a "reservation." This reservation signifies an intent to complete the operation later. Another thread, upon detecting this reservation, is expected to notify the waiting thread when the precondition is eventually satisfied. The authors' framework aims to ensure that both the initial reservation and the subsequent successful completion of an operation are handled in a manner that is both nonblocking and linearizable. Intermediate activities, such as spinning or blocking, are designed to be effectively harmless, contributing to the overall correctness and efficiency of the concurrent data structure.

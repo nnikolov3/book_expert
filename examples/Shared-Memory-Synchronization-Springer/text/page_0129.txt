@@ -1,0 +1,71 @@
+7.4 Other Language Mechanisms 133
+
+7.4.3 Series-Parallel Execution
+
+At the beginning of Chapter5, we noted that many spin-based mechanisms for condition
+synchronization can be rewritten, straightforwardly, to use scheduler-based synchronization
+instead. Examples include flags, barriers, and reader-writer locks. Any place a thread might
+spin for a (statically known) condition, we can lock out signals or interrupts, grab the
+scheduler lock, move the current thread to a condition queue, and call reschedule instead.
+
+Scheduler-based implementations are also commonly used for series-parallel execution,
+mentioned briefly in Sec. 5.3.3. In Cilk (Frigo et al. 1998; Blumofe et al. 1995), for example,
+a multi-phase application might look something like this:
+
+do {
+for (1 = 0; 1 < n; i++) {
+spawn work (i) ;
+}
+sync; // wait for all children to complete
+
+} while —terminating condition
+
+Conceptually, this code suggests that the main thread create (“fork”) n threads at the top
+of each do loop iteration, and “join” them at the bottom. The Cilk runtime system, however,
+1s designed to make spawn and sync as inexpensive as possible. Concise descriptions of
+the tasks are placed into a “work-stealing queue” (Blumofe et al. 1995) from which they are
+farmed out to a collection of preexisting worker threads. Similar schedulers are used in a
+variety of other languages as well. Source code syntax may vary, of course. X10 (Charles
+et al. 2005), for example, replaces spawn and sync with async and finish.
+
+Many languages (including the more recent Cilk++) include a “parallel for” loop whose
+iterations proceed logically in parallel. An implicit sync causes execution of the main pro-
+gram to wait for all iterations to complete before proceeding with whatever comes after the
+loop. Similar functionality can be added to existing languages in the form of a library routine
+that takes the loop bounds as arguments, together with a parameterized lambda expression
+to represent the body of the loop; examples can be found in C# and C++’ 17. In the absence
+of lambdas, extensions can leverage annotations on sequential loops. OpenMP (Chandra
+et al. 2001), in particular, defines a set of compiler- or preprocessor-based pragmas that
+can be used to parallelize loops in C and Fortran. Like threads executing the same phase of
+a barrier-based application, iterations of a parallel loop must generally be free of data races.
+If occasional conflicts are allowed, they must be resolved using other synchronization.
+
+In a very different vein, Fortran 95 and its descendants provide a forall loop whose
+iterations are heavily synchronized. Code like the following
+Seven point four Other Language Mechanisms. Seven point four point three Series Parallel Execution.
+
+At the beginning of Chapter five, we noted that many spin based mechanisms for condition synchronization can be rewritten, straightforwardly, to use scheduler based synchronization instead. Examples include flags, barriers, and reader writer locks. Any place a thread might spin for a statically known condition, we can lock out signals or interrupts, grab the scheduler lock, move the current thread to a condition queue, and call reschedule instead. Scheduler based implementations are also commonly used for series parallel execution, mentioned briefly in Section five point three point three. In Cilk, Frigo et al. nineteen ninety eight, Blumofe et al. nineteen ninety five, for example, a multi phase application might look something like this:
+
+do
+{
+for (i is equal to 0; i less than n; i increment by one)
+{
+spawn work open parenthesis i close parenthesis
+}
+sync // wait for all children to complete
+} while not terminating condition
+
+Conceptually, this code suggests that the main thread create fork n threads at the top of each do loop iteration, and join them at the bottom. The Cilk runtime system, however, is designed to make spawn and sync as inexpensive as possible. Concise descriptions of the tasks are placed into a work stealing queue Blumofe et al. nineteen ninety five from which they are farmed out to a collection of preexisting worker threads. Similar schedulers are used in a variety of other languages as well. Source code syntax may vary, of course. X ten Charles et al. two thousand five, for example, replaces spawn and sync with async and finish. Many languages including the more recent Cilk plus include a parallel for loop whose iterations proceed logically in parallel. An implicit sync causes execution of the main program to wait for all iterations to complete before proceeding with whatever comes after the loop. Similar functionality can be added to existing languages in the form of a library routine that takes the loop bound as arguments, together with a parameterized lambda expression to represent the body of the loop, examples can be found in C sharp and C plus plus seventeen. In the absence of lambdas, extensions can leverage annotations on sequential loops. Open M P Chandra et al. two thousand one, in particular, defines a set of compiler or preprocessor based pragmas that can be used to parallelize loops in C and Fortran. Like threads executing the same phase of a barrier based application, iterations of a parallel loop must generally be free of data races. If occasional conflicts are allowed, they must be resolved using other synchronization. In a very different vein, Fortran nine five and its descendants provide a forall loop whose iterations are heavily synchronized. Code like the following
+The section delves into series parallel execution as an alternative to spin based synchronization mechanisms. Instead of busy waiting, which involves threads repeatedly checking a condition, scheduler based synchronization allows threads to yield control when a condition is not met, effectively placing themselves in a waiting queue. This process can involve signaling or interrupts to wake up waiting threads. The text highlights that scheduler based implementations are often found in systems utilizing series parallel execution, a paradigm where computations are structured as a series of parallel tasks.
+
+A code snippet illustrates a typical series parallel loop construct, reminiscent of the Cilk runtime system. The structure involves a 'do' loop that iteratively spawns 'n' threads. Inside the loop, a 'spawn work i' command indicates the creation of a new parallel task for each iteration. Following the loop, a 'sync' operation serves as a synchronization point, ensuring that all spawned threads complete their execution before the program proceeds. The loop continues until a termination condition is met.
+
+Conceptually, this code represents a pattern where a primary thread forks 'n' child threads at the beginning of a loop iteration and then joins them at the end. The Cilk runtime system is noted for its efficient implementation of 'spawn' and 'sync' operations, aiming for minimal overhead. The text further explains that such tasks are often managed by a collection of worker threads, with the workload distributed through techniques like work stealing. This approach is also seen in other languages and frameworks.
+
+The text elaborates on how various programming languages and libraries provide mechanisms for parallel loop execution. For instance, Cilk++ supports 'parallel for' loops, where execution proceeds logically in parallel. An implicit synchronization occurs at the end of such loops, ensuring all iterations complete before the program moves past the loop construct. This synchronization functionality can be integrated into existing languages through library routines. Examples include parameterized lambda expressions, which can encapsulate the loop body and be passed as arguments, or compiler extensions like pragmas in OpenMP. These mechanisms facilitate the parallel execution of loop iterations, often with the goal of achieving performance gains by distributing the work across multiple processing units.
+
+The concept of a "work stealing queue" is fundamental to many parallel runtime systems. In this model, worker threads maintain their own queues of tasks. When a thread finishes its current task, it attempts to steal a task from the queue of another busy thread. This load balancing strategy helps to keep all available processors utilized, maximizing throughput. The efficiency of Cilk's 'spawn' and 'sync' operations, as mentioned, contributes to the viability of this approach.
+
+The text also touches upon the importance of proper synchronization to avoid data races. Data races occur when multiple threads access shared memory, and at least one access is a write, without any synchronization mechanism to control the order of operations. This can lead to unpredictable and incorrect program behavior. Barrier synchronization, as implied by the 'sync' statement, ensures that all threads reach a certain point in execution before any thread can proceed. This is crucial for maintaining program correctness in parallel environments.
+
+The discussion extends to how series parallel execution is supported in languages like Fortran. Fortran 95 and its successors offer constructs such as the 'forall' loop, which allows for parallel iteration. The text suggests that in some scenarios, occasional synchronization conflicts might arise, necessitating explicit resolution mechanisms. However, for loops designed to execute iterations in parallel, a common requirement is that all iterations must complete in the same phase of execution. This implies a form of barrier synchronization at the loop's boundary. The presence of features like compiler or preprocessor directives, as seen in OpenMP, further demonstrates the evolution of programming language support for parallel and concurrent computation, aiming to abstract away much of the low level synchronization complexity for the programmer.

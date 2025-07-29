@@ -1,0 +1,63 @@
+7.5 Kernel/User Interactions 137
+
+indicates that the user wishes not to be preempted. The second flag is written by the kernel
+and read by the user thread: it indicates that the kernel wanted to preempt the thread, but
+refrained because the first flag was set. A test_and_set spin lock might use these flags as
+follows:
+
+atomic<bool> do_not_preempt_me := false /l shared between the kernel and user
+atomic<bool> kernel_wanted_to_preempt_me := false /l shared between the kernel and user
+
+class lock
+atomic<bool> f := false
+
+lock.acquire(): lock.release():
+do_not_preempt_me.store(true, ||) f store(false, RW)
+
+while ~f.TAS(WI|) do_not_preempt_me.store(false, W||)
+
+do_not_preempt_me.store(false, RI) if kernel_wanted_to_preempt.me.load(W||)
+if kernel_wanted_to_preempt_me.load(W||) yield
+
+yield
+do_not_preempt_me.store(true, R||)
+fence(R||RW)
+
+To avoid abuse, the kernel is free to ignore the do_not_preempt_me flag if it stays set
+for too long. It can also deduct any extra time granted a thread from the beginning of its
+subsequent quantum. Other groups have proposed related mechanisms that can likewise
+be used to avoid (Marsh et al. 1991) or recover from (Anderson et al. 1992) inopportune
+preemption. Solaris (Dice 2011) provides a schedctl mechanism closely related to that of
+Edler et al.
+
+The code shown for test_and_set above can easily be adapted to many other locks,
+with features including backoff, locality awareness, timeout, double-checked or asymmetric
+locking, and adaptive spin-then-wait. Fair queueing is harder to accommodate. In a ticket,
+Hemlock, MCS, or CLH lock, one must consider the possibility of preemption not only while
+holding a lock, but also while waiting in line. So if several threads are waiting, preemption
+of any one may end up creating a convoy.
+
+To avoid passing a lock to a thread that has been preempted while waiting in line,
+Kontothanassis et al. (1997) proposed extensions to the kernel interface in the spirit of
+Edler et al. Specifically, they provide additional values for the do_not_preempt_me flag,
+and make it visible to other threads. These changes allow one thread to pass a lock to
+another, and to make the other nonpreemptable, atomically. In a different vein, He et al.
+(2005) describe a family of queue-based locks in which a lock-releasing thread can esti-
+mate (with high confidence) whether the next thread in line has been preempted and, if so,
+dynamically remove it from the queue. The key to these locks is for each spinning thread to
+periodically write the wall-clock time into its lock queue node. If a thread discovers that the
+difference between the current time and the time in its successor’s queue node exceeds some
+appropriate threshold, it assumes that the successor is preempted. A thread whose node has
+been removed from the queue will try again the next time it has a chance to run.
+Seven point five Kernel User Interactions. One hundred thirty seven. Indicates that the user wishes not to be preempted. The second flag is written by the kernel and read by the user thread; it indicates that the kernel wanted to preempt the thread, but refrained because the first flag was set. A test and set spin lock might use these flags as follows: Atomic bull do not preempt me is false. Atomic bull kernel wanted to preempt me is false. Class lock. Atomic bull f is false. Lock acquire. Do not preempt me store true, Or. While F T A S W. If kernel wanted to preempt me load W. Yield. Do not preempt me store true, Or. Fence R R W. Lock release. F store false, R Or. Do not preempt me store false, W Or. If kernel wanted to preempt me load W. Yield. To avoid abuse, the kernel is free to ignore the do not preempt me flag if it stays set for too long. It can also deduct any extra time granted a thread from the beginning of its subsequent quantum. Other groups have proposed related mechanisms that can likewise be used to avoid Marsh et al. nineteen ninety one or recover from Anderson et al. nineteen ninety two inopportune preemption. Solaris Dice two thousand eleven provides a schedctl mechanism closely related to that of Edler et al. The code shown for test and set above can easily be adapted to many other locks, with features including backoff, locality awareness, timeout, double checked or asymmetric locking, and adaptive spin then wait. Fair queueing is harder to accommodate. In a ticket lock, M C S, or C L H lock, one must consider the possibility of preemption not only while holding a lock, but also while waiting in line. So if several threads are waiting, preemption of any one may end up creating a convoy. To avoid passing a lock to a thread that has been preempted while waiting in line, Kontothanassis et al. nineteen ninety seven proposed extensions to the kernel interface in the spirit of Edler et al. Specifically, they provide additional values for the do not preempt me flag, and make it visible to other threads. These changes allow one thread to pass a lock to another, and to make the other nonpreemptable, atomically. In a different vein, He et al. two thousand five describe a family of queue based locks in which a lock releasing thread can estimate with high confidence whether the next thread in line has been preempted and, if so, dynamically remove it from the queue. The key to these locks is for each spinning thread to periodically write the wall clock time into its lock queue node. If a thread discovers that the difference between the current time and the time in its successor's queue node exceeds some appropriate threshold, it assumes that the successor is preempted. A thread whose node has been removed from the queue will try again the next time it has a chance to run.
+This section delves into mechanisms for managing thread preemption within a kernel, focusing on how user threads can signal their non-preemptible state and how the kernel can respect these signals. The core concept revolves around a test and set spin lock, a fundamental synchronization primitive used to protect shared data.  The provided code snippet illustrates the use of two boolean flags: `do_not_preempt_me` and `kernel_wanted_to_preempt_me`. Both are declared as atomic types, ensuring that operations on them are indivisible and safe in a concurrent environment. The comments indicate that these flags are shared between the kernel and user space.
+
+The `lock.acquire()` function demonstrates a typical spin lock acquisition process. It first sets `do_not_preempt_me` to false, signaling that the thread is willing to be preempted. This is followed by a loop that uses `atomic<bool> f: = false`. The core of the spin lock logic is `while ¬f.TAS(W||)`. Here, `TAS` refers to the test and set operation, a primitive that atomically reads the value of a memory location and then sets it to a new value. The `W||` likely signifies a memory ordering constraint, specifically a weak ordering with respect to write operations, common in modern processor architectures. The loop continues as long as the `TAS` operation fails to acquire the lock, meaning the lock is already held by another thread. Inside the loop, `do_not_preempt_me.store(true, R||)` is called. This line is crucial: if the thread is waiting to acquire the lock, it sets `do_not_preempt_me` to true, indicating that it should not be preempted while spinning. The `R||` signifies a memory ordering constraint for read operations, likely a weak ordering. Subsequently, it checks `if kernel_wanted_to_preempt_me.load(W||)`. If the kernel has signaled its intent to preempt this thread, the current thread `yield()`s, relinquishing the CPU to allow other threads, potentially including the one signaling preemption, to run. This `yield` is a form of cooperative multitasking, allowing the scheduler to decide the next thread to execute. Finally, `fence(R||RW)` is used, likely a memory fence to enforce a specific ordering of read and read-write memory operations, ensuring that the state of the flags is consistent before proceeding. The `lock.release()` function is also shown, where the lock holder sets `f.store(false, R||)`, relinquishes the `do_not_preempt_me` flag by storing `false`, and potentially signals the kernel via `do_not_preempt_me.load(W||)` or other mechanisms.
+
+The text then discusses the rationale behind such mechanisms. The kernel might want to preempt a thread to ensure fairness or to respond to higher-priority tasks. However, user threads might need to perform critical operations that cannot be interrupted. The `do_not_preempt_me` flag serves as a notification to the kernel. If a thread is spinning on a lock and this flag is set, it indicates that the thread is in a critical section and should not be preempted. The kernel, upon observing this flag, might defer preemption. The `yield` operation within the spin loop is a form of backoff, preventing a thread from monopolizing the CPU while waiting for a lock.
+
+The discussion then broadens to consider variations and improvements upon this basic model. The kernel might need to ignore the `do_not_preempt_me` flag if a thread holds a lock for an excessively long period, as this could lead to system unresponsiveness. Researchers have proposed mechanisms to address this, such as Solaris's `schedctl` which allows for more sophisticated scheduling decisions. The cited works by Marsh et al. and Anderson et al. highlight the ongoing research in this area, exploring different methods to balance thread execution and kernel responsiveness.
+
+The text then mentions that the test and set spin lock implementation can be adapted for various scenarios, including those requiring backoff, locality awareness, timeout, or double-checked or asymmetric locking. Fair queuing, which ensures that threads acquire locks in the order they requested them, is noted as being more challenging to implement. The problem of lock convoying, where a line of waiting threads is formed, is also mentioned.
+
+A significant challenge arises when a thread attempting to acquire a lock is preempted while holding the lock. Kontothanassis et al. (1997) proposed extensions to the kernel interface to address this. These extensions allow a thread to pass a lock to another thread atomically. This is particularly useful in distributed systems or complex multithreaded applications. He et al. (2005) further elaborate on this by describing queue based locks where a releasing thread can estimate the waiting time of the next thread in line. This allows the releasing thread to pass the lock directly to the next thread, potentially avoiding the overhead of repeated attempts to acquire the lock. The mechanism involves periodically writing the wait time into a lock queue node. If the difference between the current time and the time in the successor's queue node exceeds a certain threshold, it indicates that the successor thread has likely been preempted or is otherwise unavailable. In such cases, the lock is not passed directly, and the thread that just released the lock can resume its execution or attempt to pass the lock to the next eligible thread. This approach aims to optimize lock transfer efficiency and reduce contention.

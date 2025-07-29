@@ -1,0 +1,66 @@
+=
+
+Check for
+updates
+
+Transactional Memory
+
+Transactional memory (TM) has been one of the most active areas of synchronization
+research over the course of the past two decades, spanning literally hundreds of published
+papers. The current chapter attempts to outline the shape of the TM design space, the current
+state of the art, and the major open questions. For further details, readers may wish to consult
+the encyclopedic monograph of Harris et al. (2010).
+
+At its core, TM represents the fusion of two complementary ideas: first, that we should
+raise the level of abstraction for synchronization, allowing programmers to specify what
+should be atomic without needing to specify how to make it atomic; second, that we should
+employ (at least in many cases) an underlying implementation based on speculation. The
+user-level construct is typically simply an atomic label attached to a block of code. The
+speculative implementation allows transactions (executions of atomic blocks) to proceed
+in parallel unless and until they conflict with one another (access the same location, with
+at least one of them performing a write). At most one conflicting transaction 1s allowed to
+continue; the other(s) abort, roll back any changes they have made, and try again.
+
+Ideally, the combination of atomic blocks and speculation should provide (much of) the
+scalability of fine-grain locking with (most of) the simplicity of coarse-grain locking, thereby
+sidestepping the traditional tradeoff between clarity and performance. The combination also
+offers a distinct semantic advantage over lock-based critical sections, namely composability.
+
+An atomicity mechanism is said to be composable if it allows smaller atomic operations
+to be combined into larger atomic operations without the possibility of introducing deadlock.
+Critical sections based on fine-grain locks are not composable: if operations are composed
+in different orders in different threads, they may attempt to acquire the same set of locks
+in different orders, and deadlock can result. Speculation-based implementations of atomic
+blocks break the “irrevocability” required for deadlock (Sec. 3.1.1): when some transactions
+abort and roll back, others are able to make progress.
+
+Asnoted at the end of Chapter 2, TM was originally proposed by Herlihy and Moss (1993).
+A similar mechanism was proposed concurrently by Stone et al. (1993), and precursors can
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 185
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_9
+Transactional Memory
+
+Transactional memory (T M) has been one of the most active areas of synchronization research over the course of the past two decades, spanning literally hundreds of published papers. The current chapter attempts to outline the shape of the T M design space, the current state of the art, and the major open questions. For further details, readers may wish to consult the encyclopedic monograph of Harris et al. (2010).
+
+At its core, T M represents the fusion of two complementary ideas: first, that we should raise the level of abstraction for synchronization, allowing programmers to specify what should be atomic without needing to specify how to make it atomic; second, that we should employ (at least in many cases) an underlying implementation based on speculation. The user level construct is typically simply an atomic label attached to a block of code. The speculative implementation allows transactions (executions of atomic blocks) to proceed in parallel unless and until they conflict with one another (access the same location, with at least one of them performing a write). At most one conflicting transaction is allowed to continue; the other(s) abort, roll back any changes they have made, and try again.
+
+Ideally, the combination of atomic blocks and speculation should provide (much of) the scalability of fine grain locking with (most of) the simplicity of coarse grain locking, thereby sidestepping the traditional tradeoff between clarity and performance. The combination also offers a distinct semantic advantage over lock based critical sections, namely composability. An atomicity mechanism is said to be composable if it allows smaller atomic operations to be combined into larger atomic operations without the possibility of introducing deadlock. Critical sections based on fine grain locks are not composable: if operations are composed in different orders in different threads, they may attempt to acquire the same set of locks in different orders, and deadlock can result. Speculation based implementations of atomic blocks break the "irrevocability" required for deadlock (See Section 3.1.1): when some transactions abort and roll back, others are able to make progress.
+
+As noted at the end of Chapter 2, T M was originally proposed by Herlihy and Moss (1993). A similar mechanism was proposed concurrently by Stone et al. (1993), and precursors can
+
+C The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 M. L. Scott and T. Brown, Shared Memory Synchronization, Synthesis Lectures on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_9
+
+185
+Transactional memory, a fundamental concept in concurrent systems design, has been a significant area of research for over two decades. Its evolution aims to simplify the complex landscape of synchronization, particularly in multi-processor environments. The core idea of transactional memory is to elevate the level of abstraction for programmers, allowing them to specify atomic operations without the intricate details of low-level locking mechanisms.
+
+At its heart, transactional memory represents a fusion of two key ideas. First, it enables programmers to declare that a block of code should execute atomically. This means that the operations within that block appear to occur instantaneously from the perspective of other threads, ensuring data integrity and preventing race conditions. Second, transactional memory often relies on speculation. Instead of acquiring locks beforehand, speculative implementations proceed with operations, keeping track of accessed memory locations. If a conflict arises—meaning another thread modifies data that the current transaction has already read or written—the transaction is aborted, its changes are rolled back, and it may be retried. This speculative approach can offer performance advantages, especially in systems with low contention, as it avoids the overhead associated with lock acquisition and release.
+
+The text highlights a crucial trade-off in transactional memory design: the balance between the simplicity of coarse-grained locking and the scalability of fine-grain locking. While coarse-grained locking is straightforward to implement and understand, it can limit concurrency by serializing access to large data structures. Fine-grain locking, conversely, allows multiple threads to access different parts of a data structure concurrently, but it is notoriously difficult to implement correctly and can lead to deadlocks if locks are not acquired in a consistent order. Transactional memory aims to provide the benefits of fine-grain concurrency with the ease of use associated with coarse-grained approaches.
+
+Composability is a key desirable property in concurrent systems. A system is considered composable if its individual components can be combined to form larger, correct systems without requiring a re-analysis of their interactions. Transactional memory, particularly when implemented with atomic blocks that do not depend on external synchronization primitives like locks, can exhibit this composability. The text posits that atomic operations, when composed, should offer a distinct semantic advantage over lock-based critical sections, especially in their ability to avoid deadlock.
+
+The concept of atomicity is central to transactional memory. A mechanism is said to ensure atomicity if a sequence of operations either completes entirely or has no effect. In transactional memory, this is achieved through the transactional execution of code blocks. The text mentions that critical sections based on fine-grain locks are not inherently composable if they require the acquisition of locks in different orders across different threads, which can lead to deadlocks. Speculation-based implementations, in contrast, aim to break the "irrevocability" of operations required for deadlock by providing mechanisms to abort and roll back transactions when conflicts are detected.
+
+The foundational work in transactional memory is attributed to Herlihy and Moss, who proposed a model in nineteen ninety three. This early work, along with concurrent proposals by Stone and colleagues, laid the groundwork for subsequent research and development in the field, influencing the design of modern concurrent data structures and programming models. The chapter referenced, specifically section three point one point one, likely delves deeper into the theoretical underpinnings of atomicity and deadlock prevention within speculative execution models.

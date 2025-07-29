@@ -1,0 +1,88 @@
+24 2 Architectural Background
+
+Table 2.2 Illustrative examples of possible reorderings under the memory model employed herein.
+In these examples, x, y, z, and w are assumed to be atomic variables, and b is not. L is a lock.
+ordered load-store
+x.load(]|) // cannot be reordered after the store
+
+y.store(1, Rl)
+
+unordered load-store
+x.load(||R) /l can be reordered after the store
+y.store(1, W|[RW)
+
+fence ordered load
+x.load(]|) // cannot be reordered after the fence
+fence(R||)
+
+unidirectional ordering
+
+x.store(1, ||) // can be reordered freely
+y.load(|[RW) // cannot be reordered after z.store
+z.store(2, ||) // cannot be reordered before y.load
+
+implicit ordering
+x.store(1, |) // cannot be reordered after y.load,
+y.load() // as this load has implicit RW|[RW ordering
+
+conditional load reordering
+if x.load(]|) // even if the compiler does not reorder these instructions,
+
+y.store(1,]) // the processor can
+
+reordering into a critical section
+
+x.load(||) // can be reordered into the critical section
+x.store(1, ||) // can be reordered into the critical section
+L.acquire() // lock implementation will ensure [RW ordering
+y.load(]l) // can be reordered with z.store, but
+
+z.store(2, |) // both must remain within the critical section
+L.release() // lock implementation will ensure RW|| ordering
+w.store(3, ||) // can be reordered into the critical section
+w.load(||) // can be reordered into the critical section
+
+ordering ordinary and synchronizing accesses
+x.store(1, [|W) // cannot be reordered after the store to b because of |W
+b:=1
+Architectural Background.
+
+Table two point two illustrates examples of possible reorderings under the memory model employed herein. In these examples, x, y, z, and w are assumed to be atomic variables, and b is not. L is a lock.
+
+Under ordered load store, the instruction `x.load` parenthesis or or parenthesis, cannot be reordered after the store. Another instruction under this category is `y.store` parenthesis one comma R or or parenthesis.
+
+For unordered load store, the instruction `x.load` parenthesis or or R parenthesis, can be reordered after the store. An additional instruction is `y.store` parenthesis one comma W or or R W parenthesis.
+
+In fence ordered load, the instruction `x.load` parenthesis or or parenthesis, cannot be reordered after the fence. Another instruction is `fence` parenthesis R or or parenthesis.
+
+Regarding unidirectional ordering, the instruction `x.store` parenthesis one comma or or parenthesis, can be reordered freely. The instruction `y.load` parenthesis or or R W parenthesis, cannot be reordered after `z.store`. The instruction `z.store` parenthesis two comma or or parenthesis, cannot be reordered before `y.load`.
+
+For implicit ordering, `x.store` parenthesis one comma or or parenthesis, cannot be reordered after `y.load`. This is because the instruction `y.load` parenthesis parenthesis, has implicit R W or or R W ordering.
+
+In conditional load reordering, if `x.load` parenthesis or or parenthesis, even if the compiler does not reorder these instructions, the processor can reorder `y.store` parenthesis one comma or or parenthesis.
+
+When reordering into a critical section, `x.load` parenthesis or or parenthesis, can be reordered into the critical section. Similarly, `x.store` parenthesis one comma or or parenthesis, can also be reordered into the critical section. The `L.acquire` parenthesis parenthesis instruction means the lock implementation will ensure or or R W ordering. The `y.load` parenthesis or or parenthesis instruction can be reordered with `z.store`, but both `y.load` and `z.store` parenthesis two comma or or parenthesis, must remain within the critical section. The `L.release` parenthesis parenthesis instruction means the lock implementation will ensure R W or or ordering. The `w.store` parenthesis three comma or or parenthesis instruction can be reordered into the critical section. Likewise, `w.load` parenthesis or or parenthesis, can be reordered into the critical section.
+
+Finally, for ordering ordinary and synchronizing accesses, `x.store` parenthesis one comma or or W parenthesis, cannot be reordered after the store to `b` because of or or W. This includes the instruction `b` is equal to one.
+The provided table dissects the intricate landscape of memory reordering, a fundamental concept in modern computer architecture and concurrent programming. Memory reordering refers to the process by which a C P U or compiler alters the apparent order of memory operations from how they were specified in the program code. This optimization is crucial for achieving high performance by exploiting parallelism and hiding memory latency, but it introduces complexities in multi-threaded environments where the visibility of memory updates across different cores or processors becomes critical. The underlying principle here is the tension between maintaining program correctness under a specified memory consistency model and maximizing hardware utilization through out of order execution and compiler optimizations.
+
+The table illustrates various scenarios under a specific, though unnamed, memory model, using atomic variables `x`, `y`, `z`, and `w`, a non-atomic variable `b`, and a lock `L`. The notation `double pipe` accompanying load or store operations or fences denotes a particular memory ordering semantic, often implying a stronger guarantee like sequential consistency or release/acquire semantics.
+
+First, consider the contrast between **ordered load-store** and **unordered load-store**. In the ordered case, an `x.load` operation followed by `y.store` with an `R double pipe` qualifier cannot be reordered such that the load appears after the store. This `R double pipe` on the store implies a release semantic, ensuring that all operations preceding it are globally visible before the store completes. Conversely, in the unordered example, `x.load` with `double pipe R` followed by `y.store` with `W double pipe R W` *can* be reordered after the store. The `double pipe R` on the load likely indicates a relaxed load, and `W double pipe R W` on the store suggests a weak, or acquire/release equivalent, store that permits subsequent operations to be reordered before it, or previous operations to be reordered after it. This distinction highlights that explicit or implicit memory ordering qualifiers are essential to prevent unwanted reorderings and maintain a consistent view of shared memory.
+
+The **fence ordered load** section demonstrates the explicit use of a memory barrier. Here, an `x.load` is followed by a `fence(R double pipe)`. The comment clearly states that the load cannot be reordered after this fence. Memory fences, or memory barriers, are instructions that enforce ordering constraints. An `R double pipe` fence, often a read memory barrier, ensures that all load instructions before the fence complete before any load or store instructions after the fence are executed or become globally visible. This is a common mechanism to enforce program order across critical points without imposing full sequential consistency globally, thus balancing performance and correctness.
+
+**Unidirectional ordering** illustrates more nuanced reordering rules. A `x.store` operation with a plain `double pipe` can be reordered freely, suggesting a very relaxed store semantic. However, a subsequent `y.load` with `double pipe R W` cannot be reordered after a `z.store`. This implies that `y.load` has some `R W` (Read-Write) ordering semantic that ties it to the subsequent `z.store`, preventing the load from being "moved past" the store by the hardware's out of order engine. Conversely, the `z.store` itself, also with a plain `double pipe`, cannot be reordered before the `y.load`. This shows a clear store-load ordering constraint: `z.store` must not precede `y.load` in the observed execution order. These unidirectional constraints are typical of weaker memory models, such as processor consistency or release consistency, where certain pairs of operations are ordered while others are not.
+
+The concept of **implicit ordering** is vital. When `x.store` (with `double pipe`) is followed by a simple `y.load()` without explicit ordering qualifiers, the `x.store` cannot be reordered after `y.load`. This is because `y.load()` is stated to have "implicit `R W` double pipe `R W` ordering." This signifies that certain operations, even without explicit programmer-specified qualifiers, might possess strong memory ordering guarantees due to their nature, perhaps because they involve memory-mapped I O, or are specific system calls, or are part of an instruction set architecture's stronger default for certain operations. This implicit behavior is a critical aspect for system designers and low-level programmers to understand.
+
+The **conditional load reordering** example highlights the distinction between compiler reordering and processor reordering. Even if a compiler, which operates on the static program, does not reorder an `if x.load` followed by `y.store`, the dynamic execution by the processor's out of order execution engine *can* still reorder these instructions. Modern C P U architectures feature sophisticated out of order pipelines and multiple execution units. If dependencies are not explicitly enforced, or if the memory model allows it, the processor can reorder operations to keep its pipelines full, potentially leading to surprising behaviors in concurrent code if not properly synchronized.
+
+The section on **reordering into a critical section** provides a detailed look at how locks interact with memory reordering. A critical section, typically delimited by `L.acquire()` and `L.release()` operations, is a region of code designed to protect shared data.
+The `L.acquire()` operation is stated to ensure `double pipe R W` ordering. This means that all memory operations *after* the `acquire` (loads and stores within the critical section) cannot be observed by other processors *before* the `acquire` itself. This acts as a barrier, effectively synchronizing memory access.
+Similarly, `L.release()` ensures `R W double pipe` ordering, meaning all memory operations *before* the `release` (loads and stores within the critical section) are guaranteed to be globally visible *before* the `release` completes.
+Despite these strong guarantees provided by `acquire` and `release`, the examples show that `x.load` and `x.store` *before* the `acquire` can be reordered *into* the critical section. Likewise, `w.store` and `w.load` *after* the `release` can also be reordered *into* the critical section. This phenomenon, known as "hoisting" or "sinking," means that the compiler or processor might move operations across the logical boundaries of the critical section if there are no data dependencies or explicit fences to prevent it. However, `y.load` and `z.store` *within* the critical section are stated to still be reorderable *with each other* (e.g., `y.load` can reorder with `z.store`), but "both must remain within the critical section." This demonstrates that while `acquire` and `release` create strong global ordering boundaries, they don't necessarily impose total ordering *within* the critical section unless explicitly stated by the memory model or additional internal fences.
+
+Finally, **ordering ordinary and synchronizing accesses** shows that `x.store` with a `double pipe W` semantic cannot be reordered after a store to `b`. Although `b` is explicitly stated as *not* being an atomic variable, the strong `double pipe W` semantic on `x.store` acts as a release operation, ensuring that all prior operations, including the store to `b` if it logically precedes `x.store`, are observed before `x.store` completes. This illustrates that strong atomic operations can impose ordering on surrounding non-atomic operations, even when those non-atomic operations wouldn't inherently provide such guarantees.
+
+In summary, this table provides a practical exploration of how memory consistency models, compiler optimizations, and hardware reordering interact. It underscores the necessity of memory ordering primitives such as atomic operations, explicit fences, and synchronization mechanisms like locks to enforce specific orderings and ensure the correctness of concurrent programs. Understanding these subtle reordering behaviors is paramount for designing robust multi-threaded software and for optimizing performance without introducing elusive race conditions or data inconsistencies.

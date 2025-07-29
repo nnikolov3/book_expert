@@ -1,0 +1,55 @@
+194 9 Transactional Memory
+
+requires a separate read for every thread (rather than one for every wordsize threads), but
+readers never write the words of other threads, and contention is dramatically reduced in
+read-heavy workloads.
+
+If we dispense with visible readers, we can use sequence locks (Sec. 6.2) to replace the
+reader-writer locks on Orecs. A reader makes no change to the (shared) lock, but does keep
+a (private) record of the value of the lock at the time it reads a covered location. The record
+of lock values constitutes a read log, analogous to the write log already required for redo on
+commit or undo on abort. Using its read log, a transaction can validate its reads by double-
+checking the values of Orec locks: if a lock has changed, then some other transaction has
+acquired the Orec as a writer, and the covered data can no longer be assumed to be consistent;
+the reader must abort.
+
+To reduce the impact of false sharing, a transaction can choose to keep the values of
+loaded locations in its read log, instead of—or in addition to—the values of Orec locks. It
+can then perform value-based validation (Olszewski et al. 2007; Ding et al. 2007), verifying
+that previously-read locations still (or again) contain the same values. Some mechanism—
+typically a check of Orec lock values—must still be used, of course, to guarantee that the
+verified values are all present at the same time.
+
+In the degenerate case, Dalessandro et al. (2010c¢) use a single global Orec to provide this
+guarantee. Their “NOrec” system allows a read-only transaction to validate—and commit—
+without acquiring any locks: the transaction reads the global sequence lock, uses value-
+based-validation to verify the consistency of all read locations, and then double-checks the
+sequence lock to make sure that no other transaction committed writes during the validation.
+As in any system with invisible readers, they employ a redo log rather than an undo log, and
+they validate during the transaction immediately after every shared read or (with sandboxing
+(Dalessandro and Scott 2012)) immediately before every “dangerous” operation. NOrec
+forces transactions to write back their redo logs one at a time, in mutual exclusion, but it
+allows them to create those logs—to figure out what they want to write—in parallel. At the
+time of testing in 2013, no known STM system was found to consistently outperform NOrec
+for realistic workloads on single-chip multicore machines, though both TML (Dalessandro
+et al. 2010a) and FastLane (Wamhoff et al. 2013) were better in important cases.
+
+Avoiding Redundant Validation
+
+If a transaction reads n different locations, and validates its previous reads after each new
+read (to guarantee opacity), Orecs will need to be consulted O(n?) times over the course
+of the transaction. For large transactions, the overhead of this incremental validation can
+be prohibitive. To reduce it, Spear et al. (2006) observe that in a redo-log-based system,
+transaction T must validate its reads only if some other transaction has committed writes
+since Ts last validation. Absent a very large number of cores and a very high transaction
+completion rate, many validations can be avoided if we maintain a global count of the number
+one hundred ninety four. nine Transactional Memory. requires a separate read for every thread, rather than one for every wordsize threads, but readers never write the words of other threads, and contention is dramatically reduced in read heavy workloads. If we dispense with visible readers, we can use sequence locks. See section six point two to replace the reader writer locks on Orecs. A reader makes no change to the shared lock, but does keep a private record of the value of the lock at the time it reads a covered location. The record of lock values constitutes a read log, analogous to the write log already required for redo on commit or undo on abort. Using its read log, a transaction can validate its reads by double checking the values of Orec locks. If a lock has changed, then some other transaction has acquired the Orec as a writer, and the covered data can no longer be assumed to be consistent. The reader must abort. To reduce the impact of false sharing, a transaction can choose to keep the values of loaded locations in its read log, instead of or in addition to the values of Orec locks. It can then perform value based validation, Olszewski et al. two thousand seven Ding et al. two thousand seven, verifying that previously read locations still, or again, contain the same values. Some mechanism, typically a check of Orec lock values, must still be used, of course, to guarantee that the verified values are all present at the same time. In the degenerate case, Dalessandro et al. two thousand ten c use a single global Orec to provide this guarantee. Their N Orec system allows a read only transaction to validate and commit without acquiring any locks. The transaction reads the global sequence lock, uses value based validation to verify the consistency of all read locations, and then double checks the sequence lock to make sure that no other transaction committed writes during the validation. As in any system with invisible readers, they employ a redo log rather than an undo log, and they validate during the transaction immediately after every shared read or with sandboxing, Dalessandro and Scott, two thousand twelve immediately before every dangerous operation. N Orec forces transactions to write back their redo logs one at a time, in mutual exclusion, but it allows them to create those logs to figure out what they want to write in parallel. At the time of testing in two thousand thirteen, no known S T M system was found to consistently outperform N Orec for realistic workloads on single chip multicore machines, though both T M L, Dalessandro et al. two thousand ten a and FastLane, Wamhoff et al. two thousand thirteen, were better in important cases. Avoiding Redundant Validation. If a transaction reads n different locations, and validates its previous reads after each new read, to guarantee opacity, Orecs will need to be consulted O of n squared times over the course of the transaction. For large transactions, the overhead of this incremental validation can be prohibitive. To reduce it, Spear et al. two thousand six observe that in a redo log based system, transaction T must validate its reads only if some other transaction has committed writes since T's last validation. Absent a very large number of cores and a very high transaction completion rate, many validations can be avoided if we maintain a global count of the number.
+The text discusses techniques for efficient transactional memory systems, focusing on optimistic concurrency control and validation mechanisms.
+
+One approach described involves using sequence locks to manage read-heavy workloads. Unlike traditional reader-writer locks, sequence locks are simplified. A read operation using a sequence lock makes no modifications to the data. The core mechanism is the maintenance of a private record, analogous to a write log, which captures the values of lock acquisitions at the time of reading. This read log enables a transaction to validate its prior reads. If a lock's value has changed since it was recorded, it implies another transaction has written to that location, potentially invalidating the current read. In such a scenario, the transaction must abort to maintain consistency.
+
+To mitigate the performance impact of frequent read-write conflicts, particularly in the presence of false sharing where unrelated data items reside in the same cache line, transactions can employ value-based validation. This involves storing the values of read locations directly within the transaction's read log. During validation, the transaction checks if the currently stored values in memory are still consistent with the values recorded in its read log. If all previously read locations retain their original values, the transaction can proceed to commit. This value-based validation is a crucial step for ensuring atomicity and isolation in transactional systems.
+
+A specific implementation, referred to as "N Orec" by Dalessandro, Dalessandro, and Scott, utilizes a single global Orec to facilitate read-only transactions. This system allows a read-only transaction to validate and commit by reading the global Orec and then performing a double-check of all read locations against the consistency of their captured values. Their work highlights that such a system, without the overhead of acquiring individual locks for each read location, can lead to significant performance improvements, especially in scenarios with a high degree of concurrency and read operations. The text also references research by Dalessandro and Scott (2012) and Dalessandro et al. (2010a), as well as FastLane by Wamhoff et al. (2013), indicating that these systems offer competitive or superior performance in realistic workloads compared to other transactional memory implementations.
+
+The section "Avoiding Redundant Validation" addresses the performance implications of repeated validation checks in transactional memory. When a transaction reads 'n' different locations, it must validate its previous reads after each new read. For large transactions, the overhead of this incremental validation, which can occur 'O(n squared)' times, becomes substantial. Spear et al. (2006) observed that in redo log based systems, transactions might need to validate their reads only if another transaction has committed writes to those locations. For systems with a large number of cores and high transaction completion rates, minimizing redundant validations is critical. The text suggests that by maintaining a global count of committed writes, unnecessary validations can be avoided, thereby improving overall system throughput. This highlights a key trade-off in transactional memory design: balancing the guarantee of correctness with the imperative for performance. The cost of validation is directly proportional to the number of read operations and the frequency of write conflicts, making efficient validation strategies a critical area of research and development.

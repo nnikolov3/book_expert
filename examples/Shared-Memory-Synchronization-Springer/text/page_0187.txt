@@ -1,0 +1,57 @@
+192 9 Transactional Memory
+
+work it performs after the original occurrence of a conflict might be seen as “egregiously
+wasted”: in hindsight, given the conflict, there 1s no way it could have been productive. With
+eager conflict resolution, however, we may not know, at the time of the conflict, what other
+conflicts may arise in the future. If transaction A aborts in deference to transaction B, but B
+subsequently aborts in deference to some other transaction C, then in hindsight there was
+no point in aborting A: its work has been wasted just as egregiously as it was in the lazy
+case. There 1s no way, in general, to tell whether eager or lazy conflict resolution will result
+in more wasted work. Mixed resolution exploits the observation that in a redo-log-based
+system, both transactions can commit in the wake of a read-write conflict, if the reader does
+so first.
+
+As noted above, invisible readers avoid the problem of “turning readers into writers” by
+forcing them to update metadata. By introducing asymmetry between readers and writers,
+however, we force conflict resolution to be performed by readers. Moreover, read-write
+conflicts in which the read occurs first must be detected after the fact: a reader must revisit
+and validate its reads before committing (Sec. 9.1.4). An intermediate option, explored in
+the SkySTM system (Lev et al. 20092), 1s to use a scalable non-zero indicator (SNZI) (Ellen
+et al. 2007) to indicate the presence of one or more readers, without recording their individual
+identities. As noted in Sec. 5.4, SNZI uses a tree-based representation to reduce contention
+
+Generalizing the Notion of Conflict
+
+Write-write and read-write conflicts interfere with serializability because the accesses don’t com-
+mute: they can lead to different results if performed in the opposite order. Concurrent reads of the
+same location by different transactions do not interfere with serializability because they do commute:
+they produce the same results if performed in the opposite order.
+
+With this observation in mind, one can raise the level of abstraction, generalize the notion of conflict,
+decrease the overhead of conflict detection, and reduce the frequency with which transactions
+conflict. We have already seen an example with malloc and free. Unless these are treated as a
+special case, loads and stores to locations in the memory manager (e.g., a global free list) are
+likely to be seen as conflicts, even though operations on separate blocks of memory are logically
+independent. By special-casing malloc and free, we essentially add them to the list of primitive
+operations (along with load and store), and we note that (as long as the memory manager is properly
+synchronized internally), operations on separate blocks commute at the level of program semantics,
+even if they result in different memory contents (different blocks in different places) at the level of
+the implementation.
+
+Herlihy and Koskinen (2008) have proposed a transactional boosting mechanism to add abstractions
+to the TM system, so that conflicts on a set abstraction, for example, might be tracked at the level of
+add, remove, and lookup operations, rather than individual loads and stores. Two add operations
+would then commute—and fail to cause a conflict—even if they resulted in a different concrete
+representation of the (abstract) set in memory. Boosting requires that every operation have an inverse
+that can be used to undo its effects. It also benefits from an asymmetric generalization of the notion
+of commutativity (Koskinen et al. 2010).
+Nine Transactional Memory. One hundred ninety two. work it performs after the original occurrence of a conflict might be seen as egregiously wasted, in hindsight, given the conflict, there is no way it could have been productive. With eager conflict resolution, however, we may not know, at the time of the conflict, what other conflicts may arise in the future. If transaction A aborts in deference to transaction B, but B subsequently aborts in deference to some other transaction C, then in hindsight there was no point in aborting A. Its work has been wasted just as egregious as it was in the lazy case. There is no way, in general, to tell whether eager or lazy conflict resolution will result in more wasted work. Mixed resolution exploits the observation that in a redo log based system, both transactions can commit in the wake of a read write conflict, if the reader does so first. As noted above, invisible readers avoid the problem of turning readers into writers by forcing them to update metadata. By introducing asymmetry between readers and writers, however, we force conflict resolution to be performed by readers. Moreover, read write conflicts in which the read occurs first must be detected after the fact, a reader must revisit and validate its reads before committing. Section nine point one point four. An intermediate option, explored in the Sky T M system Lev et al. two thousand nine a, is to use a scalable non zero indicator S N Z I. Ellen et al. two thousand seven to indicate the presence of one or more readers, without recording their individual identities. As noted in Section five point four, S N Z I uses a tree based representation to reduce contention.
+
+Generalizing the Notion of Conflict. Write write and read write conflicts interfere with serializability because the accesses don't commute. They can lead to different results if performed in the opposite order. Concurrent reads of the same location by different transactions do not interfere with serializability because they do commute. They produce the same results if performed in the opposite order. With this observation in mind, one can raise the level of abstraction, generalize the notion of conflict, decrease the overhead of conflict detection, and reduce the frequency with which transactions conflict. We have already seen an example with malloc and free. Unless these are treated as a special case, loads and stores to locations in the memory manager, for example, global free list, are likely to be seen as conflicts, even though operations on separate blocks of memory are logically independent. By specializing malloc and free, we essentially add them to the list of primitive operations along with load and store, and we note that as long as the memory manager is properly synchronized internally, operations on separate blocks commute at the level of program semantics, even if they result in different memory contents different blocks in different places at the level of the implementation. Herlihy and Koskinen two thousand eight have proposed a transactional boosting mechanism to add abstractions to the T M system, so that conflicts on a set abstraction, for example, might be tracked at the level of add, remove, and lookup operations, rather than individual loads and stores. Two add operations would then commute and fail to cause a conflict even if they resulted in a different concrete representation of the abstract set in memory. Boosting requires that every operation have an inverse that can be used to undo its effects. It also benefits from an asymmetric generalization of the notion of commutativity Koskinen et al. two thousand ten.
+The discussion delves into the intricacies of transactional memory, specifically focusing on conflict detection and resolution strategies. One critical aspect explored is the notion of "egregious" conflict resolution, which considers whether work performed by a transaction prior to its abort could have been avoided. In a hindsight analysis, a conflict between transaction A and transaction B might appear avoidable if A aborts after interacting with B, suggesting that B's execution should have been prioritized or managed differently. This perspective highlights the challenge in eager conflict resolution, where conflicts are detected early, as it might lead to premature aborts that, in retrospect, were unnecessary. The text notes that when transaction A aborts due to a dependency on transaction C, and this dependency only becomes apparent in hindsight, aborting A is indeed wasteful. The core problem then becomes determining whether eager or lazy conflict resolution leads to less wasted work. Mixed resolution strategies aim to exploit observations to minimize such waste, by, for instance, reducing the need for read-write conflict resolution in a redo log based system by ensuring both transactions commit only after the read-write conflict is resolved first.
+
+A key strategy to mitigate the problem of "turning readers into writers" involves introducing asymmetry between readers and writers. This approach addresses situations where a read-write conflict occurs. In such scenarios, a reader must re-examine its reads before committing, particularly if its read occurs after a write. The SkySTM system, for example, uses a scalable non zero indicator to detect the presence of one or more readers. If readers are present, the system may employ mechanisms to avoid conflicts or to handle them efficiently. This often involves recording individual read and write identities to manage contention.
+
+The section "Generalizing the Notion of Conflict" expands on how different types of memory accesses, specifically write-write and read-write conflicts, can impact serializability. While concurrent reads of the same memory location by different transactions do not interfere with serializability because they commute, write-write and read-write conflicts can lead to different outcomes depending on the order of operations. By abstracting conflict detection to a higher level, the overhead of detecting and resolving conflicts can be reduced. The text posits that special cases like memory allocation and deallocation, which access locations within the memory manager, can be viewed as conflicts. When operations on separate memory blocks are performed, they are logically independent. However, by abstracting these operations, such as using mallok and free, they can be treated as primitive operations that commute. This is particularly true if the memory manager correctly handles these operations, ensuring they do not violate transactional guarantees.
+
+Further advancements in this area include transactional boosting mechanisms, as proposed by Herlihy and Koskinen. This approach allows for the integration of abstractions, such as set operations (add, remove, lookup), into transactional memory systems. These set operations are designed to commute, meaning their order of execution does not affect the final outcome. Boosting leverages the concept of an inverse operation for each concrete operation. For a set, an add operation might have a corresponding remove operation as its inverse. This property is crucial for ensuring that transactional operations, even when complex abstractions are involved, maintain transactional integrity and can be correctly managed in the presence of concurrent access. The mechanism benefits from an asymmetric representation of operations, further aiding in efficient conflict management.

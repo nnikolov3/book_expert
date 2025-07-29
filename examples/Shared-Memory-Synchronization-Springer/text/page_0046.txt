@@ -1,0 +1,73 @@
+3.2 Liveness 47
+
+Nonblocking algorithms have the desirable property that inopportune preemption (e.g., of a
+lock holder) never precludes forward progress in other threads. In some environments (e.g.,
+a system with high fault-tolerance requirements), nonblocking algorithms may also allow
+the system to survive when a thread crashes or is prematurely killed. We consider several
+variants of nonblocking progress in Sec. 3.2.1.
+
+In both blocking and nonblocking algorithms, we may also care about fairness—the
+relative rates of progress of different threads. We consider this topic briefly in Sec. 3.2.2.
+
+3.2.1 Nonblocking Progress
+
+Given the difficulty of guaranteeing any particular rate of execution (in the presence of
+timesharing, cache misses, page faults, and other sources of variability), we generally speak
+of progress in terms of abstract program steps rather than absolute time.
+
+A method is said to be wait free (the strongest variant of nonblocking progress) if it is
+guaranteed to complete in some bounded number of its own program steps. (This bound
+need not be statically known.) A method M is said to be lock free (a somewhat weaker
+variant) if some thread 1s guaranteed to make progress (complete an operation on the same
+object) in some bounded number of M’s program steps. M is said to be obstruction free (the
+weakest variant of nonblocking progress) if it is guaranteed to complete in some bounded
+number of program steps if no other thread executes any steps during that same interval.
+
+Wait freedom 1s sometimes referred to as starvation freedom: a given thread is never
+prevented from making progress. Lock freedom 1s sometimes referred to as livelock freedom:
+an individual thread may starve, but the system as a whole is never prevented from making
+forward progress (equivalently: no set of threads can actively prevent each other from making
+progress indefinitely). Obstruction-free algorithms can suffer not only from starvation but
+also from livelock; if all threads but one “hold still” long enough, however, the one running
+thread 1s guaranteed to make progress.
+
+Many practical algorithms are lock free or obstruction free. Treiber’s stack, for example
+(Sec. 2.3.1), 1s lock-free, as is the widely used queue of Michael and Scott (Sec. 8.3.1).
+Obstruction freedom was first described in the context of Herlihy et al.’s double-ended queue
+(2003a) (Sec. 8.3.2). It 1s also provided by several TM systems (among them the DSTM of
+Herlihy et al. (2003b), the ASTM of Marathe et al. (2005), and the work of Marathe and Moir
+(2008)). Moir and Shavit (2005) provide an excellent survey of concurrent data structures,
+including coverage of nonblocking progress. Sundell and Tsigas (2008a) describe a library
+of nonblocking data structures.
+
+Wait-free algorithms are significantly less common. Herlihy (1991) demonstrated that
+any sequential data structure can be transformed, automatically, into a wait-free concurrent
+version, but the construction is highly inefficient. Kogan and Petrank (2012), building on a
+series of intermediate results, showed how to reduce the time overhead dramatically, though
+space overhead remains proportional to the maximum number of threads in the system.
+Three point two, Liveness.
+
+Nonblocking algorithms have the desirable property that inopportune preemption, for example, of a lock holder, never precludes forward progress in other threads. In some environments, for example, a system with high fault tolerance requirements, nonblocking algorithms may also allow the system to survive when a thread crashes or is prematurely killed. We consider several variants of nonblocking progress in Section three point two point one.
+
+In both blocking and nonblocking algorithms, we may also care about fairness, which is the relative rates of progress of different threads. We consider this topic briefly in Section three point two point two.
+
+Three point two point one, Nonblocking Progress.
+
+Given the difficulty of guaranteeing any particular rate of execution in the presence of timesharing, cache misses, page faults, and other sources of variability, we generally speak of progress in terms of abstract program steps rather than absolute time.
+
+A method is said to be *wait free*, the strongest variant of nonblocking progress, if it is guaranteed to complete in some bounded number of its own program steps. This bound need not be statically known. A method M is said to be *lock free*, a somewhat weaker variant, if some thread is guaranteed to make progress, which means complete an operation on the same object, in some bounded number of M's program steps. M is said to be *obstruction free*, the weakest variant of nonblocking progress, if it is guaranteed to complete in some bounded number of program steps if no other thread executes any steps during that same interval.
+
+Wait freedom is sometimes referred to as *starvation freedom*: a given thread is never prevented from making progress. Lock freedom is sometimes referred to as *livelock freedom*: an individual thread may starve, but the system as a whole is never prevented from making forward progress. Equivalently, no set of threads can actively prevent each other from making progress indefinitely. Obstruction free algorithms can suffer not only from starvation but also from livelock. If all threads but one "hold still" long enough, however, the one running thread is guaranteed to make progress.
+
+Many practical algorithms are lock free or obstruction free. Treiber’s stack, for example, Section two point three point one, is lock free, as is the widely used queue of Michael and Scott, Section eight point three point one. Obstruction freedom was first described in the context of Herlihy et al.'s double ended queue, two thousand three A, Section eight point three point two. It is also provided by several T M systems, among them the D S T M of Herlihy et al., two thousand three B, the A S T M of Marathe et al., two thousand five, and the work of Marathe and Moir, two thousand eight. Moir and Shavit, two thousand five, provide an excellent survey of concurrent data structures, including coverage of nonblocking progress. Sundell and Tsigas, two thousand eight A, describe a library of nonblocking data structures.
+
+Wait free algorithms are significantly less common. Herlihy, nineteen ninety one, demonstrated that any sequential data structure can be transformed automatically into a wait free concurrent version, but the construction is highly inefficient. Kogan and Petrank, two thousand twelve, building on a series of intermediate results, showed how to reduce the time overhead dramatically, though space overhead remains proportional to the maximum number of threads in the system.
+The concept of liveness in concurrent systems refers to the property that a system, or at least some part of it, will eventually make progress. This is a fundamental consideration in the design of robust and responsive multi threaded applications. Nonblocking algorithms are a class of concurrent algorithms specifically designed to ensure this progress by avoiding traditional locking mechanisms. A key advantage of these algorithms is their resilience to inopportune preemption, where a thread holding a critical resource or lock might be temporarily suspended by the O S. In a blocking system, such an event could lead to a deadlock or indefinite stall. Nonblocking algorithms, however, are engineered such that the preemption or even crash of one thread does not prevent other threads from making forward progress, thereby contributing to higher fault tolerance. While the primary focus is on overall system progress, fairness, which concerns the relative rates of progress among competing threads, is also an important aspect to consider.
+
+The definition of progress in nonblocking algorithms is often given in terms of abstract program steps, rather than absolute time, due to the inherent variability introduced by factors such as timesharing, cache misses, and page faults. This allows for a more deterministic analysis of progress guarantees.
+
+The strongest variant of nonblocking progress is **wait freedom**. A method is considered wait free if it guarantees that every individual thread attempting an operation will complete its task within a bounded number of its *own* program steps. This guarantee holds true regardless of the execution speed of other threads or even if other threads crash. Wait freedom inherently ensures both starvation freedom and livelock freedom. Starvation freedom means that no individual thread will be indefinitely prevented from making progress, ensuring that every thread eventually gets its turn. Livelock freedom means that threads will not continuously perform unproductive work, repeatedly attempting operations that fail without actual progress. While wait freedom offers the highest level of fault tolerance and determinism, it is often the most challenging and computationally expensive to implement, frequently leading to higher overhead. Early research demonstrated that any sequential data structure could, in principle, be transformed into a wait free concurrent version, although initial constructions often incurred substantial performance penalties. Subsequent advancements have aimed to reduce this overhead, sometimes by allowing space complexity to scale with the number of active threads.
+
+A more common, and slightly weaker, form of nonblocking progress is **lock freedom**. A method is lock free if it guarantees that at least *one* thread attempting an operation on a shared object will complete its task within a bounded number of *system* wide program steps. The crucial distinction from wait freedom is that while the system as a whole is guaranteed to make progress, individual threads are *not* guaranteed to make progress and may still suffer from starvation. Lock freedom prevents system wide deadlocks and livelocks by ensuring that at least one operation will always succeed, even under contention. Practical implementations include widely used data structures such as Treiber's lock free stack and the Michael and Scott lock free queue. These algorithms strike a balance between robust concurrency and acceptable performance overhead, making them suitable for scenarios where overall system availability is prioritized, even if some individual thread fairness is not strictly enforced.
+
+The weakest form of nonblocking progress discussed is **obstruction freedom**. An operation is obstruction free if it is guaranteed to complete within a bounded number of program steps, provided that *no other thread takes any steps* during that specific execution interval. In essence, if a thread runs in isolation without interference from other concurrent operations, it will complete. However, if multiple threads are actively contending, an obstruction free algorithm can suffer from starvation, as threads might repeatedly conflict and retry their operations without success. It is considered livelock free because if a thread is eventually given an opportunity to execute without interference, it will make progress. The primary advantage of obstruction freedom lies in its comparative simplicity of implementation, often leveraging optimistic concurrency control techniques. Transactional Memory, for example, frequently utilizes obstruction freedom, where threads optimistically perform operations and only validate and commit their changes if no conflicts occurred. If a conflict is detected, the operation is simply retried. To ensure that an obstruction free algorithm does not lead to indefinite starvation in a practical system, an external scheduling mechanism is often required to ensure that, eventually, one contending thread is given a period of uninterrupted execution to complete its operation.

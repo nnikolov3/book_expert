@@ -1,0 +1,46 @@
+166 8 Nonblocking Algorithms
+
+|gparentUpdate |
+
+Clean | parentUpdate |
+A
+
+(e) replace parent, target with sibling (f) “unlock” gparent using CAS
+
+Figure 8.17 EFRB algorithm to perform delete(90). Suppose the thread searches for 90, locating
+the target node containing 90, and its parent and gparent, and sees that neither node is “locked.”
+After step (¢) the delete might be helped.
+
+another operation O, the thread helps O, then restarts its own delete. Otherwise, the thread
+proceeds as in Figure 8.17.
+
+The steps are similar to those in insert, except here two nodes are “locked.” The first 1s
+“locked” with state DFlag in step (c¢); the second is “locked” with state Mark in step (d),
+since it is being removed from the tree. There is no need to “lock” (or Mark) the leaf target
+that is being removed, since leaves cannot be changed. If the CAS in step (c¢) fails, the delete
+restarts from the beginning. If the CAS in step (d) fails, the delete performs a CAS to try to
+“unlock” gparent by changing gparent.update from (DFlag, desc) to (Clean, desc) before
+one hundred sixty six
+
+eight Nonblocking Algorithms
+
+Figure 8.17 EFRB algorithm to perform delete(90). Suppose the thread searches for ninety, locating the target node containing ninety, and its parent and gparent, and sees that neither node is "locked." After step (c) the delete might be helped.
+
+another operation O, the thread helps O, then restarts its own delete. Otherwise, the thread proceeds as in Figure 8.17. The steps are similar to those in insert, except here two nodes are "locked." The first is "locked" with state DFlag in step (c); the second is "locked" with state Mark in step (d), since it is being removed from the tree. There is no need to "lock" (or Mark) the leaf target that is being removed, since leaves cannot be changed. If the CAS in step (c) fails, the delete restarts from the beginning. If the CAS in step (d) fails, the delete performs a CAS to try to "unlock" gparent by changing gparent.update from (DFlag, desc) to (Clean, desc) before
+This page illustrates the step-by-step deletion process in a nonblocking algorithm, specifically focusing on the Efficient Redundant Binary (EFRB) tree. The diagrams depict various states of the tree during a delete operation, highlighting the use of atomic primitives to maintain consistency in a concurrent environment.
+
+Figure Eight point one seven details an EFRB algorithm to perform a delete operation on the value ninety. The scenario supposes that a thread searches for ninety, locating the target node containing ninety, and its parent and grandparent. Crucially, this thread observes that neither the parent nor the grandparent nodes are initially "locked."
+
+Diagram (a) shows the tree state before the deletion of ninety. We see a grandparent node with value sixty, which has a left child with value thirty and a right child with value ninety. The node with value thirty has children with values twenty and fifty. The node with value ninety has children with values seventy and ninety. Additionally, there are associated "update" fields for the parent and grandparent nodes, indicated by boxes above them, which are currently in a "Clean" state.
+
+Diagram (b) illustrates the creation of a new "DeleteFlag" descriptor. This descriptor is conceptually associated with the node to be deleted, marking it for removal.
+
+Diagram (c) depicts the operation of "locking" the parent using a Compare And Swap, or C A S, primitive. The parent node's update field, which was "Clean," is atomically changed to a state represented as DFlag, indicating it is locked for deletion. This change involves attempting to swap the current state of the parent's update field with a new state that includes the DFlag. A dashed arrow from the grandparent's update field points to the parent's update field, signifying a dependency or attempt to coordinate. The node ninety is also shown with a "Mark" in its associated update field, indicating it is marked for deletion.
+
+Diagram (d) shows the "locking" of the grandparent using C A S. Similar to the parent, the grandparent's update field is intended to be transitioned to a state that reflects the ongoing deletion. In this diagram, the grandparent's update field is shown transitioning to a state involving DFlag, and the node ninety itself is marked. This step implies a more complex coordination mechanism, where the grandparent's state is also modified to reflect the pending removal.
+
+Diagram (e) illustrates replacing the parent with its sibling. This is a structural modification to the tree, where the parent node is effectively removed by relinking its sibling into its place. This operation likely occurs after successful marking and locking of the relevant nodes.
+
+Diagram (f) shows the "unlocking" of the grandparent using C A S. The grandparent's update field is returned to its "Clean" state after the deletion operation has progressed. This action signifies that the grandparent is no longer actively involved in the deletion of the target node ninety, or that its role in coordinating that specific deletion is complete.
+
+The text following the figures describes the behavior when another thread encounters this deletion operation. If this other thread helps the ongoing deletion and then restarts its own operation, it proceeds as shown in Figure Eight point one seven. The steps are described as similar to an insert operation, with a key difference: two nodes are encountered in a "locked" state. The first locked node is the target node marked in step (d) of the deletion, which is being removed from the tree. In this case, there's no need to "lock" the leaf target node further because its leaves cannot be changed. If the C A S operation in step (d) fails, the deleting thread performs a C A S to try to transition the grandparent's update from DFlag to Clean, with a descriptor, effectively rolling back or retrying the operation. This handling of C A S failures is crucial for the progress and correctness of nonblocking algorithms, ensuring that operations can complete even in the face of concurrent modifications.

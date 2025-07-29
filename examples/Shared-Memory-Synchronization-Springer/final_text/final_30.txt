@@ -1,0 +1,68 @@
+
+The text explores the evolution of techniques for managing concurrent operations in data structures, focusing on Version-based Reclamation, or VBR, as introduced by Sheffi and colleagues in two thousand twenty-one. These techniques aim to allow multiple threads to read and write data simultaneously without relying on hardware prefetching, or HP, mechanisms. VBR represents a shift in how concurrent memory is managed, offering an alternative to traditional methods that often require more rigid synchronization.
+
+In a related area, the work of Brown from two thousand seventeen provides a broader overview of Safe Memory Reclamation, or SMR, algorithms. These algorithms are essential for ensuring that memory is safely reclaimed in concurrent systems, especially when multiple threads are accessing shared data. Brown's publication also examines how well these SMR algorithms integrate with common data structures, such as stacks, queues, and trees. The compatibility of these algorithms with different structures is crucial for building robust, scalable concurrent systems.
+
+Section eight point eight of the text introduces the concept of Dual Data Structures, which are designed to handle concurrent operations in a way that avoids blocking. A key challenge in these structures is ensuring nonblocking progress, especially when an operation is attempted on a data structure that is not in a valid state. For example, if a thread tries to remove an element from a stack or queue that is empty, the operation must still be well-defined. This is referred to as a total operation, meaning it must always produce a result, even in edge cases.
+
+To handle such situations, a common approach is to return a special value that indicates failure. This value is often represented by a symbol known as perp, which signals that the operation could not be completed. However, this approach introduces a new challenge: how to coordinate between threads when an operation must wait for a condition to be met, such as the arrival of new data in an empty container.
+
+One way to address this is through a technique called spinning. Spinning involves a thread repeatedly checking a condition until it becomes true. For instance, a thread might keep trying to remove an element from a container until it succeeds. The process can be described as follows: a variable v is assigned the result of a remove operation on the container. If v equals perp, the thread repeats the operation. This continues until v is no longer perp, indicating a successful removal.
+
+While spinning is conceptually simple, it has notable drawbacks. It consumes CPU cycles and can lead to increased contention, especially when many threads are trying to access the same data structure. A particularly problematic scenario arises when a new element is inserted into an empty container. A thread that has been spinning might remove this new element almost immediately, but due to the way the operating system schedules threads, it could end up removing the element before the inserting thread has fully completed its operation. This unintended behavior highlights the need for more sophisticated synchronization strategies.
+
+To address these limitations, Scherer and Scott, in their two thousand four publication, proposed nonblocking dual data structures. These structures aim to eliminate the inefficiencies of spinning while maintaining the correctness of concurrent operations. Their framework introduces the idea of reservations, which allow a thread to indicate its intent to perform an operation later. When another thread detects a reservation, it can notify the waiting thread once the necessary condition is met. This approach ensures that operations are both nonblocking and linearizable, meaning they appear to occur instantaneously from the perspective of other threads.
+
+The framework also allows for intermediate steps, such as spinning or waiting, without compromising the overall correctness of the system. This flexibility is important because it allows the system to adapt to varying levels of contention while still guaranteeing that operations will eventually complete.
+
+The discussion then turns to specific implementations of nonblocking dual data structures, including the Treiber stack and the M and S queue. In these structures, the challenge is to ensure atomicity—meaning that operations appear to happen all at once, without interference from other threads. For example, when inserting a new element into a stack or queue, the system must decide whether to add the element directly or fulfill an existing reservation. This decision must be made in a way that appears atomic to other threads, even though it may involve multiple steps internally.
+
+To achieve this, the system must ensure that once an operation begins, it completes within a bounded number of steps, regardless of other concurrent operations. This is important for maintaining performance and predictability in highly concurrent environments.
+
+In the case of dual queues, atomicity is maintained by associating a tag with each node in the queue. This tag indicates whether the node contains a data item or a reservation. When a reservation is fulfilled, the waiting thread attempts to update the queue's data structure using a compare and swap, or CAS, operation. This operation allows the thread to change a field from a null value to the reservation, ensuring that the update is atomic and does not interfere with other threads.
+
+An alternative approach involves using condition variables to signal when a waiting thread can proceed. However, this can introduce blocking, which is generally avoided in nonblocking algorithms.
+
+The text also covers nonblocking dual stacks, where the tagging mechanism is similar but the structure differs in that insertions and deletions occur at the same end of the list. The absence of a dummy node adds complexity, as it requires an additional step to ensure correct operation. For example, a thread may need to request permission before popping an element from the stack.
+
+A potential issue arises when a thread stalls after the operation has been linearized but before it has been fully completed. In such cases, other operations may interleave, leading to delays. To handle this, a push operation always adds a data node to the stack, regardless of its current state. If the top node is a reservation, the two nodes annihilate each other: any thread that finds a data node and a reservation at the top of the stack attempts to link them and then remove both from the stack.
+
+In subsequent work, Izraelevitz and Scott, in two thousand seventeen, extended this idea to create dual versions of lock-free, cache-oblivious, reservation-based queues. These structures are designed to work efficiently with generic nonblocking containers that pair data with reservations.
+
+The practical benefits of nonblocking dual data structures are evident in the Java programming language. Specifically, the Executor framework in Java six replaced the lock-based task pools used in Java five with dual stacks and queues. This change led to significant performance improvements, with throughput increasing by a factor of two to ten times.
+
+The text then introduces the concept of nonblocking elimination, a technique used to reduce contention and improve scalability in concurrent data structures. Elimination works by using a temporary auxiliary structure, often called an elimination array or elimination buffer, to resolve conflicts between operations that would otherwise require blocking or expensive atomic operations like CAS.
+
+In a nonblocking stack, for example, threads typically use CAS to modify the top of the stack. When contention is low, this works well. However, under high contention, CAS operations often fail, leading to wasted CPU cycles. To mitigate this, Hendler and colleagues proposed an elimination strategy. When a thread's CAS operation fails, it looks for a matching operation in the elimination array. For instance, a push operation might look for a pending pop operation, and vice versa.
+
+The elimination array is divided into slots. A thread might first try to access a slot at the beginning of the array. If the slot is empty, the thread parks its operation there for a limited time, hoping that another thread will find it and perform a hand-off. This hand-off usually involves an atomic exchange of data. If a matching operation is found, both operations are eliminated, and the threads can complete successfully.
+
+If no match is found within the time limit, the thread adjusts its strategy. It might shrink or expand the range of slots it probes based on past success or failure. This dynamic adjustment helps the system adapt to varying levels of contention.
+
+Elimination is not limited to stacks. It has also been applied to queues, where enqueue and dequeue operations can be paired. In some implementations, an enqueue operation is delayed until its data would have reached the head of the queue, at which point it can safely combine with a dequeue operation. This is managed using monotonically increasing serial numbers, which help determine when an operation is sufficiently old to be eliminated.
+
+Elimination techniques have also been adapted for priority queues, where operations with small keys can eliminate other operations. The core idea remains the same: to provide a localized, temporary conflict resolution mechanism that bypasses the need for contention on the primary data structure.
+
+In the context of stacks, Hendler and colleagues used elimination to adaptively back off in the face of contention. A thread starts by attempting a CAS on the top of the stack. If that fails, it selects a slot in an elimination array. If a matching operation is already there, the two threads exchange data and complete. If the slot is empty, the thread parks its operation for a set time, hoping a matching operation will arrive.
+
+If no match is found, the thread retries the CAS on the stack. This process continues until either the operation succeeds on the stack or in the elimination array. Threads can also adjust the subrange of the elimination array they use based on past experience, improving the chances of finding a match.
+
+Similar elimination techniques have been applied to other abstractions, such as exchange channels, where threads pair up and swap information. Scherer and colleagues described such a system in two thousand five, which was later refined into the Exchanger class in Java's concurrency library.
+
+Elimination has also been implemented in priority queues, allowing delete Min and insert operations on very small keys to eliminate each other. This approach has been explored by researchers such as Braginsky and Calciu.
+
+The text then shifts to higher-level constructions, where researchers have sought to automatically generate concurrent, nonblocking implementations from sequential ones. The goal is to take a sequential data structure and produce a concurrent version that is both efficient and correct. This is based on properties that are inherently nonblocking and concurrent.
+
+Herlihy's work in nineteen ninety-one laid the foundation for wait-free synchronization, which allows any thread to complete its operation in a bounded number of steps, regardless of other threads. His nineteen ninety-three paper introduced methods for both wait-free and lock-free paradigms, using a root pointer to allow read-only operations to proceed without blocking.
+
+Universal constructions have since been developed to simplify the creation of concurrent algorithms, though they often introduce overhead. Researchers like Fatourou and Kallimanis have surveyed these efforts. Techniques such as k-compare-single swap, or k-CSS, and k-CAS have been developed to improve efficiency. These allow multiple memory locations to be checked and updated atomically.
+
+LLX and SCX operations, developed by Brown and colleagues, offer an alternative by working on nodes rather than individual addresses. PathCAS, a more recent development, generalizes k-CAS to make it easier to design lock-free trees.
+
+Transactional memory represents the most expressive synchronization primitive proposed to date. It allows arbitrary sequences of reads and writes to be grouped into atomic transactions that either commit as a whole or abort and roll back. Inspired by hardware proposals from Herlihy and Moss in nineteen ninety-three, software transactional memory was introduced by Shavit and Touitou in nineteen ninety-five.
+
+Transactional memory raises the level of abstraction for synchronization, allowing programmers to specify what should be atomic without worrying about how to implement it. It also uses speculation, allowing transactions to proceed in parallel until conflicts arise. When conflicts occur, one transaction continues while others abort and retry.
+
+This approach offers composability, meaning that smaller atomic operations can be combined into larger ones without the risk of deadlock. It has become a major area of research, with hundreds of papers published over the past two decades.
+
+In summary, nonblocking algorithms and transactional memory are critical for building modern concurrent systems. Advances in synchronization primitives like k-CAS, LLX/SCX, and PathCAS have enabled the development of high-performance data structures. Transactional memory, with its ability to encapsulate arbitrary sequences of operations in atomic transactions, offers a promising path forward for simplifying concurrent programming. As research continues, we can expect further improvements in performance, scalability, and reliability in concurrent systems.

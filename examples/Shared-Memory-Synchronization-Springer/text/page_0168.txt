@@ -1,0 +1,94 @@
+172 8 Nonblocking Algorithms
+
+class unsafe_stack value unsafe_stack.pop():
+atomic<node*> top loop
+void unsafe_stack.push(value v): 0 := top.load(||)
+Nn = new node if o = null return _L
+n—value =v n := o—next.load(||)
+repeat if top.CAS(o, n, R||)
+0 = top.load(||) value v := o—value
+n—next = 0 free o
+until top.CAS(o, n, W|)) return v
+
+Figure 8.18 Unsafe variant of the Treiber stack that allocates in push and frees in pop. (Compare
+to the version in Figure 8.2, which passes nodes, rather than values, to and from its methods.).
+
+to hold simultaneously to safely perform all of its hazardous accesses.” Threads write only
+to their own slots, but can read each others’ slots. After making its announcement, a thread
+must re-verify that it is safe to access o, by demonstrating that o has not yet been removed
+from the data structure. In the Treiber stack, verification can be performed by reading the
+top pointer and seeing that it still points to o. If verification succeeds, the thread is permitted
+to perform hazardous accesses to o until it releases its hazard pointer by writing null to the
+appropriate slot in the announcement array. On the other hand, if verification fails, the thread
+1s not permitted to access o.
+
+Most algorithms require at least minor changes in order to use HPs—both to insert
+the verification step and to recover when it fails. The HP paper suggests that it may be
+reasonable in the failure case to take whatever actions would normally be taken when a
+thread encounters contention. In the HP version of the Treiber stack (Figure 8.19), a single
+HP per thread suffices. The loop in push uses this HP to protect the top node in the stack
+while placing a new node above it; the loop in pop uses it to protect the node that is being
+removed (and whose value is being read).
+
+Rather than directly freeing a node o that has been removed from the data structure, HP-
+enabled code invokes a procedure called delayed_free(o), which delays reclamation until
+no thread holds a hazard pointer to o. (In some papers, delayed_free is known as retire.)
+Internally, delayed_free(o) scans the announcement array looking for any pointers to retired
+nodes (0 among them). Any retired node with no remaining HPs can be freed. Others (o
+potentially among them) are kept in a shared buffer, so they can be freed during some later
+call to delayed_free.
+
+The crux of the HP algorithm lies in the “handshake” that takes place between a thread
+Tr that wants to free o and a thread 7}, that wants to perform a hazardous access to o. In
+order to perform a hazardous access to o, Tj, must announce a hazard pointer to o, then
+verify that o has not yet been removed from the data structure. In order to free o, Tr must
+
+9 In the standard formulation, k must be statically known. Some HP implementations allow it to be
+dynamically determined.
+172 Nonblocking Algorithms
+
+class unsafe_stack
+  atomic<node*> top
+
+void unsafe_stack::push(value v):
+  n := new node
+  n->value := v
+  repeat
+    o := top.load()
+    n->next := o
+  until top.CAS(o, n)
+
+value unsafe_stack::pop():
+  loop
+    o := top.load()
+    if o = null return _|_
+    n := o->next.load()
+    if top.CAS(o, n)
+      free o
+      return v
+  return v
+
+Figure 8.18 Unsafe variant of the Treiber stack that allocates in push and frees in pop. (Compare to the version in Figure 8.2, which passes nodes, rather than values, to and from its methods.)
+
+to hold simultaneously to safely perform all of its hazardous accesses. Nine Threads write only to their own slots, but can read each others' slots. After making its announcement, a thread must re verify that it is safe to access o, by demonstrating that o has not yet been removed from the data structure. In the Treiber stack, verification can be performed by reading the top pointer and seeing that it still points to o. If verification succeeds, the thread is permitted to perform hazardous accesses to o until it releases its hazard pointer by writing null to the appropriate slot in the announcement array. On the other hand, if verification fails, the thread is not permitted to access o.
+
+Most algorithms require at least minor changes in order to use HPs—both to insert the verification step and to recover when it fails. The HP paper suggests that it may be reasonable in the failure case to take whatever actions would normally be taken when a thread encounters contention. In the HP version of the Treiber stack (Figure 8.19), a single HP per thread suffices. The loop in push uses this HP to protect the top node in the stack while placing a new node above it; the loop in pop uses it to protect the node that is being removed (and whose value is being read).
+
+Rather than directly freeing a node o that has been removed from the data structure, HP-enabled code invokes a procedure called delayed_free(o), which delays reclamation until no thread holds a hazard pointer to o. (In some papers, delayed_free is known as retire.) Internally, delayed_free scans the announcement array looking for any pointers to retired nodes (o among them). Any retired node with no remaining HPs can be freed. Others (o potentially among them) are kept in a shared buffer, so they can be freed during some later call to delayed_free.
+
+The crux of the HP algorithm lies in the "handshake" that takes place between a thread Tf that wants to free o and a thread Th that wants to perform a hazardous access to o. In order to perform a hazardous access to o, Th must announce a hazard pointer to o, then verify that o has not yet been removed from the data structure. In order to free o, Tf must
+
+Nine In the standard formulation, k must be statically known. Some HP implementations allow it to be dynamically determined.
+The provided text details an unsafe variant of the Treiber stack algorithm, specifically focusing on its push and pop operations and the associated memory management challenges in a concurrent environment. The core concept revolves around nonblocking algorithms, which aim to ensure that at least one thread can always make progress, even in the presence of contention. This is contrasted with blocking algorithms that might halt progress for all threads if a single thread is delayed.
+
+The code snippet for `unsafe_stack.pop()` illustrates a typical nonblocking approach using compare-and-swap (CAS) operations, which are fundamental building blocks for lock-free data structures. The `loop` construct indicates a retry mechanism: if the CAS operation fails, meaning another thread has modified the data since it was read, the operation restarts.
+
+The `top` pointer, an `atomic<node*>`, is critical. The `pop` operation first reads the current `top` using `top.load(acquire)`, employing an acquire memory fence to ensure visibility of preceding writes. If the stack is empty, indicated by `o == null`, the operation returns a special null value. Otherwise, it attempts to read the `next` pointer of the current top node, also using an acquire fence. The crucial step is the `top.CAS(o, n, release)` operation. This atomic instruction attempts to update `top` to point to `n` (the next node in the stack) only if `top` currently holds the value `o` (the node that was just read). The `release` fence ensures that writes to the node being popped are visible to other threads before the CAS operation completes. If the CAS succeeds, the value from the popped node (`o->value`) is stored, the popped node `o` is freed, and the value is returned. If the CAS fails, the loop retries the entire process.
+
+The accompanying text highlights the complexities of memory reclamation in such algorithms. Threads performing hazardous accesses, meaning accesses to data that might be modified or freed by other threads, need protection. The concept of "hazard pointers" (HP) is introduced as a mechanism for this protection. A thread intending to access a node `o` must first announce its intent by writing `o` into its designated hazard pointer slot. This announcement effectively "protects" `o` from being freed by another thread until the accessing thread has completed its operation.
+
+Verification is key: before a thread frees a node, it must verify that no other thread currently holds a hazard pointer to it. In the context of the Treiber stack, verification involves checking if the `top` pointer still points to the node `o` that was originally read. If `top` has changed, it implies that another thread has modified the stack, and the current thread must restart its operation. If the verification succeeds, meaning `top` still points to `o`, the thread can proceed to release its hazard pointer and potentially free the node.
+
+The text emphasizes the importance of ensuring that hazard pointers are properly managed. The HP paper suggests that a single hazard pointer per thread might be sufficient in many cases. However, the failure to properly manage hazard pointers can lead to serious issues, such as freeing memory that is still in use, resulting in crashes or data corruption.
+
+The "handshake" mechanism describes the interaction between a thread that wishes to perform a hazardous access (`T_h`) and a thread that is attempting to free a node (`T_f`). `T_h` must announce its intent to access `o` by setting a hazard pointer. `T_f`, before freeing `o`, must scan all hazard pointers to ensure `o` is not protected. If `o` is protected by any hazard pointer, `T_f` cannot free it. This process ensures that memory is not reclaimed prematurely. The concept of `delayed_free` is introduced, where nodes that cannot be immediately freed are placed in a shared buffer and reclaimed later. The critical requirement for `T_f` is to verify that `o` has not been removed from the data structure and is not currently being accessed by any other thread. This verification step is fundamental to maintaining the safety of the nonblocking data structure. The footnote indicates that in some formulations, the number of hazard pointers required (`k`) might be statically determined, while in others, it can be dynamically adjusted.

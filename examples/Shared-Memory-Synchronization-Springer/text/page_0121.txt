@@ -1,0 +1,75 @@
+7.3 Monitors 125
+
+While scope-based critical sections help to solve the problem of missing acquire and
+release calls, the association between a lock and the data it protects is still entirely a matter
+of convention. Critical sections on a given lock may be widely scattered through the text of
+a program, and condition synchronization remains entirely ad hoc.
+
+To address these limitations, Dijkstra (1972), Brinch Hansen (1973), and Hoare (1974)
+developed a language-level synchronization mechanism known as the monitor. In essence,
+a monitor is a data abstraction (a module or class) whose methods (often called entries) are
+automatically translated into critical sections on an implicit per-monitor lock. Since fields of
+the monitor are visible only within its methods, language semantics ensure that the state of
+the abstraction will be read or written only when holding the monitor lock. To accommodate
+condition synchronization, monitors also provide condition variables. A thread that needs
+to wait for a condition within the monitor executes a wait operation on a condition variable;
+a thread that has made a condition true performs a signal operation to awaken a waiting
+thread. Unlike semaphores, which count the difference in the number of P and V operations
+over time, condition variables contain only a queue of waiting threads: if a signal operation
+occurs when no threads are waiting, the operation has no effect.
+
+Over the past 40 years, monitors have been incorporated into dozens of programming
+languages. Historically, Concurrent Pascal (Brinch Hansen 1975), Modula (Wirth 1977), and
+Mesa (Lampson and Redell 1980) were probably the most influential. Today, Java (Goetz
+et al. 2006) 1s probably the most widely used. There have also been occasional attempts to
+devise a library interface for monitors, but these have tended to be less successful: the idea
+depends quite heavily on integration into a language’s syntax and type system.
+
+Details of monitor semantics vary from one language to another. In the first subsection
+below we consider the classic definition by Hoare. Though it is not followed precisely (to
+the best of the authors’ knowledge) by any particular language, it 1s the standard against
+which all other variants are compared. The following two subsections consider the two
+most significant areas of disagreement among extant monitor variants. The final subsection
+describes the variant found in Java.
+
+7.3.1 Hoare Monitors
+
+As originally defined by Hoare (1974), a monitor can be represented pictorially as shown
+in Figure 7.2. Threads queue for entry at the left and exit at the right. Only one 1s allowed
+“inside the box” at any given time. When a thread performs a wait operation, it steps out of
+the box and into a condition queue. When a thread performs a signal operation, it checks
+to see whether any thread is waiting on the associated condition queue. If so, it steps out of
+the box and into the urgent queue, and the thread at the head of the condition queue steps
+in. When a thread exits the monitor, the implementation allows a thread to enter from the
+urgent queue or, if that queue is empty, from the entry queue. If both queues are empty, the
+monitor 1s unlocked.
+While scope-based critical sections help to solve the problem of missing acquire and release calls, the association between a lock and the data it protects is still entirely a matter of convention. Critical sections on a given lock may be widely scattered through the text of a program, and condition synchronization remains entirely ad hoc.
+
+To address these limitations, Dijkstra one thousand nine hundred seventy two, Brinch Hansen one thousand nine hundred seventy three, and Hoare one thousand nine hundred seventy four developed a language level synchronization mechanism known as the monitor. In essence, a monitor is a data abstraction, a module or class, whose methods, often called entries, are automatically translated into critical sections on an implicit per monitor lock. Since fields of the monitor are visible only within its methods, language semantics ensure that the state of the abstraction will be read or written only when holding the monitor lock. To accommodate condition synchronization, monitors also provide condition variables. A thread that needs to wait for a condition within the monitor executes a wait operation on a condition variable; a thread that has made a condition true performs a signal operation to awaken a waiting thread. Unlike semaphores, which count the difference in the number of P and V operations over time, condition variables contain only a queue of waiting threads; if a signal operation occurs when no threads are waiting, the operation has no effect.
+
+Over the past forty years, monitors have been incorporated into dozens of programming languages. Historically, Concurrent Pascal by Brinch Hansen one thousand nine hundred seventy five, Modula by Wirth one thousand nine hundred seventy seven, and Mesa by Lampson and Redell one thousand nine hundred eighty were probably the most influential. Today, Java by Goetz et al. two thousand six is probably the most widely used. There have also been occasional attempts to devise a library interface for monitors, but these have tended to be less successful: the idea depends quite heavily on integration into a language’s syntax and type system.
+
+Details of monitor semantics vary from one language to another. In the first subsection below we consider the classic definition by Hoare. Though it is not followed precisely, to the best of the authors’ knowledge, by any particular language, it is the standard against which all other variants are compared. The following two subsections consider the two most significant areas of disagreement among extant monitor variants. The final subsection describes the variant found in Java.
+
+Section seven point three point one, Hoare Monitors.
+
+As originally defined by Hoare one thousand nine hundred seventy four, a monitor can be represented pictorially as shown in Figure seven point two. Threads queue for entry at the left and exit at the right. Only one is allowed “inside the box” at any given time. When a thread performs a wait operation, it steps out of the box and into a condition queue. When a thread performs a signal operation, it checks to see whether any thread is waiting on the associated condition queue. If so, it steps out of the box and into the urgent queue, and the thread at the head of the condition queue steps in. When a thread exits the monitor, the implementation allows a thread to enter from the urgent queue or, if that queue is empty, from the entry queue. If both queues are empty, the monitor is unlocked.
+The foundational challenge in concurrent programming lies in managing shared resources and orchestrating the execution of multiple threads to avoid data corruption and ensure correct program behavior. While primitive synchronization mechanisms like critical sections and locks offer mutual exclusion, they present significant liabilities. The explicit requirement for programmers to manually invoke acquire and release calls for locks is error prone, often leading to deadlocks or race conditions if these operations are missed or improperly paired. Furthermore, the association between a specific lock and the data it protects is frequently implicit, relying on convention rather than compiler enforcement. Critical sections, even when guarded by a lock, tend to be scattered throughout a codebase, making it difficult to reason about their correctness. Crucially, the synchronization of threads waiting for a specific condition to become true, beyond simple mutual exclusion, remains largely ad hoc with these lower-level constructs.
+
+To address these inherent limitations, a more robust, language level synchronization mechanism emerged: the monitor. Pioneering work by Dijkstra in nineteen seventy two, Brinch Hansen in nineteen seventy three, and Hoare in nineteen seventy four established the monitor as a seminal concept. In essence, a monitor is a data abstraction, akin to an O O P class or module, designed to encapsulate shared data along with the procedures or methods that operate on that data. A key principle is that access to the monitor's internal data is restricted exclusively to its methods. The language semantics themselves ensure that the methods of a monitor are automatically translated into critical sections, implicitly acquiring and releasing a per-monitor lock. This design guarantees mutual exclusion: only one thread can be actively executing inside a monitor at any given time, thereby protecting the encapsulated data.
+
+Beyond mutual exclusion, monitors also provide condition variables, a sophisticated mechanism for condition synchronization. A thread executing within a monitor that needs to wait for a specific condition to be met will perform a wait operation on a condition variable. This causes the thread to suspend its execution, temporarily release the monitor lock, and be placed into a queue associated with that condition variable. Subsequently, when another thread makes the condition true by modifying the shared data within the monitor, it can perform a signal operation on the relevant condition variable. This signal operation awakens one of the threads waiting on that particular condition queue, allowing it to re enter the monitor and continue execution once the monitor lock becomes available. A crucial distinction from semaphores is that condition variables do not possess a persistent state; they do not count the difference in the number of signal and wait operations over time. If a signal operation occurs when no threads are waiting on the associated condition variable, the operation has no effect, unlike a semaphore's incrementing of its internal counter.
+
+Over the past forty years, monitors have been widely adopted and integrated into numerous programming languages. Historically, Concurrent Pascal, introduced by Brinch Hansen in nineteen seventy five, Modula by Wirth in nineteen seventy seven, and Mesa developed by Lampson and Redell in nineteen eighty, were particularly influential in popularizing the monitor concept. Modern languages like Java, as seen in the work by Goetz and collaborators in two thousand six, incorporate monitor semantics directly, often through intrinsic locks and the `wait`, `notify`, and `notifyAll` methods. While some attempts have been made to implement monitor like functionality purely through libraries, these have generally been less successful because the fundamental concept of a monitor relies heavily on tight integration with the language's syntax and type system to enforce its critical properties of encapsulation and implicit locking.
+
+The semantics of monitor operations can vary significantly across different programming languages. However, the classic definition by Hoare remains a primary reference point and serves as a standard for comparison. While not always followed precisely in every language implementation, it provides a rigorous theoretical framework. Subsequent analysis will delve into specific variations, highlighting areas of significant disagreement among existing monitor implementations, particularly focusing on the variant found in Java.
+
+### Hoare Monitors
+
+As originally defined by Hoare in nineteen seventy four, the conceptual structure of a monitor can be visualized with distinct queuing mechanisms governing thread flow. Imagine a central logical "box" representing the monitor itself, where only one thread can be present and actively executing at any given time. Threads seeking to enter this box first arrive at an entry queue, conceptually positioned at the left of this model. When a thread successfully acquires the monitor and enters the box, it holds the exclusive lock.
+
+Within the monitor's operational cycle, a thread may encounter a condition that requires it to pause. When a thread executes a wait operation, it yields its control of the monitor, exiting the "box" and entering a specific condition queue associated with the particular condition variable it is waiting on. This queue effectively removes the thread from active monitor execution until the condition is met.
+
+Conversely, when a thread inside the monitor changes shared data such that a condition for which other threads might be waiting becomes true, it performs a signal operation. Upon signalling, the Hoare monitor model prescribes a specific handoff: the signalling thread immediately checks if any threads are waiting on the associated condition queue. If so, the signalled thread is awakened and conceptually steps out of its condition queue, directly taking control of the monitor. Crucially, the original signalling thread does not continue execution immediately but instead steps out of the "box" and into a special urgent queue. This urgent queue is a critical component of the Hoare monitor, prioritizing threads that have just signaled a condition, ensuring that the awakened thread can promptly act on the now true condition.
+
+When any thread wishes to exit the monitor, either after completing its task or after performing a signal operation and being placed in the urgent queue, the monitor implementation follows a specific priority order for granting access. First, it checks the urgent queue. If there are any threads in the urgent queue, the thread at the head of that queue is permitted to re enter the monitor "box" to complete its execution. If the urgent queue is empty, the implementation then checks the entry queue. If threads are present in the entry queue, the thread at its head is allowed to enter the monitor. Only if both the urgent queue and the entry queue are empty is the monitor truly unlocked, allowing any subsequent thread to contend for entry. This precise exit protocol ensures fairness and correctness, particularly the unique "signal and urgent wait" behavior where the signalling thread yields immediately to the awakened thread and then waits in the urgent queue for its turn to resume.

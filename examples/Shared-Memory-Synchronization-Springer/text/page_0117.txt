@@ -1,0 +1,74 @@
+7.1 Scheduling 121
+
+need a separate current_thread variable for each core or kernel thread, and we need one or
+more spin locks to protect scheduler data structures from simultaneous access by another
+core or kernel thread. The disabling of interrupts/signals eliminates races between normal
+execution and timer handlers; spin locks eliminate races among cores or kernel threads.
+Explicit calls to scheduler routines first disable interrupts (signals) and then acquire the
+appropriate spin lock(s); handlers simply acquire the lock(s), on the assumption that nested
+interrupts (signals) are disabled automatically when the first one is delivered.
+
+Races in the Scheduler
+
+Schedulers are tricky algorithms, with many opportunities for data and (low-level) synchronization
+races. When implementing (high-level) condition synchronization, for example, the scheduler must
+generally check a condition and de-schedule the current thread if the condition does not hold. To
+ensure correctness, we must avoid scenarios in which the corresponding wakeup operation in some
+other thread falls into the “timing window” between the check of the condition and the operation
+(typically an enqueue) that makes the waiting thread visible to peers:
+
+thread 1: thread 2:
+if =condition
+if =Q.empty()
+ready_list.enqueue(Q.dequeue())
+Q.enqueue(self)
+reschedule()
+
+Here it is important that thread 1 acquire the scheduler spin lock before it checks the awaited condition,
+and hold it through the call to reschedule.
+
+Priority Inversion
+
+The problem addressed by disabling interrupts or signals during scheduler operations is an example
+of a more general class of problems known as priority inversion. Priority inversion occurs when a
+high priority task (of any sort) preempts a low priority task (of any sort), but is unable to proceed
+because it needs some resource held by the low priority task. Cast in these terms, a program running
+above a preemption-based scheduler can be thought of as a low-priority task; an arriving interrupt
+or signal preempts it, and runs a handler at high priority instead. A spin lock on scheduler data
+structures ensures atomicity among explicit scheduler operations performed by different cores (or
+kernel threads), but it cannot provide the same protection between normal execution and interrupt
+(signal) handlers: a handler that tried to acquire a lock held by the normal code it preempted would
+end up spinning forever; priority inversion would leave the system deadlocked.
+The system needs a separate current thread variable for each core or kernel thread. Additionally, one or more spin lock or locks are required to protect scheduler data structures from simultaneous access by another core or kernel thread. The disabling of interrupts or signals effectively eliminates races between normal execution and timer handlers. Spin lock or locks further eliminate races among cores or kernel threads. When explicit calls are made to scheduler routines, they first disable interrupts or signals and then acquire the appropriate spin lock or locks. Handlers simply acquire the lock or locks, operating under the assumption that nested interrupts or signals are automatically disabled when the first one is delivered.
+
+**Races in the Scheduler**
+Schedulers are complex algorithms that present many opportunities for data and low level synchronization races. When implementing high level condition synchronization, for example, the scheduler must typically check a condition and then de-schedule the current thread if that condition does not hold. To ensure correctness, it is crucial to avoid situations where a corresponding wakeup operation in another thread falls within the timing window. This window is the period between the check of the condition and the operation, such as an enqueue, that makes the waiting thread visible to other threads.
+
+Consider the following two threads to illustrate this:
+Thread one's logic is: if not condition, then Q dot enqueue self and reschedule.
+Thread two's logic is: if not Q dot empty, then ready list dot enqueue the result of Q dot dequeue.
+
+It is critical that Thread one acquires the scheduler spin lock before it checks the awaited condition, and holds this lock throughout the call to reschedule.
+
+**Priority Inversion**
+The problem of disabling interrupts or signals during scheduler operations exemplifies a more general class of issues known as priority inversion. Priority inversion occurs when a high priority task, regardless of its type, preempts a low priority task, also regardless of its type, but subsequently cannot proceed because it requires a resource that the low priority task is currently holding. In these terms, a program running above a preemption based scheduler can be considered a low priority task. An arriving interrupt or signal will then preempt this program and execute its handler at a high priority. While a spin lock on scheduler data structures ensures atomicity among explicit scheduler operations performed by different cores or kernel threads, it does not provide the same level of protection between normal execution and interrupt or signal handlers. Specifically, a handler attempting to acquire a lock held by the normal code it preempted would end up spinning indefinitely, resulting in a system deadlock due to priority inversion.
+The intricate domain of operating system scheduling mandates a rigorous approach to concurrency control to uphold system correctness and stability. At its core, scheduling involves orchestrating the execution of multiple threads or processes, often across multiple C P U cores. A fundamental requirement is the safeguarding of shared scheduler data structures from simultaneous, unsynchronized access by concurrent execution contexts, whether they be C P U cores running different threads or kernel threads, or even interrupt service routines. This protection is typically achieved through mechanisms like disabling interrupts and employing spin locks.
+
+Disabling interrupts serves as a localized, processor specific form of mutual exclusion. When interrupts are disabled, the currently executing code cannot be preempted by an interrupt handler. This is particularly crucial for protecting shared data accessed by both normal program execution and asynchronous interrupt events, such as timer interrupts that might trigger a reschedule. On the other hand, spin locks provide a robust mechanism for mutual exclusion across multiple C P U cores or kernel threads, ensuring that only one thread can hold the lock and access the critical section at any given moment. A common protocol for scheduler routines involves a precise sequence: first, disabling interrupts to prevent local preemption, and then acquiring the necessary spin locks to ensure cross-core mutual exclusion. The system design often assumes that nested interrupts are automatically managed, implying a hierarchical or state driven interrupt handling system where, for example, a higher priority interrupt might temporarily re enable interrupts while preserving the state of the lower level interrupt mask.
+
+The presence of multiple concurrent execution flows introduces the challenge of race conditions, particularly pertinent in scheduler implementations. Schedulers frequently encounter situations where a thread must evaluate a condition and, if that condition is not met, potentially yield the C P U or place itself onto a wait queue. Consider a scenario involving two threads: thread one, which intends to wait for a certain `condition` to become true, and thread two, which might be responsible for setting that `condition` or waking up waiting threads.
+
+The timing window problem illustrates a classic race. Thread one checks the `condition`. If it evaluates to `false`, it proceeds to enqueue itself onto a waiting queue, here denoted as `Q`, and then calls `reschedule()` to yield its processor. Conceptually, this sequence of operations can be represented as:
+`if not condition`
+  `Q.enqueue(self)`
+  `reschedule()`
+
+Concurrently, thread two might be performing an operation that fulfills the `condition` or processes the waiting queue. A critical part of thread two's logic might involve checking if the queue `Q` is empty, and if not, dequeueing a thread and placing it onto a `ready_list` for future execution. This can be visualized as:
+`if not Q.empty()`
+  `ready_list.enqueue(Q.dequeue())`
+
+The race arises if thread one checks the `condition`, finds it `false`, and is then preempted or delayed before it can complete both the enqueue and the `reschedule()` calls. If, during this critical timing window, thread two performs its operation, it might find `Q` empty (because thread one hasn't yet enqueued itself) or, conversely, if thread one has enqueued but not yet called `reschedule()`, thread two might dequeue thread one and place it on the ready list. However, if thread one *then* calls `reschedule()`, it effectively puts itself to sleep, even though it has already been "woken up" by thread two. This leads to a lost wakeup and a potentially indefinite wait. To prevent such a race, it is paramount that thread one acquires the scheduler spin lock *before* it evaluates the `condition` and continues to hold this lock throughout the entire sequence of enqueuing itself and invoking `reschedule()`. This ensures atomicity of the `check-then-sleep` operation, guaranteeing that no intervening operations on the shared queue or condition state can occur.
+
+Another profound challenge in concurrent system design, particularly in real time contexts, is priority inversion. This phenomenon occurs when a high priority task becomes involuntarily blocked by a lower priority task. The problem often manifests when tasks share resources protected by synchronization primitives like locks. Imagine a scenario where a low priority task acquires a lock on a shared resource. Subsequently, a high priority task becomes ready to run and preempts the low priority task. If the high priority task then attempts to acquire the same lock, it will block, waiting for the low priority task to release the resource. Now, if a medium priority task becomes runnable, it can preempt the low priority task (which holds the lock and is the only one that can release it), effectively delaying both the low priority task and, consequently, the high priority task. This situation means the high priority task's execution is indirectly dictated by the medium priority task, violating the fundamental principle of priority scheduling.
+
+Applying this to scheduler operations themselves, disabling interrupts or signals during scheduler routines, or acquiring spin locks within the scheduler, introduces a similar vulnerability. For instance, if a low priority scheduler operation is in progress, holding a scheduler lock, and a high priority interrupt handler or kernel thread attempts to acquire that same lock, the high priority entity will block. If the low priority operation was itself preempted before it could release the lock, the system could enter a state where the high priority task spins indefinitely waiting for a lock that the low priority task cannot release because it is preempted. This situation is akin to a deadlock and can lead to system unresponsiveness. The resolution to priority inversion often involves sophisticated protocols like priority inheritance, where the low priority task temporarily inherits the priority of the highest priority task waiting for its resource, ensuring that it can complete its critical section and release the resource promptly. Without such mechanisms, the integrity and predictability of high priority tasks in a concurrent, real time environment are severely compromised, potentially leading to system deadlock or failure.

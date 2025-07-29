@@ -1,0 +1,62 @@
+160 8 Nonblocking Algorithms
+
+thread T1
+
+(a) T1 starts search(60) (b) T2 starts delete(70) (c) delete(70) finishes, then
+and sleeps at 50 and swaps 60, 70 search(60) returns false!
+
+Figure 8.12 Example of an atomic delete causing a concurrent search to return an incorrect answer.
+Nodes highlighted in gray indicate changes.
+
+40] [60] 40] [so] [s0] [so] 40] [60]
+
+(a) initial tree (b) after insert(90) (c) after delete(80)
+
+Figure 8.13 Sequential operations on an external BST. Nodes highlighted gray indicate changes.
+
+Second, since a BST node has two child pointers, marking a single pointer (as in the
+Harris & Michael list of Sec. 8.2.1) is not sufficient to prevent a node from being erroneously
+modified by CAS after it has been deleted: marking only one child pointer would still allow
+the other to be changed.
+
+External Trees To overcome the first challenge (swapping an internal node with its succes-
+sor), the Ellen et al. (EFRB) tree is external, or leaf-oriented—every key logically present
+in the tree is stored in a leaf. Internal nodes also contain keys, but these are routing keys,
+which serve only to direct searches to the appropriate leaf node. Deletions in an external
+BST are simplified greatly, since a key to be deleted is always found in a leaf. The sequential
+algorithms for insertion and deletion in an external BST are illustrated in Figure 8.13. Note
+that each successful insert adds one leaf and one routing node, and each successful delete
+removes one leaf and one routing node. Each new routing node contains a duplicate of some
+leat’s key. With duplicate keys, the search tree property must be relaxed slightly: a node’s
+left subtree contains strictly smaller keys, but its right subtree contains keys that are greater
+than or equal to its key. The number of nodes in an external BST 1s at most twice that of an
+internal BST containing the same keys.
+
+Lock-free “Locking” To overcome the second challenge (marking the pointers of a to-be-
+deleted node), each node (not pointer) has a dedicated update field that behaves like a sort
+of “lock-free lock,” synchronizing threads’ updates to the node. Crucially, these “lock-free
+locks” grant exclusive access to the operation, rather than the thread. Whenever a node
+One hundred sixty. Eight Nonblocking Algorithms.
+
+Figure eight point one two. Example of an atomic delete causing a concurrent search to return an incorrect answer. Nodes highlighted in gray indicate changes.
+
+The diagram shows three states of a binary search tree. In state (a), labeled "initial tree", a thread T one starts a search for the value sixty, and sleeps. The tree consists of a root node with value seventy, a left child with value fifty, and a right child with value eighty. The node fifty has children forty and sixty. In state (b), labeled "T two starts delete(seventy) and swaps sixty, seventy", thread T two begins a delete operation on the value seventy. This operation swaps seventy with its successor sixty. The node with value sixty is now highlighted in green, indicating a change. The tree structure is now seventy with left child fifty and right child eighty. The node fifty has children forty and seventy, which is now colored green. In state (c), labeled "delete(seventy) finishes, then search(sixty) returns false!", the delete operation completes. The value seventy is removed. Thread T one, which was sleeping and searching for sixty, is now woken up. Because the node with value sixty was moved to replace seventy, the search for sixty by T one incorrectly returns false. The node sixty is now highlighted in gray, indicating it is no longer where T one expects it to be.
+
+Figure eight point one three. Sequential operations on an external B S T. Nodes highlighted in gray indicate changes.
+
+The diagram shows three states of an external binary search tree. In state (a), labeled "initial tree", the tree has a root node with value seventy, a left child node with value fifty, and a right child node with value eighty. The node fifty has children forty and sixty, both represented as squares, indicating they are leaf nodes. In state (b), labeled "after insert(ninety)", a new value ninety is inserted. The insertion results in a new node with value ninety being added as the right child of the node fifty. This new node ninety is highlighted in green. The node fifty now has children forty and ninety. In state (c), labeled "after delete(eighty)", the value eighty is deleted from the tree. The deletion process involves marking the leaf node containing eighty for removal. The node eighty is now highlighted in gray, indicating its removal.
+
+Second, since a B S T node has two child pointers, marking a single pointer (as in the Harris and Michael list of Section eight point two point one) is not sufficient to prevent a node from being erroneously modified by C A S after it has been deleted, marking only one child pointer would still allow the other to be changed.
+
+External Trees. To overcome the first challenge (swapping an internal node with its successor), the Ellen et al. external B S T tree is external, or leaf oriented—every key logically present in the tree is stored in a leaf. Internal nodes also contain keys, but these are routing keys, which serve only to direct searches to the appropriate leaf node. Deletions in an external B S T are simplified greatly, since a key to be deleted is always found in a leaf. The sequential algorithms for insertion and deletion in an external B S T are illustrated in Figure eight point thirteen. Note that each successful insert adds one leaf and one routing node, and each successful delete removes one leaf and one routing node. Each new routing node contains a duplicate of some leaf's key. With duplicate keys, the search tree property must be relaxed slightly: a node's left subtree contains strictly smaller keys, but its right subtree contains keys that are greater than or equal to its key. The number of nodes in an external B S T is at most twice that of an internal B S T containing the same keys.
+
+Lock free Locking. To overcome the second challenge (marking the pointers of a to be deleted node), each node (not pointer) has a dedicated update field that behaves like a sort of lock free lock, synchronizing threads updates to the node. Crucially, these lock free locks grant exclusive access to the operation, rather than the thread. Whenever a node
+Figure 8.12 illustrates a critical concurrency issue in binary search trees, specifically when atomic operations are not properly handled.  The scenario depicts thread T1 attempting to search for the key sixty, while concurrently, thread T2 is executing a delete operation on the key seventy. Initially, the tree consists of nodes with keys forty, fifty, sixty, and eighty.  In panel (a), thread T1 has begun its search, reaching the node with key fifty, and then proceeds to the node with key sixty, where it pauses, represented by "zzZZ." Subsequently, in panel (b), thread T2 initiates a delete operation on key seventy. This operation involves swapping the keys sixty and seventy, effectively relocating the key sixty.  After this swap, T2 completes the deletion of seventy. In panel (c), thread T1 resumes its search from the node with key fifty. However, due to T2's modification, the structure has changed.  T1's search path, which would have naturally led to the node with key sixty, is now disrupted. When T1 eventually examines the node that previously held sixty, it might now contain a different value, or the node itself might have been removed or restructured. The consequence highlighted is that thread T1 returns an incorrect answer for its search, demonstrating how a lack of atomicity in the delete operation can lead to data races and corrupted search results. The nodes highlighted in gray indicate the modifications that have occurred.
+
+Figure 8.13 demonstrates sequential operations on an external binary search tree, where changes to nodes are visually indicated by gray highlighting. Panel (a) shows the initial state of the tree. Panel (b) depicts the state after an insertion of the key ninety. This insertion adds a new leaf node containing ninety. Following this, panel (c) shows the tree after the deletion of the key eighty. This deletion operation removes the node containing eighty, and the tree structure is rebalanced accordingly. These diagrams illustrate the step-by-step evolution of the external BST under common tree operations.
+
+The text then discusses the challenges in implementing concurrent binary search trees, particularly the issue of internal nodes having two child pointers. A simple compare and swap operation on a single pointer, as referenced in Section 8.2.1, is insufficient to prevent race conditions. This is because an internal node could be modified by another thread between the time a thread reads the child pointer and attempts to update it. This can lead to a situation where a node is modified by a compare and swap operation after it has already been changed by another thread, leading to an inconsistent state.
+
+To address these challenges, the concept of "External Trees" is introduced, as proposed by Ellen et al. (EFRB tree). In this model, the tree is structured as a "leaf-oriented" or "external" binary search tree. Here, each key is logically present in a leaf node. Internal nodes, while also containing keys, function primarily as routing nodes, directing searches to the appropriate leaf. This simplification is significant because deletions in an external BST are streamlined, as a key to be deleted is always located in a leaf. The sequential algorithms for insertion and deletion in an external BST are illustrated in Figure 8.13. A successful insertion involves adding a new leaf node and a new routing node, with the new routing node holding a duplicate of the inserted key, and the new leaf containing the key itself. For deletions, a successful delete operation removes both the leaf and its associated routing node. The search tree property is slightly relaxed in this model: a node's left subtree contains keys that are strictly smaller than the node's key, while its right subtree contains keys that are greater than or equal to the node's key. Consequently, the number of nodes in an external BST is at most twice that of an equivalent internal BST containing the same keys.
+
+The text further elaborates on "Lock-free Locking," a technique to overcome the second challenge of concurrent BST operations, which involves managing the pointers of a node slated for deletion. In this approach, each node possesses a dedicated "update" field. This field functions similarly to a sorted list or a linked list of updates, allowing threads to atomically append their intended modifications. Crucially, these "lock-free locks" enable threads to gain exclusive access to the operation itself, rather than locking the node for an extended period. This mechanism ensures that updates are applied in a controlled and non-blocking manner, preventing the data races that would occur with traditional locking mechanisms when multiple threads attempt to modify the same node concurrently.

@@ -1,0 +1,71 @@
+64 4 Practical Spin Locks
+
+Like all deadlock-free mutual exclusion algorithms based only on loads and stores, the
+bakery algorithm requires €2(n) space, where n is the total number of threads in the system.
+Total time to enter the critical section is also €2(n), even in the absence of contention. As
+originally formulated (and as shown in Figure 4.2), number fields in the bakery algorithm
+grow without bound. Taubenfeld (2004) has shown how to bound them instead. For machines
+with more powerful atomic primitives, the conceptually similar ticket lock (Fischer et al.
+1979; Reed and Kanodia 1979) (Sec.4.2.2) uses fetch_and_increment on shared “next
+ticket” and “now serving” variables to reduce space requirements to O(1) and time to
+O (m), where m 1s the number of threads concurrently competing for access.
+
+4.1.1 Lamport’s Fast Algorithm
+
+One of the truisms of parallel computing is that if a lock is highly contended most of the
+time, then the program in which it is embedded probably won’t scale. Turned around, this
+observation suggests that in a well designed program, the typical spin lock will usually
+be free when a thread attempts to acquire it. Lamport’s “fast” algorithm (1987) (Figure
+4.3) exploits this observation by arranging for a lock to be acquired in constant time in the
+absence of contention (but in O (n) time, where n 1s the total number of threads in the system,
+whenever contention is encountered).
+
+The core of the algorithm is a pair of lock fields, x and y. To acquire the lock, thread r must
+write its id into x and then y, and be sure that no other thread has written to x in-between.
+Thread ¢ checks y immediately after writing x, and checks x immediately after writing vy.
+
+Defining Time Complexity for Spin Locks
+
+Given that we generally have no bounds on either the length of a critical section or the relative rates
+of execution of different threads, we cannot in general bound the number of load instructions that
+a thread may execute in the acquire method of any spin lock algorithm. How then can we compare
+the time complexity of different locks?
+
+The standard answer is to count only accesses to shared variables (not those that are thread-local),
+and then only when the access is “remote.” This is not a perfect measure, since local accesses are not
+free, but it captures the dramatic difference in cost between cache hits and misses on modern machines.
+
+On an NRC-NUMA machine (Sec. 2.1.2), the definition of “remote” is straightforward: we associate
+a (static) location with each variable and thread, and charge for all and only those accesses made by
+threads to data at other locations. On a globally cache-coherent machine, the definition is less clear,
+since whether an access hits in the cache may depend on whether there has been a recent access by
+another thread. The standard convention is to count all and only those accesses to shared variables
+that might be conflict misses. In a simple loop that spins on a Boolean variable, for example, we
+would count the initial load that starts the spin and the final load that ends it. Ideally, we would
+not count any of the loads in-between. If, however, another thread could write the variable and then
+restore its value before we read it again, we would need to consider—and count—the number of
+times this could happen.
+
+Unless otherwise noted, we will use the globally cache coherent model in this monograph.
+Like all deadlock free mutual exclusion algorithms based only on loads and stores, the bakery algorithm requires Omega of n space, where n is the total number of threads in the system. Total time to enter the critical section is also Omega of n, even in the absence of contention. As originally formulated, and as shown in Figure four point two, number fields in the bakery algorithm grow without bound. Taubenfeld, in two thousand four, has shown how to bound them instead. For machines with more powerful atomic primitives, the conceptually similar ticket lock, from Fischer and others in nineteen seventy nine, and described in Section four point two point two, uses fetch and increment on shared “next ticket” and “now serving” variables to reduce space requirements to O of one and time to O of m, where m is the number of threads concurrently competing for access.
+
+One of the truisms of parallel computing is that if a lock is highly contended most of the time, then the program in which it is embedded probably won’t scale. Turned around, this observation suggests that in a well designed program, the typical spin lock will usually be free when a thread attempts to acquire it. Lamport’s “fast” algorithm, from nineteen eighty seven, and shown in Figure four point three, exploits this observation by arranging for a lock to be acquired in constant time in the absence of contention. However, it takes O of n time, where n is the total number of threads in the system, whenever contention is encountered.
+
+The core of the algorithm is a pair of lock fields, x and y. To acquire the lock, thread t must write its id into x and then y, and be sure that no other thread has written to x in between. Thread t checks y immediately after writing x, and checks x immediately after writing y.
+
+Defining Time Complexity for Spin Locks
+
+Given that we generally have no bounds on either the length of a critical section or the relative rates of execution of different threads, we cannot in general bound the number of load instructions that a thread may execute in the acquire method of any spin lock algorithm. How then can we compare the time complexity of different locks?
+
+The standard answer is to count only accesses to shared variables, not those that are thread local, and then only when the access is “remote.” This is not a perfect measure, since local accesses are not free, but it captures the dramatic difference in cost between cache hits and misses on modern machines.
+
+On an N R C N U M A machine, described in Section two point one point two, the definition of “remote” is straightforward: we associate a static location with each variable and thread, and charge for all and only those accesses made by threads to data at other locations. On a globally cache coherent machine, the definition is less clear, since whether an access hits or misses in the cache may depend on whether there has been a recent access by another thread. The standard convention is to count all and only those accesses to shared variables that might be conflict misses. In a simple loop that spins on a Boolean variable, for example, we would count the initial load that starts the spin and the final load that ends it. Ideally, we would not count any of the loads in between. If, however, another thread could write the variable and then restore its value before we read it again, we would need to consider, and count, the number of times this could happen.
+
+Unless otherwise noted, we will use the globally cache coherent model in this monograph.
+The fundamental challenge in concurrent computing is ensuring that multiple threads or processes can safely access shared resources without introducing inconsistencies or deadlocks. Deadlock-free mutual exclusion algorithms, such as Lamport's Bakery Algorithm, are designed to solve this by guaranteeing that only one thread can execute within a critical section at any given time, and that threads attempting to enter will eventually succeed.
+
+The Bakery Algorithm, a seminal example, demonstrates an inherent scalability limitation. It typically requires `Omega of n` space, where `n` represents the total number of threads in the system. This space is consumed by "number fields" that threads acquire to determine their turn for entering the critical section, much like customers taking a number at a bakery. Consequently, the time required to enter the critical section is also `Omega of n`, even in scenarios with no contention, because each thread must perform a series of reads and writes to these number fields to establish its unique "turn". While later work, such as that by Taubenfeld in two thousand four, has explored methods to bound these number fields, the core `Omega of n` spatial and temporal complexity persists. In contrast, for machines equipped with more powerful atomic primitives, like `fetch and increment`, the conceptually similar ticket lock offers superior performance. Ticket locks leverage a shared "next ticket" counter and a "now serving" counter. A thread atomically increments `next ticket` to acquire its unique number and then spins, waiting for `now serving` to match its ticket. This design reduces space requirements to `O of one` and the time to enter the critical section to `O of m`, where `m` is the number of threads actively contending for access, making it more efficient under high contention.
+
+Lamport's Fast Algorithm is another sophisticated approach to spin lock design, predicated on a crucial observation in parallel computing: if a lock is not frequently contended, the overhead of acquiring it should be minimal. This algorithm, introduced by Lamport in one thousand nine hundred eighty seven, is specifically optimized for this common case. Its strength lies in achieving `O of one` acquisition time in the absence of contention, a significant performance advantage. However, under high contention, its performance degrades to `O of n` time, where `n` again refers to the total number of threads in the system. The core of this algorithm relies on two shared lock fields, typically denoted as `x` and `y`. To acquire the lock, a thread `t` first writes its unique identifier into `x`. Subsequently, it immediately checks the value of `y`. If `y` is zero, indicating no other thread is actively trying to acquire the lock through the `y` field, it then proceeds to recheck `x` to ensure its identifier remains undisturbed. This sequence ensures that if another thread concurrently attempted to acquire the lock, `x` would have been overwritten, causing the current thread `t` to detect contention and retry its acquisition process. If `y` is not zero, it signals contention, and thread `t` then waits for `y` to become zero, indicating that the previously contending thread has either acquired or relinquished its attempt. Finally, if all conditions are met, thread `t` sets `y` to `t` to claim the lock. To release the lock, a thread simply sets `y` to zero.
+
+The precise definition of time complexity for spin locks presents a nuanced challenge. Given the variability in execution rates of different threads and the arbitrary length of critical sections, bounding the number of load instructions required by a spin lock algorithm becomes problematic. The standard approach to measuring cost in such contexts is to count only accesses to shared variables that are "remote," meaning they are not thread-local. This metric is imperfect but captures the dramatic performance disparity between a cache hit, which is extremely fast, and a cache miss, which can be orders of magnitude slower on modern machines. On `N R C hyphen N U M A` (Non Uniform Memory Access) architectures, the definition of "remote" is straightforward: it refers to accesses to memory locations residing on a physically distinct node from the processor making the access. The cost of such accesses is significantly higher due to longer latencies and potential coherence overheads. On globally cache coherent machines, determining whether an access constitutes a remote access or a conflict miss is less clear, as the cache coherence protocol dynamically manages data consistency across multiple caches. The convention for cost accounting in these systems typically involves counting all accesses to shared variables. This includes the initial load that initiates a spin and the final load that concludes it. Ideally, one would not count intermediate loads if another thread could not interfere by modifying the variable. However, if another thread could indeed write to the variable in between, forcing a reload, then those reloads must be counted to accurately reflect the overhead. For the purposes of this analysis and monograph, a globally cache coherent model is assumed, implying a consistent memory view across all processors, simplifying the performance analysis to focus on the costs of shared variable access and contention.

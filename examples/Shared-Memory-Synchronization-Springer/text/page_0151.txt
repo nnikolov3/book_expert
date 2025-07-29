@@ -1,0 +1,61 @@
+8.3 Queues and Deques 155
+
+The ABP algorithm, as it is sometimes known, 1s both simple and clever. It has very
+low constant-time overhead in the common case, and 1s very widely used. It does, however,
+have two important limitations. First, it uses a bounded array, which limits the number of
+tasks that can be pushed into the deque at any given time. Second, when tasks are “stolen”
+via pop_left operations, the space cannot be reclaimed until the deque is empty; that is,
+the left end index resets to zero only when the local thread “bumps into it” in the course
+of a pop_right operation. Chase and Lev (2005) present an ABP extension that addresses
+both limitations: it treats the array as circular, avoiding the reset problem, and it allows the
+array to be resized on overflow, much like an extensible hash table. In an attempt to improve
+performance when workloads are unevenly distributed, Hendler and Shavit (2002) describe
+another ABP extension in which a thread can, in a single operation, steal up to half the
+elements from a peer’s deque. Many additional extensions and alternatives can be found in
+the literature; work stealing remains an active topic of research.
+
+8.4 Hash Tables
+
+In his paper on nonblocking lists, Michael (2002b) presented a straightforward extension
+of his code to yield a nonblocking hash table with external chaining and a fixed number of
+buckets. Each bucket of the table is the head pointer of a nonblocking list; lookup, insert,
+and delete simply apply the identically-named list method to the appropriate bucket.
+
+The problem with this approach is that the size of the table cannot easily change. If we
+lack a good a priori estimate of the number of items that will eventually belong to our set,
+we need an extensible hash table. We can obtain one by protecting the table with a single
+sequence lock (Sec. 6.2), which ordinary lookup, insert, and delete methods access as
+“readers,” and which a thread that chooses to enlarge the table acquires as a “writer.” This
+strategy preserves safety but not nonblocking progress: when a resize is in progress, lookup,
+insert, and delete operations must wait. If we use RCU (Sec. 6.3) to delay reclamation of
+the older, smaller table, we can allow lookup operations to proceed in parallel with resizing,
+but insert and delete will still need to wait.
+
+Ideally, we should like resizing to be a nonblocking operation that allows not only lookup
+but also insert and delete operations to continue unimpeded. Shalev and Shavit (2006)
+describe an algorithm that achieves precisely this objective. It is also incremental: the costs
+of a resizing operation are spread over multiple insert, delete, and lookup operations,
+retaining O (1) expected time for each. The basic idea is illustrated in Figure 8.11. Instead
+of a separate list of nodes in each bucket, it maintains a single list of all nodes, sorted by order
+number. Given a hash function /# with a range of 0.. 2" — 1, we obtain the order number of
+a node with key k by reversing the n bits of 4(k) and then adding an extra least-significant
+1 bit.
+
+Fast access into the list of nodes is provided by a collection of 2/ lazily initialized buckets,
+where j is initialized to some small positive integer value i, and may increase at run time
+Section 8.3 Queues and Deques, page 155.
+
+The A B P algorithm, as it is sometimes known, is both simple and clever. It has very low constant time overhead in the common case, and is very widely used. It does, however, have two important limitations. First, it uses a bounded array, which limits the number of tasks that can be pushed into the deque at any given time. Second, when tasks are stolen via pop left operations, the space cannot be reclaimed until the deque is empty; that is, the left end index resets to zero only when the local thread bumps into it in the course of a pop right operation. Chase and Lev (2005) present an A B P extension that addresses both limitations: it treats the array as circular, avoiding the reset problem, and it allows the array to be resized on overflow, much like an extensible hash table. In an attempt to improve performance when workloads are unevenly distributed, Hendler and Shavit (2002) describe another A B P extension in which a thread can, in a single operation, steal up to half the elements from a peer's deque. Many additional extensions and alternatives can be found in the literature; work stealing remains an active topic of research.
+
+Section 8.4 Hash Tables
+
+In his paper on nonblocking lists, Michael (2002b) presented a straightforward extension of his code to yield a nonblocking hash table with external chaining and a fixed number of buckets. Each bucket of the table is the head pointer of a nonblocking list; lookup, insert, and delete simply apply the identically named list method to the appropriate bucket.
+
+The problem with this approach is that the size of the table cannot easily change. If we lack a good a priori estimate of the number of items that will eventually belong to our set, we need an extensible hash table. We can obtain one by protecting the table with a single sequence lock (Sec. 6.2), which ordinary lookup, insert, and delete methods access as readers, and which a thread that chooses to enlarge the table acquires as a writer. This strategy preserves safety but not nonblocking progress; when a resize is in progress, lookup, insert, and delete operations must wait. If we use R C U (Sec. 6.3) to delay reclamation of the older, smaller table, we can allow lookup operations to proceed in parallel with resizing, but insert and delete will still need to wait.
+
+Ideally, we should like to resizing to be a nonblocking operation that allows not only lookup but also insert and delete operations to continue unimpeded. Shalev and Shavit (2006) describe an algorithm that achieves precisely this objective. It is also incremental; the costs of a resizing operation are spread over multiple insert, delete, and lookup operations, retaining O(1) expected time for each. The basic idea is illustrated in Figure 8.11. Instead of a separate list of nodes in each bucket, it maintains a single list of all nodes, sorted by order number. Given a hash function h with a range of 0..2^n - 1, we obtain the order number of a node with key k by reversing the n bits of h(k) and then adding an extra least significant bit.
+
+Fast access into the list of nodes is provided by a collection of lazily initialized buckets, where j is initialized to some small positive integer value i, and may increase at run time.
+The section begins by discussing bounded array-based queues, specifically addressing limitations of a particular algorithm. The first limitation is the use of a bounded array, which inherently restricts the number of tasks that can be concurrently held. The second limitation pertains to space reclamation; space allocated for tasks is only freed when the queue is empty, or when a local thread "bumps" into an empty slot. An extension to this algorithm, by Chase and Lev, addresses the problem of a full array by treating it as circular. This allows for resizing on overflow, which is particularly beneficial when task loads are unevenly distributed, a scenario common in work stealing paradigms. Hendler and Shavit further enhanced this by introducing mechanisms for stealing tasks from other threads, effectively distributing workload. The continuous research into these extensions highlights the ongoing effort to optimize concurrent data structures.
+
+The discussion then transitions to hash tables, focusing on Michael's contribution of a nonblocking hash table with external chaining. In this design, each bucket within the hash table points to a linked list, enabling efficient lookup, insertion, and deletion operations without requiring mutual exclusion locks. A significant challenge for such an approach is the lack of an `a priori` estimate for the table size, necessitating an extensible hash table. To manage concurrency and ensure safety during table resizing, a single sequence lock is employed to serialize ordinary lookup, insert, and delete operations. However, resizing operations themselves are considered "writer" operations. While this strategy maintains safety, it introduces blocking for other operations during a resize. To mitigate this, the use of read copy update, or RCU, is proposed. RCU allows lookup operations to proceed concurrently with resizing, deferring the reclamation of old table memory until all readers have finished. Insert and delete operations, however, must still wait for resizing to complete. The ideal scenario, as described by Shalev and Shavit, is a nonblocking resizing operation that allows all other operations to continue unimpeded. Their algorithm achieves this objective by spreading the cost of resizing across multiple insert, delete, and lookup operations, while maintaining an expected constant time for these operations. The underlying principle involves organizing data within buckets using sorted lists, where the order is determined by a specific ordering attribute of the nodes. For instance, a hash function generating values within a range of zero to two to the power of n minus one can be used to determine the bucket, with the order determined by the bitwise representation of the hash key. Accessing elements within these lists can be further optimized by using lazily initialized buckets, where the indexing mechanism can dynamically adjust based on the number of elements, potentially increasing at runtime.

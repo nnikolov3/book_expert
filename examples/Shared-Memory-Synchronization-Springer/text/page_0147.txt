@@ -1,0 +1,65 @@
+no best words!!
+8.3 Queues and Deques 151
+
+pop
+
+Me push \N
+
+s, <1
+
+| [sTABLE| || ||STABLE], |
+I I
+L; R;
+| LPusH | | || | RPUSH | |
+pop
+−−−−−−−
+push = |
+Sa.
+| | [STABLE] | | ⋅
+push_left push_right
+−−−−−−− >
+L, A A R og R.
+| LPUSH | | | [v | v | | | | RPUSH |
+
+pop
+
+Figure 8.9 Operation of alock-free deque (figure adapted from Michael (2003)). Blue arrows indicate
+state transitions. In each state, the anchor word is shown at top, comprising the head pointer, status
+flag, and tail pointer. Nodes in the queue (oriented vertically) contain right and left pointers and a
+value (‘v’). Interior nodes are elided in the figure, as suggested by dashed arrows. A left or right
+push from state So is a three-step process. Nodes in the process of being inserted are shown in
+gray. Question marks indicate immaterial values, which will not be inspected. An ‘X’ indicates a
+temporarily incorrect (incoherent) pointer.
+
+status flag that can take on any of three possible values: STABLE, LPUSH, and RPUSH.
+For ABA-sate memory allocation, the algorithm can be augmented with hazard pointers
+(Michael 2004b). Alternatively, it can be modified to rely on counted pointers, but to fit
+two of these plus the status flag in a single CAS-able anchor—even one of double width—
+the “pointers” must be indices into a bounded-size pool of nodes. If this is unacceptable,
+double-width LL/SC can be emulated with an extra level of indirection (Michael 2004a).
+
+Operations on the deque are illustrated in Figure 8.9. At any given point in time, the
+structure will be in one of seven functionally distinct states. Blue arrows in the figure indicate
+state transitions effected by push_left, pop_left, push_right, and pop_right operations
+(arrows labeled simply “push” or “pop” cover both left and right cases).
+
+Three states are STABLE, as indicated by their status flag: they require no cleanup to
+complete an operation. In Sy the dequeue is empty—the head and tail pointers are null. In
+Si there 1s a single node, referred to by both head and tail. In S, there are two or more
+nodes, linked together with left and right pointers.
+Queues and Deques.
+
+Figure eight point nine Operation of a lock free deque figure adapted from Michael two thousand three. Blue arrows indicate state transitions. In each state, the anchor word is shown at top, comprising the head pointer, status flag, and tail pointer. Nodes in the deque oriented vertically contain right and left pointers and a value X. Interior nodes are elided in the figure, as suggested by dashed arrows. A left or right push from state S two is a three step process. Nodes in the process of being inserted are shown in gray. Question marks indicate immaterial values, which will not be inspected. An X indicates a temporarily incorrect incoherent pointer.
+
+A status flag that can take on any of three possible values: STABLE, LPUSH, and RPUSH. For ABA safe memory allocation, the algorithm can be augmented with hazard pointers Michael two thousand four b. Alternatively, it can be modified to rely on counted pointers, but to fit two of these plus the status flag in a single CAS able anchor even one of double width the pointers must be indices into a bounded size pool of nodes. If this is unacceptable, double width LL/SC can be emulated with an extra level of indirection Michael two thousand four a. Operations on the deque are illustrated in Figure eight point nine. At any given point in time, the structure will be in one of seven functionally distinct states. Blue arrows in the figure indicate state transitions effected by push left, pop left, push right, and pop right operations arrows labeled simply push or pop cover both left and right cases. Three states are STABLE, as indicated by their status flag: they require no cleanup to complete an operation. In S zero the dequeue is empty the head and tail pointers are null. In S one there is a single node, referred to by both head and tail. In S two plus there are two or more nodes, linked together with left and right pointers.
+The text discusses the operational principles of a lock free double ended queue, or deque, building upon the foundational concepts of concurrent data structures. The diagram, Figure 8.9, illustrates seven distinct functional states of the deque, visualized through nodes and state transitions. Each node within the deque can be thought of as a memory element containing data and pointers, potentially to other nodes.
+
+The states are characterized by the combination of head and tail pointers, and a status flag. The status flag can assume one of three values: STABLE, LPUSH, and RPUSH. These designations indicate the stability of the deque's structure at a given point in time, with STABLE representing a quiescent state. LPUSH signifies a pending insertion at the left end, and RPUSH indicates a pending insertion at the right end.
+
+The operation is presented as a three step process, as suggested by Michael (2003), where nodes in the process of insertion are depicted with dashed arrows. Interior nodes are marked with a value, denoted by 'v', and pointers. Some pointers might be marked with a question mark, indicating an immaterial value that is not inspected during the operation, or an 'X' signifying a temporarily incorrect pointer.
+
+The diagram shows transitions between states through operations labeled 'pop', 'push', 'push_left', and 'push_right'. For example, state S0, representing an empty deque where head and tail pointers are null, can transition to other states upon push operations. State S1 depicts a deque with a single node, where the head and tail pointers refer to the same node. State S2 and subsequent states (S2+) represent deques containing two or more nodes, with nodes linked via left and right pointers. The blue arrows indicate the flow of operations, guiding the visualization of state changes.
+
+The text elaborates on the underlying mechanisms for ensuring correctness in a concurrent environment, particularly focusing on memory allocation and ABA problem mitigation. For ABA safe memory allocation, hazard pointers are mentioned as a common technique. Alternatively, the algorithm can be augmented to rely on counted pointers. A more compact approach involves consolidating the status flag and pointers within a single CAS-able anchor, utilizing double width for storage. However, if this double width is not feasible, an additional level of indirection can be introduced to manage pointer complexity, as discussed in Michael (2004a).
+
+The operational states of the deque are further detailed. Three states are designated as STABLE, indicating states where a completed operation requires no further cleanup. In state S0, the deque is empty, and both head and tail pointers are null. In state S1, there is a single node, and both head and tail pointers point to this node. In states S2 and beyond, there are two or more nodes, linked together with left and right pointers. The figure depicts the states and transitions that allow for efficient and lock free manipulation of the deque data structure, crucial for high performance concurrent systems. The state transitions, such as 'push_left' and 'push_right', are fundamental to the deque's functionality, allowing elements to be added to either end of the structure without requiring mutual exclusion locks. The 'pop' operations similarly facilitate removal from either end. The states labeled LPUSH and RPUSH represent intermediate states during left and right insertions, respectively, where the structure is temporarily in a state that needs careful handling to maintain consistency across concurrent accesses.

@@ -1,0 +1,126 @@
+84
+
+4 Practical Spin Locks
+
+class lock
+atomic<bool> fast_turn := true
+atomic<bool> fast_interested := false
+atomic<bool> slow_interested := false
+general_lock GL
+
+lock.acquire():
+if preferred_thread
+fast_interested.store(true,
+fence(W||W)
+fast_turn.store(true, ||)
+// W||R fence intentionally omitted
+while slow_interested.load(||) and fast_turn.load(
+
+)
+
+);
+else
+GL.acquire()
+slow_interested.store(true,
+fence(W||W)
+fast_turn.store(false,
+fence(W||R)
+handshake()
+while fast_interested.load(||) and —fast_turn.load(
+fence(R||RW)
+
+lock.release():
+fence(RW||W)
+if preferred_thread
+fast_interested.store(false,
+
+)
+
+)
+
+);
+
+)
+
+else
+GL.releasel()
+slow_interested.store(false,
+
+)
+
+/l free on TSO machine
+
+/] spin
+
+/l slow
+
+Il very slow
+
+/] spin
+
+/l free on TSO machine
+
+/l free on TSO machine
+
+Figure 4.17 Anasymmetric lock built around Peterson’s algorithm. We have written the code entirely
+with fences rather than annotated synchronizing accesses to highlight the ordering operations. The
+handshake operation on the slow path forces a known ordering with respect to the store—load
+
+sequence on the fast path.
+
+1. if the preferred thread set fast_interested before the interaction, then the non-preferred
+
+thread 1s guaranteed to see it afterward.
+
+2. if the preferred thread did not set fast_interested before the interaction, then it (the
+preferred thread) is guaranteed to see slow_interested afterward.
+Four Practical Spin Locks.
+
+The provided code defines a class named `lock`. Inside this class, there are three atomic boolean variables: `fast turn`, which is initialized to true; `fast interested`, which is initialized to false; and `slow interested`, which is initialized to false. Additionally, there is a `general lock` object named `G L`.
+
+The `lock dot acquire` method operates as follows:
+First, it checks if the current thread is a `preferred thread`.
+If it is a `preferred thread`:
+The `fast interested` variable stores true with `or or` memory ordering.
+A fence of type `Write or or Write` is executed; this operation is free on a T S O machine.
+The `fast turn` variable then stores true with `or or` memory ordering.
+A `Write or or Read` fence is intentionally omitted in this path.
+The thread then enters a loop, continuously spinning while `slow interested` loads true with `or or` memory ordering `and and` `fast turn` loads true with `or or` memory ordering. This is described as a spin operation.
+
+If the current thread is not a `preferred thread`:
+The `G L dot acquire` method is called, which is a slow operation.
+The `slow interested` variable stores true with `or or` memory ordering; this is described as a very slow operation.
+A fence of type `Write or or Write` is executed.
+The `fast turn` variable stores false with `or or` memory ordering.
+A fence of type `Write or or Read` is executed.
+The `handshake` function is called, which is also described as a spin operation.
+The thread then enters a loop, continuously spinning while `fast interested` loads true with `or or` memory ordering `and and` `not fast turn` loads true with `or or` memory ordering. This is described as being free on a T S O machine.
+Finally, a fence of type `Read or or Write` is executed.
+
+The `lock dot release` method performs the following actions:
+A fence of type `Read Write or or Write` is executed; this is free on a T S O machine.
+It then checks if the current thread is a `preferred thread`.
+If it is a `preferred thread`:
+The `fast interested` variable stores false with `or or` memory ordering.
+Otherwise, if it is not a `preferred thread`:
+The `G L dot release` method is called.
+The `slow interested` variable stores false with `or or` memory ordering.
+
+Figure four point seventeen illustrates an asymmetric lock architecture built around Peterson's algorithm. The provided code has been written entirely using fences, rather than relying on annotated synchronizing accesses, to specifically highlight the underlying ordering operations. The `handshake` operation, which occurs on the slow path, is crucial for enforcing a defined ordering with respect to the store load sequence that happens on the fast path.
+
+Two key conditions related to this mechanism are:
+First, if the `preferred thread` set its `fast interested` state before the interaction occurred, then the non `preferred thread` is guaranteed to observe this change afterward.
+Second, conversely, if the `preferred thread` did not set its `fast interested` state before the interaction, then the preferred thread itself is guaranteed to observe the `slow interested` state afterward.
+The provided code snippet illustrates a sophisticated approach to concurrent programming, specifically implementing an asymmetric spinlock based on Peterson's algorithm, with explicit control over memory ordering through the use of memory fences. This design addresses the fundamental challenge of mutual exclusion: ensuring that only one thread can access a shared resource at any given time, thereby preventing data corruption and maintaining program correctness in multi threaded environments.
+
+At its core, the `class lock` defines several atomic boolean variables: `fast_turn`, `fast_interested`, and `slow_interested`. The `atomic<bool>` type is crucial here, guaranteeing that operations on these shared variables, such as `store` and `load`, are indivisible and are not subject to data races. In a concurrent system, direct reads or writes to non-atomic shared variables can lead to undefined behavior due to processor reordering or caching inconsistencies. By employing atomic types, the system ensures that these operations are performed as a single, uninterruptible unit, critical for maintaining correctness in synchronization primitives. The `||` argument to `store` and `load` methods typically denotes `memory_order_seq_cst`, or sequential consistency. This is the strongest memory ordering guarantee, ensuring that all sequentially consistent atomic operations appear to execute in some single total order, and that all operations by a single thread appear in that total order in the sequence specified by the program.
+
+The `lock.acquire()` method implements the entry protocol for the critical section, bifurcated into a "fast path" for a `preferred_thread` and a "slow path" for other threads. This asymmetry is a common optimization, aiming to reduce overhead for the most frequent or performance sensitive contention scenarios.
+
+On the `fast_path`, the preferred thread first sets its `fast_interested` flag to true using a sequentially consistent store. This signals its intent to enter the critical section. Following this, a `fence(W or or W)` is invoked. This is a write-to-write memory barrier, ensuring that all prior write operations by this thread are completed and globally visible before any subsequent write operations are allowed to proceed. Subsequently, `fast_turn` is set to true, also with sequential consistency. A crucial observation is the comment indicating a `W or or R` or write-to-read fence is "intentionally omitted" and noted as "free on T S O machine". This refers to the Total Store Order memory model, prevalent in architectures like X eighty six. In a T S O model, writes from a processor become visible to other processors in the order they were issued by that processor, and a processor will always see its own writes before subsequent reads to the same address. However, for loads that follow stores to *different* addresses, reordering can occur without a `W or or R` fence. The omission here implies that, given the T S O guarantees, the specific sequence of operations on the fast path does not necessitate this particular fence for correctness, likely because the necessary ordering is implicitly provided by T S O for the subsequent `while` loop's loads. The fast path then enters a spin loop, busy-waiting while both `slow_interested` is true and `fast_turn` is true. This condition directly reflects Peterson's algorithm: if the other party (`slow_interested`) is interested and it's currently the *other party's turn* (implied by `fast_turn` being true), then the fast thread must wait.
+
+The `else` branch represents the `slow_path`, which starts by acquiring a `general_lock GL`. This suggests a fallback to a potentially more robust, but slower, synchronization mechanism, perhaps an O S-level mutex, when the optimized Peterson's path is not taken or fails. The slow path then sets `slow_interested` to true, followed by a `W or or W` fence. `fast_turn` is then set to false, signaling that it is *not* the fast path's turn, effectively granting the turn to the slow path. A `fence(W or or R)` or write-to-read memory barrier is then explicitly introduced. This fence ensures that the preceding write to `fast_turn` (and all prior writes) is globally visible before any subsequent read operations are allowed to proceed. This is critical for correctness in weaker memory models where a store might otherwise be reordered after a subsequent load. The comment `// very slow` highlights the performance overhead associated with such a strong fence and the subsequent `handshake()` operation. The `handshake()` function, while abstractly defined here, typically involves the slow thread waiting for the preferred thread to acknowledge its turn by observing specific state changes. Finally, the slow path enters its own spin loop, waiting while `fast_interested` is true and `not fast_turn` is true. This condition mirrors the fast path's logic, ensuring that if the preferred thread is interested and it's *not* the fast path's turn, the slow path spins. A `fence(R or or R W)` or read-to-read-write fence concludes the slow path's acquisition, enforcing a strong ordering for all prior memory operations before proceeding.
+
+The `lock.release()` method is responsible for relinquishing the lock. It begins with a `fence(R W or or W)` or read-write-to-write memory barrier. This strong fence ensures that all memory operations performed within the critical section prior to releasing the lock, including both reads and writes, are completed and globally visible before the lock state is altered. If the releasing thread is the `preferred_thread`, it sets `fast_interested` to false, signaling its exit from the critical section. Otherwise, if it's a non-preferred thread, it releases the `general_lock GL` and then sets `slow_interested` to false.
+
+The analysis provided in the accompanying text clarifies key aspects of this asymmetric lock. It explicitly states that the code utilizes memory fences for ordering, rather than relying on higher-level synchronizing annotations, signifying a low-level, performance-optimized design. The `handshake` operation on the slow path is highlighted as essential for forcing a "known ordering with respect to the store-load sequence on the fast path," crucial for correct interaction between the two paths under various memory model conditions. The text further elaborates on visibility guarantees: first, if the preferred thread sets `fast_interested` before interaction, the non-preferred thread is guaranteed to observe this state. This underscores the effectiveness of the memory fences in propagating state changes across threads. Second, if the preferred thread did not set `fast_interested` (i.e., did not take its path), it is guaranteed to eventually see `slow_interested` if the non-preferred thread enters its path. This confirms the reciprocal visibility guarantees necessary for the correctness of Peterson's algorithm, ensuring progress and preventing livelock by correctly establishing which thread has the "turn." This intricate dance of atomic operations and explicit memory barriers is fundamental to constructing correct and efficient synchronization primitives on modern multi-core processors with complex memory models.

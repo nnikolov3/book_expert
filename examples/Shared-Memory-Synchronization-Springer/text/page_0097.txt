@@ -1,0 +1,71 @@
+100 5 Busy-Wait Synchronization with Conditions
+
+5.3.3 Barrier-Like Constructs
+
+While barriers are the most common form of global (all-thread) synchronization, they are
+far from the only one. We have already mentioned the “Eureka” operation in Secs. 2.3.3
+and 5.2. Invoked by a thread that has discovered some desired result (hence the name),
+it serves to interrupt the thread’s peers, allowing them (in the usual case) to stop looking
+for similar results. Whether supported in hardware or software, the principal challenge for
+Eureka 1s to cleanly terminate the peers. The easiest solution is to require each thread to poll
+for termination periodically, but this can be both awkward and wasteful. More asynchronous
+solutions require careful integration with the thread library or language run-time system,
+and are beyond the scope of this monograph.
+
+Many languages (and, more awkwardly, library packages) support series-parallel exe-
+cution, in which an executing thread can launch a collection of children and then wait for
+their completion. The most common syntax involves a “loop” whose iterations are intended
+to execute in parallel. While the programmer 1s typically encouraged to think of such a loop
+as forking a separate task for each iteration, and joining them at the end, the underlying
+implementation may just as easily employ a set of preexisting “worker” threads and a barrier
+at the bottom of the loop. Because the number of workers and the number of tasks cannot in
+general be assumed to be the same, implementations of series-parallel execution are usually
+based on scheduler-based synchronization, rather than busy-wait. We will return to this topic
+in Sec. 7.4.3.
+
+5.4 Combining as a General Technique
+
+As noted in Sec. 5.2.2, the software combining tree barrier is a specific instance of a more
+general combining technique. An important detail, glossed over in that section, 1s that the
+first thread to arrive at a node of a combining tree must wait for others to arrive. In a
+barrier, we know that every thread must participate, exactly once, and so waiting for peers
+1s appropriate.
+
+Suppose, however, that we wish to implement a shared counter object with a fetch_and_
+add operation. Any thread can invoke fetch_and_add at any time; there is no guarantee
+that the number of invocations will be balanced across threads, or that any particular peer
+will invoke an operation within any particular span of time. For objects such as this, we
+can choose some modest delay interval, pause for that amount of time at each tree node,
+and continue on up the tree if no peer arrives (Tang and Yew 1990). The delays, of course,
+increase the latency of any individual operation, as does the traversal of a log-depth tree.
+Under heavy load, this disadvantage 1s outweighed by the decrease in contention, which
+leads to higher throughput.
+
+To some extent, one can obtain the best of both worlds: the combining funnels of Shavit
+and Zemach (2000) adapt the width and depth of a combining tree to match the offered load.
+Five Busy Wait Synchronization with Conditions
+
+Five point three point three Barrier Like Constructs
+
+While barriers are the most common form of global, all thread, synchronization, they are far from the only one. We have already mentioned the "Eureka" operation in Sections two point three point three and five point two. Invoked by a thread that has discovered some desired result, hence the name, it serves to interrupt the thread's peers, allowing them, in the usual case, to stop looking for similar results. Whether supported in hardware or software, the principal challenge for Eureka is to cleanly terminate the peers. The easiest solution is to require each thread to poll for termination periodically, but this can be both awkward and wasteful. More asynchronous solutions require careful integration with the thread library or language run time system, and are beyond the scope of this monograph.
+
+Many languages, and more awkwardly, library packages, support series parallel execution, in which an executing thread can launch a collection of children and then wait for their completion. The most common syntax involves a "loop" whose iterations are intended to execute in parallel. While the programmer is typically encouraged to think of such a loop as forking a separate task for each iteration, and joining them at the end, the underlying implementation may just as easily employ a set of preexisting "worker" threads and a barrier at the bottom of the loop. Because the number of workers and the number of tasks cannot in general be assumed to be the same, implementations of series parallel execution are usually based on scheduler based synchronization, rather than busy wait. We will return to this topic in Section seven point four point three.
+
+Five point four Combining a General Technique
+
+As noted in Section five point two point two, the software combining tree barrier is a specific instance of a more general combining technique. An important detail, glossed over in that section, is that the first thread to arrive at a node of a combining tree must wait for others to arrive. In a barrier, we know that every thread must participate, exactly once, and so waiting for peers is appropriate.
+
+Suppose, however, that we wish to implement a shared counter object with a fetch and add operation. Any thread can invoke fetch and add at any time. There is no guarantee that the number of invocations will be balanced across threads, or that any particular peer will invoke an operation within any particular span of time. For objects such as this, we can choose some modest delay interval, pause for that amount of time at each tree node, and continue on up the tree if no peer arrives, Tang and Yew one thousand nine hundred ninety. The delays, of course, increase the latency of any individual operation, as does the traversal of a log depth tree. Under heavy load, this disadvantage is outweighed by the decrease in contention, which leads to higher throughput.
+
+To some extent, one can obtain the best of both worlds. The combining funnels of Shavit and Zemach, two thousand, adapt the width and depth of a combining tree to match the offered load.
+The presented text delves into advanced concepts in concurrent programming and distributed systems, specifically focusing on synchronization primitives and scalable data structures designed to manage contention in highly parallel environments.
+
+Section five point three point three, titled "Barrier-Like Constructs," elucidates a fundamental synchronization paradigm known as a barrier. A barrier serves as a global synchronization point where all participating threads in a parallel computation must arrive before any thread is allowed to proceed to the next phase. This ensures that all preceding computations are complete before subsequent steps begin, maintaining program correctness in phases parallel applications. The "Eureka" operation, mentioned as an instance of such a construct, highlights a scenario where one thread's discovery or completion necessitates the synchronization and potential termination of all peer threads. The primary challenge in implementing such mechanisms is efficient termination, as a simplistic approach might involve continuous polling by each thread, leading to a busy wait state that consumes valuable C P U cycles unnecessarily. More sophisticated solutions integrate tightly with thread libraries or language run time systems to manage this more gracefully.
+
+The concept of series parallel execution is central to many parallel programming models. In this model, an executing thread typically launches a collection of child threads, often within a loop, and then waits for their collective completion. The underlying implementation of such loops often involves a fork and join pattern, where each iteration or task is forked as a separate worker thread, and these threads are subsequently joined at a synchronization point, effectively forming an implicit barrier. Crucially, such implementations typically rely on scheduler based synchronization mechanisms rather than busy waiting. Scheduler based synchronization involves threads yielding their C P U time when waiting, allowing the operating system's scheduler to allocate those resources to other runnable threads, thereby improving overall system utilization and efficiency.
+
+Moving to Section five point four, "Combining as a General Technique," the discussion shifts to a specific, highly scalable synchronization primitive: the software combining tree barrier. This technique addresses the scalability limitations of simpler barriers, particularly in scenarios involving high contention on shared resources. Unlike a flat barrier where all threads contend on a single location, a combining tree barrier organizes threads hierarchically. Threads arrive at leaf nodes, and their arrival signals propagate up the tree. At each internal node, a thread must wait for its designated peers from child nodes to arrive before it can proceed further up the tree. Once all required threads have arrived at the root, a release signal propagates back down the tree, allowing all threads to proceed. Every thread is required to participate exactly once in this process.
+
+A powerful application of the combining tree technique is the management of atomic operations on a shared counter, exemplified by the `fetch_and_add` operation. The `fetch_and_add` operation is an atomic primitive that reads a value from a memory location, adds a specified increment to it, and writes the new value back, all as a single, indivisible transaction. This atomicity is critical to prevent race conditions when multiple threads concurrently attempt to modify the same counter. However, direct, unsynchronized `fetch_and_add` operations on a single shared counter can lead to severe contention in highly parallel systems, as all threads attempt to access the same memory location.
+
+The combining tree mitigates this contention by aggregating requests. When multiple threads wish to perform `fetch_and_add` operations, their requests are combined as they ascend the tree. For instance, at a tree node, multiple `fetch_and_add` requests from child nodes can be combined into a single, larger increment, which is then propagated up to the parent node. This significantly reduces the number of individual atomic operations performed on the global counter or at higher levels of the tree. A crucial design parameter is the introduction of a modest delay interval at each tree node. While this delay increases the latency for any single `fetch_and_add` operation, as a thread might pause for a short duration, for example, fifty microseconds, waiting for a peer to arrive or to accumulate more requests, this seemingly counterintuitive approach actually leads to a substantial decrease in contention. By reducing the frequency of actual atomic operations on heavily contended resources, the overall throughput of the system—the number of operations completed per unit of time—is dramatically increased, especially under heavy load. This represents a classic trade off between individual operation latency and aggregate system throughput. The efficiency stems from the logarithmic depth of the tree, ensuring that the number of combining steps scales gracefully with the number of threads. The concept of "combining funnels," as proposed by Shavit and Zemach in two thousand, offers an adaptive mechanism to dynamically adjust the width and depth of the combining tree, allowing it to optimally match the current computational load and thereby achieve a balance between minimizing latency for individual operations and maximizing throughput for the system as a whole.

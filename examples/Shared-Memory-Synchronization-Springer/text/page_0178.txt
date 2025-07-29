@@ -1,0 +1,53 @@
+182 8 Nonblocking Algorithms
+
+In all of the aforementioned examples, elimination is essentially implemented as a sort
+of filtering step that sits on top of the data structure. Recently, a more fine-grained variant of
+elimination called publishing elimination has been implemented in (a, b)-trees (Srivastava
+and Brown 2022), which are a type of search tree with many keys per node. Publishing
+elimination attempts to improve performance in skewed workloads, where some keys are
+much more popular than others. When threads contend on the same key (and thus the same
+node), they communicate with each other through an elimination record in the node, allowing
+some concurrent inserts and deletes on the same key to be eliminated.
+
+8.10 Higher-Level Constructions
+
+In a perfect world, one could take a sequential implementation of some arbitrary data struc-
+ture, run it through an automatic tool, and obtain a fast, nonblocking, concurrent implemen-
+tation. Two of these properties (nonblocking and concurrent) are easy to obtain. Herlihy’s
+original paper on wait-free synchronization (Herlihy 1991) included a universal construction
+that would generate a wait-free concurrent implementation of any given sequential object.
+
+In a subsequent paper, Herlihy (1993) described alternative constructions for both wait-
+free and lock-free implementations. The intuition behind the lock-free construction is par-
+ticularly straightforward: access to the data structure 1s always made through a distinguished
+root pointer. A read-only operation need only dereference the pointer, find what it needs,
+and return. To modify the structure, however, a thread must create a copy, verify that it has
+done so atomically (by double-checking the root pointer), modify the copy, and then attempt
+to install the update by using LL/SC to swing the root pointer from the old version to the
+updated copy. This construction is quite efficient for small data structures. It also works well
+for small changes to large trees: since versions of the tree are immutable once installed,
+portions that do not differ can be shared between the old version and the new. If the tree is
+balanced, the overall cost of an update is only €2 (log n). Herlihy exploits this observation to
+build an efficient concurrent skew heap (a priority queue implemented as an approximately
+balanced tree). Many new universal constructions have since been proposed. An excellent
+survey of these results 1s provided by Fatourou and Kallimanis (2020).
+
+Although universal constructions make it easy to obtain concurrent, nonblocking algo-
+rithms, they often involve large overheads. The complexity of handcrafted lock-free syn-
+chronization, and the relative inefficiency of universal constructions, motivated the devel-
+opment of many synchronization constructs that strike a balance between speed and sim-
+plicity. Notable examples include k-compare-single swap (k-CSS) (Luchangco et al. 2003),
+k-word CAS (k-CAS) (Harris et al. 2002), load-link-extended/store-conditional-extended
+(LLX / SCX) (Brown et al. 2013) and PathCAS (Brown et al. 2022). Each of these constructs
+can be implemented using single word CAS. Once proven correct, they can be used to reduce
+the relative complexity of many other concurrent algorithms.
+one hundred eighty two, eight, Nonblocking Algorithms. In all of the aforementioned examples, elimination is essentially implemented as a sort of filtering step that sits on top of the data structure. Recently, a more fine-grained variant of elimination called publishing elimination has been implemented in alpha beta trees, Srivastava and Brown two thousand twenty-two, which are a type of search tree with many keys per node. Publishing elimination attempts to improve performance in skewed workloads, where some keys are much more popular than others. When threads contend on the same key and thus the same node, they communicate with each other through an elimination record in the node, allowing some concurrent inserts and deletes on the same key to be eliminated.
+
+eight point ten Higher-Level Constructions. In a perfect world, one could take a sequential implementation of some arbitrary data structure, run it through an automatic tool, and obtain a fast, nonblocking, concurrent implementation. Two of these properties, nonblocking and concurrent, are easy to obtain. Herlihy's original paper on wait-free synchronization, Herlihy nineteen ninety-one, included a universal construction that would generate a wait-free concurrent implementation of any given sequential object. In a subsequent paper, Herlihy nineteen ninety-three, described alternative constructions for both wait-free and lock-free implementations. The intuition behind the lock-free construction is particularly straightforward: access to the data structure is always made through a distinguished root pointer. A read-only operation need only dereference the pointer, find what it needs, and return. To modify the structure, however, a thread must create a copy, verify that it has done so atomically by double-checking the root pointer, modify the copy, and then attempt to install the update by using L L / S C to swing the root pointer from the old version to the updated copy. This construction is quite efficient for small data structures. It also works well for small changes to large trees, since versions of the tree are immutable once installed, and the new. If the tree is balanced, the overall cost of an update is only Omega log n. Herlihy exploits this observation to build an efficient concurrent skew heap, a priority queue implemented as an approximately balanced tree. Many new universal constructions have since been proposed. An excellent survey of these results is provided by Fatourou and Kallimanis two thousand twenty. Although universal constructions make it easy to obtain concurrent, nonblocking algorithms, they often involve large overheads. The complexity of handcrafted lock-free synchronization, and the relative inefficiency of universal constructions, motivated the development of many synchronization constructs that strike a balance between speed and simplicity. Notable examples include k-compare-single swap k-C S S, Luchangco et al. two thousand three, k-word C A S k-C A S, Harris et al. two thousand two, load-link-extended/store-conditional-extended L L X / S C X, Brown et al. two thousand thirteen, and Path C A S Path C A S, Brown et al. two thousand twenty-two. Each of these constructs can be implemented using single-word C A S. Once proven correct, they can be used to reduce the relative complexity of many other concurrent algorithms.
+Elimination, a technique previously discussed, is fundamentally implemented as a sophisticated variant of sorting, specifically integrated into fine-grained algorithms. These often manifest as tree-based structures, such as (a, b)-trees, which are optimized for handling numerous keys per node. This publishing mechanism excels in scenarios with skewed workloads, where certain keys are highly contended. In such cases, threads interact through an elimination record within a node. This interaction allows concurrent inserts and deletes targeting the same key to be resolved locally, mitigating the need for more global synchronization.
+
+Section 8.10 delves into higher-level constructions, particularly concerning the automatic derivation of concurrent, nonblocking implementations from sequential ones. The ideal scenario involves feeding a sequential data structure implementation into an automated tool to yield a performant, nonblocking version. This approach is rooted in properties that are both nonblocking and inherently concurrent. Herlihy's foundational work in wait-free synchronization, particularly his 1991 paper, provided crucial insights that enable the creation of wait-free concurrent implementations for virtually any sequential object.
+
+A subsequent paper by Herlihy in 1993 introduced alternative construction methodologies suitable for both wait-free and lock-free paradigms. The core principle behind these lock-free constructions is the ability to access the data structure without requiring exclusive locks. This is typically achieved by employing a distinguished root pointer. A read-only operation simply dereferences this pointer to locate the required data. Modifications, however, necessitate a more complex atomic update. The process involves creating a copy of the relevant part of the structure, verifying its integrity, and then atomically updating the root pointer to point to this new copy. This update mechanism is particularly efficient for small data structure modifications. Furthermore, it functions effectively for structures where older versions can be shared with newer ones, as is common in immutable data structures. The cost of such an update is approximately Omega of log n, where n represents the size of the data structure. This approach has been applied to structures like the approximately balanced tree.
+
+Numerous universal constructions have since been developed, with a survey of these efforts provided by Fatourou and Kallimanis in 2020. While these universal constructions simplify the process of obtaining concurrent, nonblocking algorithms, they often introduce substantial overhead. The inherent inefficiency of these universal constructions is a key area of research. The development of synchronization constructs that balance performance and simplicity is a significant ongoing effort. Notable examples of such constructs include the k-compare-single swap, or k-CSS, developed by Luchangco et al. in 2003. Additionally, load-link extended or store-conditional extended operations, such as those implemented by LLX/SCX by Brown et al. in 2013, and PathCAS by Brown et al. in 2022, represent advancements in this domain. These constructs leverage atomic operations on single words, and once their correctness is established, they can be utilized to implement a wide array of other concurrent algorithms.

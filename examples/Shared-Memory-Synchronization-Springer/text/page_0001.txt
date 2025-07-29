@@ -1,0 +1,64 @@
+=
+
+Check for
+updates
+
+Introduction
+
+In computer science, as in real life, concurrency makes it much more difficult to reason
+about events. In a linear sequence, if E| occurs before E>, which occurs before E3, and
+sO on, we can reason about each event individually: E; begins with the state of the world
+(or the program) after E;_1, and produces some new state of the world for E;. But if the
+sequence of events {E;} 1s concurrent with some other sequence {F;}, all bets are off. The
+state of the world prior to E; can now depend not only on E;_1 and its predecessors, but
+also on some prefix of {Fj}.
+
+Consider a simple example in which two threads attempt—concurrently—to increment
+a shared global counter:
+
+thread 1: thread 2:
+Ctr++ ctr++
+
+On any modern computer, the increment operation (ctr++) will comprise at least three
+separate instruction steps: one to load ctr into a register, a second to increment the register,
+and a third to store the register back to memory. This gives us a pair of concurrent sequences:
+
+thread 1: thread 2:
+I: r:=ctr I: r:=ctr
+2: incr 2: incr
+3: ctri=r 3: ctri=r
+
+Intuitively, if our counter is initially 0, we should like it to be 2 when both threads have
+completed. If each thread executes line 1 before the other executes line 3, however, then
+both will store a 1, and one of the increments will be “lost.”
+
+The problem here is that concurrent sequences of events can interleave in arbitrary ways,
+many of which may lead to incorrect results. In this specific example, only two of the
+
+(5) = 20 possible interleavings—the ones in which one thread completes before the other
+
+starts—will produce the result we want.
+
+© The Author(s), under exclusive license to Springer Nature Switzerland AG 2024 1
+M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures
+on Computer Architecture, https://doi.org/10.1007/978-3-031-38684-8_1
+Introduction.
+
+In computer science, as in real life, concurrency makes it much more difficult to reason about events. In a linear sequence, if E one occurs before E two, which occurs before E three, and so on, we can reason about each event individually: E i begins with the state of the world, or the program, after E i decrement by one, and produces some new state of the world for E i increment by one. But if the sequence of events F i is concurrent with some other sequence F j, all bets are off. The state of the world prior to E i can now depend not only on E i decrement by one and its predecessors, but also on some prefix of F j.
+
+Consider a simple example in which two threads attempt concurrently to increment a shared global counter. Thread one executes the operation, C T R increment by one. Similarly, Thread two executes the operation, C T R increment by one.
+
+On any modern computer, the increment operation, C T R increment by one, will comprise at least three separate instruction steps. These are: one to load the C T R value into a register, a second to increment the register, and a third to store the register back to memory. This gives us a pair of concurrent sequences. For Thread one, the steps are: one, the register R is C T R; two, increment R; and three, C T R is R. Thread two has the exact same sequence of steps: one, the register R is C T R; two, increment R; and three, C T R is R.
+
+Intuitively, if our counter is initially zero, we should like it to be two when both threads have completed. If each thread executes line one before the other executes line three, however, then both will store a one, and one of the increments will be lost.
+
+The problem here is that concurrent sequences of events can interleave in arbitrary ways, many of which may lead to incorrect results. In this specific example, only two of the binomial coefficient six choose three, which is twenty, possible interleavings, the ones in which one thread completes before the other starts, will produce the result we want.
+
+The Author(s), under exclusive license to Springer Nature Switzerland A G two thousand twenty four. M. L. Scott and T. Brown, Shared-Memory Synchronization, Synthesis Lectures on Computer Architecture, at https colon slash slash d o i dot org slash one zero dot one zero zero seven slash nine seven eight dash three dash zero three one dash three eight six eight four dash eight dash one.
+The inherent complexity of modern computer systems stems significantly from the challenge of concurrency. While reasoning about events in a strictly linear, sequential order allows for predictable state transitions where each event, say `E sub i`, modifies the state based solely on its immediate predecessor, `E sub i minus one`, and its own operation, the introduction of concurrent event sequences, such as `{F sub i}`, fundamentally alters this deterministic paradigm. When `E sub i` can interleave with `F sub i`, the resulting system state for `E sub i plus one` no longer depends solely on `E sub i` and its prior history, but also on the arbitrary interleaving of operations from `F sub i`. This non determinism complicates the verification and predictability of system behavior.
+
+Consider a canonical example involving a shared global counter, where multiple computational threads attempt to increment its value concurrently. A high level programming construct, such as `c t r increment by one`, appears atomic. However, beneath this abstraction, on virtually any modern computing architecture, this single operation decomposes into a sequence of at least three fundamental machine level instructions. First, the current value of the counter, `c t r`, must be loaded from main memory into a processor register, let us call it `r`. This is represented by `r is ctr`. Second, the value within that register `r` is then incremented, denoted as `inc r`. Finally, the new, incremented value from the register `r` must be written back to the `c t r` location in shared memory, as `ctr is r`.
+
+When two independent threads each execute this `increment by one` operation on the same shared counter, the six constituent machine instructions, three from each thread, can interleave in a multitude of ways. For instance, if the counter is initialized to zero, and both threads successfully complete their operations without any loss of execution, one would intuitively expect the final value of the counter to be two. However, due to the non atomic nature of the read modify write sequence, many of the possible interleavings can lead to a race condition. A common problematic interleaving involves both threads loading the initial value of zero, then both incrementing their respective registers to one, and finally both storing their one back to the shared counter. In such a scenario, one of the increments is effectively "lost," resulting in a final counter value of one instead of the expected two.
+
+The total number of distinct instruction interleavings for two threads, each executing three sequential operations, can be calculated using combinatorial principles. This is equivalent to choosing three positions for the instructions of thread one out of a total of six possible instruction slots, which is given by the binomial coefficient 'six choose three'. This calculation yields twenty distinct interleavings. The critical observation is that out of these twenty possible execution paths, a significant majority can lead to an incorrect final state. Specifically, the text indicates that only a very small subset of these complex interleavings—for instance, those where one thread fully completes its three operations before the other begins, or vice versa—will guarantee the desired, correct outcome. This vividly illustrates the fundamental challenge of ensuring sequential consistency and atomicity in shared memory parallel programming, necessitating robust synchronization mechanisms to constrain the possible interleavings and prevent data races. The underlying theoretical framework for addressing such problems involves formal models of concurrency, memory consistency, and the design of synchronization primitives such as locks, semaphores, or atomic operations to ensure the integrity of shared mutable data structures.

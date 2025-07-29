@@ -1,0 +1,71 @@
+66 4 Practical Spin Locks
+
+class lock
+atomic<bool> f := false
+lock.acquire(): lock.release():
+while f.TAS(|]); // spin f.store(false, RW|)
+
+fence(R||RW)
+
+Figure 4.4 The simple test_and_set lock.
+
+class lock
+atomic<bool> f := false
+lock.acquire(): lock.release():
+while f.TAS(|)) f.store(false, RW||)
+while f.load(}|); // spin
+
+fence(R||RW)
+
+Figure 4.5 The test-and-test_and_set lock. Unlike the test_and_set lock of Figure 4.4, this code
+will typically induce interconnect traffic only when the lock is modified by another core.
+
+Merritt and Taubenfeld (2000) showed how to reduce this time to O(m), where m is the
+number of threads concurrently competing for access.
+
+4,2 Centralized Algorithms
+
+As noted in Secs. 1.3 and 2.3, almost every modern machine provides read-modify-write
+(fetch_and_®) instructions that can be used to implement mutual exclusion in constant
+space and—in the absence of contention—constant time. The locks we will consider in this
+section—all of which use such instructions—are centralized in the sense that they spin on
+a single, central location. They differ in fairness and in the performance they provide in the
+presence of contention.
+
+4.2.1 Test-and-Set Locks
+
+The simplest mutex spin lock embeds a TAS instruction in a loop, as shown in Figure 4.4.
+On a typical machine, the TAS instruction will require a writable copy of the target location,
+necessitating messages across the processor-memory interconnect on every iteration of the
+loop. These messages will typically serialize, inducing enormous hardware contention that
+interferes not only with other threads that are attempting to acquire the lock, but also with
+any attempt by the lock owner to release the lock.
+
+Performance can be improved by arranging to obtain write permission on the lock
+only when it appears to be free. Proposed by Rudolph and Segall (1984), this test-and-
+The code defines a class named lock. Inside the lock class, an atomic boolean variable `f` is initialized to false. The `acquire` method of the lock is defined. It contains a loop that continues while the atomic test and set operation on `f` returns true. This is the spin part. After the loop, a memory fence for read or read write operations is issued. The `release` method of the lock is defined. It stores the value false into `f` with a read write memory ordering. Figure four point four illustrates the simple test and set lock.
+
+The code defines a class named lock. Inside the lock class, an atomic boolean variable `f` is initialized to false. The `acquire` method of the lock is defined. It contains an outer loop that continues while the atomic test and set operation on `f` returns true. Inside this outer loop, there is an inner loop that continues while `f` is true, using an atomic load operation. This inner loop represents the spinning behavior to wait for the lock to become available. After these loops, a memory fence for read or read write operations is issued. The `release` method of the lock is defined. It stores the value false into `f` with a read write memory ordering. Figure four point five illustrates the test and test and set lock. Unlike the test and set lock shown in Figure four point four, this code will typically induce interconnect traffic only when the lock is modified by another core.
+
+Merritt and Taubenfeld, in their two thousand publication, showed how to reduce this time to O of m, where m is the number of threads concurrently competing for access.
+
+Four point two Centralized Algorithms.
+
+As noted in Sections one point three and two point three, almost every modern machine provides read modify write, or fetch and phi, instructions that can be used to implement mutual exclusion in constant space, and in the absence of contention, in constant time. The locks we will consider in this section, all of which use such instructions, are centralized in the sense that they spin on a single, central location. They differ in fairness and in the performance they provide in the presence of contention.
+
+Four point two point one Test and Set Locks.
+
+The simplest mutex spin lock embeds a T A S instruction in a loop, as shown in Figure four point four. On a typical machine, the T A S instruction will require a writable copy of the target location, necessitating messages across the processor memory interconnect on every iteration of the loop. These messages will typically serialize, inducing enormous hardware contention that interferes not only with other threads that are attempting to acquire the lock, but also with any attempt by the lock owner to release the lock.
+
+Performance can be improved by arranging to obtain write permission on the lock only when it appears to be free. This approach was proposed by Rudolph and Segall in nineteen eighty four, as a test and
+The provided content delves into the fundamental principles of concurrent programming, specifically focusing on spin locks and their optimization within multiprocessor systems. The core concept is mutual exclusion, ensuring that only one thread can access a critical section of code at any given time, thereby preserving data integrity in shared memory environments.
+
+The first code block, labeled as Figure four point four, illustrates a basic test and set lock implementation. It defines a `class lock` with a single atomic boolean variable, `f`, initialized to `false`. This `f` serves as the lock flag. The `lock.acquire()` method implements the lock acquisition logic. It contains a `while` loop that continuously executes `f.TAS(||)`. The Test And Set, or T A S, instruction is a crucial atomic read-modify-write operation. It atomically reads the current value of the memory location `f`, sets `f` to `true`, and returns the original value of `f`. If the returned value is `true`, it indicates that the lock was already held by another thread, and the current thread must continue to `spin` in the loop, repeatedly attempting to acquire the lock. If T A S returns `false`, it means the lock was free, and the current thread has successfully acquired it by setting `f` to `true` atomically. Following the T A S operation, a `fence(R||RW)` instruction is included. This is a memory barrier, essential for enforcing memory ordering. In this context, it ensures that all memory operations preceding the lock acquisition are completed and visible before any operations within the critical section begin, and that no subsequent operations are reordered before the lock is successfully acquired. The `lock.release()` method is straightforward: `f.store(false, RW||)`. This atomically sets the lock flag `f` back to `false`, making the lock available for other threads. The `RW||` parameter specifies a release memory ordering, guaranteeing that all memory writes performed within the critical section by the releasing thread are made visible to other threads before the lock is actually released. Without proper memory barriers, a C P U or compiler could reorder instructions, potentially allowing critical section side effects to become visible before the lock is truly acquired or released, thus violating mutual exclusion or data consistency.
+
+The second code block, represented as Figure four point five, presents an optimized variant known as the test and test and set lock. This design addresses a significant performance bottleneck of the basic test and set lock. In the `lock.acquire()` method, the `while f.TAS(||)` loop is preceded by `while f.load(||)`. This crucial modification introduces a preliminary "test" phase. A thread attempting to acquire the lock first repeatedly `load`s the value of `f`. Only when `f.load(||)` returns `false`—indicating that the lock appears to be free—does the thread then attempt the more expensive `f.TAS(||)` operation. The `f.load(||)` operation, a simple atomic read, typically incurs less overhead than T A S, especially in cached systems. When multiple threads are spinning, most of them will be in the `f.load(||)` loop, reading `f` from their local cache. As long as the lock is held, `f` remains `true`. When the lock is released, the owning thread writes `false` to `f`. This write invalidates the cache lines of other waiting threads. Upon their next `f.load(||)` attempt, they will incur a cache miss, fetch the updated `false` value, and then proceed to attempt the `f.TAS(||)`. This strategy significantly reduces interconnect traffic by minimizing the number of T A S operations, which require an exclusive or modified cache line and trigger cache invalidations across the system bus on every failed attempt. By loading, the waiting threads avoid contention on the cache line and the associated invalidation traffic until the lock is actually released.
+
+The accompanying text clarifies that the basic test and set lock, as depicted in Figure four point four, will typically induce substantial interconnect traffic due to the constant atomic read-modify-write operations on the shared lock variable. Each T A S operation, even if it fails to acquire the lock, attempts to gain exclusive write permission on the cache line containing the lock variable. This necessitates cache coherency protocol messages, such as invalidations and ownership transfers, across the processor-memory interconnect. This serialization causes significant hardware contention, impacting not only the waiting threads but also potentially interfering with the lock owner's ability to release the lock, as its cache line might be invalidated by the contenders. The test and test and set optimization mitigates this by allowing threads to spin on a simple read, which can often be satisfied from a local cache copy without generating bus traffic, until the lock appears free.
+
+The discussion on "Centralized Algorithms" further elaborates on the underlying principles. Modern multiprocessor architectures widely provide atomic `read-modify-write` instructions, such as `fetch_and_add` or generic `fetch_and_Phi`, which are foundational for implementing mutual exclusion. These instructions guarantee that a read, a modification, and a write to a memory location occur as an indivisible unit. The text highlights that in the absence of contention, these operations can effectively achieve mutual exclusion in constant time, meaning their execution time is independent of the number of threads. However, under contention, their performance can degrade. The term "centralized" refers to the characteristic that these locks typically involve threads spinning on a single, shared memory location. This single point of contention becomes a bottleneck as the number of competing threads increases. The fairness and overall performance of these algorithms are critical metrics, differing based on the specific implementation and workload.
+
+Merritt and Taubenfeld's work in two thousand is cited, suggesting methods to reduce the performance cost of contention to Big O of `m`, where `m` represents the number of threads simultaneously competing for access. This implies a more scalable behavior compared to earlier unoptimized designs where contention might lead to much higher, even superlinear, performance degradation. Rudolph and Segall's work from nineteen eighty four is also referenced in relation to strategies for obtaining write permission on the lock variable only when it is likely to be free, reinforcing the conceptual basis of the test and test and set optimization discussed previously. These historical developments underscore the iterative process of optimizing synchronization primitives to cope with increasing core counts and memory hierarchy complexities in parallel computing.

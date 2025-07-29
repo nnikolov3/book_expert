@@ -1,0 +1,67 @@
+180 8 Nonblocking Algorithms
+
+As examples, Scherer and Scott present nonblocking dual versions of the Treiber stack
+(Sec. 8.1) and the M&S queue (Sec.8.3.1). In both, a remove operation must determine
+whether to remove a datum or insert a reservation; an insert operation must determine
+whether to insert a datum or fulfill a reservation. The challenge is to make this decision
+and then carry it out atomically, as a single linearizable operation. Among other things, we
+must ensure that if operation x satisfies the precondition on which thread 7 is waiting, then
+once x has linearized (and chosen t as its successor), + must complete its operation within
+a bounded number of (its own) time steps, with no other linearizations in between.
+
+In the nonblocking dualqueue, atomicity requires a small extension to the consistent
+snapshot mechanism and a convention that tags each next pointer with a bit to indicate
+whether the next node in the queue contains a datum or a reservation. (The only tag that
+1s ever inspected 1s the one in the next pointer of the dummy node: one can prove that at
+any given time the queue will consist entirely of data nodes or entirely of reservations.)
+Fulfillment of reservations is straightforward: if a waiting thread spins on a field in the
+reservation node, we can use a CAS to change that field from _L to the fulfilling datum before
+removing the node from the queue. (Alternatively, we could signal a single-use condition
+variable on which the waiting thread was blocked.)
+
+In the nonblocking dualstack, next pointers are also tagged, but the lack of adummy node,
+and the fact that insertions and deletions occur at the same end of the list, introduces an extra
+complication. To ensure nonblocking progress, we must fulfill a request before popping it
+from the stack; otherwise, if the fulfilling thread stalled after the pop, the waiting thread could
+execute an unbounded number of steps after the pop linearized, without making progress,
+and other operations could linearize in-between. A push operation therefore pushes a data
+node regardless of the state of the stack. If the previous top-of-stack node was a reservation,
+the adjacent nodes then “annihilate each other”: any thread that finds a data node and an
+underlying reservation at the top of the stack attempts to write the address of the former into
+the latter, and then pop both nodes from the stack. In subsequent work, Izraelevitz and Scott
+(2017) presented dual versions of the LCRQ of Morrison and Afek, together with a generic
+construction that allows any nonblocking container for data to be paired with almost any
+nonblocking container for reservations.
+
+Nonblocking dual data structures have proven quite useful in practice. In particular, the
+Executor framework of Java 6 used dualstacks and dualqueues to replace the lock-based task
+pools of Java 5, resulting in improvements of 2—10x in the throughput of thread dispatch
+(Scherer et al. 2009).
+
+8.9 Nonblocking Elimination
+
+In Sec. 5.4 we described the notion of elimination, which allows operations in a fan-in tree
+not only to combine (so that only one thread continues up the tree), but to “cancel each other
+out,” so that neither thread needs to proceed.
+As examples, Scherer and Scott present nonblocking dual versions of the Treiber stack (Sec. eight point one) and the M and S queue (Sec. eight point three point one). In both, a remove operation must determine whether to remove a datum or insert a reservation; an insert operation must determine whether to insert a datum or fulfill a reservation. The challenge is to make this decision and then carry it out atomically, as a single linearizable operation. Among other things, we must ensure that if operation x satisfies the precondition on which thread t is waiting, then once x has linearized (and chosen t as its successor), t must complete its operation within a bounded number of its own time steps, with no other linearizations in between.
+
+In the nonblocking dualqueue, atomicity requires a small extension to the consistent snapshot mechanism and a convention that tags each next pointer with a bit to indicate whether the next node in the queue contains a datum or a reservation. The only tag that is ever inspected is the one in the next pointer of the dummy node; one can prove that at any given time the queue will consist entirely of data nodes or entirely of reservations. Fulfillment of reservations is straightforward: if a waiting thread spins on a field in the reservation node, we can use a C A S to change that field from null to the fulfilling datum before removing the node from the queue. (Alternatively, we could signal a single use condition variable on which the waiting thread was blocked.)
+
+In the nonblocking dualstack, next pointers are also tagged, but the lack of a dummy node, and the fact that insertions and deletions occur at the same end of the list, introduces an extra complication. To ensure nonblocking progress, we must fulfill a request before popping it from the stack; otherwise, if the fulfilling thread stalled after the pop, the waiting thread could execute an unbounded number of steps after the pop linearized, without making progress, and other operations could linearize in between. A push operation therefore pushes a data node regardless of the state of the stack. If the previous top of stack node was a reservation, the adjacent nodes then "annihilate each other": any thread that finds a data node and an underlying reservation at the top of the stack attempts to write the address of the former into the latter, and then pop both nodes from the stack. In subsequent work, Izraelevitz and Scott (two thousand seventeen) presented dual versions of the L C R Q of Morrison and A f e k, together with a generic construction that allows any nonblocking container for data to be paired with almost any nonblocking container for reservations.
+
+Nonblocking dual data structures have proven quite useful in practice. In particular, the E x e c u t o r framework of J a v a six used dualstacks and dualqueues to replace the lock based task pools of J a v a five, resulting in improvements of two to ten times in the throughput of thread dispatch (Scherer et al. two thousand nine).
+
+Eight point nine Nonblocking Elimination
+
+In Sec. five point four we described the notion of elimination, which allows operations in a fan in tree not only to combine (so that only one thread continues up the tree), but to "cancel each other out," so that neither thread needs to proceed.
+The text delves into the intricacies of nonblocking data structures, specifically focusing on dual-structure implementations and the concept of elimination.
+
+Initially, it references the work of Scherer and Scott concerning nonblocking dual versions of the Treiber stack and the M and S queue. The core challenge in these structures, whether performing a remove or an insert operation, is to achieve atomicity. An insert operation, for example, must correctly decide whether to insert a datum or fulfill a reservation. This decision-making process needs to be atomic, meaning it appears as a single, indivisible operation from the perspective of other threads. A critical aspect is ensuring that if an operation `x` on a data structure satisfies a precondition dependent on its successor `t`, then `x` must complete its operation within a bounded number of time steps, irrespective of other concurrent operations that might linearize between `x`'s initial access and its completion.
+
+The discussion then shifts to nonblocking dual queues. Atomicity in this context necessitates a mechanism to associate a tag with each node, indicating whether it contains a datum or a reservation. This tag is crucial for the consistent snapshotting of the queue. The fulfillment of a reservation in a dual queue is described as a process where a waiting thread attempts to change a field in the queue's data structure from a null value to the reservation itself, effectively using a compare and swap (CAS) operation. This operation aims to update the queue state without blocking other threads. An alternative approach involves signaling a condition variable if a waiting thread is blocked.
+
+The analysis extends to nonblocking dual stacks. Here, next pointers are also tagged, but the key difference from dual queues lies in the fact that insertions and deletions occur at the same end of the list. The absence of a dummy node introduces an additional step to ensure correct operation, requiring a request before popping an element. A potential issue arises if the thread performing the pop operation stalls after linearization but before the pop is fully executed. In such scenarios, an unbounded number of steps might be required for the pop, and other operations could potentially linearize in the interim. A push operation might then find the top-of-stack node to be a reservation. If this reservation is then "annihilated" by another operation, the subsequent push might encounter a race condition. The text points to the work of Izrailevitz and Scott (two thousand seventeen) who presented dual versions of the lock-free, cache-oblivious, reservation-based queue, demonstrating their applicability to generic nonblocking containers for data paired with reservations.
+
+The practical utility of nonblocking dual data structures is highlighted by their use in the Executor framework of Java six, where dual stacks and dual queues were employed to replace lock-based task dispatching. This adoption resulted in performance improvements ranging from two to ten times in the throughput of thread dispatch.
+
+Finally, the text introduces section eight point nine, focusing on "Nonblocking Elimination." This section revisits the concept of elimination, previously described in section five point four. Elimination allows operations within a fan-in tree structure to effectively "cancel each other out," such that only one thread proceeds up the tree, while others are eliminated. This mechanism is crucial for optimizing performance in scenarios where multiple threads might contend for the same resources or operations.

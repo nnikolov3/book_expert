@@ -1,0 +1,113 @@
+8.6 Search Trees 163
+
+private tuple tree.search(keytype key):
+
+node * gp := null
+
+updateptr gpupdate := null
+
+node* p := root
+
+updateptr pupdate := p—update.load()
+
+node* | := p—left.load()
+
+while |—left.load() # null
+gp =p; p:=1; gpupdate := pupdate
+pupdate := p—update.load() // must be read before |—left or |—right
+| := (key < |—key) ? |—left.load() : |—right.load()
+
+return (gp, gpupdate, p, pupdate, I)
+
+private void tree.help(updateptr update)
+if update.state = DFlag then help_delete(update.info)
+else if update.state = IFlag then help_insert(update.info)
+else if update.state = Mark then help_marked(update.info)
+
+private void tree.help_insert(insertflag* desc)
+cas_child(desc—p, desc—target, desc—newlnternal)
+desc—p—update.CAS((IFlag, desc), (Clean, desc))
+
+private void tree.help_delete(deleteflag* desc)
+desc—p—update. CAS(desc—pupdate, (Mark, desc))
+updateptr result := desc—p—update.load()
+if result.state = Mark or result.info = desc—pupdate
+help_marked(desc)
+else
+help(result)
+desc—gp—update.CAS((DFlag, desc), (Clean, desc))
+
+private void tree.help_marked(deleteflag* desc)
+// identify the other child of p (that is not desc—target)
+node* other := desc—p—right.load()
+if other = desc—target then other := desc—p—left.load()
+cas_child(desc—gp, desc—p, other)
+desc—gp—update.CAS((DFlag, desc), (Clean, desc))
+
+private void tree.cas_child(node* parent, node* exp, node* newnode):
+if exp = parent—left.load() then parent—left. CAS(exp, newnode)
+else if exp = parent—right.load() then parent—right. CAS(exp, newnode)
+// note: can convert the else-if into an else (dropping the condition) if that is faster
+
+Figure 8.15 EFRB BST: private methods.
+Section eight point six, Search Trees.
+
+The page number is one hundred sixty three.
+
+private tuple tree.search(keytype key):
+node star gp is null
+updatetr gpupdate is null
+node star p is root
+updatetr pupdate
+node star l is p arrow left dot load()
+while l arrow left dot load() is not null
+gp is p, p is p, gpupdate is pupdate
+pupdate is p arrow update dot load()
+must be read before l arrow right
+l is key less than l? l arrow left dot load(): l arrow right dot load()
+return tuple gp, pupdate, l
+
+private void tree.help(updatetr update)
+if update dot state is DFlag then help dot delete(update dot info)
+else if update dot state is IFlag then help dot insert(update dot info)
+else if update dot state is Mark then help dot marked(update dot info)
+
+private void tree.help dot insert(insertflag star desc)
+cas_child(desc arrow p, desc arrow target, desc arrow newInternal)
+desc arrow p arrow update dot CAS left parenthesis IFlag comma desc right parenthesis comma left parenthesis Clean comma desc right parenthesis
+
+private void tree.help dot delete(deleteflag star desc)
+desc arrow p arrow update dot CAS left parenthesis desc arrow pupdate comma left parenthesis Mark comma desc right parenthesis right parenthesis
+updatetr result is desc arrow p arrow update dot load()
+if result dot state is Mark or result dot info is equal to desc arrow pupdate
+help left parenthesis result right parenthesis
+desc arrow gp arrow update dot CAS left parenthesis DFlag comma desc right parenthesis comma left parenthesis Clean comma desc right parenthesis
+
+private void tree.help dot marked(deleteflag star desc)
+// identify the other child of p that is not desc arrow target
+node star other is desc arrow p arrow right dot load()
+if other is desc arrow target then other is desc arrow p arrow left dot load()
+cas_child(desc arrow gp comma desc arrow p comma other)
+desc arrow gp arrow update dot CAS left parenthesis DFlag comma desc right parenthesis comma left parenthesis Clean comma desc right parenthesis
+
+private void tree.cas_child(node star parent comma node star exp comma node star newnode)
+if exp is parent arrow left dot load() then parent arrow left dot CAS left parenthesis exp comma newnode right parenthesis
+else if exp is parent arrow right dot load() then parent arrow right dot CAS left parenthesis exp comma newnode right parenthesis
+// note: can convert the else if into an else (dropping the condition) if that is faster
+
+Figure eight point fifteen: EFRB B S T: private methods.
+This page delves into the implementation details of concurrent search trees, specifically focusing on the "EFRB BST" (Equidistant Fibonacci Representation Balanced Search Tree) as indicated by Figure 8.15. The core concepts revolve around lock-free data structures and the use of atomic operations to manage concurrency without traditional locks, aiming for higher performance and scalability in multi-threaded environments.
+
+The first function, `private tuple tree.search(keytype key)`, outlines a fundamental search operation within the tree. It initializes `node* gp` (grandparent) and `pupdata` (parent update pointer) to null. It then sets `node* p` (parent) to the root and loads the parent's update pointer. The traversal begins by setting `node* l` to the left child of `p`. A `while` loop iteratively traverses the tree. Inside the loop, it continuously loads the current left child (`l->left.load()`) and right child (`l->right.load()`). The pointers `gp`, `p`, and `pupdata` are updated based on the current node `l` and its relationship to the search key. Specifically, `gp` becomes the current `p`, `p` becomes `l`, and `pupdata` is updated with the current `p`'s update pointer. The condition for continuing the loop is that `l`'s left child is not null, signifying ongoing traversal or potential structural changes. The loop's termination occurs when `l` points to a node that has no left child or when the key comparison dictates moving to the right subtree. The comparison `l:=(key < l->key) ? l->left.load() : l->right.load()` determines the next node to examine, moving left if the key is smaller and right otherwise. The function returns a tuple containing the grandparent `gp`, the parent `p`, and the parent's update pointer `pupdata`. This return value is crucial for subsequent atomic operations that might modify the tree structure, as it provides the necessary context for performing a compare-and-swap.
+
+The subsequent functions, `tree.help_update(updateptr update)`, `tree.help_insert(insertflag* desc)`, `tree.help_delete(deleteflag* desc)`, and `tree.help_marked(deleteflag* desc)`, are internal helper methods that handle different states of an update operation.
+
+The `tree.help_update` function takes an `updateptr` and, based on the state of the update, dispatches to specific handlers. If `update.state` is `DFlag`, it calls `help_delete` with the update's information. If it's `IFlag`, it calls `help_insert`. If the state indicates a "Mark" condition, it invokes `help_marked`. This demonstrates a state machine approach to managing concurrent updates, where different states necessitate distinct recovery or completion logic.
+
+`tree.help_insert` is designed to assist in insert operations. It starts by attempting a compare-and-swap (CAS) operation on the child pointer of the `desc` (descriptor) node. The CAS targets the left child pointer (`desc->p->update`) and attempts to atomically change it from `desc` to the `newInternal` node. The expected value for the CAS is a tuple containing `IFlag` and `desc` itself. If the CAS succeeds, it means the insertion into the tree's structure has been partially completed. The function then performs another CAS on the `desc`'s update pointer, transitioning it from `desc` to a `Clean` state, signifying that this descriptor is now finished.
+
+`tree.help_delete` handles the cleanup of deleted nodes. It attempts to atomically mark the parent node's update pointer to `Mark` using a CAS operation. The CAS compares the current value of `desc->p->update` with the expected value `desc` and attempts to set it to `Mark`. Following this, it retrieves the current value of the parent's update pointer (`result.info = desc->p->update.load()`). A conditional check is performed: if the `result.state` is `Mark` or if `result.info` is equal to `desc` (meaning the update is already complete or marked), it then attempts to perform a CAS on the parent's update pointer, changing it from the `desc` state to `Clean`. This logic ensures that the deletion process is properly synchronized and that nodes are correctly unlinked from the tree.
+
+`tree.help_marked` is called when a node has been marked for deletion. It identifies the other child of the parent `p` that is not the target node. This is achieved by loading the right child (`desc->p->right.load()`) and if that doesn't match the `desc->target`, then the left child (`desc->p->left.load()`) is considered the "other" child. A CAS operation is then performed on the parent's right child pointer (`desc->p->right.load()`), attempting to atomically replace the "other" child with null, effectively unlinking it. Finally, a CAS operation is performed on the grandparent's update pointer (`desc->gp->update`), changing it from `DFLAG` to `Clean`. This again uses CAS for atomic modification, ensuring that the tree structure is updated consistently across concurrent operations.
+
+The function `private void tree.cas_child(node* parent, node* exp, node* newnode)` is a utility function that encapsulates the logic for atomically updating a child pointer of a `parent` node. It first checks if the `parent`'s left child pointer is equal to `exp` (the expected child node). If it is, it attempts to perform a CAS on the `parent`'s left child pointer, replacing `exp` with `newnode`. If the left child does not match, it then checks the right child pointer. If the `parent`'s right child pointer is equal to `exp`, it attempts to perform a CAS on the `parent`'s right child pointer, replacing `exp` with `newnode`. The comment "// note: can convert the else if into an else (dropping the condition) if that is faster" suggests an optimization opportunity. By removing the explicit check `parent->right.load() == exp`, the CAS operation on the right child would be attempted unconditionally. This could be faster if the probability of the right child being the one needing an update is high, but it relies on the CAS itself to fail correctly if the condition is not met, which is a standard behavior of CAS operations. This function is a critical building block for maintaining the integrity of the tree structure during concurrent modifications.

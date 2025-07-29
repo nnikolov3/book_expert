@@ -1,0 +1,102 @@
+6.1 Reader-Writer Locks 107
+
+class rw_lock
+atomic<(short, short)> requests := (0, 0)
+atomic<(short, short)> completions := (0, 0)
+// top half of each word counts readers; bottom half counts writers
+const int base =... // tuning parameter
+
+rw_lock.writer_acquire():
+
+short rr, wr, rc, wc
+
+repeat // fetch-and-phi increment of writer requests
+(rr, wr) := requests.load(||)
+
+until requests.CAS((rr, wr), (rr, wr+1),
+
+fence(W||R)
+
+loop /] spin
+(rc, we) := completions.load(]|)
+if rc = rr and wc = wr break // all previous readers and writers have finished
+pause((wc—wr) x base)
+
+fence(R||RW)
+
+rw_lock.writer_release():
+fence(RW||W)
+short rc, wc
+repeat // fetch-and-phi increment of writer completions
+(rc, we) := completions.load(]|)
+until completions.CAS((rc, wc), (rc, wc+1),
+
+)
+
+)
+
+rw_lock.reader_acquire():
+
+short rr, wr, rc, wc
+
+repeat // fetch-and-phi increment of reader requests
+(rr, wr) := requests.load(||)
+
+until requests.CAS((rr, wr), (rr+1, wr),
+
+fence(W||R)
+
+loop /] spin
+(rc, we) := completions.load(]|)
+if wc = wr break // all previous writers have finished
+pause((wc—wr) x base)
+
+fence(R||R)
+
+rw_lock.reader_release():
+fence(R||W)
+short rc, wc
+repeat // fetch-and-phi increment of reader completions
+(rc, we) := completions.load(]|)
+until completions.CAS((rc, wc), (rc+1, wc),
+
+)
+
+)
+
+Figure 6.3 A centralized fair reader-writer lock with (roughly) proportional backoff for both readers
+and writers. Addition is assumed to be modulo the precision of (unsigned) short integers.
+Section six point one, Reader Writer Locks.
+
+The code defines a class named R W lock. It contains an atomic variable named requests, consisting of a pair of short integers, initialized to zero, zero. It also contains an atomic variable named completions, consisting of a pair of short integers, initialized to zero, zero. A comment explains that the top half of each word counts readers, and the bottom half counts writers. There is also a constant integer named base, which is a tuning parameter.
+
+The function R W lock dot writer acquire is defined. It declares short integers R R, W R, R C, and W C. It enters a repeat loop, which performs a fetch and phi increment of writer requests. Inside the loop, the pair R R, W R is loaded from requests with a sequentially consistent memory order. The loop continues until a compare and swap operation on requests successfully updates the pair from R R, W R to R R, W R increment by one, with a sequentially consistent memory order. A memory fence for write operations or read operations is performed. It then enters an inner spin loop. Inside the spin loop, the pair R C, W C is loaded from completions with a sequentially consistent memory order. If R C is equal to R R, and W C is equal to W R, the loop breaks, indicating that all previous readers and writers have finished. Otherwise, the system pauses for a duration determined by the difference between W C and W R, multiplied by base. A memory fence for read operations or read-write operations is performed.
+
+The function R W lock dot writer release is defined. It starts with a memory fence for read-write operations or write operations. It declares short integers R C and W C. It enters a repeat loop, which performs a fetch and phi increment of writer completions. Inside the loop, the pair R C, W C is loaded from completions with a sequentially consistent memory order. The loop continues until a compare and swap operation on completions successfully updates the pair from R C, W C to R C, W C increment by one, with a sequentially consistent memory order.
+
+The function R W lock dot reader acquire is defined. It declares short integers R R, W R, R C, and W C. It enters a repeat loop, which performs a fetch and phi increment of reader requests. Inside the loop, the pair R R, W R is loaded from requests with a sequentially consistent memory order. The loop continues until a compare and swap operation on requests successfully updates the pair from R R, W R to R R increment by one, W R, with a sequentially consistent memory order. A memory fence for write operations or read operations is performed. It then enters an inner spin loop. Inside the spin loop, the pair R C, W C is loaded from completions with a sequentially consistent memory order. If W C is equal to W R, the loop breaks, indicating that all previous writers have finished. Otherwise, the system pauses for a duration determined by the difference between W C and W R, multiplied by base. A memory fence for read operations or read operations is performed.
+
+The function R W lock dot reader release is defined. It starts with a memory fence for read operations or write operations. It declares short integers R C and W C. It enters a repeat loop, which performs a fetch and phi increment of reader completions. Inside the loop, the pair R C, W C is loaded from completions with a sequentially consistent memory order. The loop continues until a compare and swap operation on completions successfully updates the pair from R C, W C to R C increment by one, W C, with a sequentially consistent memory order.
+
+Figure six point three shows a centralized fair reader writer lock with roughly proportional backoff for both readers and writers. Addition is assumed to be modulo the precision of unsigned short integers.
+This document details the implementation of a centralized fair reader writer lock, a fundamental synchronization primitive in concurrent programming designed to manage access to shared resources. The core principle of a reader writer lock is to allow multiple threads to read a shared resource concurrently, while ensuring that only one thread can write to the resource at any given time, and no readers are active during a write operation.
+
+The `rw_lock` class encapsulates the state of the lock using two `atomic` variables, `requests` and `completions`. Each of these `atomic` variables is a composite type, specifically a pair of `short` integers. This packing of two distinct counters into a single atomic word is an optimization technique to reduce cache line contention and ensure that updates to these related counts occur as a single, indivisible operation. The `requests` variable, initialized to zero zero, tracks the number of outstanding read requests and write requests. Specifically, the top half of the `atomic` word counts reader requests, while the bottom half counts writer requests. Similarly, the `completions` variable, also initialized to zero zero, tracks the number of completed read and write operations. A `const int base` parameter is introduced, serving as a tuning parameter, likely to scale the backoff duration in the waiting loops.
+
+Let us first examine the `rw_lock.writer_acquire()` function, which a thread invokes to obtain write access. The method begins by declaring local variables `rr`, `wr`, `rc`, and `wc` to store the current and desired states of reader and writer request and completion counts. The acquisition process starts with a `repeat` loop that attempts to atomically increment the writer request count. Inside this loop, the thread first loads the current values of `rr` and `wr` from the `requests` atomic variable using a relaxed memory order, denoted by the double pipe symbol. It then attempts to update `requests` using a compare and swap operation, or `C A S`. The `C A S` operation atomically compares the current value of `requests` with the loaded `(rr, wr)` pair. If they match, it updates `requests` to `(rr, wr increment by one)`, signifying a new writer request. If the `C A S` fails, it indicates that another thread concurrently modified `requests`, and the loop retries by reloading the current value. This `C A S` loop constitutes a spinlock, where threads busy wait until their attempt to register a request succeeds.
+
+Following the successful registration of a writer request, a `fence` operation with `W or R` is executed. This is an acquire memory barrier, crucial for maintaining memory consistency. It ensures that all memory writes performed by other threads before they released the lock, and which are now being acquired by this writer, are visible to the current thread. Conversely, it ensures that any memory operations performed by the current writer *after* this fence will not be reordered to occur *before* it, thus preventing premature exposure of data.
+
+The writer then enters a second `loop`, which is the primary waiting phase for acquiring exclusive write access. In this spin loop, the writer continuously loads the current `rc` and `wc` values from the `completions` atomic variable. The core condition for breaking this loop and proceeding into the critical section is `if rc is equal to rr and wc is equal to wr break`. This logical conjunction ensures that the acquiring writer waits until all readers that requested access *before* its own request (`rc is equal to rr`) have completed their operations, and critically, that all writers who requested access *before* its own request (`wc is equal to wr`) have also completed. This strict condition guarantees exclusive access for the writer, as no other readers or writers can be active while it holds the lock. Should the condition not be met, the thread executes a `pause` operation. This `pause` implements a proportional backoff mechanism, where the delay is calculated as `(wc decrement wr) multiplied by base`. This backoff strategy, as noted in the figure caption, aims for fairness by penalizing threads that are "ahead" in their completion counts, thus reducing contention and avoiding starvation by allowing other threads a chance to make progress.
+
+Finally, after exiting the spin loop and just before entering its critical section, the writer executes another `fence` operation, specified as `R or RW`. This is a robust acquire memory barrier, ensuring that all subsequent memory operations (both reads and writes) are ordered after this point, making any state changes protected by the lock consistently visible.
+
+The `rw_lock.writer_release()` function reverses the acquisition process. It begins with a `fence(RW or W)` operation, which is a release memory barrier. This barrier guarantees that all memory modifications performed by the writer within its critical section are made globally visible to other processors *before* the lock is considered released. This is vital for data consistency, ensuring that subsequent acquirers of the lock will observe the writer's changes. After the fence, the writer enters a `repeat` loop that uses `C A S` to atomically increment the `wc` field within the `completions` atomic variable from `(rc, wc)` to `(rc, wc increment by one)`. This signifies that the writer has successfully exited its critical section and completed its operation, making the lock available.
+
+Turning to the `rw_lock.reader_acquire()` function, the initial steps are analogous to the writer's acquisition. It uses a `repeat` loop with `C A S` to atomically increment the reader request count (`rr`) within the `requests` atomic variable, from `(rr, wr)` to `(rr increment by one, wr)`. Notice that `wr` remains unchanged, as a reader only registers its own read request. A `fence(W or R)` acquire barrier follows, serving the same purpose as in the writer acquire path: ensuring that memory state prior to acquisition is visible.
+
+The reader then enters its spin loop. Unlike the writer, a reader's acquisition condition is more lenient: `if wc is equal to wr break`. This means a reader only waits for all writers that requested access *before* its own request (`wc is equal to wr`) to have completed their operations. It does *not* wait for other readers. This is the fundamental characteristic that allows multiple readers to concurrently access the shared resource. If this condition is not met, the reader also employs the `pause((wc decrement wr) multiplied by base)` proportional backoff, preventing excessive spinning and promoting fairness by yielding to writers that need to progress. A `fence(R or R)` barrier is then executed. This barrier is a less strict acquire fence specifically for reads, ensuring that subsequent reads by this thread are ordered after this point, and thus reflect the consistent state.
+
+Finally, the `rw_lock.reader_release()` function. It starts with a `fence(R or W)` operation, which serves as a release barrier for reader operations. This ensures that any data read or modified by the reader within its critical section, and which needs to be visible to subsequent writers, is committed to memory before the lock is effectively released. The function then uses a `repeat` loop with `C A S` to atomically increment the `rc` field in the `completions` atomic variable from `(rc, wc)` to `(rc increment by one, wc)`, signaling the completion of the read operation.
+
+In summary, this reader writer lock implementation leverages atomic operations, specifically `C A S`, for non-blocking updates to shared state. It employs a two-part counting mechanism for both outstanding requests and completed operations, allowing for distinct logic for readers and writers. Memory barriers are strategically placed to enforce specific memory ordering semantics, guaranteeing correctness and visibility of changes across threads. The inclusion of proportional backoff is a crucial design decision for performance and fairness, preventing starvation and reducing bus contention in highly concurrent environments by dynamically adjusting spin durations. This sophisticated design balances concurrent reader access with exclusive writer access, all while striving for fair progression of all threads.

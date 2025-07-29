@@ -1,0 +1,47 @@
+138 7 Synchronization and Scheduling
+
+7.5.3 Resource Minimization
+
+In addition to avoiding unnecessary crossings in and out of kernel mode, the futexes of
+Linux and the Iwp_park-based mutexes of Solaris also eliminate the need to allocate a
+kernel-level condition queue for every lock. Lists of blocked threads are kept in user-level
+memory; within the kernel, a waiting thread 1s simply descheduled, with a note in its context
+block that indicates what it is waiting for. Since kernel address space is often a scarce resource
+(especially for preallocated structures), this migration of information into user space may
+significantly increase the maximum number of locks a system can support.
+
+A similar observation regarding kernel resources was made by the designers of the NT
+kernel, the foundation for Microsoft OS releases starting with Windows 2000. Compared to
+Unix variants, the Windows API includes a much larger number of standard library routines.
+These in turn declare a very large number of internal locks (Windows mutex objects), most
+of which are never used in a typical program. To economize on kernel resources, NT delays
+allocating a kernel queue for a given lock until some thread actually tries to acquire the
+lock. Kernel space is still required for every active lock, and kernel-mode crossings occur
+on every acquire and release, but space is never wasted on locks that are not used.
+
+Unfortunately, delayed allocation of kernel queues raises the possibility of a run-time
+exception if space is not available. This possibility was a source of considerable complexity
+and brittleness in Windows 2000. To eliminate the run-time exception, the designers of
+Windows XP introduced the notion of keyed events (Duffy 2006), which allow logically
+distinct conditions to share a single kernel-level queue. Every call to wait or set (signal)
+must specify both an event and a 32-bit key. Every thread waiting in the queue is then tagged
+with the key it provided, and set will only awaken a thread with a matching key. Under most
+circumstances, the kernel allocates a new keyed event for every active lock. If it runs out
+of memory, however, it falls back to a preexisting (per-address-space) keyed event, with a
+new lock-specific key. In Windows XP, which used a linked list for the per-address-space
+queue, performance could sometimes be a problem. Windows Vista replaced the list with
+a hash table for fast key-based lookups. It also introduced a new family of synchronization
+objects, including a “slim reader-writer lock,” or SRWL. Like futexes and lwp_park-based
+mutexes, these objects maintain state in user-level memory, and avoid kernel-mode crossings
+whenever possible. When a thread does need to block, it always employs the per-address-
+space queue.
+One hundred thirty eight. Seven Synchronization and Scheduling. Seven point five point three Resource Minimization. In addition to avoiding unnecessary crossings in and out of kernel mode, the futexes of Linux and the lwp_park_based mutexes of Solaris also eliminate the need to allocate a kernel level condition queue for every lock. Lists of blocked threads are kept in user level memory, within the kernel, a waiting thread is simply descheduled, with a note in its context block that indicates what it is waiting for. Since kernel address space is often a scarce resource, especially for preallocated structures, this migration of information into user space may significantly increase the maximum number of locks a system can support. A similar observation regarding kernel resources was made by the designers of the NT kernel, the foundation for Microsoft OS releases starting with Windows two thousand. Compared to Unix variants, the Windows A P I includes a much larger number of standard library routines. These in turn declare a very large number of internal locks, Windows mutex objects, most of which are never used in a typical program. To economize on kernel resources, N T delays allocating a kernel queue for a given lock until some thread actually tries to acquire the lock. Kernel space is still required for every active lock, and kernel mode crossings occur on every acquire and release, but space is never wasted on locks that are not used. Unfortunately, delayed allocation of kernel queues raises the possibility of a run time exception if space is not available. This possibility was a source of considerable complexity and brittleness in Windows two thousand. To eliminate the run time exception, the designers of Windows X P introduced the notion of keyed events, which allow logically distinct conditions to share a single kernel level queue. Every call to wait or set, signal, must specify both an event and a thirty two bit key. Every thread waiting in the queue is then tagged with the key it provided, and set will only awaken a thread with a matching key. Under most circumstances, the kernel allocates a new keyed event for every active lock. If it runs out of memory, however, it falls back to a preexisting, per address space, keyed event with a new lock specific key. In Windows X P, which used a linked list for the per address space queues, performance could sometimes be a problem. Windows Vista replaced the list with a hash table for fast key based lookups. It also introduced a new family of synchronization objects, including a slim reader writer lock, or S R W L. Like futexes and lwp_park_based mutexes, these objects maintain state in user level memory, and avoid kernel mode crossings whenever possible. When a thread does need to block, it always employs the per address space queue.
+The concept of resource minimization in operating systems, particularly concerning synchronization primitives, is explored.  The text discusses techniques to reduce overhead associated with locks, which are fundamental for managing concurrent access to shared resources in multiprocessor systems.  One approach mentioned is the use of futexes, or fast userspace mutexes, exemplified by their implementation in Linux and Solaris. These futexes allow certain synchronization operations to be handled entirely in user space, thereby avoiding the performance cost of context switching into kernel mode for every lock acquisition or release. This is particularly beneficial for uncontended locks, where the overhead of a full kernel interaction would be disproportionately high.
+
+The kernel-level condition queues, used to manage threads waiting on a particular lock, are also examined. Solaris's futex implementation allocates these queues in user space, associated with each lock. When a thread attempts to acquire a lock that is already held, it is placed on this user-space queue and the thread is descheduled. The text highlights that kernel address space is a scarce resource, and migrating information about waiting threads into user space can significantly increase the available kernel memory.
+
+A comparison is drawn with Microsoft's NT kernel, which, in its earlier releases including Windows 2000, employed a different strategy. The NT kernel API provided a much larger number of internal mutex objects, many of which were not actively used. These objects often required the allocation of kernel memory for their associated kernel queues, even if the locks were never contended. This approach, while seemingly simpler from an API perspective, could lead to inefficient kernel memory utilization, especially when a large number of locks were created but rarely used. The text notes that to economize on kernel resources, NT kernels would delay the actual allocation of a kernel queue for a given lock until some thread actually tried to acquire it and potentially needed to wait. However, kernel space is still required for every active lock, and kernel-mode crossings still occur even for unused locks.
+
+The concept of delayed allocation of kernel queues is further discussed, specifically its potential to introduce complexity and brittleness. If a kernel queue cannot be allocated when needed due to resource constraints, it can lead to an exception. In Windows X P, the designers addressed this by introducing keyed events, a mechanism that allows logically distinct conditions to share a single kernel-level queue. Each such condition requires an event key and a thirty-two-bit identifier. A thread waiting on a keyed event is awakened only if the key matches the one it provided.
+
+Under most circumstances, when a lock is already held, the kernel allocates a new keyed event for each waiting thread. However, if the system runs out of memory, this process fails. The text states that in Windows X P, a linked list was used for per-address-space keyed events, and performance issues could arise from the linear search time of this list. Windows Vista improved upon this by replacing the linked list with a hash table, enabling faster key-based lookups. Furthermore, Windows Vista introduced the family of synchronization objects like the "slim reader-writer lock," or S R W L. These objects, similar to futexes, maintain their synchronization state in user-space memory and avoid kernel-mode crossings whenever possible, thereby optimizing resource usage and performance by minimizing the need for kernel intervention when a thread needs to block.

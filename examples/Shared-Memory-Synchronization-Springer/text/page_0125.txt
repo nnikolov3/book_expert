@@ -1,0 +1,60 @@
+7.3 Monitors 129
+
+A possible solution, suggested by Wettstein (1978), is to release the outer monitor when
+waiting, dictate that signals are only hints, and arrange for a re-awakened lock to re-acquire
+locks from the outside in—i.e., first on M1 and then on M2. This strategy is deadlock free
+so long as the programmer takes care to ensure that nested monitor calls always occur in the
+same order (i.e., always from M1 to M2, and never from M2 to M1).
+
+Unfortunately, any scheme in which a nested wait releases the locks on outer monitors
+will require the programmer to restore the monitor invariant not only on monitor exit, wait,
+and possibly signal, but also whenever calling an entry of another monitor that may wait—or
+a subroutine that may call such an entry indirectly. The designers of most languages—Java
+among them—have concluded that this requirement constitutes an unacceptable burden, and
+have opted to leave the outer monitor locked.
+
+7.3.4 Java Monitors
+
+The original design of Java—still present in the core of the language—combines scope-based
+critical sections with a simplified form of monitors. Each object 1s associated, implicitly,
+with a mutex lock and a single condition variable. A critical section on the lock is specified
+by a synchronized block that names the object:
+
+synchronized (my_object) {
+// critical section
+
+}
+
+As a form of syntactic sugar, the declaration of a class method can be prefaced with
+synchronized, in which case its body behaves as if surrounded by synchronized
+(this) { ... }.Aclass whose methods are all synchronized functions as a monitor.
+
+Within a synchronized method or block, a thread can block for condition synchro-
+nization by executing the wait method, which all objects inherit from the root class
+Object; it can unblock a waiting peer by executing notify. If threads need to wait
+for more than one condition associated with some abstraction (as they do in our bounded
+buffer), one must either restructure the code in such a way that each condition is awaited
+in a different object, or else use some single object’s one condition variable to cover all the
+alternatives. To unblock all threads waiting in a given object, one can execute notifyAll.
+
+C# provides mechanisms similar to those of core Java. Its 1ock statement is analogous
+to synchronized, and conditions are awaited and signaled with Wait, Pulse, and
+PulseAll.
+
+The Java 5 revision of the language, released in 2004, introduced a new library-based
+interface to monitors. Its Lock class (with a capital ‘L’) has explicit lock (acquire) and
+unlock (release) methods. These can be used for hand-over-hand locking (Sec. 3.1.2) and
+other techniques that cannot easily be captured with scope-based critical sections. Locks can
+also have an arbitrary number of associated condition variables, eliminating many unneces-
+Monitors. A possible solution suggested by Wettstein in nineteen seventy eight is to release the outer monitor when waiting. Dictate that signals are only hints and arrange for a re awakened lock to re acquire locks from the outside in, that is first on M one and then on M two. This strategy is deadlock free so long as the programmer takes care to ensure that nested monitor calls always occur in the same order, that is, always from M one to M two, and never from M two to M one. Unfortunately, any scheme in which a nested wait releases the locks on outer monitors will require the programmer to restore the monitor invariant not only on monitor exit, wait, and possibly signal, but also whenever calling an entry of another monitor that may wait, or a subroutine that may call such an entry indirectly. The designers of most languages, Java among them, have concluded that this requirement constitutes an unacceptable burden, and have opted to leave the outer monitor locked.
+
+Java Monitors. The original design of Java still present in the core of the language combines scope based critical sections with a simplified form of monitors. Each object is associated, implicitly, with a mutex lock and a single condition variable. A critical section on the lock is specified by a synchronized block that names the object.
+
+synchronized (my_object) { // critical section }
+
+As a form of syntactic sugar, the declaration of a class method can be prefaced with synchronized, in which case its body behaves as if surrounded by synchronized (this) { ... }. A class whose methods are all synchronized functions as a monitor. Within a synchronized method or block, a thread can block for condition synchronization by executing the wait method, which all objects inherit from the root class Object. It can unblock a waiting peer by executing notify. If threads need to wait for more than one condition associated with some abstraction, for example, in our bounded buffer, one must either restructure the code in such a way that each condition is awaited in a different object, or else use some single object's one condition variable to cover all the alternatives. To unblock all threads waiting in a given object, one can execute notify all. C sharp provides mechanisms similar to those of core Java. Its lock statement is analogous to synchronized, and conditions are awaited and signaled with wait, pulse, and pulse all. The Java five revision of the language, released in two thousand four, introduced a new library based interface to monitors. Its lock class, with a capital L, has explicit lock acquire and unlock release methods. These can be used for hand over hand locking, for example, in Section three point one point two, and other techniques that cannot easily be captured with scope based critical sections. Locks can also have an arbitrary number of associated condition variables, eliminating many unneces-.
+The discussion delves into the concept of monitors in concurrent programming, addressing potential pitfalls and introducing language-specific implementations. One challenge arises with nested monitors, where a thread may need to wait on an inner monitor (M2) while holding a lock on an outer monitor (M1). A proposed solution involves releasing the outer monitor's lock before waiting on the inner one, and then re-acquiring both locks upon waking. This strategy ensures deadlock freedom by imposing an order on lock acquisition, specifically, always acquiring M1 before M2 and never vice versa. However, a critical requirement is that when a nested wait occurs, the programmer must meticulously restore the monitor invariant not only for the outer monitor but also for any subroutine that might be called indirectly. The text notes that designers often find this requirement an unacceptable burden.
+
+The section then transitions to Java monitors, highlighting that they remain a core feature, albeit in a simplified form. Java monitors inherently combine scope-based critical sections with condition variables. Implicitly, each object in Java serves as a mutex lock. A critical section is demarcated by a synchronized block that names the object serving as the lock. For instance, the syntax `synchronized (my_object) { // critical section }` denotes a critical section associated with the `my_object` instance, ensuring that only one thread can execute within this block at a time.
+
+The concept of a synchronized method is introduced as syntactic sugar. When a class method is declared as synchronized, its execution body behaves as if it were enclosed within a synchronized block that locks on the object itself. This effectively makes all methods of such a class synchronized functions, functioning as monitors. Within a synchronized method or block, a thread can cause its own suspension by invoking the `wait` method. This method releases the lock on the object, allowing other threads to enter the critical section. A thread can then re-acquire the lock and resume execution after being signaled. To wake up a waiting thread, the `notify` method is used. It signals a single waiting thread. If multiple threads are waiting on the same condition associated with an object, one must either restructure the code to use separate condition variables for each thread or employ a single condition variable to manage all waiting threads, using `notifyAll` to wake up all waiting threads. C-sharp provides mechanisms akin to Java's core threading primitives, supporting `wait`, `pulse`, and `pulseAll` operations. The Java 5 revision introduced an enhanced, library-based interface for monitor management via the `Lock` class, which offers explicit lock acquisition and release operations. This system is also compatible with scope-based critical sections, as detailed in Section 3.1.2. Locks offer greater flexibility, enabling arbitrary numbers of associated condition variables, thereby mitigating issues associated with the limitations of single condition variables.

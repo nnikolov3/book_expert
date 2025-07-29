@@ -1,0 +1,70 @@
+1.3 Spinning Versus Blocking 7
+
+core to some other, runnable thread. The prior thread may then be run again later—either after
+some suitable interval of time (at which point it will check its condition, and possibly yield,
+again), or at some particular time when another thread has determined that the condition is
+finally true.
+
+The software responsible for choosing which thread to execute when is known as a
+scheduler. In many systems, scheduling occurs at two different levels. Within the operating
+system, a kernel-level scheduler implements (kernel-level) threads on top of some smaller
+number of processor cores; within the user-level run-time system, a user-level scheduler
+implements (user-level) threads on top of some smaller number of kernel threads. At both
+levels, the code that implements threads (and synchronization) may present a library-style
+interface, composed entirely of subroutine calls; alternatively, the language in which the
+kernel or application 1s written may provide special syntax for thread management and
+synchronization, implemented by the compiler.
+
+Certain issues are unique to schedulers at different levels. The kernel-level scheduler, in
+particular, is responsible for protecting applications from one another, typically by running
+the threads of each in a different address space; the user-level scheduler, for its part, may
+need to address such issues as non-conventional stack layout. To a large extent, however,
+the kernel and runtime schedulers have similar internal structure, and both spinning and
+blocking may be useful at either level.
+
+While blocking saves cycles that would otherwise be wasted on fruitless re-checks of a
+condition or lock, it spends cycles on the context switching overhead required to change the
+running thread. If the average time that a thread expects to wait is less than twice the context-
+switch time, spinning will actually be faster than blocking. It is also the obvious choice if
+there 1s only one thread per core, as 1s sometimes the case in embedded or high-performance
+systems. Finally, as we shall see in Chapter 7, blocking (otherwise known as scheduler-based
+synchronization) must be built on top of spinning, because the data structures used by the
+scheduler itself require synchronization.
+
+Processes, Threads, and Tasks
+
+Like “concurrent” and “parallel,” the terms “process,” “thread,” and “task” are used in different ways
+by different authors. In the most common usage (adopted here), a thread is an active computation
+that has the potential to share variables with other, concurrent threads. A process is a set of threads,
+together with the address space and other resources (e.g., open files) that they share. A task 1s a well-
+defined (typically small) unit of work to be accomplished—most often the closure of a subroutine
+with its parameters and referencing environment. Tasks are passive entities that may be executed
+by threads. They are invariably implemented at user level. The reader should beware, however, that
+this terminology is not universal. Many papers (particularly in theory) use “process” where we use
+“thread.” Ada uses “task” where we use “thread.” The Mach operating system uses “task” where we
+use “process.” And some systems introduce additional words—e.g., “activation,” “fiber,” “filament,”
+or “hart.”
+One point three, Spinning Versus Blocking.
+
+A core may switch to some other runnable thread. The prior thread may then be run again later, either after some suitable interval of time, at which point it will check its condition and possibly yield again, or at some particular time when another thread has determined that the condition is finally true.
+
+The software responsible for choosing which thread to execute when is known as a scheduler. In many systems, scheduling occurs at two different levels. Within the operating system, a kernel level scheduler implements kernel level threads on top of some smaller number of processor cores. Within the user level run time system, a user level scheduler implements user level threads and synchronization mostly on top of some smaller number of kernel threads. At both levels, the code that implements threads and synchronization may present a library style interface, composed entirely of subroutine calls. Alternatively, the language in which the kernel or application is written may provide special syntax for thread management and synchronization, implemented by the compiler.
+
+Certain issues are unique to schedulers at different levels. The kernel level scheduler, in particular, is responsible for protecting applications from one another, typically by running the threads of each in a different address space. The user level scheduler, for its part, may need to address such issues as non conventional stack layout. To a large extent, however, the kernel and runtime schedulers have similar internal structure, and both spinning and blocking may be useful at either level.
+
+While blocking saves cycles that would otherwise be wasted on fruitless re checks of a condition or lock, it spends cycles on the context switching overhead required to change the running thread. If the average time that a thread expects to wait is less than twice the context switch time, spinning will actually be faster than blocking. It is also the obvious choice if there is only one thread per core, as is sometimes the case in embedded or high performance systems. Finally, as we shall see in Chapter seven, blocking, otherwise known as scheduler based synchronization, must be built on top of spinning, because the data structures used by the scheduler itself require synchronization.
+
+Processes, Threads, and Tasks.
+
+Like "concurrent" and "parallel," the terms "process," "thread," and "task" are used in different ways by different authors. In the most common usage, adopted here, a thread is an active computation that has the potential to share variables with other concurrent threads. A process is a set of threads, together with the address space and other resources, for example, open files, that they share. A task is a well defined, typically small, unit of work to be accomplished, most often the closure of a subroutine with its parameters and referencing environment. Tasks are passive entities that may be executed by threads. They are invariably implemented at user level. The reader should beware, however, that this terminology is not universal. Many papers, particularly in theory, use "process" where we use "thread." Ada uses "task" where we use "thread." The Mach operating system uses "task" where we use "process." And some systems introduce additional words, for example, "activation," "fiber," "filament," or "hart."
+The fundamental challenge in concurrent computing lies in efficiently managing the execution of multiple independent or cooperating computational units on a finite set of processor resources. This management is primarily the responsibility of a component known as the scheduler. The scheduler's role is to determine which ready thread gains access to a C P U core at any given moment. This decision can be made either proactively, through a pre-defined time interval after which the current thread yields control, or reactively, when a thread encounters a condition that forces it to temporarily pause its execution.
+
+Two primary strategies for managing a thread's waiting state for a condition to become true are spinning and blocking. Spinning, or busy waiting, involves a thread continuously checking a condition in a tight loop. While this method consumes C P U cycles without performing useful work, it avoids the overhead associated with context switching. Context switching is the process of saving the current state of a running thread and loading the state of another thread, a process that involves saving and restoring registers, program counters, and potentially cache state, incurring a non-trivial performance cost. Spinning can be advantageous in scenarios where the expected wait time for a condition to become true is extremely short, typically less than twice the time required for a context switch. If the condition is met quickly, the C P U cycles spent spinning might be less wasteful than the cycles spent on a full context switch. However, if the condition remains false for an extended period, spinning becomes highly inefficient, monopolizing a C P U core that could otherwise be utilized by another runnable thread.
+
+Conversely, blocking involves a thread explicitly yielding the C P U when a condition is not met. The thread is then moved to a waiting queue associated with that condition or resource, and the scheduler selects another thread to run. When the condition later becomes true, the blocked thread is made runnable again and eventually re-scheduled. This approach conserves C P U cycles by avoiding busy waiting, but it inevitably incurs the overhead of context switching. Blocking is generally preferred when the expected wait time is significant, as the cost of context switching is amortized over a longer period of idleness for the blocked thread. In systems with only one thread per C P U core, blocking is often the only sensible choice, as spinning would lead to deadlocks or indefinite busy waits. Furthermore, the concept of scheduler based synchronization, where the scheduler itself is involved in managing waiting threads, is often built on top of the fundamental spinning primitive, utilizing it for short, critical sections within the scheduler's own data structures. This is particularly true in embedded or high performance computing systems where fine grain control over scheduling is paramount.
+
+Modern operating systems typically employ a hierarchical, multi level scheduling architecture. At the lowest level is the kernel level scheduler, which operates within the O S kernel and manages kernel level threads. These threads are the fundamental units of concurrency that the O S directly controls and dispatches onto the C P U cores. The kernel level scheduler is responsible for crucial aspects like isolating applications from one another by allocating distinct virtual address spaces to each process. On top of this kernel level, a user level run time system or scheduler manages user level threads. These user level threads are mapped onto a smaller number of kernel threads, often through a library style A P I that allows applications to create and manage their own threads and synchronization primitives. The code for such user level thread management and synchronization might be implemented as a set of subroutine calls or, in some programming languages, integrated directly through specialized syntax supported by the compiler. While kernel and user level schedulers have distinct responsibilities—kernel level for resource allocation and protection, user level for application specific concurrency—they often share similar internal structures and mechanisms for managing thread states and transitions.
+
+The efficient and correct operation of any scheduler, whether kernel level or user level, critically depends on robust synchronization mechanisms. The internal data structures used by the scheduler itself, such as run queues, waiting lists, and thread control blocks, are shared resources that must be accessed atomically and consistently. This necessity for synchronization within the scheduler implies that even the scheduler's internal operations might involve a form of spinning or blocking to ensure data integrity, thereby forming a recursive dependency where synchronization primitives themselves require careful management of concurrent access.
+
+To clarify the nomenclature, it is essential to distinguish between the closely related but distinct concepts of processes, threads, and tasks, although their usage can vary across different systems and theoretical frameworks. A process is an independent execution environment that encapsulates its own dedicated virtual address space, containing the program code, data, and stack, along with system resources such as open files and I O channels. It serves as a protective boundary, isolating one application from others. Within a process, one or more threads can execute. A thread, in its most common definition, is an active computation, representing a lightweight unit of execution within a process. Threads within the same process share the process's address space and system resources, allowing for efficient communication and data sharing. However, each thread maintains its own program counter, stack, and register set, enabling concurrent execution paths. A task is a more general term, often used to describe a well defined, typically small, unit of work to be accomplished. This might refer to the closure of a subroutine with its associated parameters and execution environment. Tasks are considered passive entities that can be executed by threads. In some contexts, particularly in theoretical discussions, the term "process" might be used interchangeably with what is more commonly understood as a "thread" in other systems. For instance, the Mach operating system uses "task" where other systems might use "process," while Ada programming language uses "task" where others use "thread." Some systems introduce additional terms such as "activation," "fiber," "filament," or "hart" to denote various granularities of concurrency or execution contexts. Understanding these distinctions is crucial for designing and analyzing concurrent software and operating systems.

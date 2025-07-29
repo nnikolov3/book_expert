@@ -1,0 +1,74 @@
+8.1 Single-Location Structures 141
+
+class stack { atomic<(node*, int)> top } node* stack.pop():
+
+class node { atomic<node*> next, ... } repeat
+void stack.push(node* n): (0, ¢) := top.load(]|)
+repeat if o = null return null
+(0, c) := top.load(]|) n:=o next load()
+n next store(o, ||) until top.CAS((o, ¢), (n, c+1), R||)
+until top.CAS({o, c), (n, c), W||) return o
+
+Figure 8.2 The lock-free “Treiber stack,” with a counted top-of-stack pointer to solve the ABA
+problem (reprised from Figure 2.7). It suffices to modify the count in pop only; if CAS is available
+in multiple widths, it may be applied to only the pointer in push.
+
+Treiber stack, a pop operation on an empty stack must be considered to take effect (i.e., to
+linearize) on its load of top. To ensure this, the CAS operations in push and pop must be
+write atomic. Similar observations will apply to other nonblocking data structures, later in
+this chapter.
+
+Memory Management The code in Figure 8.2 does not explicitly allocate or free node
+objects. To see why, suppose we modify the Treiber stack to pass push a value (rather than
+a node), and have the method allocate a new node to hold it. In this case, if a node were
+deallocated and then reused by unrelated code (in, say, an array of floating-point numbers),
+it would be possible (if unlikely) that one of those numbers might match the bit pattern
+of a counted pointer from the memory’s former life, leading the stack code to perform an
+erroneous operation. To avoid this problem, the Treiber stack uses a combination of counted
+pointers (as described in Sec. 2.3.1 and a type-preserving allocator.
+
+A type-preserving allocator ensures that a block of memory is reused only for an object
+of the same type and alignment. With such an allocator, space that was once occupied by a
+counted pointer will continue to hold a counted pointer even when reallocated. Moreover,
+assuming wrap-around does not occur, the pointer’s count will strictly increase as the node
+1s repeatedly reused, so a CAS will succeed only in the absence of reuse.
+
+A simple type-preserving allocator
+
+In an elegant example of mutual support, one simple implementation of a type-preserving allocator
+employs a Treiber stack as a free list: old nodes are pushed onto the stack when freed; new nodes are
+popped from the stack, or, if the stack is empty, obtained from the system memory manager. A more
+sophisticated implementation avoids unnecessary cache misses and contention on the top-of-stack
+pointer by employing a separate pool of free nodes for each thread or core. If the local pool is empty,
+a thread obtains a new “batch” of nodes from a backup central pool, or, if it is empty, the system
+memory manager. If the local pool grows too large (e.g., in a program that performs most enqueues
+in one thread and most dequeues in another), a thread moves a batch of nodes back to the central
+pool. The central pool is naturally implemented as a Treiber stack of batches.
+Eight point one Single Location Structures.
+
+The code defines a class stack containing an atomic pointer named top. It also defines a class node with an atomic pointer named next and an integer. A stack push operation takes a node pointer named n. It enters a repeat loop. Inside the loop, it reads the current top of the stack into variables o and c. If the current top is null, the operation returns null. Otherwise, it sets the next pointer of the node n to the current top o. Finally, it attempts to atomically update the top of the stack using a compare and swap operation. This operation compares the current top with the value o and the count c, and if they match, it updates the top to the new node n with an incremented count c plus one, and returns R.
+
+The code also shows a stack pop operation. It enters a repeat loop. Inside the loop, it atomically loads the current top of the stack into variables o and c. If o is null, it returns null. Otherwise, it sets the next pointer of the node n to the next pointer of the current top o. It then attempts to atomically update the top of the stack. This operation compares the current top with the value o and the count c, and if they match, it updates the top to the node n with an incremented count c plus one, and returns o.
+
+Figure eight point two shows that the lock free Treiber stack uses a counted top of stack pointer to solve the A B A problem. It suffices to modify the count in pop only, if C A S is available. In multiple widths, it may be applied to only the pointer in push.
+
+Treiber stack, a pop operation on an empty stack must be considered to take effect, i.e., to linearize on its load of top. To ensure this, the C A S operations in push and pop must be atomic. Similar observations will apply to other non blocking data structures, later in this chapter.
+
+Memory Management. To see why, suppose we modify the Treiber stack to pass a value, rather than a node, and have the method allocate a new node to hold it. In this case, if a node were deallocated and then reused by unrelated code, in say, an array of floating point numbers, it would be possible, if unlikely, that one of those numbers might match the bit pattern of a counted pointer from the memory's former life, leading the stack code to perform an erroneous operation. To avoid this problem, the Treiber stack uses a combination of counted pointers, as described in Section two point three point one, and a type preserving allocator. A type preserving allocator ensures that a block of memory is reused only for an object of the same type and alignment. With such an allocator, space that was once occupied by a counted pointer will continue to hold a counted pointer even when reallocated. Moreover, assuming wrap around does not occur, the pointer's count will strictly increase as the node is repeatedly reused, so a C A S will succeed only in the absence of reuse.
+
+A simple type preserving allocator. In an elegant example of mutual support, one simple implementation of a type preserving allocator employs a Treiber stack as a free list. Old nodes are pushed onto the stack when freed. New nodes are popped from the stack, or, if the stack is empty, obtained from the system memory manager. A more sophisticated implementation avoids unnecessary cache misses and contention on the top of stack pointer by employing a separate pool of free nodes for each thread or core. If the local pool is empty, a thread obtains a new batch of nodes from a backup central pool, or, if it is empty, the system memory manager. If the local pool grows too large, e.g., in a program that performs most enqueues in one thread and most dequeues in another, a thread moves a batch of nodes back to the central pool. The central pool is naturally implemented as a Treiber stack of batches.
+This section delves into concurrent data structures, specifically illustrating a lock-free stack implementation, often referred to as the Treiber stack, and its associated challenges and solutions. The core of this is the `stack` and `node` structures. A `stack` contains a `top` field, which is an atomic object holding a pointer to a `node` and an integer count. This atomic operation is crucial for maintaining consistency in a multithreaded environment. Each `node` in the stack also contains a pointer to the next node, forming the linked list structure of the stack, and potentially other data.
+
+The `push` operation for this stack is presented as a `void` method that takes a pointer to a `node` `n` as input. It employs a `repeat` loop, indicating an iterative process that continues until a specific condition is met. Inside this loop, it first performs an atomic load operation on the `top` field. This load operation is specified with a memory ordering hint, `Or`, which typically implies a relaxed memory order, but in this context, paired with CAS, it's part of a sequence ensuring correctness. The goal is to fetch the current state of the `top` pointer and its associated count. Subsequently, the `next` field of the node to be pushed (`n`) is set to the currently loaded `top` pointer. The critical step is the `until top.CAS` operation. This is a Compare And Swap primitive. It attempts to update the `top` field atomically. The operation succeeds only if the current value of `top` is exactly what was read in the initial atomic load (represented as `<o, c>`, where `o` is the old node pointer and `c` is the old count). If the swap is successful, it means no other thread modified the `top` pointer between the read and the attempt to write. If the swap fails, it implies a modification by another thread, and the `repeat` loop restarts, fetching the new `top` value and retrying the operation. The `CAS` operation here also aims to increment the count (`c+1`) along with updating the pointer to the new node (`n`), and the new value is denoted as `<n, c+1>`. The `W` in `W||` likely signifies a stronger memory ordering, possibly a store-store fence or a full memory barrier, to ensure visibility of the preceding writes to the new node.
+
+The `pop` operation, returning a `node*`, also uses a `repeat` loop. It atomically loads the `top` pointer and its count. If the loaded `top` is null, it signifies an empty stack, and the operation returns null. Otherwise, it sets a local variable `n` to the node pointed to by the current `top`. It then proceeds to attempt an atomic Compare And Swap operation on the `top` field. The `CAS` here tries to replace the current `top` (with node pointer `o` and count `c`) with the `next` pointer of the node `n` (which was the previous `top`'s `next` pointer), and crucially, increments the count to `c+1`. The `R` in `R||` likely indicates a strong memory ordering for the read, ensuring that all prior writes from other threads are visible. If the `CAS` succeeds, the operation returns the node `o`, which was the original `top` before the pop. If the `CAS` fails, the loop repeats, re-attempting the operation with the latest `top` value. This implementation is lock-free, meaning that at least one thread is guaranteed to make progress in a finite number of steps, avoiding the deadlocks inherent in lock-based approaches.
+
+Figure 8.2 illustrates this `stack` and `node` structure, highlighting the use of a counted top-of-stack pointer. This technique, involving an integer count associated with the pointer, is specifically designed to mitigate the ABA problem. The ABA problem occurs in lock-free algorithms when a value is read (A), then modified by another thread to B, and then back to A before the first thread's Compare And Swap operation is executed. The `CAS` would succeed because the value appears unchanged, but the intervening modification could have corrupted the data structure. By including a counter, even if the pointer returns to its original value (A), the counter will have been incremented, meaning the `CAS` would compare against a different state (`A` with a higher count) and correctly fail if the intervening modification caused a change in the data structure's integrity. The text notes that this counter modification is applied only during `push` and `pop` operations, and in multiple widths, it could potentially be applied to only the pointer in the `push` operation for efficiency.
+
+The `pop` operation's handling of an empty stack requires careful consideration. The Treiber stack's `pop` operation must correctly handle the case where the stack is empty, returning null to signify this state. This is achieved by checking the result of the initial atomic load of the `top` pointer. If the `top` is indeed null, the operation terminates and returns null.
+
+The concept of Memory Management is then discussed in relation to these data structures. It posits a scenario where the Treiber stack is modified to pass a `value` (instead of just a node pointer) and to allocate or free nodes explicitly. If a node were deallocated and then reused by unrelated code, a potential issue arises. Imagine a scenario where one thread reads a node's pointer, and before it can perform its operation (like a `CAS`), another thread deallocates that node, and then a third thread allocates a new node at the same memory address and links it into the structure. The first thread's `CAS` might then compare against the correct memory address, but it would be operating on a conceptually different node with potentially corrupted data or structure. The problem is exacerbated if the original node's bit pattern matches the bit pattern of a different type of data, leading to incorrect interpretation and operations.
+
+A `type-preserving allocator` is introduced as a solution. This type of allocator ensures that a block of memory, once freed, is only reused for objects of the same type and alignment. This drastically reduces the likelihood of the ABA problem by ensuring that if a memory address is reused, it's for an object of a compatible type and purpose. With such an allocator, a counted pointer will still increment its count if the underlying pointer value is reused, but the type-preserving nature of the allocator means that the new object at that address is semantically equivalent in its role within the data structure, thus preserving correctness. Assuming wrap-around of the pointer value does not occur (i.e., the pointer value doesn't loop back to a previously used value in a way that mimics a different node), the `CAS` operation will succeed only in the absence of actual concurrent modifications to the `top` pointer.
+
+The section then presents "A simple type-preserving allocator" as an example of its application. In this context, the Treiber stack is used as a free list. Old nodes, when freed, are pushed onto this stack. New nodes are obtained by popping from the stack. This strategy avoids cache misses by keeping frequently used nodes readily available. A more sophisticated implementation involves thread-local pools of free nodes, managed by a memory manager. When a thread's local pool is empty, it obtains a batch of nodes from a central backup pool. This approach optimizes memory allocation and deallocation by reducing contention on a single global free list and improving cache locality. The central pool's growth is managed, and if it becomes too large, nodes might be moved in batches to other locations, potentially utilizing a Treiber stack for managing these batches.

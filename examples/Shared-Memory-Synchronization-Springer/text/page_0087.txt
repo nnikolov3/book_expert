@@ -1,0 +1,82 @@
+90 5 Busy-Wait Synchronization with Conditions
+
+class barrier
+atomic<int> count := 0
+const intn:= |7T|
+atomic<bool> sense := true
+bool local_sense[7] := {true... }
+
+barrier.cycle():
+
+bool s := —local_sense[self]
+
+local_sense[self] :=s /[ each thread toggles its own sense
+
+if count.FAI(RW]||) = n—1 /I note release ordering
+count.store(0, W/||) /] after FAI, last thread resets count
+sense.store(s, W||) // and then toggles global sense
+
+else
+while sense.load(R||) # s; // spin
+
+fence(R||RW) // note acquire ordering
+
+Figure 5.1 The sense-reversing centralized barrier.
+
+5.2.1 The Sense-Reversing Centralized Barrier
+
+It is tempting to expect a centralized barrier to be easy to write: just initialize a counter
+to zero, have each thread perform a fetch_and_increment when it arrives, and then spin
+until the total reaches the number of threads. The tricky part, however, is what to do the
+second time around. Barriers are meant to be used repeatedly, and without care it is easy
+to write code in which threads that reach the next barrier “episode” (set of calls to cycle)
+interfere with threads that have not yet gotten around to leaving the previous episode. Several
+algorithms that suffer from this bug have actually been published.
+
+Perhaps the cleanest solution is to separate the counter from the spin flag, and to “reverse
+the sense” of that flag in every barrier episode. Code that embodies this technique appears
+in Figure 5.1. It is adapted from Hensgen et al. (1988); Almasi and Gottlieb (1989, p. 445)
+credit similar code to Isaac Dimitrovsky.
+
+The bottleneck of the centralized barrier is the arrival part: fetch_and_increment opera-
+tions will serialize, and each can be expected to entail a remote memory access or coherence
+miss. Departure will also entail O(n) time, but on a globally cache-coherent machine every
+spinning thread will have its own cached copy of the sense flag, and post-invalidation refills
+will generally be able to pipeline or combine, for much lower per-access latency.
+
+5.2.2 Software Combining
+
+It has long been known that a linear sequence of associative (and, ideally, commutative)
+operations (a “reduction”) can be performed tree-style in logarithmic time (Ladner and
+Fischer 1980). For certain read-modify-write operations (notably fetch_and_add), Kruskal
+et al. (1988) developed reduction-like hardware support as part of the NYU Ultracomputer
+project (Gottlieb et al. 1983). On a machine with a log-depth interconnection network (in
+which a message from processor i to memory module j goes through a O(log p) internal
+The provided code defines a barrier class. This class includes an atomic integer variable named count, initialized to zero. It also has a constant integer 'n' representing the size of T, an atomic Boolean variable named 'sense' initialized to true, and a Boolean array named 'local sense', indexed by T, initialized with all true values.
+
+The class defines a method called 'cycle'. Inside this method, a Boolean variable `s` is initialized to the logical NOT of the `local sense` value for the current thread, with a comment explaining that each thread toggles its own sense. The `local sense` value for the current thread is then updated to `s`. An 'if' statement checks if the result of a `fetch and increment` operation on 'count', with R W memory order, is equal to 'n' minus one. This is noted as release ordering. If this condition is met, 'count' is stored with zero, with W memory order, indicating that after the `fetch and increment`, the last thread resets the count. Additionally, 'sense' is stored with the value of `s`, with W memory order, which toggles the global sense. If the 'if' condition is not met, a 'while' loop spins, checking if the `sense` variable, loaded with R memory order, is not equal to `s`. This is described as a spin wait. Finally, a memory fence operation is performed with R or R W memory order, which is noted as acquire ordering.
+
+Figure five point one. The sense reversing centralized barrier.
+
+Section five point two point one. The Sense Reversing Centralized Barrier.
+
+It is tempting to expect a centralized barrier to be easy to write: just initialize a counter to zero, have each thread perform a `fetch and increment` when it arrives, and then spin until the total reaches the number of threads. The tricky part, however, is what to do the second time around. Barriers are meant to be used repeatedly, and without care it is easy to write code in which threads that reach the next barrier “episode” (set of calls to cycle) interfere with threads that have not yet gotten around to leaving the previous episode. Several algorithms that suffer from this bug have actually been published.
+
+Perhaps the cleanest solution is to separate the counter from the “reverse the sense” of that flag in every barrier episode. Code that embodies this technique appears in Figure five point one. It is adapted from Hensgen and others, one thousand nine hundred eighty eight. Almasi and Gottlieb, one thousand nine hundred eighty nine, page four hundred forty five, credit similar code to Isaac Dimitrovsky.
+
+The bottleneck of the centralized barrier is the arrival part: `fetch and increment` operations will serialize, and each can be expected to entail a remote memory access or coherence miss. Departure will also entail Order of N time, but on a globally cache coherent machine every spinning thread will have its own cached copy of the sense flag, and post invalidation refills will generally be able to pipeline or combine, for much lower per access latency.
+
+Section five point two point two. Software Combining.
+
+It has long been known that a linear sequence of associative (and, ideally, commutative) operations (a “reduction”) can be performed tree style in logarithmic time (Ladner and Fischer, one thousand nine hundred eighty). For certain `read modify write` operations (notably `fetch and add`), Kruskal and others, one thousand nine hundred eighty eight, developed reduction like hardware support as part of the N Y U Ultracomputer project (Gottlieb and others, one thousand nine hundred eighty three). On a machine with a log depth interconnection network (in which a message from processor I to memory module J goes through an Order of log P internal.
+The provided material delves into the foundational concepts of concurrent programming, specifically focusing on busy-wait synchronization using a sense-reversing barrier, and further elaborates on performance optimizations through software combining techniques.
+
+At its core, a barrier is a synchronization primitive that ensures all participating threads have reached a certain point in their execution before any of them are allowed to proceed. The code segment illustrates a `class barrier` implementation, fundamental to orchestrating parallel tasks. This class defines several member variables. `atomic<int> count` is a shared, atomically updated integer, initialized to zero. Its atomicity is crucial to prevent race conditions during concurrent modifications by multiple threads. `const int n` represents the total number of threads, symbolized as the cardinality of `T`, that must synchronize at this barrier. `atomic<bool> sense` is a global boolean flag, also atomic, initialized to `true`, which orchestrates the successive "episodes" or phases of the barrier. Finally, `bool local_sense[T]` is an array of booleans, providing each thread with its own private sense flag, initially set to `true` across the board.
+
+The `barrier.cycle()` method encapsulates the logic for a single barrier synchronization point. Upon entering, each thread first inverts its `local_sense` flag, assigning the new value to a local variable `s`. This step, `bool s is not local_sense index self`, ensures that a thread differentiates between successive barrier traversals, which is key for the "sense-reversing" mechanism. The thread then updates its `local_sense index self` to this new value `s`. The critical section of the barrier involves an atomic operation: `if count.F A I (Read Write) is n-1`. Here, `F A I` stands for Fetch And Increment, an atomic primitive that increments the `count` variable and returns its *original* value. The `Read Write` memory ordering for this atomic operation ensures that the increment is visible across all processing cores and respects the ordering of memory operations. If the returned value is `n-1`, it signifies that the current thread is the very last one to arrive at the barrier.
+
+For this last thread, its responsibility is to reset the barrier for the next cycle and signal all waiting threads. It performs `count.store(zero, Write)`, atomically resetting the shared `count` to zero with `Write` (release) memory ordering semantics. Subsequently, it performs `sense.store(s, Write)`, atomically toggling the global `sense` flag to the new value `s`, again with `Write` (release) semantics. These `store` operations ensure that all preceding memory operations made by this thread are completed and made visible to other threads before the `sense` flag is updated, and that the `sense` update itself is globally visible. Conversely, for all other threads that are *not* the last one to arrive, they enter a busy-wait loop: `while sense.load(Read) is not s`. They continuously load the global `sense` variable with `Read` (acquire) memory ordering until it matches their own newly toggled local sense `s`. The `Read` (acquire) ordering ensures that all memory operations made by the releasing thread (the last one) become visible to this acquiring thread *after* its successful load. A `fence(Read or Read Write)` instruction is often used to establish explicit memory ordering guarantees, ensuring that prior memory operations are completed and visible before subsequent ones, critical for maintaining coherence in highly parallel systems. This specific fence ensures both read and read-write ordering, bolstering the acquire-release semantics of the atomic variables.
+
+The prose in section 5.2.1 further elaborates on the "Sense-Reversing Centralized Barrier." The primary challenge with repeatedly using a simple barrier is preventing threads from a previous barrier "episode" from interfering with threads in the current one. The sense-reversing technique elegantly solves this by alternating the expected value of the `sense` flag in each barrier phase. A thread only proceeds when the global `sense` matches its current local sense, which is flipped each time it crosses the barrier. The design separates the global counter logic from the spin flag, reducing potential for errors compared to more naive implementations. The `fetch_and_increment` operation, while powerful, becomes a significant bottleneck in this centralized barrier design. All `n` threads contend for this single atomic variable, leading to serialization of the `increment` operation. This contention results in considerable cache coherence traffic, particularly remote memory accesses and cache line invalidations. Even on cache-coherent machines, the constant invalidation and refill of the cache line holding the `count` and `sense` variables can degrade performance. The statement that departure can entail `O(n)` time highlights this scalability issue, where `n` is the number of threads. The performance impact stems from the fact that each thread, after the last one releases the barrier, must acquire the updated global `sense` variable, potentially incurring cache misses and high memory access latencies due to this shared, frequently modified state.
+
+Section 5.2.2 introduces "Software Combining," a technique aimed at mitigating the performance bottlenecks of centralized synchronization primitives like those seen in the barrier. This approach recognizes that certain associative and ideally commutative operations, such as reductions (e.g., summation or maximum finding), can be performed more efficiently than through a simple linear sequence of atomic updates. Instead of all threads contending for a single global variable, these operations can be organized in a tree-like fashion, where partial results are combined at intermediate nodes before propagating upwards. This tree-style execution allows such operations to complete in logarithmic time, typically `O(log n)` or `O(log p)` where `n` or `p` represents the number of participating entities, significantly improving scalability. The text references "fetch and add," a generalized atomic operation often used in such combining networks, where increments are performed on intermediate sums or values as data moves through an interconnection network. The N Y U Ultracomputer project is cited as an example of a system that incorporated hardware support for reduction-like operations within its `O(log p)` depth interconnection network. In such architectures, the network itself is designed to perform combining operations as messages traverse from processors to memory modules and vice-versa, thereby offloading contention from central memory units and distributing the synchronization load across the network fabric. This intrinsic hardware support for combining substantially reduces the latency and contention typically associated with global synchronization points.

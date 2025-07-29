@@ -1,0 +1,68 @@
+9.1 Software TM 189
+
+second transaction. Other systems are lazy: they delay the detection and resolution of
+conflicts until one of the transactions has finished execution and is ready to commit. A
+few systems are mixed: they resolve write-write conflicts early but read-write conflicts
+late (Scott 2006; Shriraman and Dwarkadas 2009; Dragojevi€ et al. 2009).
+
+To detect conflicts, a TM system must track the accesses performed by each transaction.
+In principle, with lazy conflict resolution, one could log accesses locally in each thread,
+and intersect, at commit time, the logs of transactions that overlap in time. RingSTM
+(Spear et al. 2008a), indeed, does precisely this. More commonly, TM systems employ
+some sort of shared metadata for access tracking. Some object-oriented systems include
+metadata in the header of each object. Most STM systems, however, use a hash function
+keyed on the address of the accessed location to index into a global table of “ownership”
+records (Orecs). By ignoring the low bits of the address when hashing, we can arrange
+for the bytes of a given block (word, cache line, etc.) to share the same Orec. Given
+many-to-one hashing, a single Orec will also, of course, be shared by many blocks: this
+false sharing means that logically independent transactions will sometimes appear to
+conflict, forcing us to choose among them.
+
+Lazy and mixed conflict resolution have the advantage that readers can avoid updating
+metadata to make themselves visible to writers. A system that skips these updates 1s
+said to have invisible readers. Because metadata updates tend to induce cache misses,
+eliminating them can dramatically improve the performance of read-only or read-mostly
+transactions.
+
+Validation — It is straightforward to demonstrate that an STM system will guarantee strict
+serializability if 1t never commits conflicting transactions that overlap in time. In a sys-
+tem with invisible readers, we commonly distinguish between validation and the rest of
+conflict resolution. In a given transaction A, validation serves to ensure that no other trans-
+action B has made in-place updates (or committed updates) to locations read by A. When
+a read-only transaction (one that modifies no shared locations) completes its execution,
+successful validation is all that it requires in order to commit. When a writer transaction
+completes, it must also make its updates visible to other threads. In an Orec-based system
+with a redo-log (e.g., TL2 (Dice et al. 2006)), a transaction will typically lock the Orecs
+of all locations it wishes to modify, validate, write back the contents of its redo log, and
+then unlock the Orecs.
+
+In a system with lazy conflict resolution, validation must also be performed on occa-
+sion during transaction execution—not just at the end. Otherwise a transaction that has
+read mutually inconsistent values of memory locations (values that could not logically
+have been valid at the same time) may perform operations that would never occur in any
+sequential execution, possibly resulting in faults (e.g., divide-by-zero or segmentation
+fault), infinite loops, nontransactional (uninstrumented) stores to shared addresses, or
+branches to nontransactional (uninstrumented) code. A maximally pessimistic system
+ninety eight point one Software T M
+one hundred eighty nine
+
+Other systems are lazy; they delay the detection and resolution of conflicts until one of the transactions has finished execution and is ready to commit. A few systems are mixed; they resolve write-write conflicts early but read-write conflicts late.
+
+To detect conflicts, a T M system must track the accesses performed by each transaction. In principle, with lazy conflict resolution, one could log accesses locally in each thread, and intersect, at commit time, the logs of transactions that overlap in time. Ring S T M system employs some sort of shared metadata for access tracking. Some object oriented systems include metadata in the header of each object. Most S T M systems, however, use a hash function keyed on the address of the accessed location to index into a global table of ownership records O R e c s. By ignoring the low bits of the address when hashing, we can arrange for the bytes of a given block word, cache line, etc. to share the same Orec. Given many to one hashing, a single Orec will also, of course, be shared by many blocks; this false sharing means that logically independent transactions will sometimes appear to conflict, forcing us to choose among them.
+
+Lazy and mixed conflict resolution have the advantage that readers can avoid updating metadata to make themselves visible to writers. A system that skips these updates is said to have invisible readers. Because metadata updates tend to induce cache misses, eliminating them can dramatically improve the performance of read only or read mostly transactions.
+
+Validation – It is straightforward to demonstrate that an S T M system will guarantee strict serializability if it never commits conflicting transactions that overlap in time. In a system with invisible readers, we commonly distinguish between validation and the rest of conflict resolution. In a given transaction A, validation serves to ensure that no other transaction B has made in place updates or committed updates to locations read by A. When a read only transaction one that modifies no shared locations completes its execution, successful validation is all that it requires in order to commit. When a writer transaction completes, it must also make its updates visible to other threads. In an Orec based system with a redo log e g T L two Dice et al. two thousand and six, a transaction will typically lock the Orec s of all locations it wishes to modify, write back the contents of its redo log, and then unlock the Orec s.
+
+In a system with lazy conflict resolution, validation must also be performed on occasion during transaction execution not just at the end. Otherwise a transaction that has read mutually inconsistent values of memory locations values that could not logically have been valid at the same time may perform operations that would never occur in any sequential execution, possibly resulting in faults e g divide by zero or segmentation fault, infinite loops, nontransactional uninstrumented stores to shared addresses, or branches to nontransactional uninstrumented code. A maximally pessimistic system
+This text discusses techniques for conflict detection and resolution in Software Transactional Memory (S T M) systems, contrasting different approaches and detailing the validation process.
+
+Systems are categorized based on their conflict resolution timing. **Lazy** systems defer conflict detection and resolution until a transaction is ready to commit. Conversely, **eager** or **strict** systems resolve conflicts early, even before transactions finish execution. A subset of eager systems are described as **mixed**, where read write conflicts are handled at commit time. This approach involves tracking memory accesses performed by each transaction. In a typical implementation, access logs are maintained locally within each thread. When transactions overlap in time, their access logs are compared. Object oriented systems might employ shared metadata, often stored in headers, keyed by memory addresses. These metadata structures, referred to as O R E C S, can utilize hashing for indexing. A common strategy involves ignoring lower bits of an address during hashing, mapping multiple memory blocks to a single O R E C. This can lead to **false sharing**, where logically independent transactions appear to conflict due to their data residing in the same hash bucket, necessitating manual conflict resolution.
+
+Lazy and mixed conflict resolution strategies have an advantage: they defer the need to update metadata until a conflict is actually detected or resolution is required. Systems that skip these updates are said to have **invisible readers**. However, this can lead to performance issues such as cache misses if metadata updates are not handled efficiently, particularly for read only or read mostly transactions.
+
+The concept of **validation** is crucial for ensuring transactional semantics, specifically serializability. In an S T M system, validation guarantees that no other transaction can modify locations that a given transaction has read or written, thereby preventing conflicts. For a system to achieve strict serializability, validation must occur throughout the transaction's execution, not solely at commit time.
+
+Consider a system where transaction B, which makes updates to shared locations, has completed its execution. If a writer transaction, say A, is attempting to commit, its validation process ensures that no other transaction has modified the locations A accessed. In an O R E C based system, this typically involves acquiring locks on the relevant O R E C s. After validating its accesses and ensuring no conflicts, transaction A would then write back its modified values, which are logged in a redo log. This redo log contains the updated contents of all locations that transaction A intended to modify.
+
+In a system employing lazy conflict resolution, validation must be performed periodically during transaction execution, not just at the end. Failure to do so can lead to issues where a transaction reads inconsistent values of memory locations. For instance, a transaction might perform operations that, if executed concurrently with conflicting operations by another transaction, could result in faults. Examples include division by zero, segmentation faults, infinite loops, or uninstrumented stores to shared addresses, or even branches to uninstrumented code. Such scenarios can arise if the system cannot guarantee that the values read were valid at the time of the read, potentially allowing operations that would never occur under a strictly serial execution. This emphasizes the importance of ongoing validation in maintaining the integrity of transactional execution.

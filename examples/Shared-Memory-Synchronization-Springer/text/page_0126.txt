@@ -1,0 +1,76 @@
+130 7 Synchronization and Scheduling
+
+sary uses of covering conditions. Unfortunately, the library-based interface makes programs
+somewhat awkward. There 1s no equivalent of the synchronized label on methods, and
+the Lock-based equivalent of a synchronized block looks like this:
+
+Lock 1 = ...;
+
+1.1lock();
+try {
+// critical section
+} finally {
+// 1l.unlock() ;
+}
+
+The C# standard library also provides more general synchronization mechanisms, via its
+WaitHandle objects, but these are operating-system specific, and may behave differently
+on different systems.
+
+7.4 Other Language Mechanisms
+7.4.1 Conditional Critical Regions
+
+In Sec. 1.2 we introduced condition synchronization in the form of a hypothetical await
+condition statement. One potential complaint with both semaphores and monitors is that
+they require explicit variables as “stand-ins” for Boolean conditions. This observation led
+(Brinch Hansen 1973, Sec. 3.4.3) to propose a notation—the conditional critical region—in
+which awaited conditions could be specified directly. Critical conditional regions appear in
+several languages, including Edison (Brinch Hansen 1981) and Ada 95 (Intermetrics 1995,
+Secs. 11.9 and 9.1). Syntax is generally some variant on
+
+region protected_variable when condition
+// ... (critical section)
+
+Asin a Java synchronized block, the protected_variable specifies an object whose
+implicit lock is to be acquired. Some languages allow the programmer to specify a list of
+objects, in which case their locks are acquired in some canonical order (to avoid deadlock).
+Significantly, the when clause (also known as a guard) can appear only at the beginning of
+the critical section. The intent is that the enclosed code execute atomically at some point
+in time where the specified condition is true. This convention avoids the issue of monitor
+signal semantics, but leaves the issue of nested calls.
+
+Figure 7.4 uses conditional critical sections to implement a bounded buffer. The code is
+arguably more natural than the semaphore (Figure 7.1) or monitor (Figure 7.3) versions, but
+raises a crucial implementation question: when and how are the guards evaluated?
+one hundred thirty.
+
+sary uses of covering conditions. Unfortunately, the library based interface makes programs somewhat awkward. There is no equivalent of the synchronized label on methods, and the Lock based equivalent of a synchronized block looks like this:
+
+Lock l equals ...
+...
+l dot lock();
+try {
+// critical section
+} finally {
+// l dot unlock();
+}
+
+The C sharp standard library also provides more general synchronization mechanisms, via its WaitHandle objects, but these are operating system specific, and may behave differently on different systems.
+
+7.4 Other Language Mechanisms
+
+7.4.1 Conditional Critical Regions
+
+In Section 1 dot 2 we introduced condition synchronization in the form of a hypothetical await condition statement. One potential complaint with both semaphores and monitors is that they require explicit variables as stand ins for Boolean conditions. This observation led Brinch Hansen nineteen seventy three, Section 3 dot 4 dot 3 to propose a notation—the conditional critical region—in which awaited conditions could be specified directly. Critical conditions regions appear in several languages, including Edison Brinch Hansen nineteen eighty one and Ada ninety five Intermetrics nineteen ninety five, Sections 11 dot 9 and 9 dot 1. Syntax is generally some variant on region protected underscore variable when condition
+// ... (critical section)
+
+As in a Java synchronized block, the protected underscore variable specifies an object whose implicit lock is to be acquired. Some languages allow the programmer to specify a list of objects, in which case their locks are acquired in some canonical order to avoid deadlock. Significantly, the when clause also known as a guard can appear only at the beginning of the critical section. The intent is that the enclosed code execute atomically at some point in time where the specified condition is true. This convention avoids the issue of nested calls.
+
+Figure 7 dot 4 uses conditional critical sections to implement a bounded buffer. The code is arguably more natural than the semaphore Figure 7 dot 1 or monitor Figure 7 dot 3 versions, but raises a crucial implementation question: when and how are the guards evaluated?
+The text discusses synchronization mechanisms in concurrent programming, focusing on language-level constructs that abstract away lower-level synchronization primitives like locks. It notes that while language-based interfaces can simplify programming, they might lack the direct control or flexibility of explicitly managed locks. The example provided illustrates a common pattern of acquiring a lock, executing critical code within a try block, and ensuring the lock is released in a finally block, a robust approach to prevent deadlocks and ensure resource availability.
+
+The C# standard library's approach using WaitHandle objects is mentioned as providing more general synchronization capabilities, but with the caveat that their behavior can be system-dependent due to their reliance on operating system primitives. This highlights the trade-off between convenience and portability when using such abstractions.
+
+The subsequent section delves into "Conditional Critical Regions," a more advanced synchronization construct that allows code execution within a critical section to be predicated on specific conditions. This concept, explored in seminal works like Brinch Hansen's 1973 and 1981 publications, addresses a limitation of basic critical regions where execution is solely dependent on lock availability. Conditional critical regions introduce the notion of a "guard" or condition that must be met for the critical section to proceed. The syntax presented, `region protected_variable when condition`, suggests a mechanism where a shared variable, `protected_variable`, is associated with a Boolean `condition`. The execution of the critical section is then conditional upon this `condition` being true.
+
+This mechanism is contrasted with traditional Java synchronized blocks, where an implicit lock is acquired. In such systems, the concept of a "protected variable" is integral, and some languages permit the acquisition of locks in a canonical order to mitigate deadlock risks. The "when" clause, often termed a "guard," serves to ensure that the enclosed code executes atomically only when the specified condition is met. This convention elegantly sidesteps the complexities of nested monitor calls and provides a more expressive way to manage conditional access to shared resources. The text posits that this approach, as exemplified in Figure 7.4, offers a more intuitive and natural way to implement concepts like a bounded buffer compared to semaphore or monitor-based implementations, raising important implementation questions about when and how these guards are evaluated in a concurrent environment.

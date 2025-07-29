@@ -1,0 +1,86 @@
+70 4 Practical Spin Locks
+
+type gnode = record
+atomic<gnode™> next
+atomic<bool> waiting
+class lock
+atomic<gnode™> tail := null
+
+lock.acquire(gnode* p): // Initialization of waiting can be delayed
+p—next := null // until the if statement below,
+p—waiting := true // but at the cost of an extra W||W fence.
+gnode* prev := tail.swap(p, W||)
+if prev #£ null /l queue was nonempty
+
+prev—next.store(p, |R)
+while p—waiting.load(
+fence(R||RW)
+
+lock.release(gnode™ p):
+gnode* succ := p—next.load(RW/||)
+if succ = null // no known successor
+if tail. CAS(p, null, ||) return
+repeat succ := p—next.load(||) until succ # null
+succ—waiting.store(false, ||)
+
+); // spin
+
+Figure 4.8 The MCS queued lock.
+
+If release finds that the next pointer of its gnode is null, it attempts to CAS the lock
+tail pointer back to null. If some other thread has already swapped itself into the queue
+(line 5), the CAS will fail, and release will wait for the next pointer to become non-null
+(line 6). If there are no waiting threads (line 7), the CAS will succeed, returning the lock to
+the appearance in line 1.
+
+The MCS lock has several important properties. Threads join the queue in a wait-free
+manner (using swap), after which they receive the lock in FIFO order. Each waiting thread
+spins on a separate location, eliminating contention for cache and interconnect resources.
+In fact, because each thread provides its own gnode, it can arrange for it to be local even
+on an NRC-NUMA machine. Total (remote access) time to pass the lock from one thread
+to the next is constant. Total space is linear in the number of threads and locks.
+
+As written (Figure 4.8), the MCS lock requires both swap and CAS. CAS can of course
+be used to emulate the swap in the acquire method, but entry to the queue drops from
+wait-free to lock-free (meaning that a thread can theoretically starve). Mellor-Crummey and
+Scott (1991b) also show how to make do with only swap in the release method, but FIFO
+ordering may be lost when a thread enters the queue just as its predecessor is releasing the
+lock.
+This document describes practical spin locks.
+
+First, a code block illustrates the structure and methods for an M C S queue lock.
+The `qnode` type is defined as a record containing two atomic members: `next`, which is an atomic pointer to another `qnode`, and `waiting`, an atomic boolean.
+The `lock` class contains an atomic `qnode` pointer named `tail`, which is initialized to `null`.
+
+The `lock.acquire` method, taking a `qnode` pointer `p` as input, proceeds as follows:
+First, `p arrow next` is set to `null`.
+Next, `p arrow waiting` is set to `true`. This comment indicates that the initialization of `waiting` can be delayed until the subsequent if statement, but this comes at the cost of an extra write or write fence.
+A `qnode` pointer called `prev` is then assigned the result of an atomic swap operation on `tail` with `p`, using a write or write memory order.
+If `prev` is not `null`, indicating the queue was not empty, then `prev arrow next` is stored as `p` with a read or write memory order.
+Subsequently, the code enters a `while` loop, where it spins as `p arrow waiting` loads its value. This comment denotes the spin operation.
+A memory fence with read or write semantics is then applied.
+
+The `lock.release` method, also taking a `qnode` pointer `p`, functions as follows:
+A `qnode` pointer named `succ` is assigned the result of loading `p arrow next` with read or write memory order.
+If `succ` is `null`, meaning there is no known successor, then the code attempts a compare and swap operation on `tail`. If this operation succeeds, meaning `tail` was equal to `p`, `tail` is set to `null`, and the method returns.
+Otherwise, the method repeatedly loads `p arrow next` into `succ` until `succ` is not `null`.
+Finally, `succ arrow waiting` is stored as `false` with a relaxed memory order.
+
+Figure four point eight illustrates the M C S queued lock.
+
+If the release operation finds that the next pointer of its `qnode` is `null`, it attempts to perform a compare and swap operation on the lock's tail pointer, setting it back to `null`. If some other thread has already swapped itself into the queue, as described in line five of the code, the compare and swap will fail, and the release operation will wait for the next pointer to become non-null. If there are no waiting threads, as described in line seven, the compare and swap will succeed, returning the lock to the state it was in at line one.
+
+The M C S lock possesses several important properties. Threads join the queue in a wait free manner, utilizing a swap operation, after which they receive the lock in F I F O order. Each waiting thread spins on a separate memory location, which eliminates contention for cache and interconnect resources. In fact, because each thread provides its own `qnode`, it can arrange for it to be local, even on an N R C N U M A machine. The total time for remote access to pass the lock from one thread to the next is constant. The total space requirement is linear with respect to the number of threads and locks.
+
+As written, and as depicted in Figure four point eight, the M C S lock requires both swap and compare and swap operations. Compare and swap can, of course, be used to emulate the swap operation within the acquire method, but the entry cost to the queue drops from wait free to lock free, implying that a thread could theoretically starve. Mellor Crummey and Scott, in their 1991 publication B, also demonstrate how to achieve this with only a swap operation in the release method. However, F I F O ordering may be lost when a thread enters the queue just as its predecessor is releasing the lock.
+This analysis delves into the underlying technical concepts of the M C S, or Mellor Crummey and Scott, queued spin lock, a sophisticated synchronization primitive designed to enhance performance in multi processor environments by mitigating cache contention. The provided pseudocode defines a `qnode` record and a `lock` class, illustrating the `acquire` and `release` methods.
+
+A `qnode` record is composed of two atomic fields: an `atomic` pointer named `next` that points to another `qnode`, and an `atomic` boolean flag named `waiting`. The atomicity of these fields is paramount, ensuring that operations on them are indivisible and immune to race conditions in a concurrent system. The `lock` class itself maintains a single atomic pointer, `tail`, which points to the last `qnode` in the queue of waiting threads, initially set to `null`.
+
+The `lock dot acquire` method, which takes a `qnode` pointer `p` representing the current thread's node, initiates the process of acquiring the lock. First, `p arrow next` is set to `null`, as this node is positioned at the end of the queue. Then, `p arrow waiting` is set to `true`, indicating that this thread is now awaiting the lock. The critical step involves the atomic `swap` operation: `qnode star prev is tail dot swap p, W or or`. This operation atomically sets the global `tail` pointer to the current `qnode` `p` and returns the previous value of `tail` into the `prev` variable. The `W or or` memory ordering qualifier specifies release semantics, ensuring that all memory writes performed by this thread *before* this `swap` operation are made visible to other threads *after* the `swap` completes. This effectively links the current `qnode` to the end of the queue.
+
+Following the `swap`, a conditional block executes if `prev` is not equal to `null`, meaning the queue was not empty before this thread enqueued itself. In this scenario, `prev arrow next dot store p, or or R` is invoked. This updates the `next` pointer of the previously last `qnode` (`prev`) to point to the current `qnode` `p`. The `or or R` memory ordering provides acquire semantics, ensuring that memory operations following this store in other threads will observe the value written by this store. This establishes the explicit linkage in the queue. After linking, the thread enters a `while` loop: `while p arrow waiting dot load or or`. Here, the thread spins, repeatedly loading the value of its *own* `p arrow waiting` flag with sequential consistency `or or` ordering, until it becomes `false`. This local spinning is a fundamental advantage of the M C S lock, as it prevents multiple threads from contending for the same cache line, thereby drastically reducing cache coherence traffic and improving scalability on multi processor systems, especially those with N R C N U M A, or Non-Uniform Cache Access, architectures. A memory `fence` with `read acquire or read write` semantics is then executed, guaranteeing that all prior memory operations are completed and visible before the thread proceeds into the critical section, ensuring proper synchronization.
+
+The `lock dot release` method, also taking a `qnode` pointer `p`, is responsible for relinquishing the lock and waking up the next waiting thread. It first attempts to identify a successor by loading `p arrow next` into `succ` using `read write or or` memory ordering, which combines acquire and release semantics for strong consistency. If `succ` is equal to `null`, it suggests that no successor is yet linked, potentially indicating that this thread is the only one in the queue or a concurrent enqueue operation is still underway. In this case, the method attempts a `Compare And Swap` operation: `if tail dot C A S p, null, or or return`. This C A S atomically checks if the `tail` pointer is still equal to `p` (meaning no new thread has enqueued itself since this thread acquired the lock). If it is, `tail` is set to `null`, signifying an empty queue, and the method returns. The `or or` here denotes sequential consistency for the C A S operation. If the C A S fails, it implies another thread concurrently enqueued itself and updated `tail` before this release could set it to `null`. The releasing thread then enters a `repeat` loop, continuously loading `p arrow next` with sequential consistency `or or` until a non-null successor appears. This handles the race condition where a new thread might enqueue itself but hasn't yet updated the `prev arrow next` pointer. Once a valid `succ` is obtained, the `succ arrow waiting dot store false, or or` operation is performed. This atomically sets the successor's `waiting` flag to `false` with sequential consistency `or or` ordering, effectively notifying the waiting successor thread that it can now proceed to acquire the lock.
+
+The M C S lock possesses several critical properties beneficial for high performance concurrent systems. Threads acquire the lock in F I F O, or First In, First Out, order, ensuring fairness. The design minimizes cache line contention because each waiting thread spins on a unique, local `waiting` flag within its `qnode`, rather than on a shared global lock variable. This distributed spinning significantly reduces interconnect traffic and cache invalidations, making it highly efficient, particularly on N R C N U M A machines where remote memory access is costly. The time taken to pass the lock from one thread to the next is constant, independent of the number of waiting threads. While its space complexity is linear with the number of concurrent threads and locks, as each thread requires its own `qnode`, this is often an acceptable trade off for the performance gains. The lock's `acquire` method is effectively wait free, meaning a thread attempting to acquire the lock will always eventually make progress in joining the queue. However, the M C S lock requires both atomic `swap` and `Compare And Swap` primitives. It is worth noting that while C A S can be used to emulate `swap` in the `acquire` method, a theoretical starvation scenario can arise if a thread enters the queue just as its predecessor is releasing the lock, but before the new thread has successfully linked itself into the queue's `next` chain. Advanced techniques, such as those described by Mellor Crummey and Scott in 1991, address such edge cases to ensure robust F I F O ordering.

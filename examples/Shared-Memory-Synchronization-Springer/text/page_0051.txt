@@ -1,0 +1,77 @@
+52 3 Essential Theory
+
+ordinary loads and stores cannot achieve wait-free consensus at all—even for only two
+threads. An object supporting CAS, on the other hand (or equivalently LL /SC), can achieve
+wait-free consensus for an arbitrary number of threads:
+
+atomic<int>v = _L
+
+agree(i):
+if v.CAS(L,i, ||) returni
+else return v.load(R||)
+
+One can, in fact, define an infinite hierarchy of atomic objects, where those appearing at
+level k can achieve wait-free consensus for k threads but no more. Objects supporting CAS
+or LL/SC are said to have consensus number oo. Objects with other common primitives—
+including TAS, swap, FAI, and FAA—have consensus number 2. Atomic objects at interme-
+diate levels of the hierarchy are not typically encountered on real hardware.
+
+3.4 Memory Models
+
+As described in Sec. 2.2, most modern multicore systems are coherent but not sequentially
+consistent: changes to a given variable are serialized, and eventually propagate to all cores,
+but accesses to different locations may appear to occur in different orders from the per-
+spective of different threads—even to the point of introducing apparent causality loops. For
+programmers to reason about such a system, we need a memory model—a formal char-
+acterization of its behavior. Such a model can be provided at the hardware level —TSO 1s
+one example—but when programmers write code in a higher-level language, they need a
+language-level model. Just as a hardware-level memory model helps the compiler writer
+or library builder determine where to employ special ordering instructions, a language-
+level model helps the application programmer determine where to employ synchronization
+operations or atomic variable accesses.
+
+There 1s an extensive literature on language-level memory models. Good starting points
+include the tutorial of Adve and Gharachorloo (1996), the monograph of Sorin et al. (2019),
+and the articles introducing the models of Java (Manson et al. 2005) and C++ (Boehm and
+Adve 2008). Details vary considerably from one model to another, but most now share a
+similar framework, designed to balance performance and programmability by asking the
+programmer to label those points in the code where ordering “really matters.”
+
+A crucial goal in the design of any practical memory model is to preserve, as much as
+possible, the freedom of compiler writers to employ code improvement techniques originally
+developed for sequential programs. The ordering constraints imposed by synchronization
+operations necessitate not only hardware-level ordered accesses or memory fences, but also
+software-level “compiler fences,” which inhibit the sorts of code motion traditionally used
+for latency tolerance, redundancy elimination, and other performance enhancements.
+Ordinary loads and stores cannot achieve wait free consensus at all—even for only two threads. An object supporting C A S, on the other hand, or equivalently L L slash S C, can achieve wait free consensus for an arbitrary number of threads. The following pseudocode illustrates this: an atomic integer variable `v` is initialized to a bottom value, indicating it is uninitialized. The `agree` function takes an input `i`. Inside this function, if `v` dot C A S, comparing with the bottom value and setting to `i`, with a memory order of sequential consistency, succeeds, then `i` is returned. Otherwise, if the compare and swap operation fails, the function returns the value loaded from `v` using a memory order of sequential consistency.
+
+One can, in fact, define an infinite hierarchy of atomic objects, where those appearing at level `k` can achieve wait free consensus for `k` threads but no more. Objects supporting C A S or L L slash S C are said to have consensus number infinity. Objects with other common primitives, including T A S, swap, and F A A, have consensus number two. Atomic objects at intermediate levels of the hierarchy are not typically encountered on real hardware.
+
+Three point four Memory Models
+
+As described in Section two point two, most modern multicore systems are coherent but not sequentially consistent. Changes to a given variable are serialized and eventually propagate to all cores, but accesses to different locations may appear to occur in different orders from the perspective of different threads—even to the point of introducing apparent causality loops. For programmers to reason about such a system, we need a memory model, which is a formal characterization of its behavior. Such a model can be provided at the hardware level—T S O is one example. However, when programmers write code in a higher level language, they need a language level model. Just as a hardware level memory model helps the compiler writer or library builder determine where to employ special ordering instructions, a language level model helps the application programmer determine where to employ synchronization operations or atomic variable accesses.
+
+There is an extensive literature on language level memory models. Good starting points include the tutorial of Adve and Gharamchorloo, published in one thousand nine hundred ninety six, the monograph of Sorin et al., published in two thousand nineteen, and the articles introducing the models of Java by Manson et al., published in two thousand five, and C plus plus by Boehm and Adve, published in two thousand eight. Details vary considerably from one model to another, but most now share a similar framework, designed to balance performance and programmability by asking the programmer to label those points in the code where ordering 'really matters.'
+
+A crucial goal in the design of any practical memory model is to preserve, as much as possible, the freedom of compiler writers to employ code improvement techniques originally developed for sequential programs. The ordering constraints imposed by synchronization operations necessitate not only hardware level ordered accesses or memory fences, but also software level 'compiler fences,' which inhibit the sorts of code motion traditionally used for latency tolerance, redundancy elimination, and other performance enhancements.
+In the realm of concurrent systems, the challenge of achieving agreement among multiple threads or processors is fundamental. While simple memory operations like ordinary loads and stores are sufficient for individual data access, they are inherently incapable of guaranteeing wait free consensus, even in scenarios involving only two threads. This limitation stems from the lack of atomicity and ordering guarantees necessary to prevent race conditions and ensure progress without depending on the relative speeds of threads.
+
+To overcome this, systems rely on powerful atomic primitives such as Compare And Swap, often abbreviated as C A S, or the Load Linked and Store Conditional pair, known as L L slash S C. These operations are designed to execute indivisibly, ensuring that their effects are observed as a single, instantaneous action by all participating threads. The provided snippet illustrates how C A S can form the basis of a wait free consensus algorithm:
+`atomic less than int greater than v is bottom`
+`agree less than i greater than colon`
+  `if v dot C A S less than bottom comma i comma or or greater than return i`
+  `else return v dot load less than R or or greater than`
+
+In this construction, `v` is declared as an atomic integer variable, initially set to `bottom`, representing an uninitialized state. The `agree` function takes a proposed value `i`. The core of the algorithm is the `v dot C A S` operation: it attempts to atomically update `v` from its current value of `bottom` to the proposed value `i`. The `or or` parameter typically denotes a relaxed memory ordering, although for consensus, stronger orderings are often implied by context or the underlying hardware implementation. If the C A S succeeds, it means the calling thread was the first to establish a consensus value, and it returns `i`. If C A S fails, it implies another thread has already successfully written a value to `v`. In this case, the current thread simply loads the existing value of `v` using `v dot load less than R or or greater than`, which represents the value agreed upon by a peer. This mechanism guarantees that all threads eventually agree on a single value, and critically, no thread is ever blocked indefinitely, satisfying the wait free property.
+
+The power of an atomic primitive to solve consensus is formally quantified by its consensus number. C A S and L L slash S C are considered universal primitives because they possess an infinite consensus number, meaning they can achieve wait free consensus for an arbitrary number of threads. In contrast, simpler primitives such as Test And Set, swap, Fetch And Increment, or Fetch And Add are classified as having a consensus number of two. This implies they are only sufficient for building wait free consensus protocols among two threads and cannot be used to construct a wait free solution for three or more threads. The practical implication is that complex concurrent systems heavily rely on primitives with high, ideally infinite, consensus numbers to ensure scalability and robustness. While the theoretical hierarchy of consensus numbers is rich, intermediate levels beyond two and infinity are rarely directly exposed by contemporary hardware architectures.
+
+The behavior of these concurrent systems is rigorously defined by their "memory model," a crucial concept that dictates how memory operations performed by different processors interact and become visible to one another. Most modern multicore systems exhibit cache coherence, which ensures that all reads to a specific memory location eventually reflect the latest written value for that location, irrespective of which core performed the write or read. However, coherence alone does not guarantee sequential consistency. Sequential consistency is a much stricter property, demanding that the result of any execution appears as if all operations from all processors were executed in some global sequential order, and that operations from each individual processor appear in this sequence in the order specified by its program.
+
+The divergence between coherence and sequential consistency is where the complexity arises. In a coherent but not sequentially consistent system, while writes to a single variable are serialized and eventually propagate to all cores, operations targeting different memory locations may appear to occur in different orders from the perspective of different threads. This reordering, often performed by compilers or hardware to optimize performance, can lead to "apparent causality loops," where events seem to violate causal relationships, making concurrent program behavior difficult to reason about.
+
+Consequently, a formal memory model is indispensable for programmers to predict and control the behavior of their concurrent applications. Such models can be defined at the hardware level, exemplified by architectures employing Total Store Order semantics, or at the programming language level, such as those governing Java or C plus plus. A well defined language level memory model provides guidance for compiler writers and library developers on where to inject special ordering instructions, often referred to as memory fences, and empowers application programmers to correctly employ synchronization primitives and atomic variables to achieve their desired program semantics.
+
+The extensive body of literature on language level memory models underscores their importance. These models, while varying in their specific rules, typically share a common framework centered on balancing the twin goals of performance and programmability. This balance is often achieved by requiring programmers to explicitly label specific points in their code where precise ordering of memory operations "really matters" for correctness, allowing compilers maximum freedom for optimization elsewhere.
+
+A primary objective in designing any practical memory model is to preserve, to the greatest extent possible, the latitude for compiler writers to apply code improvement techniques originally developed for sequential programs. However, the ordering constraints imposed by synchronization operations necessitate not only hardware level ordered accesses, enforced by memory fences, but also software level "compiler fences." These fences inhibit compiler optimizations, like code motion, that might reorder instructions across synchronization points. This restriction is crucial for maintaining correctness in concurrent programs but can impact performance benefits traditionally gained from techniques such as latency tolerance, redundancy elimination, and other aggressive performance enhancements. Thus, the memory model fundamentally defines the contract between the hardware, compiler, and programmer, enabling both correct and performant execution in the multicore era.

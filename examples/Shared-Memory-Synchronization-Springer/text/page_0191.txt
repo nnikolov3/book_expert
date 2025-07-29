@@ -1,0 +1,58 @@
+196 9 Transactional Memory
+
+RingSTM (Spear et al. 2008a). RingSTM uses redo logs and lazy conflict detection, but
+its validation is based not on the write log and a full read set but rather on Bloom filter
+approximations of these.
+
+The behavior of RingSTM is most easily understood by imagining an unbounded global
+list whose entries represent committed transactions, in serialization order. Each entry of the
+list contains the write set of the transaction, summarized as a Bloom filter. When it begins
+execution, a transaction reads and remembers a pointer to the head of the list. While running,
+it builds Bloom filters that represent its reads and writes. To validate, it intersects its read
+and write filters with the write filters of any transactions that have been added to the global
+commit list since the last validation (or the start of the transaction). If all intersections are
+empty, the transaction updates its pointer to the head of the list. If some intersection 1s
+nonempty, a conflict (true or false) has occurred, and the transaction aborts. To commit, a
+transaction reads the current head pointer, validates, and then uses CAS to add its own Bloom
+filter to the head of the list. A successful CAS constitutes serialization. The transaction then
+writes back its redo log, waits until all previously-committed transactions have finished
+doing the same (as indicated in their entries of the global list) and finally marks its own
+write-back as finished.
+
+While an unbounded global list 1s clearly impractical, we really only need the portion
+that was created after the start time of the oldest running transaction. In practice, the list
+1s replaced with a bounded circular buffer (a ring—hence the name); modest extra checks
+avoid any problems with wrap-around.
+
+In comparison to NOrec, RingSTM has higher costs for load/store instrumentation but
+lower costs for validation (at least in large transactions). It also allows concurrent write-back.
+
+Bloom Filters
+
+For readers not familiar with the notion, a Bloom filter (Bloom 1970) 1s a bit vector representation
+of a set that relies on one or more hash functions. Bit i of the vector is set if and only if for some set
+member e and some hash function 4 ;, h ;(¢) = i. Element e is inserted into the vector by setting bit
+hj (e) for all j. The lookup method tests to see if e is present by checking all these bits. If all of them
+are set, lookup will return true; if any bit is unset, lookup will return false. These conventions allow
+false positives (an element may appear to be present when it is not) but not false negatives (a present
+element will never appear to be absent). In the basic implementation, deletions are not supported.
+
+Note that Bloom filters do not introduce a qualitatively different problem for TM: Orec-based STM
+systems already suffer from false sharing. The actual rate of false positives in RingSTM depends on
+the application and the choice of Bloom filter size.
+one hundred ninety six
+
+nine Transactional Memory
+
+Ring S T M Spear at al. two thousand eight a R D Ring S T M uses redo logs and lazy conflict detection but its validation is based not on the write log and a full read set but rather on Bloom filter approximations of these. The behavior of Ring S T M is most easily understood by imagining an unbounded global list whose entries represent committed transactions in serialization order. Each entry of the list contains the write set of the transaction summarized as a Bloom filter. When it begins execution a transaction reads and remembers a pointer to the head of the list. While running it builds Bloom filters that represent its reads and writes. To validate it intersects its read and write filters with the write filters of any transactions that have been added to the global commit list since the last validation or the start of the transaction. If all intersections are empty the transaction updates its pointer to the head of the list. If some intersection is nonempty a conflict true or false has occurred and the transaction aborts. To commit a transaction reads the current head pointer validates and then uses C A S to add its own Bloom filter to the head of the list. A successful C A S constitutes serialization. The transaction then writes back its redo log waits until all previously committed transactions have finished doing the same as indicated in their entries of the global list and finally marks its own write back as finished. While an unbounded global list is clearly impractical we really need only the portion that was created after the start time of the oldest running transaction. In practice the list is replaced with a bounded circular buffer a ring hence the name. Modest extra checks avoid any problems with wrap around. In comparison to N O R e c Ring S T M has higher costs for load store instrumentation but lower costs for validation at least in large transactions. It also allows concurrent write back.
+
+Bloom Filters
+
+For readers not familiar with the notion a Bloom filter Bloom nineteen seventy is a bit vector representation of a set that relies on one or more hash functions. Bit i of the vector is set if and only if for some set member e and some hash function h sub j of e equals i. Element e is inserted into the vector by setting bit h sub j of e for all j. The lookup will return true if any bit is unset. Lookup will return false if all of them are set. These conventions allow false positives an element may appear to be present when it is not but not false negatives a present element will never appear to be absent. In the basic implementation deletions are not supported. Note that Bloom filters do not introduce a qualitatively different problem for T M. O R e c based S T M systems already suffer from false sharing. The actual rate of false positives in Ring S T M depends on the application and the choice of Bloom filter size.
+The Ring S T M system, as described by Spear at al. in two thousand and eight A, utilizes redo logs alongside lazy conflict detection. Its validation mechanism is predicated on approximations derived from Bloom filters. The operational paradigm of Ring S T M is most effectively conceptualized through the metaphor of an unbounded global list, where each entry represents a committed transaction, organized in serialization order.
+
+Each transaction's state within this global list is summarized by a Bloom filter. Upon initiation, a transaction appends its read and write sets to the structure. To validate, the transaction must intersect its current read and write Bloom filters with those of all previously committed transactions residing in the global list since its last validation. If any intersection occurs, and the transaction's read set is empty, it proceeds to update its pointer to the head of the list. However, if an intersection is detected and the read set is not empty, a conflict arises. In such a scenario, the transaction aborts. To successfully commit, a transaction attempts to atomically add its own Bloom filter to the global list using a compare and swap operation. Post-successful atomic addition, the transaction writes back its redo log, mirroring the entries indicated in its global list, and is then marked as finished.
+
+The presence of an unbounded global list, while conceptually clear, poses practical challenges. Therefore, systems typically employ a bounded circular buffer, or a ring, to manage this data. This design choice, hence the name "Ring," necessitates modest additional checks to manage wrap-around behavior. In comparison to NoRec, another transactional memory system, Ring S T M incurs higher costs for load and store instrumentation but exhibits the advantage of supporting concurrent write-backs, even in scenarios involving large transactions.
+
+The section on Bloom filters introduces them as a bit vector representation of a set, where membership is determined by a series of hash functions. Specifically, for a given element denoted as 'e', multiple hash functions, say h sub j, are applied. The result of each hash function, h sub j of e, maps to an index within a bit vector. If all corresponding bits at these indices are set to one, the element is considered potentially present. If even one bit is unset, the element is definitively absent. This property is crucial for Bloom filters: they can produce false positives, where an element is indicated as present when it is not, but they strictly avoid false negatives, meaning an element that has been inserted will never be reported as absent. Insertions into the vector involve setting the bits at the calculated indices. The lookup operation checks all these bits; if they are all set, the lookup returns true, otherwise it returns false. The text also notes that Bloom filters do not introduce a qualitatively different problem for transactional memory concerning false sharing. The actual rate of false positives in Ring S T M is contingent upon the application's characteristics and the chosen Bloom filter size.

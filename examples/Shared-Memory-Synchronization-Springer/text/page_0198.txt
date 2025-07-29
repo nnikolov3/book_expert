@@ -1,0 +1,59 @@
+9.2 HardwareTM 203
+
+precisely this sort of improvement. It retains the traditional lock-based programming model,
+but attempts to execute critical sections as transactions whenever possible. Doing so has at
+least two potential benefits:
+
+1. Particularly for code with medium- to coarse-grain locks, it is common for critical sec-
+tions protected by the same lock to encounter no actual conflicts. SLE may allow such
+critical sections to execute in parallel.
+
+2. Even when data conflicts are relatively rare, it 1s common for a thread to find that a lock
+was last accessed on a different core. By eliding acquisition of the lock (i.e., simply
+verifying that it is not held), SLE may avoid the need to acquire the lock’s cache line
+in exclusive mode. By leaving locks shared among cores, a program with many small
+critical sections may suffer significantly fewer cache misses.
+
+Both of these benefits may improve performance on otherwise comparable machines. They
+also have the potential to increase scalability, allowing programs in which locks were becom-
+ing a bottleneck to run well on larger numbers of cores.
+
+Azul has indicated that lock elision was the sole motivation for their HTM design (Click
+2019), and the designers of most other commercial systems, including z (Jacobi et al. 2012),
+Power (IBM 2012), and TSX (Intel 2021a), cite it as a principal use case. On z, SLE is
+simply a programming idiom, along the following lines:
+
+really_locked := false
+tx_begin
+if failure goto handler
+read lock value // add to transaction read set
+if not held goto cs
+abort
+handler: really locked := true
+acquire lock
+CS: es // critical section
+if really_locked goto release
+tx_commit
+goto over
+release: release lock
+over:
+
+This idiom may be enhanced in various ways—e.g., to retry a few times in hardware if the
+abort appears to be transient—but the basic pattern is as shown. One shortcoming is that
+if the critical section (or a function it calls) inspects the value of the lock (e.g., if the lock
+1s reentrant, and is needed by a nested operation), the lock will appear not to be held. The
+obvious remedy—to write a “held” value to the lock—would abort any similar transaction
+that is running concurrently. An “SLE-friendly” solution would require each transaction to
+remember, in thread-local storage, the locks it has elided.
+Nine point two Hardware T M. Two hundred three. Precisely this sort of improvement. It retains the traditional lock based programming model, but attempts to execute critical sections as transactions whenever possible. Doing so has at least two potential benefits. One. Particularly for code with medium to coarse grain locks, it is common for critical sections protected by the same lock to encounter no actual conflicts. S L E may allow such critical sections to execute in parallel. Two. Even when data conflicts are relatively rare, it is common for a thread to find that a lock was last accessed on a different core. By eliding acquisition of the lock, i.e., simply verifying that it is not held, S L E may avoid the need to acquire the lock's cache line in exclusive mode. By leaving locks shared among cores, a program with many small critical sections may suffer significantly fewer cache misses. Both of these benefits may improve performance on otherwise comparable machines. They also have the potential to increase scalability, allowing programs in which locks were becoming a bottleneck to run well on larger numbers of cores. Azul has indicated that lock elision was the sole motivation for their H T M design Click 2019, and the designers of most other commercial systems, including z Jacobi et al 2012, Power IBM 2012, and T S X Intel 2021a, cite it as a principal use case. On z, S L E is simply a programming idiom, along the following lines. Really locked is equal to false. T X begin. If failure, goto handler. Read lock value. If not held, goto c s. Abort. Handler. Really locked is equal to true. Acquire lock. C s. If really locked, goto release. T X commit. Goto over. Release. Release lock. Over. This idiom may be enhanced in various ways, e.g., to retry a few times in hardware if the abort appears to be transient, but the basic pattern is as shown. One shortcoming is that if the critical section or a function it calls inspects the value of the lock, e.g., if the lock is reentrant, and is needed by a nested operation, the lock will appear not to be held. The obvious remedy to write a held value to the lock, would abort any similar transaction that is running concurrently. An S L E friendly solution would require each transaction to remember, in thread local storage, the locks it has elided.
+The document delves into the realm of transactional memory, specifically exploring its hardware-supported extensions, referred to as Software Transactional Memory, or S T M, and Lock Elision, or S L E, as a technique to improve performance in concurrent programming. The core idea is to mitigate the overhead associated with traditional lock-based synchronization mechanisms.
+
+The text outlines two primary benefits of employing S L E. Firstly, for code segments protected by medium- to coarse-grain locks, where conflicts are infrequent, S L E can enable multiple critical sections to execute in parallel. This occurs because S L E can often detect that a lock is not actually contended, allowing the transaction to proceed without acquiring the lock, thereby avoiding the associated contention and potential performance bottlenecks. This optimistic approach, by eliding lock acquisitions when no conflicts are present, can significantly reduce cache misses, as threads do not need to contend for cache lines associated with lock variables.
+
+Secondly, even in scenarios with data conflicts, if a thread's transaction accesses data that was last accessed by another thread on a different core, S L E can still offer advantages. By optimistically acquiring locks in exclusive mode, S L E can detect conflicts early. If a conflict is detected, the transaction can be aborted. However, if the lock is shared among cores, S L E can potentially satisfy the requirement of the conflicting access without the thread needing to explicitly acquire the lock, leading to fewer cache misses.
+
+These benefits, of improved performance and increased scalability on multi-core processors, are significant. However, there is a potential downside: lock elision can become a performance bottleneck itself, particularly when many cores attempt to run highly contended code sections. The motivation for lock elision, as indicated by research from Azul Systems and the designers of IBM's Power and Intel's T S X architectures, is primarily to improve performance in such scenarios.
+
+The provided pseudocode snippet illustrates a common programming idiom for lock elision. It depicts a transaction that begins with `tx_begin`. Inside the transaction, it attempts to `read lock value`. If this read operation fails, it signifies a potential conflict or an inability to proceed transactionally, leading to an `abort`. If the lock is not held by another transaction, it proceeds. If it is held, the transaction `abort`s. The `handler` section, labeled `really_locked`, implies a fallback mechanism where the lock is explicitly acquired using a standard acquire operation. Within the critical section, denoted by `cs`, the code performs its operations. Upon successful completion of the critical section, the transaction is committed using `tx_commit`. The `release` section handles releasing the lock. The `goto release` and `over` labels indicate control flow for managing the lock acquisition and release cycle. The comment `// add to transaction read set` suggests that the lock value read is being tracked as part of the transaction's read set, a common mechanism in S T M to detect write-write conflicts. The comment `// critical section` clearly demarcates the protected code block.
+
+A significant challenge with lock elision, as highlighted, is when the critical section or functions it calls inspect the value of the lock. If a function within the critical section checks if the lock is held, and the elision mechanism has made the lock appear as not held, this can lead to incorrect behavior. For example, if a nested operation requires a "held" value to the lock, but the lock was elided, the transaction might proceed as if the lock were free, potentially violating the intended semantics. An "S L E friendly" solution would typically involve ensuring that any such lock inspections or operations on locks that were elided are correctly handled, perhaps by replaying them within the transaction's context or by storing the elided lock state in thread-local storage. This ensures that even if a lock is elided, its logical state is still managed correctly to support operations that depend on it. The underlying principle here is ensuring transactional integrity and composability even in the presence of optimistic optimizations.

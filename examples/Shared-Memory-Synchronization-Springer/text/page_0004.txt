@@ -1,0 +1,80 @@
+4 1 Introduction
+
+In our simple increment example, mutual exclusion is arguably the only implementation
+strategy that will guarantee atomicity. In other cases, however, it may be overkill. Consider
+an operation that increments a specified element in an array of counters:
+
+ctr_inc(int i):
+L.acquire()
+ctrlil++
+L.release()
+
+If thread 1 calls ctr_inc(i) and thread 2 calls ctr_inc(j), we shall need mutual exclusion
+only if i = j. We can increase potential concurrency with a finer granularity of locking—
+for example, by declaring a separate lock for each counter, and acquiring only the one we
+need. In this example, the only downside is the space consumed by the extra locks. In other
+cases, fine-grain locking can introduce performance or correctness problems. Consider an
+operation designed to move n dollars from account i to account j in a banking program.
+If we want to use fine-grain locking (so unrelated transfers won’t exclude one another in
+time), we need to acquire two locks:
+
+move(int n, inti, int j):
+L[i].acquire()
+
+L[jl.acquire() // (there's a bug here)
+acctfi] —=n
+acctfj] +:=n
+
+L[i].release()
+
+L[jl.release()
+If lock acquisition and release are expensive, we shall need to consider whether the ben-
+efit of concurrency in independent operations outweighs the cost of the extra lock. More
+significantly, we shall need to address the possibility of deadlock:
+
+thread 1: thread 2:
+move(100, 2, 3) move(50, 3, 2)
+
+If execution proceeds more or less in lockstep, thread 1 may acquire lock 2 and thread 2
+may acquire lock 3 before either attempts to acquire the other. Both may then wait forever.
+The simplest solution in this case 1s to always acquire the lower-numbered lock first. In
+more general cases, if may be difficult to devise a static ordering. Alternative atomicity
+mechanisms—in particular, transactional memory, which we will consider in Chapter 9—
+attempt to achieve the concurrency of fine-grain locking without its conceptual complexity.
+
+From the programmer’s perspective, fine-grain locking is a means of implementing atom-
+icity for large, complex operations using smaller (possibly overlapping) critical sections.
+The burden of ensuring that the implementation is correct (that it does, indeed, achieve
+deadlock-free atomicity for the large operations) is entirely the programmer’s responsibil-
+ity. The appeal of transactional memory is that it raises the level of abstraction, allowing the
+programmer to delegate this responsibility to some underlying system.
+In our simple increment example, mutual exclusion is arguably the only implementation strategy that will guarantee atomicity. In other cases, however, it may be overkill. Consider an operation that increments a specified element in an array of counters:
+
+The code defines a function `counter increment` that takes an integer `i`. Inside this function, a lock `L` is acquired. The element at `counter index i` is then incremented by one. Finally, the lock `L` is released.
+
+If thread one calls `counter increment i` and thread two calls `counter increment j`, we shall need mutual exclusion only if `i is equal to j`. We can increase potential concurrency with a finer granularity of locking—for example, by declaring a separate lock for each counter, and acquiring only the one we need. In this example, the only downside is the space consumed by the extra locks. In other cases, fine grain locking can introduce performance or correctness problems. Consider an operation designed to move `n` dollars from account `i` to account `j` in a banking program. If we want to use fine grain locking, so unrelated transfers won't exclude one another in real time, we need to acquire two locks:
+
+The code defines a function `move` that takes an integer `n`, an integer `i`, and an integer `j`. Within this function, lock `L index i` is acquired, followed by lock `L index j`. Then, the value in `account index i` is decremented by `n`, and the value in `account index j` is incremented by `n`. Finally, lock `L index i` is released. A comment indicates that there is a bug here, implying that `L index j` might not be released.
+
+If lock acquisition and release are expensive, we shall need to consider whether the benefit of concurrency in independent operations outweighs the cost of the extra lock. More significantly, we shall need to address the possibility of deadlock.
+
+Consider the following two threads:
+Thread one calls the `move` function with arguments `one hundred`, `two`, and `three`.
+Thread two calls the `move` function with arguments `fifty`, `three`, and `two`.
+
+If execution proceeds more or less in lockstep, thread one may acquire lock two and thread two may acquire lock three before either attempts to acquire the other. Both may then wait forever. The simplest solution in this case is to always acquire the lower numbered lock first. In more general cases, if mutual exclusion is difficult to devise a static ordering, alternative atomicity mechanisms—in particular, transactional memory, which we will consider in Chapter nine—attempt to achieve the concurrency of fine grain locking without its conceptual complexity.
+
+From the programmer’s perspective, fine grain locking is a means of implementing atomicity for large, complex operations using smaller, possibly overlapping, critical sections. The burden of ensuring that the implementation is correct, that it does, indeed, achieve deadlock free atomicity for the large operations, is entirely the programmer’s responsibility. The appeal of transactional memory is that it raises the level of abstraction, allowing the programmer to delegate this responsibility to some underlying system.
+The foundational concept underpinning robust concurrent program design is atomicity, ensuring that a sequence of operations appears to an external observer as an indivisible unit, either completing entirely or not at all. While mutual exclusion, typically enforced through explicit locking mechanisms, can guarantee atomicity for simple operations, its application across an entire system can often lead to excessive serialization, thereby negating the benefits of parallelism. Consider, for instance, an operation designed to increment an element within an array of counters.
+
+The `ctr_inc` function, parameterized by an integer `i`, illustrates a fundamental critical section. The sequence begins with `L.acquire()`, an operation that attempts to gain exclusive control over a shared lock designated as `L`. Once acquired, the thread holding the lock gains sole permission to execute the subsequent instructions within the critical section. The statement `ctr index i increment by one` represents the core atomic operation: reading the current value of the counter at index `i`, incrementing it by one, and then writing the new value back. This read-modify-write sequence is inherently non-atomic without protection, as concurrent access by multiple threads could lead to lost updates. Following the critical operation, `L.release()` relinquishes control of the lock, allowing other waiting threads to proceed. In this initial formulation, a single lock `L` would protect access to all elements of the `ctr` array, representing a coarse-grain locking strategy.
+
+The choice of locking granularity critically impacts system performance and correctness. If two threads invoke `ctr_inc` with distinct indices, say `i` and `j` where `i` is not equal to `j`, their operations do not intrinsically conflict at the data level. However, a single, global lock `L` would still force these independent operations to execute sequentially, limiting potential concurrency. To enhance parallelism, a finer granularity of locking can be employed, assigning a separate lock to each counter element, `L index i` for `ctr index i`. This allows non-conflicting increment operations to proceed in parallel. The primary drawback of this approach lies in the increased memory overhead for managing a larger number of locks and the additional computational cost associated with their acquisition and release. Fine-grain locking, while offering higher concurrency, introduces new complexities, particularly in scenarios involving operations that manipulate multiple shared resources simultaneously, such as a banking transaction.
+
+A classic example illustrating the challenges of fine-grain locking is the `move` function, which models the transfer of `n` dollars from account `i` to account `j`. This operation inherently involves two distinct shared resources: account `i` and account `j`. To maintain atomicity and consistency, both accounts must be locked during the transfer. The function begins by attempting to acquire `L index i`, the lock associated with the source account. Subsequently, it attempts to acquire `L index j`, the lock for the destination account. Once both locks are held, the critical operations `acct index i decrement by equals n` and `acct index j increment by equals n` are performed, ensuring the integrity of the financial ledger. Finally, `L index i dot release()` and `L index j dot release()` release the acquired locks. However, this seemingly straightforward approach harbors a significant design flaw, a potential for deadlock.
+
+The cost associated with lock acquisition and release operations is non-trivial. If the critical sections protected by these locks are very short or frequently accessed, the overhead can outweigh the benefits of increased concurrency. Furthermore, the `move` operation presents a textbook case for a concurrency issue known as deadlock. Consider a scenario with two concurrent threads: thread one attempts to move one hundred dollars from account two to account three, while thread two attempts to move fifty dollars from account three to account two. If thread one successfully acquires `L index two` and thread two simultaneously acquires `L index three`, a deadlock state can arise. Thread one then attempts to acquire `L index three`, but finds it held by thread two, and thus becomes blocked. Concurrently, thread two attempts to acquire `L index two`, which is held by thread one, and also becomes blocked. This creates a circular dependency, where each thread waits indefinitely for a resource held by the other, resulting in a system freeze.
+
+To prevent such deadlocks, a common strategy is to enforce a global ordering for lock acquisition. For instance, in the banking example, a rule could be established that locks must always be acquired in increasing order of their account indices. So, for `move n, i, j`, the system would first acquire `L index minimum i comma j` and then `L index maximum i comma j`. This strict ordering breaks the circular wait condition, which is one of the necessary conditions for a deadlock. However, devising and enforcing such static ordering rules can be exceedingly complex in large-scale, dynamic systems with many interacting components and varying access patterns. This inherent complexity often makes it challenging to guarantee deadlock freedom for fine-grain locking in general cases.
+
+From a programmer's perspective, the intricate task of ensuring correct atomicity and freedom from deadlocks using fine-grain locking for complex, overlapping operations imposes a substantial burden. It demands a deep understanding of potential concurrency hazards and meticulous attention to lock management. An alternative paradigm, transactional memory, offers a promising approach to abstract away much of this complexity. Transactional memory allows programmers to define blocks of code as atomic transactions. The underlying system, whether implemented in hardware or software, is then responsible for ensuring that these transactions execute atomically and in isolation, detecting conflicts and automatically rolling back and retrying transactions if necessary. This approach significantly raises the level of abstraction, empowering the programmer to focus on the logical correctness of the application rather than the complex details of low-level synchronization primitives, thereby delegating the responsibility for intricate concurrency control to the system itself.

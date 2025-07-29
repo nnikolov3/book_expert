@@ -1,0 +1,79 @@
+22 2 Architectural Background
+
+the absence of annotations, we assume RW ||RW ordering for synchronizing instructions. To
+indicate a synchronizing instruction with no ordering constraints, we use the annotation ||.
+The main difference between an ordinary access and a synchronizing access annotated with
+| is that the former can participate in a data race, and the latter cannot. We will assume that
+the annotation on a synchronizing instruction (including the default RW||RW of an unlabeled
+instruction) inhibits reordering not only by the hardware (processor, cache, or interconnect),
+but also by the compiler or interpreter. Compiler writers or assembly language programmers
+interested in porting our pseudocode to some concrete machine will need to restrict their code
+improvement algorithms accordingly, and issue appropriate synchronizing instructions for
+the hardware at hand. Beginning guidance can be found in Doug Lea’s on-line “Cookbook
+for Compiler Writers” (Lea 2001) or in the on-line compendium hosted at the University of
+Cambridge (Sewell 2014).
+
+To determine the need for synchronizing instructions in the code of a given synchroniza-
+tion algorithm, we shall need to consider both the correctness of the algorithm itself and
+the semantics it is intended to provide to the rest of the program. The acquire operation
+of Peterson’s two-thread spin lock (Peterson 1981), for example, employs synchronizing
+stores to arbitrate between competing threads, but this ordering is not enough to prevent a
+thread from reading or writing shared data before the lock has actually been acquired—or
+after it has been released. For that, one needs accesses or fences with local ||[RW and RW||
+ordering (code in Sec. 4.1).
+
+Order Proactively, not Defensively
+
+In the absence of appropriate memory ordering annotations, processors and compilers can introduce
+a surprising amount of reordering. It is not uncommon, for example, for parts of a subroutine to
+be executed before the routine is called—either because the processor is executing out of order or
+because the compiler has expanded the subroutine in-line and intermixed its instructions with those
+of the caller.
+
+Intuition can often be misleading. Consider, for example, the code s = x; if (s) t := y. Given the
+conditional test, it is tempting to assume that the read of x must be ordered before the read of y.
+However, the processor can guess that x is non-zero, read y, then complete the read of x, verify that
+it 1s non-zero, and use the value of y (i.e., t) that was read before x. In multithreaded code, this may
+leave the reader with mutually incompatible versions of s and t, if y was written before x in another
+thread.
+
+Rather than imagining all of the ways in which optimizations can violate expectations, authors of
+synchronization mechanisms and concurrent data structures are advised to determine the order in
+which steps must occur for correctness, and then insert appropriate instructions to guarantee that
+ordering.
+
+3 These conventions are similar to C/C++, in which an unannotated synchronizing instruction (or
+equivalently, one with argument memory_order_seq_ cst) has RW|[RW semantics by default.
+Note, however, that certain annotated loads and stores in C/C++ may not be globally ordered.
+Architectural Background.
+
+In the absence of annotations, we assume read write double bar read write ordering for synchronizing instructions. To indicate a synchronizing instruction with no ordering constraints, we use the annotation double bar. The main difference between an ordinary access and a synchronizing access annotated with double bar is that the former can participate in a data race, and the latter cannot. We will assume that the annotation on a synchronizing instruction, including the default read write double bar read write of an unlabeled instruction, inhibits reordering not only by the hardware, such as the processor, cache, or interconnect, but also by the compiler or interpreter. Compiler writers or assembly language programmers interested in porting our pseudocode to some concrete machine will need to restrict their code improvement algorithms accordingly, and issue appropriate synchronizing instructions for the hardware at hand. Beginning guidance can be found in Doug Lea’s on line “Cookbook for Compiler Writers” Lea two thousand one, or in the on line compendium hosted at the University of Cambridge Sewell two thousand fourteen.
+
+To determine the need for synchronizing instructions in the code of a given synchronization algorithm, we shall need to consider both the correctness of the algorithm itself and the semantics it is intended to provide to the rest of the program. The acquire operation of Peterson’s two thread spin lock, Peterson nineteen eighty one, for example, employs synchronizing stores to arbitrate between competing threads, but this ordering is not enough to prevent a thread from reading or writing shared data before the lock has actually been acquired, or after it has been released. For that, one needs accesses or fences with local double bar read write and read write double bar ordering, code in section four point one.
+
+Order Proactively, not Defensively.
+
+In the absence of appropriate memory ordering annotations, processors and compilers can introduce a surprising amount of reordering. It is not uncommon, for example, for parts of a subroutine to be executed before the routine is called, either because the processor is executing out of order or because the compiler has expanded the subroutine in line and intermixed its instructions with those of the caller.
+
+Intuition can often be misleading. Consider, for example, the code: s is assigned x; if s, then t is assigned y. Given the conditional test, it is tempting to assume that the read of x must be ordered before the read of y. However, the processor can guess that x is non zero, read y, then complete the read of x, verify that it is non zero, and use the value of y, that is, t, that was read before x. In multithreaded code, this may leave the reader with mutually incompatible versions of s and t, if y was written before x in another thread.
+
+Rather than imagining all of the ways in which optimizations can violate expectations, authors of synchronization mechanisms and concurrent data structures are advised to determine the order in which steps must occur for correctness, and then insert appropriate instructions to guarantee that ordering.
+
+Footnote three: These conventions are similar to C slash C plus plus, in which an unannotated synchronizing instruction, or equivalently, one with argument memory underscore order underscore S E Q underscore C S T, has read write double bar read write semantics by default. Note, however, that certain annotated loads and stores in C slash C plus plus may not be globally ordered.
+Modern computer architectures and optimizing compilers employ aggressive reordering techniques to maximize performance. This practice, while beneficial for single-threaded execution, introduces significant complexities in concurrent systems, necessitating a deep understanding of memory consistency models and synchronization primitives.
+
+The fundamental challenge lies in ensuring that operations across multiple threads observe memory updates in a consistent and predictable manner. In the absence of explicit synchronization annotations, memory accesses are subject to reordering by the hardware, including the processor core, cache hierarchy, and interconnect, as well as by the compiler or interpreter. This reordering is a primary source of non-determinism and correctness issues in concurrent programs.
+
+A key distinction is drawn between ordinary memory accesses and synchronizing instructions. Ordinary accesses, such as standard loads and stores, typically operate under a weak memory consistency model. This means their order of execution, as perceived by other threads or even by the same thread across different accesses, can differ from their program order. Such operations are susceptible to data races, where multiple threads access the same memory location concurrently, with at least one access being a write, without proper coordination. Data races lead to undefined behavior, as the final state of the memory location and the values observed by readers are unpredictable.
+
+In contrast, synchronizing instructions, often explicitly annotated in code or implicitly part of higher level synchronization primitives, enforce stricter memory ordering constraints. The document specifies that synchronizing instructions adhere to an `R W` `or` `R W` ordering. This strong ordering implies a memory barrier: all memory operations issued before the synchronizing instruction must complete before the instruction itself executes, and no memory operations issued after it can begin until the synchronizing instruction has completed. This effectively creates a point of global synchronization, ensuring that any memory writes made by one thread become visible to other threads, and that subsequent reads by the synchronizing thread observe these newly visible writes. Crucially, operations involving synchronizing instructions are designed not to participate in data races, as their very purpose is to coordinate access to shared resources.
+
+Compiler writers and assembly language programmers must explicitly account for these reordering phenomena. Without specific directives, optimizing compilers might rearrange instructions to improve cache utilization or hide memory latency, potentially breaking the logical dependencies crucial for concurrent correctness. Therefore, they must incorporate appropriate synchronization instructions to restrict these aggressive optimization algorithms.
+
+A concrete illustration of the need for precise memory ordering is Peterson's two thread spin lock. This classic algorithm ensures mutual exclusion, allowing only one thread to access a critical section at a time. The `acquire` operation within such a lock is a complex sequence of memory accesses that relies on carefully orchestrated ordering to guarantee its correctness. Without explicit memory ordering, a thread might observe stale data or fail to correctly acquire the lock, leading to race conditions. The document highlights that merely using an `acquire` operation is insufficient to prevent a thread from reading or writing shared data before the lock is truly acquired. Instead, one requires explicit memory accesses or fences, such as `local or R W` and `R W or`, which are specific types of memory barriers that enforce ordering constraints at a finer granularity, ensuring that operations complete in a particular sequence relative to each other.
+
+The principle of "Order Proactively, not Defensively" underscores the danger of relying on intuition regarding memory ordering. Processors and compilers can introduce surprising amounts of reordering. For instance, parts of a subroutine might be executed out of order, or a compiler might inline a subroutine, intermixing its instructions with those of the caller. This can lead to unexpected behaviors where memory writes are not visible in the expected order, or reads fetch stale data.
+
+Consider the hypothetical code snippet `s is x; if s then t is y`. Intuition might suggest that `x` must be read before `y`. However, without explicit synchronization, a compiler or processor might reorder these reads. If, for example, the processor were to guess that `x` is non zero and proceed to read `y` before confirming `x`'s value, and then later verify `x`'s value, it could lead to a situation where `y` was written by another thread *before* `x` was written, but the current thread observes a new `x` and an old `y`. This creates logically incompatible versions of `s` and `t`, because `t` reflects an outdated state of `y` relative to the observed `x`. Such reordering violates program correctness in multithreaded environments.
+
+Therefore, rather than attempting to predict or compensate for how optimizations might violate program expectations, authors of synchronization mechanisms and concurrent data structures are advised to proactively determine the exact order in which memory operations must occur for correctness. They must then insert appropriate synchronization instructions or memory fences to guarantee that precise ordering, preventing the hardware and compiler from introducing incorrect reorderings. It is crucial to note that while some programming language constructs, such as `C` `slash` `C++`'s `memory_order_seq_cst`, provide `R W` `or` `R W` semantics by default for synchronizing instructions, general unannotated loads and stores may not be globally ordered, emphasizing the need for explicit attention to memory consistency in the design of robust concurrent software.

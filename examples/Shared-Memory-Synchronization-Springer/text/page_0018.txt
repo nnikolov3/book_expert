@@ -1,0 +1,77 @@
+2.2 Memory Consistency 19
+
+// initially x =f = 0
+
+thread 1: thread 2:
+
+1: x:=foo() 1: while If
+
+2: f:=true 2: // spin
+3: y:=1/x
+
+Figure 2.5 A simple example of flag-based synchronization. To avoid a spurious error, the update
+to x must be visible to thread 2 before the update to f.
+
+zero, a programmer might naively expect that thread 2 will never see a divide-by-zero error
+at line 3. If the write at line 2 in thread 1 can bypass the write in line 1, however, thread 2
+may read X too early, and see a value of zero. Similarly, if the read of x at line 3 in thread 2
+can bypass the read of f in line 1, a divide-by-zero may again occur, even if the writes in
+thread 1 complete in order. (While thread 2’s read of x is separated from the read of f by
+a conditional test, the second read may still issue before the first completes, if the branch
+predictor guesses that the loop will never iterate.)
+
+Any machine that is not sequentially consistent will provide special instructions that allow
+the programmer to force consistent ordering in situations in which it matters, but in which
+the hardware might not otherwise guarantee it. Perhaps the simplest such instruction is a
+synchronizing access (typically a special load or store) that is guaranteed to be both locally
+and globally ordered. Here “locally ordered” means that the synchronizing access will appear
+to occur after any preceding (ordinary or synchronizing) accesses in its own thread, and
+before any subsequent (ordinary or synchronizing) accesses in its thread, from the perspective
+of all threads. “Globally ordered” means that the synchronizing access will appear to occur
+in some consistent, total order with respect to all other synchronizing instructions in the
+program, from the perspective of all threads. (These orders overlap, in that both require
+synchronizing accesses by the same thread appear to occur in program order, from the
+perspective of all threads.)
+
+To avoid the spurious error in Figure 2.5, itis sufficient (though not necessary) to use fully
+(locally and globally) ordered accesses to f in both threads, thereby ensuring that thread 1°s
+update of x happens before its update of f, and thread 2’s read of x happens after it sees
+
+Barriers Everywhere
+
+Fences are sometimes known as memory barriers. Sadly, the word barrier is heavily overloaded.
+As noted in Sec. 1.2 (and explored in more detail in Sec. 5.2), it is the name of a synchronization
+mechanism used to separate program phases. In the programming language community, it refers to
+code that must be executed when changing a pointer, in order to maintain bookkeeping information
+for the garbage collector. In a similar vein, it sometimes refers to code that must be executed when
+reading or writing a shared variable inside an atomic transaction, in order to detect and recover from
+speculation failures (we discuss this code in Chapter 9, but without referring to it as a “barrier”). The
+intended meaning is usually clear from context, but may be confusing to readers who are familiar
+with only some of the definitions.
+Two point two Memory Consistency.
+
+The provided code block illustrates a scenario with two concurrent threads. Initially, shared variables x and f are both set to zero. Thread one performs two operations: first, on line one, it assigns the result of a function call 'foo' to variable x. Second, on line two, it sets the boolean flag f to true. Thread two contains a loop on line one that continuously checks if f is false. If f becomes true, the loop exits. Line two is a comment indicating the loop is for spinning or waiting. After the spin loop, on line three, thread two attempts to assign the value of one divided by x to variable y.
+
+Figure two point five: A simple example of flag based synchronization. To avoid a spurious error, the update to x must be visible to thread two before the update to f.
+
+Zero, a programmer might naively expect that thread two will never see a divide by zero error at line three. If the write at line two in thread one can bypass the write in line one, however, thread two may read x too early, and see a value of zero. Similarly, if the read of x at line three in thread two can bypass the read of f in line one, a divide by zero may again occur, even if the writes in thread one complete in order. While thread two's read of x is separated from the read of f by a conditional test, the second read may still issue before the first completes, if the branch predictor guesses that the loop will never iterate.
+
+Any machine that is not sequentially consistent will provide special instructions that allow the programmer to force consistent ordering in situations in which it matters, but in which the hardware might not otherwise guarantee it. Perhaps the simplest such instruction is a synchronizing access, typically a special load or store, that is guaranteed to be both locally and globally ordered. Here, locally ordered means that the synchronizing access will appear to occur after any preceding, ordinary or synchronizing, accesses in its own thread, and before any subsequent, ordinary or synchronizing, accesses in its thread, from the perspective of all threads. Globally ordered means that the synchronizing access will appear to occur in some consistent, total order with respect to all other synchronizing instructions in the program, from the perspective of all threads. These orders overlap, in that both require synchronizing accesses by the same thread appear to occur in program order, from the perspective of all threads.
+
+To avoid the spurious error in Figure two point five, it is sufficient, though not necessary, to use fully locally and globally ordered accesses to f in both threads, thereby ensuring that thread one's update of x happens before its update of f, and thread two's read of x happens after it sees.
+
+Barriers Everywhere.
+Fences are sometimes known as memory barriers. Sadly, the word barrier is heavily overloaded. As noted in Section one point two, and explored in more detail in Section five point two, it is the name of a synchronization mechanism used to separate program phases. In the programming language community, it refers to code that must be executed when changing a pointer, in order to maintain bookkeeping information for the garbage collector. In a similar vein, it sometimes refers to code that must be executed when reading or writing a shared variable inside an atomic transaction, in order to detect and recover from speculation failures. We discuss this code in Chapter nine, but without referring to it as a barrier. The intended meaning is usually clear from context, but may be confusing to readers who are familiar with only some of the definitions.
+The concept of memory consistency is fundamental to the correct operation of concurrent programs on multiprocessor architectures. It defines the rules for how memory operations, specifically reads and writes, from multiple threads or processors appear to each other. In an idealized model, known as sequential consistency, all memory operations appear to execute in some single, global total order, and operations from each individual processor appear in that total order in the same sequence as they were issued by the program. However, real world hardware deviates from this strict model for performance reasons, often reordering memory accesses.
+
+Consider the illustrative example involving two threads and shared variables `x` and `f`, both initially zero. Thread one, on the left, first performs a computation and assigns its result to `x`, labeled as line one. Subsequently, it sets the flag `f` to true, labeled as line two. The intent is for thread one to signal that `x` is ready for consumption. Concurrently, thread two, on the right, enters a spin loop, repeatedly checking if `f` is still false, labeled as line one. Once `f` becomes true, thread two exits this loop, then attempts to perform a computation involving `x`, specifically, dividing one by `x`, labeled as line three.
+
+A programmer might naively assume that thread two will never encounter a divide by zero error because the write to `x` occurs before the write to `f` in thread one's program order, and thread two waits for `f` to be true. However, in non-sequentially consistent systems, this assumption can lead to critical failures. For instance, the write to `x` in thread one might not be visible to thread two before the write to `f` becomes visible. If `f` becomes true and thread two proceeds to read `x` while `x` still holds its initial value of zero, a divide by zero error occurs. This issue arises because the processor or compiler may reorder the writes in thread one, or the memory system might propagate them out of program order to thread two's cache.
+
+Similarly, if thread two's processor reorders its own operations, the read of `x` at line three might be executed speculatively or prematurely, bypassing the read of `f` at line one. In such a scenario, thread two could read a stale value of `x` even if `f` eventually becomes true. Furthermore, if the branch predictor in thread two's C P U mispredicts the outcome of the `while` loop, the instructions inside the loop, including the read of `x` at line three, might be issued speculatively before the read of `f` at line one confirms the loop exit condition. If this speculative execution reads `x` before thread one has fully updated it and made it visible, another divide by zero error could occur, or thread two might operate on incorrect data.
+
+To prevent such spurious errors in non-sequentially consistent machines, specific instructions known as memory barriers or fences are necessary. These instructions allow programmers to impose ordering constraints on memory operations that the hardware might not otherwise guarantee. A "synchronizing access" is a special load or store operation that is guaranteed to be both "locally ordered" and "globally ordered." "Locally ordered" means that the synchronizing access will appear to occur after any preceding, ordinary or synchronizing, accesses in its own thread's program order. This ensures that a thread observes its own memory operations in the sequence they were written. "Globally ordered" implies a stronger guarantee: that the synchronizing access will appear to occur in some consistent, total order with respect to all other synchronizing instructions across all threads in the system. While ordinary memory accesses within a thread maintain program order relative to other ordinary accesses within that same thread, the critical aspect for inter-thread synchronization is global ordering.
+
+To avoid the errors described in the example, it is sufficient to ensure that thread one's update to `x` is globally ordered to happen before its update to `f`. This can be achieved by inserting a memory barrier between the `x` write and the `f` write in thread one. Concurrently, thread two must ensure that its read of `x` is globally ordered to happen after its read of `f`. This would involve another memory barrier between the read of `f` and the read of `x` in thread two, effectively synchronizing the visibility of `x` across threads. These barriers force the memory system to complete and make visible all preceding operations before any subsequent operations can proceed past the barrier, from the perspective of other processors.
+
+The term "barrier" itself is overloaded in computer science, leading to potential confusion. While "memory barrier" or "memory fence" refers specifically to instructions that enforce memory operation ordering, the word "barrier" is also used more broadly. For instance, in parallel programming, a "synchronization barrier" is a point in a program where all participating threads must arrive before any thread is allowed to proceed. This is a higher level synchronization primitive often built upon memory barriers. In programming language runtimes, particularly for garbage collection, "write barriers" or "read barriers" are mechanisms that track pointer changes or object accesses to ensure the consistency of the memory heap during garbage collection cycles. Similarly, in the context of atomic transactions, "barriers" may refer to the explicit boundaries of transactions, where atomicity, consistency, isolation, and durability properties are enforced. Finally, in modern C P U architectures, "barriers" can relate to internal processor mechanisms that manage speculative execution and ensure correct state recovery after branch mispredictions. The precise meaning of "barrier" therefore heavily depends on its specific technical context.

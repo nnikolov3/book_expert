@@ -1,0 +1,63 @@
+8.7 Safe Memory Reclamation (SMR) 171
+
+Even if other threads will eventually notice the removal and recover (e.g., by restarting their
+operations), until they do so it is generally unsafe to reclaim and reuse the node.
+
+As we noted in Sec. 8.1.1, the original Treiber stack used counted pointers and a type-
+preserving allocator to ensure safety even in the event of reclamation and reuse. In the EFRB
+tree, by contrast, Ellen et al. assumed that new nodes would always be allocated at addresses
+that have never previously been used. Other authors have made similar assumptions. At
+first glance, the need for unique addresses would seem to preclude freeing and then reusing
+nodes, but it turns out that any algorithm that is correct under the uniqueness assumption
+1s also correct under the safe memory reclamation (SMR) assumption: an unlinked node
+can be freed or reused only if no thread-local pointers still refer to it. Intuitively, if a node
+1s unlinked (so no pointers to it remain in the data structure proper), and no thread has a
+pointer to it in a local variable, then no thread can tell the difference between the old node
+and a newly allocated node that happens to lie at the same address. The SMR assumption is
+satisfied by automatic garbage collection,® and by various specialized memory reclamation
+algorithms.
+
+8.7.1 Hazard Pointers
+
+Hazard Pointers (Michael 2002a, 2004b), also known as the “Pass the Buck” solution to
+the Repeat Offenders Problem (Herlihy et al. 2002a,b, 2005), were the first truly general-
+purpose approach to SMR. They remain the dominant approach today.
+
+The hazard pointer (HP) algorithm classifies accesses to nodes as either hazardous or
+safe, and requires a thread to protect a node o with a hazard pointer before performing any
+hazardous access to o. Intuitively, a read/write on a node o is hazardous if 0 might have
+been freed prior to the read/write. It 1s also hazardous to use o as the old value of a CAS if o
+may have been freed: an occurrence of the ABA problem might allow the CAS to succeed
+incorrectly if the pointer now refers to a different node with the same address.
+
+As an illustrative example, consider an unsafe variant of the Treiber stack (Figure 8.18)
+that allocates and frees nodes, rather than assuming type stable memory as we did in
+Sec.8.1.1. In this algorithm, reading the top pointer of the stack is safe, since the top
+pointer 1s a member of the stack object, which cannot have been freed. However, derefer-
+encing the top pointer and performing a read or write on the node to which it points is
+hazardous, since that node could be freed at any time by a concurrent thread. In this algo-
+rithm, there is only one hazardous access in push—the CAS, which is a hazardous access to
+o. There are three hazardous accesses in pop, all of them accesses to o: the read of 0o— next,
+the CAS, and the read of o— value.
+
+To safely perform a hazardous access to o, a thread must first store a pointer to o in an
+announcement array that is shared with other threads. This array has k slots per thread,
+where k is the (data structure specific) number of hazard pointers that a thread might need
+
+3 Unfortunately, fully nonblocking automatic garbage collection remains an open problem.
+Eight point seven Safe Memory Reclamation S M R One hundred seventy one.
+
+Even if other threads will eventually notice the removal and recover e g by restarting their operations, until they do so it is generally unsafe to reclaim and reuse the node. As we noted in Sec eight point one point one the original Treiber stack used counted pointers and a type preserving allocator to ensure safety even in the event of reclamation and reuse. In the E F R B tree by contrast Ellen et al. assumed that new nodes would always be allocated at addresses that have never previously been used. Other authors have made similar assumptions. At first glance the need for unique addresses would seem to preclude freeing and then reusing nodes but it turns out that any algorithm that is correct under the uniqueness assumption is also correct under the safe memory reclamation S M R assumption: an unlinked node can be freed or reused only if no thread local pointers still refer to it. Intuitively if a node is unlinked so no pointers to it remain in the data structure proper and no thread has a pointer to it in a local variable then no thread can tell the difference between the old node and a newly allocated node that happens to lie at the same address. The S M R assumption is satisfied by automatic garbage collection and by various specialized memory reclamation algorithms.
+
+Eight point seven point one Hazard Pointers.
+
+Hazard Pointers Michael Two thousand two a Two thousand four b also known as the Pass the Buck solution to the Repeat Offenders Problem Herlihy et al. Two thousand two a b Two thousand five were the first truly general purpose approach to S M R. They remain the dominant approach to S M R today. The hazard pointer H P algorithm classifies accesses to nodes as either hazardous or safe and requires a thread to protect a node o with a hazard pointer before performing any hazardous access to o. Intuitively a read write on a node o is hazardous if o might have been freed prior to the read write. It is also hazardous to use o as the old value of a C A S if o may have been freed: an occurrence of the A B A problem might allow the C A S to succeed incorrectly if the pointer now refers to a different node with the same address. As an illustrative example consider an unsafe variant of the Treiber stack Figure eight point one eight that allocates and frees nodes rather than assuming type stable memory as we did in Sec eight point one point one. In this algorithm reading the top pointer of the stack is safe since the top pointer is a member of the stack object which cannot have been freed. However dereferencing the top pointer and performing a read or write on the node to which it points is hazardous since that node could be freed at any time by a concurrent thread. In this algorithm there is only one hazardous access in push the C A S, which is a hazardous access to o. There are three hazardous accesses in pop all of them accesses to o: the read of o next, the C A S, and the read of o value. To safely perform a hazardous access to o a thread must first store a pointer to o in an announcement array that is shared with other threads. This array has k slots per thread where k is the data structure specific number of hazard pointers that a thread might need.
+
+Eight Unfortunately fully nonblocking automatic garbage collection remains an open problem.
+This section delves into advanced memory reclamation techniques in concurrent systems, specifically focusing on Safe Memory Reclamation, also known as S M R, and the Hazard Pointers mechanism.
+
+Safe Memory Reclamation (S M R) operates under a critical assumption for its correctness: an unlinked node, meaning a node that is no longer reachable from the active structure but may still be pointed to by threads, must not have its memory freed or reused if any thread-local pointer might still refer to it. This assumption is derived from the challenge that if a thread-local pointer points to a memory location, and that location is subsequently freed and reused for a new object, any attempt by the thread to access the original object through its local pointer can lead to undefined behavior. The core problem arises when a thread attempts to dereference a pointer to a node that has been unlinked from the primary data structure and then reallocated. The S M R assumption fundamentally states that no thread can distinguish between an old node and a newly allocated node at the same address if a thread-local pointer refers to it. This is particularly relevant when considering concurrent data structures where memory management must be safe even when operations are interleaved across multiple threads. The S M R assumption is inherently satisfied by garbage collection algorithms, which automatically manage memory deallocation, and also by various specialized memory reclamation techniques.
+
+The subsection on Hazard Pointers, credited to Michael and Scott in two thousand and two and later expanded upon, introduces a proactive approach to managing memory safety in concurrent data structures, often referred to as the "Pass the Buck" solution. This method is recognized as a generally applicable technique for S M R. The hazard pointer algorithm classifies accesses to nodes within a concurrent structure as either hazardous or safe. An access to a node, denoted as 'o', is considered hazardous if 'o' might be freed before the operation completes. To protect against such hazards, a thread uses a hazard pointer, essentially a dedicated memory location, to temporarily shield a node from reclamation. Intuitively, a read or write operation on a node 'o' is hazardous if 'o' could have been freed prior to the read or write. A key challenge in concurrent memory management is the ABA problem, which can occur if a node's memory is freed and then reallocated to a new node with the same memory address. If a thread observes the node at that address, it might incorrectly assume the node has not changed. Hazard pointers aim to mitigate this by ensuring that a node referenced by a hazard pointer is protected from being freed.
+
+The text illustrates this with an example of an unsafe variant of the Treiber stack, which allocates and frees nodes. In such a scenario, reading the top pointer of the stack is generally safe because the stack object itself cannot be freed. However, dereferencing this top pointer to access the node it points to, and then performing a read or write on that node, presents a hazard. This is because the node to which the top pointer points could be freed by a concurrent thread at any time. The algorithm describes three primary hazardous accesses within a push operation: the read of the top pointer itself, and implicitly, any operation that depends on the integrity of the node pointed to by the top pointer, such as accessing its 'value' field or its 'next' pointer. To safely perform a hazardous access to a node 'o', a thread must first store a pointer to 'o' in one of its dedicated hazard pointers. These hazard pointers are typically managed within an array, with each thread having a certain number of slots. This array is shared among threads, and the number of slots, denoted by 'k', is determined by the specific data structure or system requirements. The problem of managing these hazard pointers, particularly the determination of an appropriate value for 'k', remains an area of research. The footnote indicates that the efficient, non-blocking management of automatic garbage collection in such scenarios is an ongoing research question.

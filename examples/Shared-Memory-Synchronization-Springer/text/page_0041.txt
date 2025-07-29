@@ -1,0 +1,95 @@
+3 Essential Theory
+
+thread 1: thread 2:
+// insert(C) Il delete(D) | |
+readn v II A readn v II A [A J D | K
+p:=n p:=n
+n:=n next n:=n next
+readn v /l D readn v /I D
+m := new node(C) t:=n next
+m next:=n —>A J [C +—|D +—/K +—
+p next:=m
+p next:=t
+
+Figure 3.1 Dynamic trace of improperly synchronized list updates. This execution can lose node C
+even on a sequentially consistent machine.
+
+lock on A, but would complete before reaching D or K; thread 1°s insert of C might thus be
+said to linearize at the release of the lock on A. While threads can never perform conflicting
+operations on the same nodes simultaneously, one thread can “chase the other down the list”
+to the point where the conflict occurs, achieving substantially higher concurrency than would
+be possible with a global lock. Similar “hand-over-hand” locking techniques are commonly
+used in concurrent trees and other pointer-based data structures.
+
+Serializability
+
+Recall that the purpose of an ordering criterion is to clarify the meaning of atomicity. By
+requiring an operation to complete at a single point in time, and to be visible to all other
+threads before it returns to its caller, linearizability guarantees that the order of operations
+on any given concurrent object will be consistent with all other observable orderings in an
+execution, including those of other concurrent objects.
+
+The flip side of this guarantee is that the linearizability of individual operations does not
+necessarily imply linearizability for operations that manipulate more than one object, but
+are still intended to execute as a single atomic unit.
+
+Consider a banking system in which thread 1 transfers $100 from account A to account
+B, while thread 2 adds the amounts in the two accounts:
+
+// initially A.balance() = B.balance() = 500
+
+thread 1: thread 2:
+A.withdraw(100)
+sum := A.balance() // 400
+sum +:= B.balance() // 900
+B.deposit(100)
+
+If we think of A and B as separate objects, then the execution can linearize as suggested
+by vertical position on the page, but thread 2 will see a cross-account total that is $100 “too
+low.” If we wish to treat the code in each thread as a single atomic unit, we must disallow
+this execution—something that neither A nor B can do on its own. We need, in short, to be
+Figure three point one illustrates a dynamic trace of improperly synchronized list updates, demonstrating how node C can be lost even on a sequentially consistent machine. The figure displays two snapshots of a linked list. The top snapshot shows the list in an initial state: a block labeled A points to a block labeled D, which in turn points to a block labeled K.
+
+Below this, the operations for two concurrent threads are shown.
+For Thread one, which intends to insert node C:
+First, it reads node N as value V, representing node A. Then, a pointer P is assigned to N. Next, N is updated to point to the next node, which is D. It then reads node N again as value V, representing node D. A new node M is created, containing the value C. M's next pointer is set to N, meaning C points to D. Finally, P's next pointer is set to M, which makes A point to C.
+
+For Thread two, which intends to delete node D:
+First, it reads node N as value V, representing node A. Then, a pointer P is assigned to N. Next, N is updated to point to the next node, which is D. It then reads node N again as value V, representing node D. Finally, a pointer T is assigned to N's next node, which is K. The last step sets P's next pointer to T, which would make A point to K.
+
+The bottom snapshot in the figure visually represents the list state after Thread one's insertion operation: block A points to block C, which points to block D, which then points to block K. The caption implies that an interleaving of these thread operations can lead to the loss of node C, despite Thread one having successfully inserted it.
+
+If we were to acquire a lock on A, it would complete before reaching D or K. Thread one's insert of C might thus be said to linearize at the release of the lock on A. While threads can never perform conflicting operations on the same nodes simultaneously, one thread can “chase the other down the list” to the point where the conflict occurs, achieving substantially higher concurrency than would be possible with a global lock. Similar “hand over hand” locking techniques are commonly used in concurrent trees and other pointer based data structures.
+
+Serializability.
+Recall that the purpose of an ordering criterion is to clarify the meaning of atomicity. By requiring an operation to complete at a single point in time, and to be visible to all other threads before it returns to its caller, linearizability guarantees that the order of operations on any given concurrent object will be consistent with all other observable orderings in an execution, including those of other concurrent objects.
+
+The flip side of this guarantee is that the linearizability of individual operations does not necessarily imply linearizability for operations that manipulate more than one object, but are still intended to execute as a single atomic unit.
+
+Consider a banking system in which thread one transfers one hundred dollars from account A to account B, while thread two adds the amounts in the two accounts.
+Initially, both A's balance and B's balance are equal to five hundred.
+
+For thread one:
+It withdraws one hundred from account A.
+It then deposits one hundred into account B.
+
+For thread two:
+It calculates a sum. When it reads A's balance, it finds it to be four hundred. So, sum is assigned four hundred.
+It then increments the sum by adding B's balance. At this point, B's balance is still five hundred, resulting in a total sum of nine hundred.
+
+If we think of A and B as separate objects, then the execution can linearize as suggested by vertical position on the page, but thread two will see a cross account total that is one hundred dollars “too low.” If we wish to treat the code in each thread as a single atomic unit, we must disallow this execution—something that neither A nor B can do on its own. We need, in short, to be
+The provided content delves into fundamental concepts in concurrent programming, specifically addressing issues of data consistency, atomicity, and linearizability in shared data structures and multi-object systems.
+
+The initial section illustrates a critical challenge in concurrent data structure manipulation using a linked list as an example. The figure depicts a sequence of nodes: A, D, and K, connected linearly, representing a simple linked list. Below this initial configuration, a second arrangement shows nodes A, C, D, and K, implying an insertion, but with an anomalous direct connection from A to K, bypassing C and D. This visual representation is crucial for understanding the dynamic trace of concurrent operations.
+
+Two threads are presented, attempting to modify this shared linked list. Thread one aims to `insert` a new node, C, while thread two intends to `delete` node D. Analyzing the code segments for each thread reveals the underlying mechanism of these operations. Both threads manipulate pointers by reading node values and updating `next` pointers, a common practice in linked list management. For instance, in thread one's `insert` operation, `read n v` for node A and subsequently for node D, followed by pointer reassignments using `p := n`, `n := n next`, `m next := n`, and `p next := m`, are the primitive steps to insert node C between A and D. Similarly, thread two's `delete` operation involves traversing the list by reading values for nodes A and D, storing `n next` into `t`, and then bypassing node D by setting `p next := t`, effectively removing D from the list.
+
+The diagram and accompanying text elucidate a classic race condition resulting from the interleaving of these unsynchronized operations. The execution trace shows that even on a machine guaranteeing sequential consistency, where operations within each thread appear to execute in program order and overall operations appear in some global interleaved order, node C can be lost. This happens because thread one's intended insertion of C between A and D, which involves updating A's `next` pointer, can be overwritten or become invalid if thread two simultaneously modifies A's `next` pointer to delete D. Specifically, if thread one reads A's `next` pointer as D, and thread two concurrently reads A's `next` pointer as D and then updates A's `next` pointer to K to delete D, thread one's subsequent update of A's `next` to C might be rendered obsolete if A already points to K. This demonstrates that mere sequential consistency is insufficient for maintaining the integrity of complex data structures under concurrent modification. The problem underscores the necessity of robust synchronization mechanisms beyond basic memory model guarantees. The mention of "hand over hand" locking, also known as lock coupling, points to a common strategy for concurrent linked list operations, where a thread acquires a lock on the current node, then acquires a lock on the next node, and only then releases the lock on the current node, ensuring that no concurrent modification of adjacent nodes can lead to data corruption or lost updates.
+
+The discussion then transitions to the broader concept of `Serializability`, a critical property for ensuring correctness in concurrent systems, particularly for transactional operations. The core idea is `atomicity`, which dictates that an operation must appear to complete instantaneously at a single, distinct point in time, and its effects become immediately visible to all other threads. This prevents partial or inconsistent states from being observed.
+
+`Linearizability` is introduced as a stronger consistency model that builds upon atomicity. It applies to concurrent objects and guarantees that the observable order of operations on a given concurrent object is consistent with their real-time execution order. In other words, if an operation A completes before operation B begins, then A's effects must be visible to B. This provides a strong guarantee of "real time" ordering for individual object operations.
+
+However, the text critically highlights that linearizability for individual operations does not necessarily extend to operations that manipulate more than one object. This distinction is paramount in the context of `transactions`, which often involve operations across multiple distinct data elements. The banking system example starkly illustrates this. In a scenario where thread one transfers one hundred dollars from account A to account B, and concurrently thread two attempts to calculate the sum of balances in accounts A and B.
+
+Initially, suppose both A dot balance and B dot balance are five hundred. Thread one's transfer would involve `A.withdraw(100)` making A dot balance four hundred, and `B.deposit(100)` making B dot balance six hundred. The correct total system balance should remain one thousand. Thread two, however, reads `A.balance()` and `B.balance()` sequentially. If thread one's `A.withdraw` completes, making A dot balance four hundred, and thread two then reads A dot balance as four hundred, but thread one's `B.deposit` has not yet completed (or its effects are not yet visible to thread two), and thread two reads B dot balance as its original five hundred, then thread two calculates a sum of four hundred plus five hundred, which is nine hundred. This sum is one hundred dollars "too low" compared to the true total of one thousand, which would be observed if the entire transfer operation by thread one were atomic from thread two's perspective. The inconsistency arises because the "transfer" itself is not treated as a single atomic unit spanning multiple objects (accounts A and B), even if individual `withdraw` and `deposit` operations on their respective accounts are linearizable. This problem underscores the need for `transactional atomicity` or `serializability` at a higher level, encompassing multiple objects or operations, to maintain global system invariants. Such guarantees often necessitate more sophisticated concurrency control mechanisms like two phase locking or multi-version concurrency control.

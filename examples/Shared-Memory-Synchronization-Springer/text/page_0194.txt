@@ -1,0 +1,70 @@
+9.2 HardwareTM 199
+
+performance analyzer.” Because these instructions violate isolation and/or atomicity, they
+must be used with great care.
+
+On an abort, a transaction may retry automatically (generally no more than some fixed
+number of times), retry the transaction under protection of an implicit global lock, or jump
+to a software handler that figures out what to do (e.g., retry under protection of a software
+lock). In Intel’s RTM (Restricted Transactional Memory—part of TSX), the address of the
+handler 1s an argument to the tx_start instruction. In IBM’s z and Power TM, and in Arm
+TME, tx_start sets a condition code, in the style of the POSIX setjmp routine, to indicate
+whether the transaction is beginning or has just aborted; this code is typically checked by the
+following instruction. With either style of abort delivery, any speculative updates performed
+so far will be discarded.
+
+In the IBM Blue Gene/Q, HTM operations were triggered not with special instructions
+but with stores to special locations in I/O space. Conflicts would raise an interrupt, which
+was fielded by the OS kernel.
+
+Buffering of Speculative Updates
+
+There are many ways in which a processor can buffer speculative updates. Herlihy and
+Moss’s original proposal called for a special transactional cache located alongside the L1
+data cache. Sun’s prototype Rock processor (never brought to market) allowed only a very
+small number of speculative stores, which it kept in the core’s store buffer (Dice et al.
+2009). A few academic systems have proposed keeping logs in virtual memory (Ananian
+et al. 2005; Yen et al. 2007; Bobba et al. 2008), but by far the most common approach is to
+buffer speculative updates at some level of the normal cache hierarchy, and to “hide” them
+from the coherence protocol until the transaction is ready to commit. In some systems (e.g.,
+Blue Gene/Q and the original Herlihy and Moss proposal), the cache holds both the original
+and the speculative version of a line, but most systems buffer only the speculative version;
+the original can always be found in some deeper level of cache or memory.
+
+Whatever the physical location used to buffer speculative updates, there will be a limit on
+the space available. In most HTM systems, a transaction will abort if it overflows this space,
+or exceeds the supported degree of associativity (footnote, Sec. 2.1.2). Several academic
+groups have proposed mechanisms to “spill” excess updates to virtual memory and continue
+to execute a hardware transaction of effectively unbounded size (Rajwar et al. 2005; Blundell
+et al. 2007; Chuang et al. 2006; Ceze et al. 2006; Chung et al. 2006; Shriraman et al. 2010),
+
+2 Among commercial machines (as of 2023), z' TM provides nontransactional stores (ordered at com-
+mit or abort time), but not loads. Sun’s Rock provided both, with stores again ordered at commit/abort.
+Intel’s TSX originally provided neither, but Sapphire Rapids processors introduced a “Suspend Load
+Address Tracking” mechanism that supports nontransactional loads. Power TM allows transactions
+to enter a “suspended” state (see Sec. 9.2.1) in which both loads and stores will happen immediately
+and “for real.” Blue Gene/Q facilities could be used to similar ends, but only with kernel assistance. On
+both the Power 8/9 and Blue Gene/Q, the programmer must be aware of the potential for paradoxical
+memory ordering.
+nine point two Hardware T M. One hundred ninety nine.
+
+performance analyzer. Because these instructions violate isolation and or atomicity, they must be used with great care.
+
+On an abort, a transaction may retry automatically, generally no more than some fixed number of times, retry the transaction under protection of an implicit global lock, or jump to a software handler that figures out what to do, for example, retry under protection of a software lock. In Intel's R T M, Restricted Transactional Memory, part of T S X, the address of the handler is an argument to the tx start instruction. In I B M's z and Power T M, and in Arm T M E, tx start sets a condition code, in the style of the P O S I X setjmp routine, to indicate whether the transaction is beginning or has just aborted. this code is typically checked by the following instruction. With either style of abort delivery, any speculative updates performed so far will be discarded.
+
+In the I B M Blue Gene Q, H T M operations were triggered not with special instructions but with stores to special locations in I O space. Conflicts would raise an interrupt, which was fielded by the O S kernel.
+
+Buffering of Speculative Updates
+
+There are many ways in which a processor can buffer speculative updates. Herlihy and Moss's original proposal called for a special transactional cache located alongside the L one data cache. Sun's prototype Rock processor, never brought to market, allowed only a very small number of speculative stores, which it kept in the core's store buffer, Dice et al. two thousand nine. A few academic systems have proposed keeping logs in virtual memory, Ananian et al. two thousand five; Yen et al. two thousand eight, but by far the most common approach is to buffer speculative updates at some level of the normal cache hierarchy, and to hide them from the coherence protocol until the transaction is ready to commit. In some systems, for example, Blue Gene Q and the original Herlihy and Moss proposal, the cache holds both the original and the speculative version of a line, but most systems buffer only the speculative version. the original can always be found in some deeper level of cache or memory.
+
+Whatever the physical location used to buffer speculative updates, there will be a limit on the space available. In most H T M systems, a transaction will abort if it overflows this space, or exceeds the supported degree of associativity, footnote, Sec. two point one point two. Several academic groups have proposed mechanisms to spill excess updates to virtual memory and continue to execute a hardware transaction of effectively unbounded size, Rajwar et al. two thousand five; Blundell et al. two thousand seven; Chuang et al. two thousand six; Ceze et al. two thousand six; Shriraman et al. two thousand ten.
+
+Among commercial machines, as of two thousand twenty three, z T M provides nontransactional stores, ordered at commit or abort time, but not loads. Sun's Rock provided both, with stores again ordered at commit abort. Intel's T S X originally provided neither, but Sapphire Rapids processors introduced a Suspend Load Address Tracking mechanism that supports nontransactional loads. Power T M allows transactions to enter a suspended state, see Sec. nine point two point one, in which both loads and stores will happen immediately and for real. Blue Gene Q facilities could be used to similar ends, but only with kernel assistance. On both the Power eight nine and Blue Gene Q, the programmer must be aware of the potential for paradoxical memory ordering.
+Section 9.2 delves into aspects of hardware support for transactional memory, specifically examining the behavior of transactions when encountering certain conditions and the mechanisms for managing speculative updates.
+
+When a transactional memory operation, or transaction, aborts, it typically retries automatically for a limited number of attempts. If these automatic retries fail, a software handler is invoked. This handler is designed to determine the appropriate course of action, which might include a retry under the protection of an explicit global lock, or a jump to a different instruction sequence. In Intel's Restricted Transactional Memory, or RTM, this handler is provided with arguments to the transaction's start instruction. For instance, in the context of IBM's z and Power T M architectures, and also in Arm's T M E, a specific instruction such as ‘tx_start’ sets a condition code. This code, in conjunction with a POSIX setjmp routine, informs the system whether the transaction has begun or has just aborted. Any speculative updates made before an abort are typically discarded. The explanation then references specific implementations, noting that on the IBM Blue Gene/Q, H T M operations were triggered by special instructions, but stores to special I O locations would result in an interrupt handled by the operating system kernel, which could lead to conflicts.
+
+The subsequent section, "Buffering of Speculative Updates," addresses the challenge of managing speculative writes within a transactional system. Processors can buffer these speculative updates, and various proposals exist for how to achieve this. Herlihy and Moss's original proposal involved a special transactional cache located adjacent to the L one cache. Sun's prototype Rock processor, which was not brought to market, utilized a small number of speculative stores, which were kept in a store buffer, a component typically found deeper in the cache hierarchy. Other academic proposals, such as those by Ananian et al. in two thousand and five, and Yen et al. in two thousand and eight, suggested buffering speculative updates at a level of the cache hierarchy, with the aim of “hiding” these updates until the transaction commits. Some systems, like those described for Blue Gene/Q and the original Herlihy and Moss proposal, kept both the original data and the speculative version in a line within the cache. Most systems, however, buffer only the speculative version, and this buffering can occur at various levels of the cache. The location chosen for buffering speculative updates depends on the available space. In most H T M systems, when a transaction overflows this buffering space, it will abort. The degree of associativity in the buffering mechanism is also relevant, with footnote references pointing to discussions of its significance. Several academic groups have proposed mechanisms to “spill” excess updates to virtual memory and to allow transactions to effectively grow without bounds, as seen in the work of Rajwar et al. in two thousand and five, Blundell et al. in two thousand and six, Ceze et al. in two thousand and six, Chung et al. in two thousand and six, and Shriraman et al. in two thousand and ten.
+
+Footnote two provides context on the availability of transactional memory features in commercial processors as of two thousand and twenty three. It notes that z T M offers non transactional stores, which are ordered at commit or abort. Sun's Rock processor supported both transactional and non transactional stores, with stores ordered at commit or abort. Intel's T S X, however, originally provided neither but later introduced a "Suspend Load Address Tracking" mechanism that supports non transactional loads. Power T M allows transactions to enter a "suspended" state, as described in section 9.2.1, where both loads and stores occur immediately and are considered "for real." This behavior is observed in both the Power eight slash nine and Blue Gene/Q processors. In such scenarios, the programmer must be aware of the potential for paradoxical memory ordering, highlighting a critical aspect of ensuring correctness in concurrent systems.

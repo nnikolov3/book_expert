@@ -1,0 +1,80 @@
+Detected 19 diacritics
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+12
+
+2 Architectural Background
+
+Processor 1
+
+Processor 7
+
+Core 1 Core 4
+IEEE | | ∣∣ ∣
+∣ ∣ ∣
+| E | |
+<4 Global Interconnect
+
+Memory Bank 1
+
+>
+
+Memory Bank
+
+Figure 2.1 Typical symmetric (uniform memory access—UMA) machine. Numbers of components
+of various kinds, and degree of sharing at various levels, differs across manufacturers and models.
+
+Processor 1
+
+Core 1
+
+1
+
+L2
+
+Core £
+
+S 2s
+
+Processor 7
+
+E
+
+5
+
+J:
+
+Global Interconnect
+
+—
+
+re
+wo
+
+Memory Bank 1
+
+Memory Bank 7
+
+Figure 2.2 Typical nonuniform memory access (NUMA) machine. Again, numbers of components
+of various kinds, and degree of sharing at various levels, differs across manufacturers and models.
+Two Architectural Background.
+
+Figure two point one. Typical symmetric (uniform memory access, U M A) machine. Numbers of components of various kinds, and degree of sharing at various levels, differs across manufacturers and models.
+The diagram illustrates a uniform memory access, U M A, machine architecture. It shows a series of processors, from Processor one to Processor N, connected to a Global Interconnect, which in turn connects to multiple Memory Banks, from Memory Bank one to Memory Bank M. Each processor, for example, Processor one, contains multiple Cores, depicted as Core one through Core K, with ellipses indicating more cores. Inside each Core, there are L one caches. These L one caches connect to an L two cache, which then connects to an L three cache. The L three cache of each processor is connected to the Global Interconnect, which acts as a central bus for all processors to access all memory banks uniformly.
+
+Figure two point two. Typical nonuniform memory access (N U M A) machine. Again, numbers of components of various kinds, and degree of sharing at various levels, differs across manufacturers and models.
+This diagram presents a nonuniform memory access, N U M A, machine architecture. It features multiple processors, from Processor one to Processor N. Similar to the U M A model, each processor, such as Processor one, includes multiple Cores, from Core one through Core K, with ellipses representing additional cores. Each Core has L one caches, connected to an L two cache, which then connects to an L three cache. A key distinguishing feature of this N U M A machine is that the L three cache of each processor has a direct connection to a dedicated local Memory Bank. For instance, Processor one's L three cache connects to Memory Bank one, and Processor N's L three cache connects to Memory Bank N. Additionally, each L three cache also connects to a Global Interconnect. This Global Interconnect provides connectivity across all processors and memory banks, enabling access to non-local memory, though typically with higher latency than local access.
+Modern computing architectures are fundamentally designed to optimize the efficient flow of data to and from processing units, a challenge amplified by the increasing disparity between processor speeds and memory access times, often referred to as the memory wall. The two figures presented illustrate two primary approaches to shared memory system design: Uniform Memory Access, or U M A, and Nonuniform Memory Access, or N U M A. These architectural choices dictate how multiple processors interact with main memory and significantly influence system performance and programming paradigms.
+
+Let us first analyze the symmetric U M A architecture depicted in the top diagram, Figure two point one. Conceptually, this system is organized horizontally, with multiple 'Processor' blocks, from 'Processor one' extending rightward to 'Processor N', situated at the top of the hierarchy. Each 'Processor' block represents an independent Central Processing Unit package. Within each processor, there is a nested hierarchy of computational and caching elements. Specifically, 'Processor one' contains several 'Core' blocks, starting from 'Core one' and extending to 'Core K'. Each 'Core' block, positioned above, features two green shaded square units, representing the execution pipelines or processing elements. Directly below these core execution units, there are hierarchical cache levels. The 'L one' cache, a smaller, faster cache, is private to each core. It is directly connected to the core's execution units. Below the 'L one' cache, each core has an 'L two' cache, which serves as a second level of high-speed memory for that core. Further down in the hierarchy, shared by all cores within a single 'Processor' block, is a larger 'L three' cache. This 'L three' cache acts as a unified, inclusive cache for all the 'L one' and 'L two' caches within that processor, providing a faster path to data than main memory.
+
+The defining characteristic of the U M A architecture is that all 'Processor' blocks, including their internal caching structures, connect to a central, elliptical 'Global Interconnect'. This interconnect, acting as a shared bus or crossbar switch, then connects downward to multiple 'Memory Bank' blocks, labeled 'Memory Bank one' through 'Memory Bank M'. The significance of this global interconnect is that it provides a logically flat memory address space where any processor can access any memory location in any memory bank with approximately the same latency. This uniform access simplifies software development, as programmers do not need to consider data placement for optimal performance. However, this shared interconnect is also the primary bottleneck. As the number of processors or cores increases, contention for the bus bandwidth grows, limiting scalability. Cache coherence protocols, such as M E S I or M O E S I, are critically important in U M A systems to ensure data consistency across the various 'L one', 'L two', and 'L three' caches that might hold copies of the same memory line.
+
+Now, let us turn our attention to the N U M A architecture presented in the bottom diagram, Figure two point two, which addresses the scalability limitations of U M A. The overall layout appears similar, with 'Processor' blocks, from 'Processor one' to 'Processor N', occupying the top portion. Within each 'Processor' block, the internal structure of cores and private caches, specifically 'L one' and 'L two', remains consistent with the U M A model. Each core, such as 'Core one' within 'Processor one', contains its green processing units, connected to its dedicated 'L one' cache, which then connects to its 'L two' cache. An 'L three' cache, represented as a wide rectangle, is still associated with each processor and serves as the highest level of shared cache within that processor.
+
+The crucial architectural divergence in N U M A lies in the direct connection between each 'Processor' block and its own dedicated 'Memory Bank'. For instance, 'Processor one' is directly connected to 'Memory Bank one', and 'Processor N' is directly connected to 'Memory Bank N'. This creates distinct "nodes," each comprising a processor, its hierarchical caches, and a portion of the main memory that is local to it. Accessing this local memory is significantly faster because the data path is direct and avoids the global interconnect. All these individual processor and local memory nodes are then connected to a 'Global Interconnect', depicted as a central ellipse. This global interconnect serves as the communication fabric for inter node memory access. When a processor needs to access data residing in a 'Memory Bank' associated with a *different* processor, the request must traverse this global interconnect, incurring higher latency. This difference in access time, dependent on whether the memory is local or remote, defines Nonuniform Memory Access.
+
+The N U M A design offers superior scalability compared to U M A because it distributes memory bandwidth across multiple nodes. As more nodes are added, the total aggregate memory bandwidth increases, mitigating the single bus bottleneck. However, this scalability comes at the cost of increased programming complexity. To achieve optimal performance in a N U M A system, software must be designed with an awareness of the memory topology. Operating systems and applications must employ techniques such as memory affinity, where threads are scheduled on cores closest to the memory they frequently access, and data placement strategies, where data structures are allocated in memory banks local to the processors that primarily operate on them. Cache coherence in N U M A systems is more intricate due to the distributed nature of memory and caches. These systems typically employ directory-based coherence protocols, where a centralized or distributed directory tracks the state and location of cached data blocks across all nodes to ensure consistency. In essence, while U M A prioritizes programming simplicity with uniform access, N U M A prioritizes high scalability for large systems by accepting non-uniform access latencies, shifting the burden of optimization towards software and memory management.

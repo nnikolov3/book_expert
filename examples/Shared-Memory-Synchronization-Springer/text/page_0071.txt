@@ -1,0 +1,94 @@
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+no best words!!
+4.3 Queued Spin Locks 73
+
+tail next
+
+E
+
+on
+
+(2)
+
+ju
+>
+| ∣
+
+≺∍≻∟
+
+−−−−−−−−
+
+≺∠⇂≻∟
+
+> −
+oy)
+
+=
+
+∎∎
+
+∩
+
+=
+
+∎∎
+
+≺⋝≻∟
+
+Figure 4.11 Operation of the K42 MCS lock. An ‘R’ (running) indicates a null “tail” pointer; ‘W’
+indicates a “waiting” flag. Dashed boxes indicate gqnodes that are no longer needed, and may safely
+be freed by returning from the method in which they were declared. In (1) the lock is free. In (2) a
+single thread is active in the critical section. In (3) and (4) two new threads have arrived. In (5) thread
+A has finished and thread B is now active.
+
+pointer with a pointer to the lock variable itself, indicating that the lock is held, but that no
+other threads are waiting. At this point, newly arriving thread B (line 3) will see the lock
+variable as its “predecessor,” and will update the next field of the lock rather than that of A’s
+gnode (as it would have in a regular MCS lock). When thread C arrives (line 4), it updates
+B’s next pointer, because it obtained a pointer to B’s gnode when it performed a CAS on
+the tail field of the lock. When A completes its critical section (line 5), it finds B’s gnode
+by reading the head field of the lock. It then changes B’s “head” pointer (which serves as
+a waiting flag) to null, thereby releasing B. Upon leaving its spin, B updates the head field
+of the lock to refer to C’s gnode. Assuming no other threads arrive, when C completes its
+critical section it will return the lock to the state shown in line 1.
+
+The careful reader may notice that the code of Figure 4.10 has a lock-free (not wait-free)
+entry protocol, and thus admits the (remote, theoretical) possibility of starvation. This can
+be remedied by replacing the original CAS with a swap, but a thread that finds that the lock
+was previously free must immediately follow up with a CAS, leading to significantly poorer
+performance in the (presumably common) uncontended case. A potentially attractive hybrid
+strategy starts with a load of the tail pointer, following up with a CAS if the lock appears to
+be free and a swap otherwise.
+Four point three Queued Spin Locks
+
+Figure four point eleven illustrates the operation of the K forty two M C S lock. An 'R' running indicates a null tail pointer; 'W' indicates a waiting flag. Dashed boxes indicate qnodes that are no longer needed, and may safely be freed by returning from the method in which they were declared. In panel one, the lock is free. The diagram shows the lock's 'tail' pointer linked to a qnode 'L', which has a null 'next' pointer. In panel two, a single thread 'A' is active in the critical section. The lock's 'tail' still points to 'L', and 'L' now points to 'A', which is in the running state 'R'. In panel three, a new thread 'B' has arrived. The lock's 'tail' pointer now points to 'B', and 'A' now points to 'B', which is in the waiting state 'W'. In panel four, another new thread 'C' has arrived. The lock's 'tail' pointer now points to 'C', and 'B' now points to 'C', which is in the waiting state 'W'. In panel five, thread 'A' has finished, indicated by a dashed box around 'A' with 'R'. Thread 'B' is now active, indicated by a dashed box around 'B' with 'R'. The lock's 'tail' still points to 'C', and 'B' now points to 'C'.
+
+pointer with a pointer to the lock variable itself, indicating that the lock is held, but that no other threads are waiting. At this point, newly arriving thread B, as shown in line three, will see the lock variable as its predecessor, and will update the next field of the lock rather than that of A's qnode, as it would have in a regular M C S lock. When thread C arrives, as shown in line four, it updates B's next pointer, because it obtained a pointer to B's qnode when it performed a C A S on the tail field of the lock. When A completes its critical section, as shown in line five, it finds B's qnode by reading the head field of the lock. It then changes B's head pointer, which serves as a waiting flag, to null, thereby releasing B. Upon leaving its spin, B updates the head field of the lock to refer to C's qnode. Assuming no other threads arrive, when C completes its critical section it will return the lock to the state shown in line one.
+
+The careful reader may notice that the code of Figure four point ten has a lock free, not wait free, entry protocol, and thus admits the remote, theoretical, possibility of starvation. This can be remedied by replacing the original C A S with a swap, but a thread that finds that the lock was previously free must immediately follow up with a C A S, leading to significantly poorer performance in the presumably common uncontended case. A potentially attractive hybrid strategy starts with a load of the tail pointer, following up with a C A S if the lock appears to be free and a swap otherwise.
+The depicted figure illustrates the operational sequence of a K forty two M C S queued spin lock, a sophisticated synchronization primitive designed to enhance scalability and fairness in highly contended concurrent systems. Unlike a simple test and set spin lock, which can generate substantial cache coherence traffic as multiple processors contend for a single cache line, a queued spin lock distributes contention by allowing each waiting thread to spin on its own distinct memory location. This fundamental shift reduces bus contention and improves overall system throughput.
+
+At its core, the M C S lock, named after M C A L P I N E, C A R E Y, and S C H N E I D E R, utilizes a linked list of queue nodes, or qnodes, where each waiting thread adds itself to the tail of the list and spins on a flag within its own qnode. This mechanism ensures first in, first out fairness and significantly mitigates the performance degradation associated with cache line bouncing in traditional spin locks.
+
+Let us dissect the sequence of operations presented in the figure, which visually charts the lock's state transitions:
+
+In **Diagram one**, positioned at the top of the illustration, the lock is depicted in its initial free state. We observe a central lock variable, labeled 'L', which contains two primary fields: 'tail' and 'next'. The 'tail' pointer, pointing to the right, currently indicates a null value, represented by a horizontal line, signifying that no threads are currently queued or holding the lock. The 'next' field is implicitly empty or irrelevant in this state. This configuration represents an available lock ready for acquisition.
+
+Moving to **Diagram two**, located beneath the first, a single thread, identified as 'A', attempts to acquire the lock. Thread A creates its own qnode, depicted as a rectangular box labeled 'A' with a dashed outline, indicating it is not yet fully integrated into the active lock structure. This qnode for thread A initially holds an 'R' within a dashed box, denoting that it is currently "running" within the critical section. The process of acquisition typically involves an atomic compare and swap, or C A S, operation on the lock's 'tail' pointer. Thread A attempts to swing the 'tail' pointer from its null state to point to A's qnode. Upon successful C A S, thread A's qnode effectively becomes the lock's active qnode. The qnode itself contains a 'next' pointer, which in this initial state would be null, and a 'pred' or predecessor field (not explicitly shown but implied in M C S), which would hold the value of the previous 'tail' (null in this case). The 'R' flag signifies that thread A has successfully entered the critical section.
+
+**Diagram three**, situated below Diagram two, illustrates a scenario where a second thread, 'B', attempts to acquire the lock while thread 'A' is still holding it. Thread 'B' creates its own qnode, represented by a solid rectangular box labeled 'B', which initially contains a 'W' flag, signifying it is "waiting." When 'B' attempts to perform a C A S on the lock's 'tail', it finds that 'tail' already points to 'A's qnode. Consequently, 'B' atomically updates 'A's 'next' pointer to point to 'B's qnode, effectively linking itself to the end of the queue. The lock's 'tail' pointer then swings to point to 'B's qnode. Thread 'B' now spins on a flag within its own qnode, waiting for its predecessor 'A' to signal its release. The curved arrow originating from the 'next' field of 'A' and pointing to 'B' visually represents this queueing action.
+
+In **Diagram four**, positioned directly below Diagram three, a third thread, 'C', enters the system and attempts to acquire the lock. Similar to 'B', thread 'C' creates its qnode, now a solid rectangular box labeled 'C' also containing a 'W' for waiting. 'C' attempts to C A S the lock's 'tail' pointer, discovering it currently points to 'B's qnode. 'C' then atomically updates 'B's 'next' pointer to point to its own qnode, linking itself to the end of the queue. The lock's 'tail' pointer then updates to point to 'C's qnode. This extends the linked list of waiting qnodes, with 'A' at the head, followed by 'B', and then 'C'. Both 'B' and 'C' are in a waiting state, indicated by their 'W' flags.
+
+Finally, **Diagram five**, the last diagram in the sequence, illustrates the release of the lock by thread 'A' and its subsequent acquisition by thread 'B'. When thread 'A' completes its critical section, it begins the release process. First, it reads the 'head' field of the lock to determine if there are any successors. If 'A' has a successor, which 'B' is in this case, 'A' will effectively "hand off" the lock to 'B'. This involves 'A' changing its own head pointer, or setting a flag in 'B's qnode, to transition 'B' from a 'W' (waiting) state to an 'R' (running) state. The diagram shows 'B's qnode now with an 'R' in a dashed box, indicating it has become the active thread in the critical section, and 'A's qnode is now dashed, signifying it is no longer active. The lock's 'tail' pointer, originally pointing to 'C', remains pointing to 'C', as 'C' is still the last in the queue. The key is that 'B' no longer spins and proceeds into its critical section. The arrows show that the lock's main 'L' pointer has effectively swung to point to 'B', and 'B's 'next' pointer continues to point to 'C'. This sequential handoff from predecessor to successor is a hallmark of queued spin locks.
+
+The underlying principles of the K forty two M C S lock revolve around distributed spinning and fine grained synchronization. By having each thread spin on its own qnode's status flag rather than a global lock variable, cache line invalidations are localized, reducing cross core traffic and improving performance, especially in multicore or manycore architectures. This design effectively mitigates the "hot spot" problem common in centralized spin locks.
+
+The text further elaborates on the lock acquisition process. A newly arriving thread, such as 'B' in Diagram three, sees the lock variable pointing to the qnode of the current lock holder, 'A'. 'B' then updates 'A's 'next' field to point to its own qnode and sets the lock's 'tail' pointer to its own qnode. This atomic sequence ensures the correct ordering in the queue. Upon 'A' completing its critical section (as in Diagram five), it reads the head field of the lock. If it finds its 'next' pointer points to 'B's qnode, it updates a flag in 'B's qnode, effectively signaling 'B' to proceed. 'B', which was spinning on its qnode's flag, now detects this change, acquires the lock, and sets its own 'head' pointer to null, effectively becoming the new head of the queue. This is a crucial aspect of the hand-off. When 'C' completes its critical section, it would likewise update 'B's 'next' pointer if 'B' were its predecessor, returning the lock to the state shown in Diagram one if no other threads are waiting.
+
+It is critical to note that the K forty two M C S lock is considered lock free but not wait free. A lock free algorithm guarantees that system wide progress is made, meaning at least one thread will complete its operation in a finite number of steps, even if other threads are temporarily delayed. However, it does not guarantee that every individual thread will make progress. The "remote, theoretical possibility of starvation" mentioned for the code in Figure four point ten (not shown here) highlights a potential vulnerability where a thread might repeatedly fail its C A S operation if it is consistently preempted or loses races for the lock. This is distinct from wait freedom, which would guarantee that every thread makes progress within a bounded number of steps, regardless of contention or scheduling. The suggested remediation, employing a C A S with a swap or a hybrid strategy, aims to improve performance in uncontended cases by attempting a direct C A S on the lock's tail, avoiding the queueing overhead if the lock is free. If that fails, it then reverts to the standard queueing mechanism. This pragmatic approach balances performance for common cases with robustness under contention.

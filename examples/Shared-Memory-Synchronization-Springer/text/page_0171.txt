@@ -1,0 +1,65 @@
+8.7 Safe Memory Reclamation (SMR) 175
+
+In this case, we are retiring a node that 1s technically still pointed to by the data structure,
+since the CAS stored (Clean, desc), but a thread that sees the Clean state will never access
+any field of desc, so itis functionally the same as if we had removed the last pointer to desc.
+
+Finally, to facilitate DeleteFlag descriptor reclamation, at the end of help_marked we
+check if the unflagging CAS has succeeded, and if so call retire(desc). As in the previous
+case, technically desc is still pointed to by the data structure, but no thread will dereference
+that pointer. Similarly, the deleted node still points to desc, but that pointer has state Mark,
+and no thread will dereference a pointer with state Mark. These are the only two nodes that
+can point to desc, so we have effectively removed all pointers. Note that retire does not
+immediately free a node. Rather, a node will be freed at some later time when no thread has
+(or will follow) a private pointer to it. Figure 8.20 depicts a simplified example execution of
+the EFRB tree with EBR, showing how nodes are reclaimed.
+
+Liveness of Reclamation EBR can be implemented without any locks or blocking, but it
+reclaims memory only as long as all threads make progress. Performance is often excellent,
+but when there are more threads than processor cores there may be long delays between the
+times when certain threads participate in the EBR algorithm. If one thread stops participating,
+then other threads can continue performing data structure operations, but memory will not
+be reclaimed. Of course, if memory is not reclaimed, and threads continue to allocate new
+nodes forever, eventually the system will run out of memory. This is the main drawback of
+EBR: it does not bound the amount of unreclaimed garbage. Various improvements to EBR
+have been proposed to tackle this issue.
+
+DEBRA + In DEBRA+ (Brown 2015), if a slow thread T is preventing reclamation, other
+threads will neutralize T by sending POSIX signals to it. DEBRA+ bounds garbage and
+would be lock-free in a hypothetical system with lock-free signals. Upon receipt of a sig-
+nal, 7 will immediately forget all of its pointers and jump to special recovery code. This
+recovery code is responsible for repairing any potential inconsistencies in the data structure
+that were created by neutralizing T'. The insight in DEBRA+ is that mechanisms for repair-
+ing inconsistencies already exist in many lock-free data structures where threads help one
+another.
+
+Data structure compatibility with EBR
+
+The assumption that threads are quiescent between operations precludes data structures in which,
+for example, a thread remembers a pointer it read in one search operation, and uses that pointer in a
+later search operation to speed up its traversal. For example, one could imagine a sorted linked list
+in which a thread always remembers a pointer to the last node L that was visited by its last search.
+When starting a new search for a key k, a thread can first check whether L is still in the list, and if
+so, can compare k with the key of L. If k is greater than or equal to L’s key, then the search can start
+at L instead of the head. Despite this limitation, EBR is one of the most widely applicable memory
+reclamation techniques, and is usable with many popular data structures.
+Eight point seven Safe Memory Reclamation S M R.
+
+In this case, we are retiring a node that is technically still pointed to by the data structure, since the C A S stored clear desc, but a thread that sees the Clear state will never access any field of desc, so it is functionally the same as if we had removed the last pointer to desc. Finally, to facilitate DeleteFlag descriptor reclamation, at the end of help marked we check if the unflagging C A S has succeeded, and if so call retire desc. As in the previous case, technically desc is still pointed to by the data structure, but no thread will dereference that pointer. Similarly, the deleted node still points to desc, but that pointer has state Mark, and no thread will dereference a pointer with state Mark. These are the only two nodes that can point to desc, so we have effectively removed all pointers. Note that retire does not immediately free a node. Rather, a node will be freed at some later time when no thread has or will follow a private pointer to it. Figure Eight point twenty depicts a simplified example execution of the E F R B tree with E B R, showing how nodes are reclaimed.
+
+Liveness of Reclamation E B R can be implemented without any locks or blocking, but it reclaims memory only as long as all threads make progress. Performance is often excellent, but when there are more threads than processor cores there may be long delays between the times when certain threads participate in the E B R algorithm. If one thread stops participating, then other threads can continue performing data structure operations, but memory will not be reclaimed. Of course, if memory is not reclaimed, and threads continue to allocate new nodes forever, eventually the system will run out of memory. This is the main drawback of E B R. it does not bound the amount of unreclaimed garbage. Various improvements to E B R have been proposed to tackle this issue.
+
+D E B R A plus. In D E B R A plus, Brown two thousand fifteen, if a slow thread T is preventing reclamation, other threads will neutralize T by sending P O S I X signals to it. D E B R A plus bounds garbage and would be lock free in a hypothetical system with lock free signals. Upon receipt of a signal, T will immediately forget all of its pointers and jump to special recovery code. This recovery code is responsible for repairing any potential inconsistencies in the data structure that were created by neutralizing T. The insight in D E B R A plus is that mechanisms for repairing inconsistencies already exist in many lock free data structures where threads help one another.
+
+Data structure compatibility with E B R.
+
+The assumption that threads are quiescent between operations precludes data structures in which, for example, a thread remembers a pointer it read in one search operation, and uses that pointer in a later search operation to speed up its traversal. For example, one could imagine a sorted linked list in which a thread always remembers a pointer to the last node L that was visited by its last search. When starting a new search for a key k, a thread can first check whether L is still in the list, and if so, can compare k with the key of L. If k is greater than or equal to L's key, then the search can start at L instead of the head. Despite this limitation, E B R is one of the most widely applicable memory reclamation techniques, and is usable with many popular data structures.
+The discussion delves into safe memory reclamation techniques, specifically addressing scenarios where data structures retain pointers to nodes that are logically removed but not yet physically deallocated.  The primary challenge is to ensure that no thread attempts to dereference a pointer to a node that has been reclaimed, which would lead to undefined behavior or program crashes.
+
+One approach described involves a scheme where a node, after being logically removed, is marked with a "Mark" state. A thread attempting to reclaim a node first checks if its associated descriptor contains a "Clean" state. If the state is "Clean," it implies no other thread is currently referencing the node, and the node can be safely reclaimed. However, if the node has a "Mark" state, it indicates that another thread has marked it for reclamation. Such a thread, upon seeing the "Mark" state, will defer its reclamation attempt. The text highlights that only two nodes can point to a descriptor: one that has been logically removed and another that is being logically removed. When a node is freed, it implies that all threads have retired or moved past it.
+
+A critical aspect of memory reclamation is ensuring liveness, meaning that reclaimed memory should not be excessively delayed. Epoch-based reclamation, or E B R, is presented as a method that avoids explicit locking or blocking. Its performance is generally excellent, as memory reclamation can occur promptly if there are no threads actively participating in data structure operations or if these threads complete their operations efficiently. However, a potential drawback arises when there are significantly more threads than processor cores, leading to long delays between thread completions. If a thread stops participating in the E B R algorithm, it can continue performing data structure operations without its memory being reclaimed. This scenario can lead to memory exhaustion if the system continues to allocate new nodes without freeing the old ones, effectively resulting in a memory leak. To address this, improvements to E B R have been proposed.
+
+The DEBRA+ system is introduced as a refinement that handles slow threads by sending POSIX signals. In this system, a slow thread T, when it receives a signal, is effectively neutralized. The DEBRA+ approach ensures that the system remains lock-free, with the neutralized thread T immediately executing special recovery code. This recovery code is responsible for repairing any potential inconsistencies in the data structure that might have been introduced by the neutralization process. The core insight of DEBRA+ is that these repair mechanisms are often already present in many lock-free data structures, where threads assist each other.
+
+The section on "Data structure compatibility with E B R" discusses a crucial assumption: that threads are quiescent between operations. This quiescence allows for techniques like memory reclamation. The text illustrates a scenario where a thread remembers a pointer to the last node L visited during a search operation. For a subsequent search for a key K, the thread can first check if L is still in the list and if its key is greater than or equal to K. If these conditions are met, the search can commence from L rather than the head of the data structure, potentially speeding up the traversal. This optimization is particularly useful in sorted linked lists. Despite this specific limitation, E B R is highlighted as a widely applicable memory reclamation technique, compatible with numerous common data structures.

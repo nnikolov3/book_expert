@@ -1,0 +1,73 @@
+8.6 Search Trees 167
+
+restarting from the beginning.> CAS steps (d) through (f) might be performed by helpers;
+with some care, one can argue that only the first CAS executed in each step (by any helper,
+including the thread that started the delete) can succeed. Once both nodes are “locked,” the
+operation 1s guaranteed to succeed.
+
+Helping Helping an insert operation O entails inspecting O’s descriptor and performing
+steps (d) and (e) shown in Figure 8.16. Helping a delete operation O entails inspecting
+O's descriptor and performing steps (d), (e) and (f) shown in Figure 8.17. Note that help-
+ing delete involves “locking” a node (parent), whereas helping insert does not. For a
+given DeleteFlag descriptor, the parent node can be “locked” successfully by at most one
+helper (including the thread that initially started the delete), because all helpers use the
+parentUpdate value saved in the DeleteFlag descriptor as the expected value for their
+“locking” CAS. This shared expected value avoids scenarios in which a slow helper might
+wake up after sleeping for a long time, “lock” the parent, and inappropriately modify it,
+long after the delete is over.
+
+Note that helping does not trivially guarantee lock-free progress. Helping an insert oper-
+ation always results in forward progress, since an insert is guaranteed to succeed once it
+successfully flags a node (and it cannot be helped until it has flagged a node). However,
+delete operations might fail to mark the parent after successfully flagging the gparent.
+The progress proof for the EFRB tree, which appears in the authors’ technical report (Ellen
+et al. 2010b), is quite subtle. Intuitively, a delete can fail because a lock-free “lock” it wants
+to acquire is already held by another operation deeper in the tree, but eventually, some thread
+must hold the deepest lock in the tree and thus make progress.
+
+Time Complexity Analyzing the worst-case time complexity of concurrent data structures
+1s extremely difficult, because the time taken by an operation may depend on the actions of
+concurrent threads (which may in turn depend on how threads are scheduled to run). In fact,
+in a lock-free data structure, the time to complete a given operation can be unbounded, if the
+operation is starved by other operations (some of which do complete in bounded time). For
+this reason, it often makes sense to amortize the worst-case time complexity over a sequence
+of operations instead.
+
+The paper that introduced the EFRB tree did not present any complexity analysis, but
+follow-up work by Ellen et al. (2014) showed that the original EFRB tree has a rather poor
+worst-case amortized time complexity of O (hc) steps per operation, where A 1s the height
+of the tree at the start of the operation, and c is the number of concurrent threads. The cause
+of this poor complexity is the fact that operations search again from the root whenever they
+encounter contention.
+
+> In this case, the descriptor cannot be immediately freed or reused once the delete restarts, since it
+was made reachable from parent.update. Instead, it must be freed using a safe memory reclamation
+algorithm for nonblocking data structures.
+
+®Ifa helper fails the CAS in step (d) because parent is “locked” by a different operation, the helper
+also tries to “unlock” gparent using CAS. Only the first such CAS can succeed, and only if no helper
+performed a successful CAS in step (d).
+Search Trees. Restarting from the beginning, CAS steps d through f might be performed by helpers. With some care, one can argue that only the first CAS executed in each step by any helper, including the thread that started the delete, can succeed. Once both nodes are locked, the operation is guaranteed to succeed.
+
+Helping. Helping an insert operation O entails inspecting O's descriptor and performing steps d and e shown in Figure eight point sixteen. Helping a delete operation O entails inspecting O's descriptor and performing steps d, e, and f shown in Figure eight point seventeen. Note that helping insert involves locking a node, the parent, whereas helping insert does not. For a given DeleteFlag descriptor, the parent node can be locked successively by at most one helper, including the thread that initially started the delete, because all helpers use the parent update value saved in the DeleteFlag descriptor as the expected value for their locking CAS. This shared expected value avoids scenarios in which a slow helper might wake up after sleeping for a long time, lock the parent, and inappropriately modify it, long after the delete is over.
+
+Note that helping does not trivially guarantee lock free progress. Helping an insert operation always results in forward progress since an insert is guaranteed to succeed once it successfully flags a node and it cannot be helped until it has flagged a node. However, delete operations might fail to mark the parent after successfully flagging the gparent. The progress proof for the E F R B tree, which appears in the authors' technical report Ellen at al. two thousand ten b, is quite subtle. Intuitively, a delete can fail because a lock free lock it wants to acquire is already held by another operation deeper in the tree, but eventually, some thread must hold the deepest lock in the tree and thus make progress.
+
+Time Complexity. Analyzing the worst case time complexity of concurrent data structures is extremely difficult, because the time taken by an operation may depend on the actions of concurrent threads, which may in turn depend on how threads are scheduled to run. In fact, in a lock free data structure, the time to complete a given operation can be unbounded if the operation is starved by other operations, some of which do complete in bounded time. For this reason, it often makes sense to amortize the worst case time complexity over a sequence of operations instead.
+
+The paper that introduced the E F R B tree did not present any complexity analysis, but follow up work by Ellen at al. two thousand fourteen showed that the original E F R B tree has a rather poor worst case amortized time complexity of O of h c steps per operation, where h is the height of the tree at the start of the operation, and c is the number of concurrent threads. The cause of this poor complexity is the fact that operations search again from the root whenever they encounter contention.
+
+In this case, the descriptor cannot be immediately freed or reused once the delete restarts, since it was made reachable from parent update. Instead, it must be freed using a safe memory reclamation algorithm for nonblocking data structures.
+
+If a helper fails the CAS in step d, because parent is locked by a different operation, the helper also tries to unlock gparent using CAS. Only the first such CAS can succeed, and only if no helper performed a successful CAS in step d.
+The discussion centers on the intricacies of concurrent data structures, specifically focusing on operations within search trees and their time complexity.
+
+The initial paragraphs address the concept of "helping" in the context of concurrent operations, particularly focusing on how one operation might assist another to progress. For instance, when an insertion operation is being performed, a helper thread might be involved. The text describes that CAS, or Compare and Swap, operations are fundamental to achieving lock-free progress. These operations are atomic, meaning they are indivisible and occur as a single uninterruptible unit. A CAS operation typically takes a current value, an expected value, and a new value. If the current value matches the expected value, the new value is written; otherwise, the operation fails.
+
+When multiple threads attempt to modify the same data concurrently, issues can arise. The text explains that CAS steps (d) through (f) may need to be re-executed by helpers if the initial operation isn't successful. One can argue that only the first CAS operation that successfully modifies the data will commit. If both the original thread and a helper thread attempt to modify the same data, and if their operations are not properly coordinated, it can lead to race conditions. The concept of "locking" a node is mentioned, which, in a lock-free context, is achieved using CAS operations rather than traditional locks. A helper assisting an insertion operation involves inspecting the descriptor of the operation. If this descriptor indicates a pending deletion, the helper might be tasked with completing parts of that deletion. The text notes that a helper performing an insert operation might incorrectly assume a node is still valid if a slow delete operation hasn't yet updated the node's state, potentially leading to the helper operating on stale data. This shared expectation value mechanism aims to prevent such problematic scenarios.
+
+The discussion then delves into the challenges of guaranteeing progress in lock-free data structures. While an insert operation might be guaranteed to succeed once it flags a node, concurrent operations can interfere. For example, a delete operation might fail to mark a parent node correctly if another operation has already modified it, causing the delete to restart. The progress proof for the described data structure, an EFRB tree, is noted as being quite subtle. Intuitively, a delete operation can fail if another operation has already acquired a "lock" on the parent node, preventing the delete from proceeding. This highlights the complex interactions and dependencies that must be managed in concurrent environments.
+
+The section on Time Complexity underscores the difficulty in precisely analyzing the worst-case time complexity of concurrent data structures. The time taken for an operation can be highly variable and dependent on the scheduling of threads and the actions of other concurrent operations. In lock-free data structures, an operation's completion time is not bounded by the presence of locks, but rather by the actions of other threads. If an operation is continuously delayed or "starved" by other operations, its completion time can become unbounded. Therefore, it is often more meaningful to consider the amortized worst-case time complexity over a sequence of operations, rather than focusing on the worst-case for a single isolated operation. The text references prior work on EFRB trees, noting that the original EFRB tree had a rather poor worst-case amortized time complexity, which was often described as O of HC, where H is the height of the tree and C is the number of concurrent threads. The cause for this inefficiency is attributed to contention, where multiple threads compete for access to the same data, often requiring them to re-search from the root whenever they encounter such contention.
+
+Footnotes provide additional context. Footnote five explains that in a particular scenario, a descriptor cannot be immediately freed or reused after a parent update until a safe memory reclamation mechanism, such as epoch-based reclamation or hazard pointers, explicitly allows it. Footnote six clarifies a situation where a helper fails a CAS operation because the parent is "locked" by a different operation, and in such cases, the helper might attempt to "unlock" the parent, but only the first such attempt that successfully modifies the parent is effective.

@@ -1,0 +1,67 @@
+9.1 Software TM 191
+
+roll back to. Variables that are private but were created outside the transaction will need
+to be rolled back. Because no other thread can modify them, it suffices to checkpoint their
+values at the beginning of the transaction, and simply restore them on abort: no per-access
+Instrumentation is required.
+
+Compilers may use conservative static analysis to distinguish between private and shared
+data. Any access that might be to shared data must be instrumented. Any pre-existing private
+variable that might be modified in the transaction must be checkpointed (and restored on
+abort)—unless every store that might access it is instrumented.
+
+Dynamically allocated data require special treatment. Malloc and free (or their equiva-
+lents) can be made transaction-safe. Data malloced in an aborted transaction must be freed.
+Data freed in a transaction must be kept in limbo until we know whether the transaction
+will commit. With lazy conflict resolution, freed data is probably best kept in limbo until
+all potentially concurrent transactions have completed.
+
+As noted above, most TM systems are prone to false sharing—accesses to disjoint data
+that are covered by the same metadata. Here the mismatch between access and metadata
+granularity may lead to unnecessary aborts. Granularity is also a problem for redo and undo
+logging. Suppose that transaction A stores to byte b of word w, and that nontransactional
+code stores to byte c. If the TM system logs accesses at full-word granularity, then the write-
+back of w on commit (in a redo-log system) or abort (in an undo-log system) may overwrite
+the nontransactionally updated value of c. Note that the example entails no data race between
+transactional and nontransactional code: the problem is one of implementation. To maintain
+correctness, either the compiler must ensure (via data structure layout) that transactional and
+nontransactional instructions never access different pieces of a logging-granularity block,
+or the TM system must log at the finest possible granularity. One possible optimization 1s
+to log at word granularity, but tag each logged word with per-byte dirty bits.
+
+9.1.3 Access Tracking and Conflict Resolution
+
+Two concurrent transactions conflict if they both access the same location and at least one
+of them writes it. Conflicts can be resolved by aborting either transaction or (in some cases)
+by stalling the transaction that makes its access second. Without prior knowledge of read
+and write sets (and without enforcing global mutual exclusion), a TM system must speculate
+(and be prepared to roll back) at least up to the first conflict. It can speculate beyond that
+point, but then write-write conflicts among transactions will eventually force all but one to
+abort, and read-write conflicts will force the reader(s) to abort if a writer commits first.
+There is a fundamental tradeoff between eager and lazy conflict resolution. Let us say
+that a conflict occurs at the time of the second of a pair of conflicting accesses. The conflict
+1s resolved when the TM system chooses which transaction will be given the chance to
+commit. (In some systems, there may be a point in-between at which the conflict is detected
+but not yet resolved.) With lazy conflict resolution, if transaction A eventually aborts, any
+9.1 Software T M 191
+
+roll back to. Variables that are private but were created outside the transaction will need to be rolled back. Because no other thread can modify them, it suffices to checkpoint their values at the beginning of the transaction, and simply restore them on abort: no per-access instrumentation is required.
+
+Compilers may use conservative static analysis to distinguish between private and shared data. Any access that might be to shared data must be instrumented. Any pre-existing private variable that might be modified in the transaction must be checkpointed (and restored on abort)—unless every store that might access it is instrumented.
+
+Dynamically allocated data require special treatment. Malloc and free (or their equivalents) can be made transaction-safe. Data malloced in an aborted transaction must be freed. Data freed in a transaction must be kept in limbo until we know whether the transaction will commit. With lazy conflict resolution, freed data is probably best kept in limbo until all potentially concurrent transactions have completed.
+
+As noted above, most T M systems are prone to false sharing—accesses to disjoint data that are covered by the same metadata. Here the mismatch between access and metadata granularity may lead to unnecessary aborts. Granularity is also a problem for redo and undo logging. Suppose that transaction A stores to byte B of word W, and that nontransactional code stores to byte C. If the T M system logs accesses at full-word granularity, then the write-back of W on commit (in a redo-log system) or abort (in an undo-log system) may overwrite the nontransactionally updated value of C. Note that the example entails no data race between transactional and nontransactional code: the problem is one of implementation. To maintain correctness, either the compiler must ensure (via data structure layout) that transactional and nontransactional instructions never access different pieces of a logging-granularity block, or the T M system must log at the finest possible granularity. One possible optimization is to log at word granularity, but tag each logged word with per-byte dirty bits.
+
+9.1.3 Access Tracking and Conflict Resolution
+
+Two concurrent transactions conflict if they both access the same location and at least one of them writes it. Conflicts can be resolved by aborting either transaction or (in some cases) by stalling the transaction that makes its access second. Without prior knowledge of read and write sets (and without enforcing global mutual exclusion), a T M system must speculate (and be prepared to roll back) at least up to the first conflict. It can speculate beyond that point, but then write-write conflicts among transactions will eventually force all but one to abort, and read-write conflicts will force the reader(s) to abort if a writer commits first.
+
+There is a fundamental tradeoff between eager and lazy conflict resolution. Let us say that a conflict occurs at the time of the second of a pair of conflicting accesses. The conflict is resolved when the T M system chooses which transaction will be given the chance to commit. (In some systems, there may be a point in-between at which the conflict is detected but not yet resolved.) With lazy conflict resolution, if transaction A eventually aborts, any
+This section delves into the intricacies of Software Transactional Memory, specifically focusing on its memory management and conflict resolution mechanisms. When private variables are created within a transaction, they are not subject to rollback if the transaction aborts. However, if a transaction needs to checkpoint its state, especially for non-per-access instrumentation, it must handle these private variables by restoring them to their initial values upon abort. Dynamically allocated data, including memory allocated via Mal L O C and freed, requires special attention. Data freed within a transaction that eventually commits must be kept in a limbo state until the transaction's completion to prevent premature deallocation. Lazy conflict resolution strategies dictate that freed data is likely best kept in limbo until all potentially concurrent transactions have finished.
+
+Transactional Memory systems are susceptible to the issue of false sharing, where transactions access disjoint data items that reside within the same memory block or cache line. This mismatch in access granularity, between the transactional granularity and the underlying memory system's granularity, can lead to unnecessary transaction aborts. For example, if a transaction writes to a single byte within a word, but the transactional system logs accesses at the word level, this can create false sharing. A redo log system might overwrite the entire word with the updated value, while an undo log system would log the change. The challenge then becomes one of implementation: either the compiler must ensure, through data structure layout, that transactional instructions never access different parts of the same logged block, or the transactional memory system must log accesses at the finest possible granularity, such as per-byte, to avoid such conflicts.
+
+Section nine point three, "Access Tracking and Conflict Resolution," addresses the core problem of concurrent transactions interacting. Two transactions conflict if they access the same memory location, with at least one of them performing a write operation. These conflicts can be resolved by aborting one of the transactions, effectively making its access the second one. Without a global mutual exclusion mechanism, a transactional memory system must speculate on access patterns. This means the system might speculatively proceed beyond an initial conflict, but it must be prepared to roll back if further conflicts arise. Specifically, write-write conflicts will force all but one transaction to abort, and read-write conflicts will force the reader to abort if the writer commits first.
+
+This introduces a fundamental trade-off between eager and lazy conflict resolution. The decision of which transaction to abort is often made at the time the second of a pair of conflicting accesses occurs. In some systems, there might be an intermediate point where a conflict is detected but not yet resolved. Lazy conflict resolution, in particular, might see a transaction eventually abort even if the conflict was not immediately apparent.

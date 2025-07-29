@@ -1,0 +1,78 @@
+62 4 Practical Spin Locks
+
+class lock
+atomic<bit> turn // 0 or1
+atomic<bool> interested[0..1] := { false, false }
+
+lock.acquire():
+T other := 1 — self
+interested[self].store(true,
+turn.store(self, |R)
+while interested[other].load(||R) and turn.load(||) # other; // spin
+fence(R||RW)
+
+lock.release():
+interested[self].store(false, RW||)
+
+W)
+
+Figure 4.1 Peterson’s 2-thread spin lock. Variable self must be either O or 1.
+
+To release the lock, thread i sets interested[self] back to false. This allows the other
+thread, if it 1s waiting, to enter the critical section. The initial value of turn in each round is
+immaterial: it serves only to break the tie when both threads are interested in entering the
+critical section.
+
+In his original paper, Peterson showed how to extend the lock to n threads by proceeding
+through a series of n — 1 rounds, each of which eliminates a possible contender. Total
+time for a thread to enter the critical section, however, is Q(n?), even in the absence of
+contention. In separate work, Peterson and Fischer (1977) showed how to generalize any 2-
+thread solution to n threads with a hierarchical fournament that requires only O (log n) time,
+even in the presence of contention. Burns and Lynch (1980) proved that any deadlock-free
+mutual exclusion algorithm using only loads and stores requires €2(n) space.
+
+Lamport’s Bakery Algorithm
+
+Most of the n-thread mutual exclusion algorithms based on loads and stores can be shown
+to be starvation free. Given differences in the relative rates of progress of different threads,
+however, most allow a thread to be bypassed many times before finally entering the critical
+section. In an attempt to improve fault tolerance, Lamport (1974) proposed a “bakery”
+algorithm (Figure 4.2) inspired by the “please take a ticket” and “now serving” signs seen
+at bakeries and other service counters. His algorithm has the arguably more significant
+advantage that threads acquire the lock in the order in which they first indicate their interest—
+1.e., in FIFO order.
+
+Each thread begins by scanning the number array to find the largest “ticket” value held
+by a waiting thread. During the scan it sets its choosing flag to true to let its peers know
+that its state 1s in flux. After choosing a ticket higher than any it has seen, it scans the
+array again, spinning until each peer’s ticket is (a) stable and (b) greater than or equal to its
+own. The second of these spins uses lexicographic comparison of (value, thread id) pairs
+to resolve any ties in the chosen tickets. The equals case in the comparison avoids the need
+Four Practical Spin Locks
+
+The following code defines a class named 'lock'. This class contains two atomic members: 'turn', which is a bit that can be zero or one, and 'interested', an atomic boolean array of size two, initialized with both elements set to false.
+
+The 'lock acquire' method proceeds as follows: A local variable 'other' is computed as one minus 'self'. The 'interested' array at the index 'self' is then set to true, with a write memory ordering. Next, the 'turn' variable is set to 'self', with a read memory ordering. The method then enters a spin loop. This loop continues as long as two conditions are met: first, the 'interested' array at the index 'other' evaluates to true after a read memory load, and second, the 'turn' variable, also after a load, is equal to 'other'. Inside this spin loop, a memory fence is executed with read or read write memory ordering.
+
+The 'lock release' method simply sets the 'interested' array at the index 'self' to false, with a read write memory ordering.
+
+Figure four point one: Peterson's two thread spin lock. The variable 'self' must be either zero or one.
+
+To release the lock, thread I sets 'interested index self' back to false. This allows the other thread, if it is waiting, to enter the critical section. The initial value of 'turn' in each round is immaterial; it serves only to break the tie when both threads are interested in entering the critical section.
+
+In his original paper, Peterson showed how to extend the lock to N threads by proceeding through a series of N minus one rounds, each of which eliminates a possible contender. Total time for a thread to enter the critical section, however, is Omega N squared, even in the absence of contention. In separate work, Peterson and Fischer, in nineteen seventy seven, showed how to generalize any two thread solution to N threads with a hierarchical tournament that requires only O log N time, even in the presence of contention. Burns and Lynch, in nineteen eighty, proved that any deadlock free mutual exclusion algorithm using only loads and stores requires Omega N space.
+
+Lamport's Bakery Algorithm
+
+Most of the N thread mutual exclusion algorithms based on loads and stores can be shown to be starvation free. Given differences in the relative rates of progress of different threads, however, most allow a thread to be bypassed many times before finally entering the critical section. In an attempt to improve fault tolerance, Lamport, in nineteen seventy four, proposed a "bakery" algorithm, depicted in Figure four point two, which was inspired by the "please take a ticket" and "now serving" signs seen at bakeries and other service counters. His algorithm has the arguably more significant advantage that threads acquire the lock in the order in which they first indicate their interest, that is, in F I F O order.
+
+Each thread begins by scanning the number array to find the largest "ticket" value held by a waiting thread. During the scan, it sets its 'choosing flag' to true to let its peers know that its state is in flux. After choosing a ticket higher than any it has seen, it scans the array again, spinning until each peer's ticket is A stable and B greater than or equal to its own. The second of these spins uses lexicographic comparison of value comma thread I D pairs to resolve any ties in the chosen tickets. The equals case in the comparison avoids the need to resolve any ties in the chosen tickets.
+The provided code snippet illustrates Peterson's two thread spin lock, a classical software based mutual exclusion algorithm that guarantees mutual exclusion, freedom from deadlock, and freedom from starvation for two concurrent processes. The `class lock` encapsulates the shared state required for synchronization. This state consists of two atomic variables: `turn`, an atomic bit initialized to either zero or one, which indicates whose "turn" it is to enter the critical section when both threads are interested; and `interested`, an array of two atomic boolean values, initially set to `false, false`, where each element `interested index self` signifies if a particular thread is attempting to enter the critical section.
+
+The `lock.acquire` method, which a thread invokes to gain exclusive access, begins by determining the `other` thread's identifier by subtracting its own `self` identifier from one. This simple arithmetic effectively toggles between zero and one. The thread then declares its interest in entering the critical section by performing an atomic store operation, `interested index self dot store true, double pipe W`. The `double pipe W` memory order indicates a release store, which ensures that all memory writes performed by this thread before this store become visible to other threads that subsequently acquire the lock. Following this, the thread performs another atomic store, `turn dot store self, double pipe R`, setting the `turn` variable to its own identifier. The `double pipe R` memory order indicates an acquire store, which acts as a barrier, making all prior writes visible and establishing a happens before relationship. The crucial part of the acquisition logic is the spin loop: `while interested index other dot load double pipe R and and turn dot load double pipe R is equal to other`. This loop causes the current thread to busy wait, or "spin," as long as two conditions are met: first, the `other` thread is also interested in entering the critical section as indicated by `interested index other dot load double pipe R` with acquire semantics, which makes sure this thread observes any writes made by the other thread that set its `interested` flag; and second, it is the `other` thread's turn, as indicated by `turn dot load double pipe R is equal to other`, again with acquire semantics. The `fence R double pipe W` instruction acts as a memory barrier, ensuring that all prior reads are completed before subsequent writes, and all prior writes are completed before subsequent reads, specifically enforcing ordering between reads and writes (`R W`). This is critical for correctness in weakly ordered memory models, ensuring the necessary visibility and ordering of operations across threads.
+
+Upon exiting the spin loop, the thread has successfully acquired the lock. When a thread finishes its critical section, it calls `lock.release`. This method simply sets its `interested` flag to `false` via `interested index self dot store false, R W double pipe`. The `R W double pipe` memory order typically implies sequential consistency or a strong release, guaranteeing that the relinquishing thread's critical section writes are made visible to any thread that subsequently acquires the lock. Peterson's algorithm's original form for two threads can be generalized to `n` threads using a hierarchical tournament structure, as demonstrated by Peterson and Fischer in nineteen seventy seven. While this extension guarantees mutual exclusion and freedom from deadlock, its time complexity for a thread to enter contention is `Omega n squared`. However, the tournament algorithm itself requires `O log n` time, but the overall `n` thread solution with `n` Peterson two thread locks leads to `Omega n squared` in the worst case. Burns and Lynch in nineteen eighty provided a proof that any deadlock free mutual exclusion algorithm relying solely on loads and stores requires `Omega n` space.
+
+Lamport's Bakery Algorithm is an advancement for the `n` thread mutual exclusion problem, renowned for its ability to guarantee starvation freedom. Unlike some other `n` thread solutions, the Bakery Algorithm ensures that threads acquire the lock in F I F O, or first in first out, order, thereby preventing any single thread from being perpetually bypassed. This algorithm draws an analogy from a bakery's queue system, where customers take a numbered ticket and wait for their number to be called. Each thread, upon wishing to enter the critical section, first sets a `choosing` flag to `true` to signal its intention. It then scans a shared `number` array, identifying the largest "ticket" value currently held by any other thread, and chooses a ticket number one greater than that maximum. This initial scan is a critical phase, as it ensures that new threads entering the queue receive a number larger than all existing numbers, facilitating the F I F O ordering.
+
+After choosing its ticket, the thread sets its `choosing` flag back to `false`, indicating that its number is now finalized. Subsequently, it enters a waiting phase, where it iterates through all other threads. For each peer thread, it waits until that peer's `choosing` flag is `false`, ensuring that the peer has already picked its number. Then, it compares its own chosen `value, thread id` pair lexicographically with the peer's `value, thread id` pair. If the peer has a smaller ticket number, or if the ticket numbers are equal but the peer's `thread id` is smaller (a tie breaking rule crucial for uniqueness and fairness), the current thread will yield and continue spinning. This lexicographical comparison based on the `value, thread id` pair ensures a total ordering of threads, effectively resolving any simultaneous ticket choices and guaranteeing that threads enter the critical section strictly in the order of their chosen tickets, with smaller `thread id` breaking ties for identical ticket numbers. This mechanism ensures strict F I F O entry, thereby preventing starvation, a significant advantage over algorithms that only guarantee bounded waiting without a strict order.

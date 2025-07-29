@@ -1,0 +1,57 @@
+7.5 Kernel/User Interactions 135
+
+signal or wait operation. This capability facilitates the management of stencil applications,
+in which a thread synchronizes with its neighbors at the end of each phase, but not with other
+threads. Neighbor-only synchronization is also supported, in a more limited fashion, by the
+topological barriers of Scott and Michael (1996). In the message-passing world, barrier-like
+operations are supported by the collective communication primitives of systems like MPI
+(Bruck et al. 1995), but these are beyond the scope of this monograph.
+
+7.5 Kernel/User Interactions
+
+Throughout this chapter, we have focused on scheduling as a means of implementing syn-
+chronization. It is also, however, a means of sharing some limited number of cores or kernel
+threads among a (usually larger) number of kernel or user threads. Fair sharing requires
+that user-level applications cross into the kernel when switching between kernel threads,
+introducing nontrivial overheads. Inopportune preemption—e.g., during a critical section—
+may introduce greater overheads. Resources required for synchronization (e.g., headers for
+queues of waiting threads) may constitute a significant burden for systems with large num-
+bers of synchronization objects. The subsections below address these issues in turn.
+
+7.5.1 Context Switching Overhead
+
+As we noted in Sec. 1.3, spinning is generally preferable to blocking when the expected wait
+time 1s less than twice the context-switching overhead. When switching between kernel
+threads in user space, this overhead can easily be hundreds of cycles, due to the cost of
+crossing into kernel mode and back. Some 30 years ago, Ousterhout (1982) suggested that
+a user-level thread that is unable to acquire a lock (or that is waiting for a currently-false
+condition) should spin for some modest amount of time before invoking the kernel-level
+scheduler, in the hope that it might avoid the context switch. Many widely used locks today,
+including most implementations of pthread locks and Java synchronized blocks, use
+spin-then-block techniques. Karlin et al. (1991) provide a detailed analysis of how long to
+spin before blocking; they demonstrate the value of dynamic adaptation, and prove bounds
+on worst-case performance.
+
+Of course, spinning in user space requires that the state of the lock be visible in user-
+level memory. This 1s natural for locking among threads of the same application, but not for
+threads in separate address spaces. Traditional interprocess locks, such as Unix System V
+semaphores, are implemented entirely within the kernel. The semget system call returns
+an opaque handle, which can be passed to P and V (semop). Spinning before blocking is
+simply not an option. Sadly, this implies an overhead of hundreds of cycles to acquire even
+an uncontended lock.
+7.5 Kernel User Interactions. This capability facilitates the management of stencil applications, in which a thread synchronizes with its neighbors at the end of each phase, but not with other threads. Neighbor only synchronization is also supported, in a more limited fashion, by the topological barriers of Scott and Michael (1996). In the message passing world, barrier like operations are supported by the collective communication primitives of systems like M P I (Bruck et al. 1995), but these are beyond the scope of this monograph.
+
+7.5 Kernel User Interactions. Throughout this chapter, we have focused on scheduling as a means of implementing synchronization. It is also, however, a means of sharing some limited number of cores or kernel threads among a (usually larger) number of kernel or user threads. Fair sharing requires that user level applications cross into the kernel when switching between kernel threads, introducing nontrivial overheads. Inopportune preemption, e.g., during a critical section, may introduce greater overhead. Resources required for synchronization (e.g., headers for queues of waiting threads) may constitute a significant burden for systems with large numbers of synchronization objects. The subsections below address these issues in turn.
+
+7.5.1 Context Switching Overhead. As we noted in Section 1.3, spinning is generally preferable to blocking when the expected wait time is less than twice the context switching overhead. When switching between kernel threads in user space, this overhead can easily be hundreds of cycles due to the cost of crossing into kernel mode and back. Some 30 years ago, Ousterhout (1982) suggested that a user level thread that is unable to acquire a lock (or that is waiting for a currently false condition) should spin for some modest amount of time before invoking the kernel level scheduler, in the hope that it might avoid the context switch. Many widely used locks today, including most implementations of pthreads locks and J ava synchronized blocks, use spin then block techniques. Karlin et al. (1991) provide a detailed analysis of how long to spin before blocking; they demonstrate the value of dynamic adaptation, and prove bounds on worst case performance. Of course, spinning in user space requires that the state of the lock be visible in user level memory. This is natural for locking among threads of the same application, but not for threads in separate address spaces. Traditional interprocess locks, such as Unix System V semaphores, are implemented entirely within the kernel. The semget system call returns an opaque handle, which can be passed to P and V (semop). Spinning before locking is simply not an option. Sadly, this implies an overhead of hundreds of cycles to acquire even an uncontended lock.
+The discussion delves into kernel user interactions, particularly concerning synchronization mechanisms within multi threaded environments.  The concept of signal or wait operations is fundamental, enabling threads to coordinate their execution.  Synchronization is crucial when multiple threads access shared resources to prevent race conditions.  Neighbor only synchronization, as mentioned, implies a restricted communication pattern where threads only synchronize with their immediate peers, often in a localized manner, contrasting with global synchronization strategies.  In message passing systems, such as those utilizing the Message Passing Interface, collective communication primitives abstract complex inter thread coordination patterns. These primitives, like barriers, ensure that all participating threads reach a certain point in their execution before any thread proceeds, thereby establishing a synchronization point.  The text highlights that such advanced synchronization mechanisms are beyond the immediate scope, suggesting a focus on more fundamental interactions.
+
+The section then expands on the role of scheduling in implementing synchronization. While scheduling primarily manages thread execution and resource allocation, it indirectly supports synchronization by determining which threads run and for how long. The interplay between kernel threads and user threads is significant here, as user level threads often rely on the kernel for scheduling and synchronization primitives. Fair sharing of processor resources among a large number of threads, whether kernel or user threads, is essential for system throughput and responsiveness. However, user level applications that frequently switch between user mode and kernel mode to access synchronization services can incur substantial overhead. This overhead, often referred to as context switching overhead, involves the cost of saving the state of one thread and restoring the state of another, including saving processor registers and updating the process control blocks.
+
+Inappropriate preemption, described as occurring during a critical section, is particularly detrimental. A critical section is a segment of code that accesses shared resources and must be executed atomically by a single thread at a time. If a thread holding exclusive access to a resource is preempted before releasing it, other threads waiting for that resource will be blocked unnecessarily. The resources required for synchronization, such as mutexes, semaphores, and condition variables, can also introduce overhead. The management of synchronization objects, like headers for synchronization, can become a significant burden, especially in systems with a large number of threads contending for these resources.
+
+The subsection on context switching overhead specifically addresses the performance implications of thread management. Spinning, a technique where a thread repeatedly checks for a condition (e.g., lock availability) rather than immediately yielding the processor, is generally preferred to blocking when the expected wait time is short. This is because spinning avoids the full cost of a context switch. However, the cost of context switching itself can be substantial, potentially being more than twice the cost of a simple user space thread switch. The performance advantage of spinning is thus directly related to minimizing these kernel transitions.
+
+The work by Ousterhout in nineteen eighty two suggested that if a thread is waiting for a condition that is expected to be met shortly, it should spin for a modest amount of time before resorting to blocking. This approach, termed spin then block, aims to amortize the cost of acquiring a lock or waiting for a condition across multiple threads. By spinning, a thread might be able to acquire the desired resource without involving the kernel scheduler, thereby avoiding a context switch. Many modern synchronization implementations, including pthreads locks and Java synchronized blocks, utilize variations of this spin then block strategy. Karlin et al. in nineteen ninety one provided a detailed analysis of dynamic adaptation in these schemes, demonstrating their effectiveness in improving performance by tuning the spin duration based on observed contention levels.
+
+The efficiency of spinning is directly tied to the visibility of the lock state in user level memory. Traditional interprocess locks and semaphores, such as those found in Unix System V, are typically implemented entirely within the kernel. This means that user threads must transition into kernel mode to interact with these synchronization primitives. Spinning on such kernel resident locks requires the user thread to repeatedly invoke system calls or perform memory accesses that are checked by the kernel, still incurring significant overhead. For instance, the semaphore system calls, such as P and V operations, require kernel intervention. Consequently, spinning before blocking to acquire an uncontended lock might still impose an overhead of hundreds of CPU cycles, as the system must perform the necessary checks and state updates within the kernel. This highlights the trade off between avoiding context switches and the intrinsic cost of kernel interactions even when attempting to spin.

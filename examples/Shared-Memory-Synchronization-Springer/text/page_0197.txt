@@ -1,0 +1,55 @@
+202 9 Transactional Memory
+
+instructions not supported in speculative mode. Exactly which instructions and exceptions
+will trigger an abort differs from machine to machine. Transactions on Sun’s Rock pro-
+cessor were particularly fragile: most subroutine calls or mispredicted branches would end
+the current transaction (Dice et al. 2009). Blue Gene/Q was particularly robust: uncached
+memory accesses and DMA requests were the only program behaviors that would force
+the TM system to interrupt a transaction (the operating system would also abort the current
+transaction on various interrupts and faults).
+
+Most of the proposals for “unbounded” hardware transactions have addressed not only
+the possibility of inadequate space for buffered updates but also inadequate time: the system
+generally provides a way to save the state of a transaction to memory at the end of a scheduling
+quantum and resume it the next time its thread gets to run. Among the HTM systems that
+have actually been built, only Blue Gene/Q allows transactions to survive a context switch.
+Most others abort the current transaction on any of the interrupts (e.g., timer expiration,
+device completion) that might end the current quantum.
+
+Power 8 (IBM 2012; Le et al. 2015) introduced a distinctive mechanism to suspend and
+resume the current transaction. While a transaction is suspended, loads and stores proceed
+nontransactionally. Most exceptions cause the current transaction to be suspended rather
+than aborted. The operating system can choose whether to resume the transaction after
+servicing the exception. If it decides to effect a context switch, a special instruction allows
+it to reclaim the processor state that was checkpointed at the beginning of the transaction.
+At the start of the next quantum, another special instruction allows the OS to re-checkpoint
+and resume the transaction, whereupon it will immediately abort and fall into its software
+handler (which can then retry, fall back to a software lock, etc., as appropriate).
+
+For mission-critical applications, IBM’s zTM (Jacobi et al. 2012) provided a special
+constrained transaction mode that was guaranteed to succeed, eventually, in hardware, with
+no software handler or fallback path. Constrained transactions are limited to a small total
+number of instructions (32 on the zEC12) with no backward branches, no subroutine calls,
+and a small (128 bytes on the ZEC12) memory access footprint. They are intended for small
+data structure updates—the sorts of things for which Herlihy and Moss TM (or Oklahoma
+Update) was originally intended. AMD’s Advanced Synchronization Facility (ASF) (AMD
+2009; Diestelhorst et al. 2010) envisioned a similar guarantee for small transactions.
+
+9.2.2 Speculative Lock Elision
+
+While proponents typically argue for TM as a way to simplify the construction of scalable
+parallel programs, this is not necessarily a compelling argument from the perspective of
+hardware vendors. Given the investment needed to add TM to an existing ISA—and to
+propagate it through all future generations—potential improvements in the performance
+of existing programs provide a much more compelling argument. Speculative lock elision
+(SLE) (Rajwar and Goodman 2001; Rajwar and Goodman 2002) is a use case that promises
+Two hundred and two. Nine Transactional Memory. Instructions not supported in speculative mode. Exactly which instructions and exceptions will trigger an abort differs from machine to machine. Transactions on Sun's Rock processor were particularly fragile: most subroutine calls or mispredicted branches would end the current transaction (Dice et al. two thousand and nine). Blue Gene/Q was particularly robust: uncached memory accesses and D M A requests were the only program behaviors that would force the T M system to interrupt a transaction (the operating system would also abort the current transaction on various interrupts and faults). Most of the proposals for "unbounded" hardware transactions have addressed not only the possibility of inadequate space for buffered updates but also inadequate time: the system generally provides a way to save the state of a transaction to memory at the end of a scheduling quantum and resume it the next time its thread gets to run. Among the H T M systems that have actually been built, only Blue Gene/Q allows transactions to survive a context switch. Most others abort the current transaction on any of the interrupts (e.g., timer expiration, device completion) that might end the current quantum. Power eight (I B M two thousand and twelve; Lee et al. two thousand and fifteen) introduced a distinctive mechanism to suspend and resume the current transaction. While a transaction is suspended, loads and stores proceed nontransactionally. Most exceptions cause the current transaction to be suspended rather than aborted. The operating system can choose whether to resume the transaction after servicing the exception. If it decides to effect a context switch, a special instruction allows it to reclaim the processor state that was checkpointed at the beginning of the transaction. At the start of the next quantum, another special instruction allows the O S to re checkpoint and resume the transaction, whereupon it will immediately abort and fall into its software handler (which can then retry, fall back to a software lock, etc., as appropriate). For mission critical applications, I B M's z T M (Jacobi et al. two thousand and twelve) provided a special constrained transaction mode that was guaranteed to succeed, eventually, in hardware, with no software handler or fallback path. Constrained transactions are limited to a small total number of instructions (thirty two on the z E C twelve) with no backward branches, no subroutine calls, and a small one hundred and twenty eight bytes on the z E C twelve memory access footprint. They are intended for small data structure updates—the sorts of things for which Herlihy and Moss T M (or Oklahoma Update) was originally intended. A M D's Advanced Synchronization Facility (A S F) (A M D two thousand and nine; Diestelhorst et al. two thousand and ten) envisioned a similar guarantee for small transactions. Nine point two point two Speculative Lock Elision. While proponents typically argue for T M as a way to simplify the construction of scalable parallel programs, this is not necessarily a compelling argument from the perspective of hardware vendors. Given the investment needed to add T M to an existing I S A—and to propagate it through all future generations—potential improvements in the performance of existing programs provide a much more compelling argument. Speculative lock elision (S L E) (Rajwar and Goodman two thousand and one; Rajwar and Goodman two thousand and two) is a use case that promises
+The provided text delves into the intricacies of transactional memory (TM) systems, specifically focusing on how processors handle instructions and exceptions within a speculative execution context, and introduces the concept of Speculative Lock Elision.
+
+Within speculative execution, instructions that are not inherently supported by hardware transactions can trigger an abort. This behavior can vary significantly across different processor architectures. For instance, transactions on Sun's Rock processor are particularly susceptible to aborts triggered by subroutine calls or mispredicted branches. The Blue Gene/Q architecture exhibited a degree of robustness, where typically only uncached memory accesses and direct memory access requests would force a transaction abort, indicating that the operating system would intervene to interrupt the transaction on experiencing various interrupts and faults. However, a common challenge for "unbounded" hardware transactions is the potential for inadequate buffer space to store pending updates. To mitigate this, some systems provide a mechanism to save the transaction state to memory, allowing it to be resumed later when the thread is next scheduled. The text highlights that among the systems built, only Blue Gene/Q offered this capability for transactions interrupted by events like timer expiration, allowing them to survive a context switch.
+
+The text then discusses the Power eight processor, which, as described by Lee et al. in 2015, implemented a mechanism to suspend and resume current transactions. In this model, stores proceed nontransactionally, and the transaction is suspended rather than aborted. The operating system can then choose to resume the transaction after an exception or context switch. A special instruction facilitates this resumption at the beginning of the transaction. Furthermore, the operating system can be instructed to re-checkpoint the state, enabling the processor to resume the transaction, potentially falling back to a software lock mechanism if recovery via the transactional path fails.
+
+For mission-critical applications, IBM's z/TM system is presented as an example of a hardware transactional memory system that provides a guaranteed success path, even in the presence of issues like unsupported instructions or faults. This system is designed to handle a limited number of instructions and has a small memory access footprint, as exemplified by the zEC12, which supports no backward branches or subroutine calls within transactions. These characteristics are suitable for small data structure updates, like those typically involving one hundred twenty eight bytes on the zEC12. The article also mentions A M D's Advanced Synchronization Facility, or ASF, which similarly aimed to provide transaction guarantees.
+
+The latter part of the text introduces "Speculative Lock Elision," or S L E, as a technique that proponents argue can simplify the construction of scalable parallel programs. However, the authors suggest that the necessity of adding transactional memory to existing instruction set architectures might not be the most compelling argument for its adoption. Instead, they propose that future improvements in performance resulting from transactional memory offer a stronger justification. S L E is presented as a use case that leverages transactional memory to promise significant enhancements in the performance of existing programs, offering a more compelling argument for its integration. This approach implies that the transactional mechanisms can be used to elide traditional locking primitives, improving concurrency without the overhead of explicit lock management.

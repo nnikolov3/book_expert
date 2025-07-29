@@ -1,0 +1,92 @@
+5.2 Barrier Algorithms 93
+
+const int logN := [log, n |
+
+type flag_t = record
+atomic<bool> my_flags[0..1][0..logN—1]
+atomic<bool> * partner_flags[0..1][0..logN—1]
+
+class barrier
+
+int parity[7] :={0...}
+
+bool sense[7] = {true...}
+
+flag_t flag_array[7] i=...
+// on an NRC-NUMA machine, flag_array[i] should be local to thread i
+// initially flag_array[:].my_flags[r][k] is false Vi, r, k
+INifj = (i+ 2F) mod n, then Vr, k:
+// flag_array[:].partner_flags[r][k] points to flag_array[j].my_flags[r][k]
+
+barrier.cycle():
+
+fence(RW||W)
+
+flag_t* fp := &flag_array[self]
+
+int p := parity[self]
+
+bool s := sense]self]
+
+forintiin 0..logN—1
+fo—partner_flags[p][i]—store(s, R||)
+while fp—my_flags[p][i].load(W||) #s; // spin
+
+ifp=1
+sense[self] := —s
+
+parity[self] :=1 — p
+
+fence(R||RW)
+
+Figure 5.4 The dissemination barrier.
+
+resetting variables after every episode. The flags on which each thread spins are statically
+determined (allowing them to be local even on an NRC-NUMA machine), and no two threads
+ever spin on the same flag.
+
+Interestingly, while the critical path length of the dissemination barrier is [log, n], the
+total amount of interconnect traffic (remote writes) is n[log, n]. (Space requirements are
+also O(nlogn).) This 1s asymptotically larger than the O(n) space and bandwidth of the
+centralized and combining tree barriers, and may be a problem on machines whose inter-
+connection networks have limited cross-sectional bandwidth.
+
+5.2.4 Non-combining Tree Barriers
+
+While the potential cost of fetch_and_® operations is an argument against the combin-
+ing tree barrier, it turns out not to be an argument against tree barriers in general. Hens-
+gen et al. (1988) and Lubachevsky (1989) observe that one can eliminate the need for
+fetch_and_® by choosing the “winner” at each tree node in advance. As in a combining
+Section five point two, Barrier Algorithms.
+
+The code block defines a constant integer `logN` as the ceiling of log base two of n. It defines a custom type `flag_t` as a record. This record contains `my_flags`, which is an atomic boolean two dimensional array, indexed from zero to one, and from zero to `logN` decrement by one. It also contains `partner_flags`, which is a pointer to an atomic boolean two dimensional array, indexed similarly from zero to one, and from zero to `logN` decrement by one.
+
+The code then defines a class named `barrier`. Inside the `barrier` class, there are several members. `parity` is an integer array, indexed by T, initialized with values starting from zero. `sense` is a boolean array, indexed by T, initialized with values starting from true. `flag_array` is a `flag_t` array, indexed by T.
+A comment explains that on an N R C Numa machine, `flag_array` index i should be local to thread i. Initially, `flag_array` index i dot `my_flags` index r index k is false for all i, r, and k. Another comment states that if j is equal to the quantity i plus two to the power of k modulo n, then for all r and k, `flag_array` index i dot `partner_flags` index r index k points to `flag_array` index j dot `my_flags` index r index k.
+
+The `barrier` class defines a function called `cycle`. The `barrier cycle` function starts with a `fence` operation, with parameters read write or or write. It declares a pointer `fp` of type `flag_t` and initializes it to the address of `flag_array` index self. An integer variable `p` is set to `parity` index self. A boolean variable `s` is set to `sense` index self. A loop iterates with integer `i` from zero up to `logN` decrement by one. Inside the loop, `fp` points to `partner_flags` index p index i, which then calls its `store` method, passing `s` and a memory ordering of R or or. Following this, the code enters a spin loop: while `fp` points to `my_flags` index p index i, and its `load` method, with a memory ordering of W or or, is not equal to `s`, the loop continues. After the loop, if `p` is equal to one, then `sense` index self is set to the logical NOT of `s`. `parity` index self is set to one decrement by `p`. Finally, a `fence` operation is performed with parameters R or or read write.
+
+Figure five point four depicts the dissemination barrier.
+
+Resetting variables occurs after every episode. The flags on which each thread spins are statically determined, allowing them to be local even on an N R C Numa machine, and no two threads ever spin on the same flag. Interestingly, while the critical path length of the dissemination barrier is the ceiling of log base two of n, the total amount of interconnect traffic, which represents remote writes, is n times the ceiling of log base two of n. Space requirements are also big O of n log n. This is asymptotically larger than the big O of n space and bandwidth of the centralized and combining tree barriers, and may be a problem on machines whose interconnection networks have limited cross sectional bandwidth.
+
+Section five point two point four, Non-combining Tree Barriers.
+
+While the potential cost of fetch and phi operations is an argument against the combining tree barrier, it turns out not to be an argument against tree barriers in general. Hensgen and others, from one nine eight eight, and Lubachevsky, from one nine eight nine, observe that one can eliminate the need for fetch and phi by choosing the "winner" at each tree node in advance. As in a combining tree.
+The provided content details the implementation and theoretical underpinnings of a dissemination barrier, a distributed synchronization primitive crucial in parallel computing environments. This type of barrier operates without a centralized bottleneck, allowing threads to synchronize in a highly parallel fashion, particularly well suited for non uniform memory access, or N U M A, architectures.
+
+At its core, the algorithm relies on a series of stages, with the number of stages determined by `log N`, representing the base two logarithm of the total number of participating threads. Each thread progresses through these `log N` stages, communicating with a distinct partner in each stage. This logarithmic dependency is fundamental to achieving scalable synchronization.
+
+The structure of the barrier is defined by a `flag_t` record, which encapsulates two key components: `my_flags` and `partner_flags`. Both are arrays of atomic boolean values. The `atomic<bool>` type is critical, ensuring that operations on these flags, specifically `store` and `load`, are performed atomically, preventing race conditions and ensuring memory visibility across different threads. The `my_flags` array holds the flags a thread will spin on and write to, while `partner_flags` are pointers to the `my_flags` of other threads. This pointer indirection allows threads to directly update the flags of their synchronization partners.
+
+The `class barrier` encapsulates the state for a thread's participation in the barrier. Each thread maintains its own `parity` and `sense` variables, which alternate between barrier cycles. The `flag_array` is a distributed data structure, where each `flag_array index i` is conceptually local to thread `i` on an N R C - N U M A machine. This locality minimizes costly remote memory accesses for a thread's own flags. The initialization logic for this `flag_array` is crucial to establishing the dissemination pattern. Initially, all `my_flags` are set to `false`. The `partner_flags` are meticulously assigned such that `flag_array index i.partner_flags index r index k` points to `flag_array index j.my_flags index r index k`, where `j` is computed as `i increment by two to the power of k modulo n`. This formula precisely defines the partner for thread `i` in stage `k` for a given `r` (parity or sense value). This forms a butterfly-like or tree-like communication pattern where, in each successive stage, a thread communicates with a partner that is twice as "far" away in terms of thread index.
+
+The `barrier.cycle()` method orchestrates the synchronization. It begins with a `fence` operation, specifically a `read write or or write` memory barrier. This ensures that all memory operations performed by the thread *before* entering the barrier are completed and visible to other threads *before* the barrier communication begins. Inside the loop, which iterates `log N` times, representing each stage: a thread `store`s its current `sense` value to its partner's `my_flags` using a `read or write` memory order. This acts as a signal to the partner that this thread has reached this stage of the barrier. Subsequently, the thread enters a `while` loop, continuously `load`ing its *own* `my_flags` for that stage until the value is `not equal to` its current `sense`. This spinning is the core of the busy-wait synchronization. It means the thread waits until its partner, in turn, signals its completion of that stage by writing to this thread's `my_flags`. The `write` memory order on the `load` ensures that the latest value is observed.
+
+After all `log N` stages are complete, the algorithm updates the `sense` and `parity` variables. If the `parity` is `one`, the `sense` variable is inverted, and `parity` is reset to `one`. This toggling of `sense` and `parity` ensures that the barrier can be reused for subsequent synchronization points, preventing false positives from old flag values. The method concludes with another `fence` operation, a `read or or read write` memory barrier. This ensures that all memory operations related to the barrier itself are completed and globally visible, and any operations *after* the barrier will see a consistent global state.
+
+From a broader theoretical perspective, the critical path length of the dissemination barrier is `log base two of n`. This logarithmic dependency is highly desirable for scalability, as it means the barrier latency grows very slowly with the number of threads. The total amount of interconnect traffic, primarily remote writes, is `n times log base two of n`. This measure quantifies the communication overhead, indicating that each of `n` threads performs `log N` remote writes. Space requirements are `O(n log n)`, as each of `n` threads maintains `log N` flags and `log N` pointers.
+
+While the logarithmic critical path length is excellent, the `n times log n` interconnect traffic and `O(n log n)` space complexity are asymptotically larger compared to idealized centralized or combining tree barriers, which can theoretically achieve `O(n)` space. This difference can become a limiting factor on machines with limited cross sectional bandwidth between processing nodes, potentially leading to congestion.
+
+The concept of "non combining tree barriers" addresses a potential performance bottleneck associated with `fetch_and_Phi` operations, which are common in traditional combining tree barriers. `fetch_and_Phi` operations are atomic read modify write operations that can introduce contention at tree nodes. As observed by Hensgen et al. in one thousand nine hundred eighty eight and Lubachevsky in one thousand nine hundred eighty nine, the need for these complex atomic operations can be eliminated. This is achieved by pre determining a "winner" at each node of the synchronization tree, which allows simpler, non combining operations to suffice. This highlights a fundamental design principle in parallel algorithm optimization: transforming expensive, contention prone atomic operations into less contention prone, more distributed patterns by carefully orchestrating communication and state transitions.

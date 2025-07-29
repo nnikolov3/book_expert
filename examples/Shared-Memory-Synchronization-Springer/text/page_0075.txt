@@ -1,0 +1,64 @@
+4.3 Queued Spin Locks 77
+
+the only real difference is that instead of requiring the caller to pass a gnode to release,
+we leave that pointer in a head field of the lock. Dynamic allocation and deallocation of
+gnodes (not shown in Figure 4.14) happens only when locks are created and destroyed.
+At any given time, the total number of extant nodes is always n + j for n threads and j
+locks—one per lock at the head of each queue (with succ_must_wait true or false, as
+appropriate), one enqueued (not at the head) by each thread currently waiting for a lock, and
+one (in the appropriate slot of thread_qgnode_ptrs) reserved for future use by each thread
+not currently waiting for a lock. (Elements of thread_qnode_ptrs corresponding to threads
+currently waiting for a lock are overwritten, at the end of acquire, before being read again.)
+As in the original CLH variant, gnodes cycle among the locks as threads move
+through their critical sections. With the new, standard interface, the gnode saved in
+thread_qgnode_ptrs[self] at the end of lock.release will typically be different from the one
+retrieved at the beginning of lock.acquire. Similarly, the gnode deallocated when a lock is
+destroyed will typically be different from the one allocated when the lock was created.
+
+4.3.3 Hemlock
+
+In 2021, Dice and Kogan presented a remarkably simple and scalable variant on the CLH
+lock, which they dubbed Hemlock. Code appears in Figure 4.15. Like a CLH lock, a Hemlock
+comprises a single word that is null when the lock is free and that otherwise identifies the
+last thread currently in line. There are, however, no gnodes. Instead, each thread uses a
+single status word, located in shared memory, to link into the queue of any lock for which
+it 1s currently waiting.
+
+A thread that wishes to enter a critical section swaps the address of its status word into
+the lock’s tail pointer. If the return value is null, the thread has acquired the lock. Otherwise,
+it has learned the address of its predecessor’s status word, on which it proceeds to spin.
+
+To release a lock, a thread attempts a CAS on the tail pointer; this succeeds if and only
+if no other thread is waiting. In the failure case, the thread writes the lock’s address into
+its status word. This write terminates the successor’s spin. Using the lock’s address as the
+written value serves to disambiguate cases in which a thread holds more than one lock and
+there 1s more than one successor spinning on the status word. To avoid the possibility of a
+lost wakeup if the thread tries to release another lock before the first successor has noticed the
+wakeup, the release method waits for a “handshake” in which the first successor confirms
+that it has indeed noticed.
+
+If a thread holds a large number of locks, the wakeup operation may cause a flurry
+of coherence activity, as multiple potential successors reload the line to see who is being
+awoken. In the common case, in which a thread holds a single lock, coherence traffic is
+comparable to that of the CLH lock. To reduce the overhead of handshakes, in which a
+thread obtains a status word in shared mode and must then upgrade it to exclusive, Dice
+and Kogan suggest the counter-intuitive but effective strategy of spinning (in both acquire
+and release) with CAS instead of load.
+Section four point three: Queued Spin Locks.
+
+The only real difference is that instead of requiring the caller to pass a qnode to release, we leave that pointer in a head field of the lock. Dynamic allocation and deallocation of qnodes, not shown in Figure four point fourteen, happens only when locks are created and destroyed. At any given time, the total number of extant nodes is always n plus j for n threads and j locks—one per lock at the head of each queue, with succ must wait true or false as appropriate; one enqueued, not at the head, by each thread currently waiting for a lock; and one in the appropriate slot of thread qnode ptrs reserved for future use by each thread not currently waiting for a lock. Elements of thread qnode ptrs corresponding to threads currently waiting for a lock are overwritten, at the end of acquire, before being read again. As in the original C L H variant, qnodes cycle among the locks as threads move through their critical sections. With the new, standard interface, the qnode saved in thread qnode ptrs index self at the end of lock dot release will typically be different from the one retrieved at the beginning of lock dot acquire. Similarly, the qnode deallocated when a lock is destroyed will typically be different from the one allocated when the lock was created.
+
+Section four point three point three: Hemlock.
+
+In two thousand twenty one, Dice and Kogan presented a remarkably simple and scalable variant on the C L H lock, which they dubbed Hemlock. Code appears in Figure four point fifteen. Like a C L H lock, a Hemlock comprises a single word that is null when the lock is free and that otherwise identifies the last thread currently in line. There are, however, no qnodes. Instead, each thread uses a single status word, located in shared memory, to link into the queue of any lock for which it is currently waiting. A thread that wishes to enter a critical section swaps the address of its status word into the lock’s tail pointer. If the return value is null, the thread has acquired the lock. Otherwise, it has learned the address of its predecessor’s status word, on which it proceeds to spin. To release a lock, a thread attempts a C A S on the tail pointer; this succeeds if and only if no other thread is waiting. In the failure case, the thread writes the lock’s address into its status word. This written value serves to disambiguate cases in which a thread holds more than one lock and there is more than one successor spinning on the status word. To avoid the possibility of a lost wakeup if the thread tries to release another lock before the first successor has noticed the wakeup, the release method waits for a “handshake” in which the first successor confirms that it has indeed noticed. If a thread holds a large number of locks, the wakeup operation may cause a flurry of coherence activity, as multiple potential successors reload the line to see who is being awoken. In the common case, in which a thread holds a single lock, coherence traffic is comparable to that of the C L H lock. To reduce the overhead of handshakes, in which a thread obtains a status word in shared mode and must then upgrade it to exclusive, Dice and Kogan suggest the counter intuitive but effective strategy of spinning, in both acquire and release, with C A S instead of load.
+The fundamental concept explored here revolves around queued spin locks, a synchronization primitive designed to manage access to shared resources in multi-threaded environments, particularly on multi-processor systems. Unlike simple spin locks where threads repeatedly attempt to acquire the lock, potentially leading to excessive contention and cache line invalidations, queued spin locks improve fairness and efficiency by arranging waiting threads in a queue.
+
+In this context, a crucial data structure is the "qnode," which represents a thread awaiting a lock. A key distinction in the discussed variant of queued spin locks is that the responsibility for managing "qnodes" is shifted away from the caller of the lock release mechanism. Instead, the system handles the dynamic allocation and deallocation of these "qnodes," primarily when locks themselves are created or destroyed, rather than on every acquisition or release. This design implies a pre-allocation or persistent allocation strategy for "qnodes," where the total number of active "qnodes" at any given time is maintained at a count of `n` plus `j`, corresponding to `n` threads and `j` locks. Each thread typically reserves its own "qnode" for future use, and these "qnodes" are effectively recycled or cycled among the locks as threads progress through their critical sections. This means a "qnode" that was used by a thread for one lock acquisition can be reused by that same thread for a subsequent acquisition of the same or a different lock, optimizing resource utilization and reducing the overhead associated with frequent memory allocations and deallocations. Furthermore, the "qnode" a thread saves at the end of a lock release operation is typically the same "qnode" it will retrieve at the beginning of its next lock acquisition.
+
+The text then delves into "Hemlock," a notably simple and scalable variant of the C L H lock, presented by Dice and Kogan. The innovative aspect of Hemlock is its concise representation: the lock itself is managed by a single word in memory. This word holds a null value when the lock is free. When the lock is held or contended, this single word identifies the last thread that has enqueued itself. Critically, Hemlock eliminates the need for explicit shared "qnodes." Instead, each thread utilizes its own dedicated "status word" located in shared memory. This "status word" serves to link the thread into the queue of any lock for which it is currently waiting.
+
+To enter a critical section using a Hemlock, a thread performs an atomic swap operation. It exchanges the address of its own "status word" with the current value of the lock's "tail pointer," which is the single word representing the lock. If the value returned from this atomic swap is null, it signifies that the lock was free, and the thread has successfully acquired it. Conversely, if the returned value is not null, it indicates that another thread was the predecessor. The returned value is the memory address of that predecessor's "status word." The current thread then proceeds to spin, repeatedly checking the content of its predecessor's "status word," waiting for it to change, which signals the predecessor's release of the lock. This spinning is a form of busy waiting, consuming C P U cycles until the condition is met.
+
+Releasing a Hemlock involves a nuanced process to ensure proper handoff and prevent race conditions. The releasing thread attempts a C A S, or Compare And Swap, operation on the lock's "tail pointer." It compares the current value of the tail pointer with the address of its own "status word." If this C A S operation succeeds, it implies that no other thread has attempted to acquire the lock since the current thread obtained it, making this thread the last in the conceptual queue. In this simple case, the lock is freed by setting its "tail pointer" back to null. However, if the C A S fails, it means one or more threads have subsequently enqueued themselves. In this scenario, the releasing thread writes the address of the lock itself into its *own* "status word." This action is critical because the successor thread, which is spinning on the releasing thread's "status word," will observe this change, terminating its spin. The specific value written, the lock's address, serves to disambiguate situations where a thread might be holding multiple locks or where multiple successors might be spinning. To prevent a "lost wakeup" problem, where a successor might miss the signal to stop spinning, the release method then waits for a "handshake" from the first successor. This handshake confirms that the successor has indeed noticed the release and is ready to proceed.
+
+A notable consideration for Hemlock, especially when threads hold a large number of locks, is the potential for increased cache coherence activity during wakeup operations. This can cause a "flurry" of cache line invalidations and updates as multiple potential successors reload memory lines to determine which thread is being awoken. While the coherence traffic in the common case of a single C L H lock might be comparable to other variants, the handshake mechanism, while ensuring correctness, can add overhead. Dice and Kogan propose an optimization where, instead of simple load operations for checking status, threads use C A S operations for spinning during both acquisition and release. This counter intuitive strategy can be effective because C A S, as an atomic read-modify-write operation, provides stronger memory ordering guarantees and allows a thread to directly attempt to modify the state, rather than just observing it, potentially reducing contention and improving performance in certain high-concurrency scenarios by allowing more decisive state transitions.

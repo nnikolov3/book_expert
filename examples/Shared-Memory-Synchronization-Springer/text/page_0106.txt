@@ -1,0 +1,107 @@
+6.1 Reader-Writer Locks 109
+
+rw_lock.reader_acquire(gnode* I):
+| —role := reader; |—waiting := true
+| —next := |—prev := null
+qnode* pred := tail.swap(l, W||)
+if pred =£ null // lock is not free
+| —prev.store(pred, ||)
+pred—next.store(l, W||)
+if pred—role.load(W||) # active_reader
+while |—waiting.load(||); // spin
+gnode* succ := |—next.load(R||)
+if succ # null and succ—role.load(R||) = reader
+succ—waiting.store(false, R||) // unblock contiguous readers
+| —role.store(active_reader, RW||R)
+
+rw_lock.reader_release(gnode* |):
+fence(R||W)
+gnode* pred := |—prev.load(||)
+if pred =£ null // need to disconnect from predecessor
+pred—mutex.acquire()
+while pred # |—prev.load()
+pred—mutex.release()
+pred := |—prev.load(|]);
+if pred = null break
+pred—mutex.acquire()
+// At this point we hold the mutex of our predecessor, if any.
+if pred =£ null
+| —mutex.acquire()
+pred—next.store(null, ||)
+gnode* succ := |—next.load(||)
+if succ = null and —tail.CAS(l, pred, ||R)
+repeat succ := |—next.load(]|) until succ # null
+if succ #= null // need to disconnect from successor
+succ—prev.store(pred, R||)
+pred—next.store(succ, R||)
+| —mutex.release()
+pred—mutex.release()
+return
+| —mutex.acquire()
+gnode* succ := |—next.load(||)
+if succ = null and —tail.CAS(I, null, ||)
+repeat succ := |—next.load(||) until succ # null
+if succ #= null /[ 4 successor but no predecessor
+bool succ_is_writer := succ—role.load(R||) = writer
+succ—waiting.store(false, R||)
+if =succ_is_writer
+succ—prev.store(null, W||)
+| —mutex.release()
+
+Figure 6.5 A fair queued reader-writer lock (reader routines).
+The reader acquire function, named `r w lock dot reader acquire`, takes a pointer to a queue node, referred to as `I`. Inside this function, the `role` member of node `I` is set to `reader`, and its `waiting` status is set to `true`. Both the `next` and `prev` pointers of node `I` are initialized to `null`.
+
+A pointer variable, `pred`, short for predecessor, is declared. This `pred` variable is assigned the result of an atomic compare and swap operation on the `tail` of the queue. This operation attempts to replace the current `tail` with node `I`, using node `I` itself as the desired value, with write memory order semantics. This check determines if the lock is free.
+
+If `pred` is not equal to `null`, indicating a predecessor exists:
+Node `I`'s `prev` pointer is set to `pred` with memory order semantics. Then, the `next` pointer of `pred` is set to node `I` with write memory order semantics. If, upon loading `pred`'s `role` with write memory order, it is found to be not an `active reader` (meaning the lock is not free), then node `I` enters a spin loop. This loop continues as long as `I`'s `waiting` status, loaded with memory order semantics, remains `true`. This constitutes a spin wait for the lock.
+
+After this potential waiting period, a pointer variable, `succ`, short for successor, is assigned the value of node `I`'s `next` pointer, loaded with memory order semantics. If `succ` is not equal to `null` and its `role`, when loaded with read memory order, is `reader`, then `succ`'s `waiting` status is set to `false` with read memory order. This action serves to unblock any contiguous readers. Finally, node `I`'s `role` is set to `active reader` with read or write memory order semantics.
+
+Next, we describe the `r w lock dot reader release` function, which also takes a pointer to a queue node, `I`.
+The function begins with a memory fence operation ensuring read or write memory ordering. A pointer variable `pred`, for predecessor, is assigned the value of node `I`'s `prev` pointer, loaded with memory order semantics.
+
+The logic proceeds based on whether a predecessor exists.
+
+If `pred` is not equal to `null`:
+The mutex of `pred` is acquired. A `while` loop is entered, continuing as long as `pred` is not equal to node `I`'s `prev` pointer, loaded with memory order semantics. This loop indicates a need to disconnect from the predecessor. Inside this loop, `pred`'s mutex is released, and `pred` is updated to node `I`'s `prev` pointer, loaded with memory order semantics. If `pred` becomes `null` within this update, `pred`'s mutex is acquired. A comment in the code states that at this point, the mutex of our predecessor, if any, is held.
+
+Continuing within the `if pred is not equal to null` branch:
+If `pred` is still not equal to `null`:
+Node `I`'s mutex is acquired. `pred`'s `next` pointer is set to `null` with memory order semantics. A pointer variable `succ`, for successor, is assigned the value of node `I`'s `next` pointer, loaded with memory order semantics. A `repeat` loop then ensures that `succ` is not equal to `null` by continuously loading node `I`'s `next` pointer until a non-null `succ` is found.
+
+If `succ` is not equal to `null`:
+`succ`'s `prev` pointer is set to `pred` with read memory order semantics. Then, `pred`'s `next` pointer is set to `succ` with read memory order semantics.
+Finally, node `I`'s mutex is released, followed by the release of `pred`'s mutex. The function then returns.
+
+Now, consider the case where the initial `pred` (predecessor) was `null` at the beginning of the `reader release` function:
+Node `I`'s mutex is acquired. A pointer variable `succ`, for successor, is assigned node `I`'s `next` pointer, loaded with memory order semantics.
+If `succ` is equal to `null` AND an atomic compare and swap operation on the `tail`, attempting to replace node `I` with `null` using memory order semantics, returns `false` (meaning the `compare and swap` operation fails):
+A `repeat` loop ensures `succ` is not equal to `null` by continuously loading node `I`'s `next` pointer until a non-null `succ` is found. This condition implies there is a successor, but no predecessor, requiring the tail to be updated and then the successor found.
+
+If, after these operations, `succ` is not equal to `null`:
+A boolean variable, `succ is writer`, is set to `true` if `succ`'s `role`, loaded with read memory order semantics, is equal to `writer`.
+`succ`'s `waiting` status is set to `false` with read memory order semantics.
+If `succ is writer` is `false`, then `succ`'s `prev` pointer is set to `null` with write memory order semantics.
+Finally, node `I`'s mutex is released.
+
+Figure six point five illustrates a fair queued reader writer lock, specifically focusing on the reader routines.
+The provided code snippet delineates the intricate mechanisms of acquiring and releasing a reader lock within a fair queued reader-writer lock implementation. This design is rooted deeply in the principles of concurrent programming and distributed systems, focusing on robust synchronization in a multi threaded environment.
+
+The fundamental objective of a reader-writer lock is to enable concurrent access for multiple readers while enforcing exclusive access for a single writer. The "fair queued" aspect implies that requests, whether from readers or writers, are processed in the order they arrive, mitigating the risk of starvation for any particular thread type.
+
+Let us dissect the `r w_lock.reader_acquire` routine. When a thread, represented by its `qnode` structure `I`, attempts to acquire a reader lock, it first initializes its `qnode` state. Specifically, `I->role` is set to 'reader', and `I->waiting` is set to 'true'. The `I->next` and `I->prev` pointers are initialized to 'null', signifying that the node is currently unlinked. The critical step for queue insertion is `qnode* pred := tail.swap(I, W ||)`. This operation is an atomic `swap`: it sets the global `tail` pointer of the queue to the current `qnode` `I` and, crucially, returns the `qnode` that was previously at the `tail`. This returned `qnode` becomes the current node's `pred`ecessor. The `W ||` memory order ensures that all writes preceding this atomic operation, such as setting `I`'s role and waiting status, are globally visible before `tail` is updated.
+
+Upon obtaining its `pred`ecessor, the thread checks `if pred != null`. If a `pred`ecessor exists, it means the queue was not empty, and the current `qnode` `I` must link itself into the queue. This is achieved by `I->prev.store(pred, ||)` and `pred->next.store(I, ||)`. These operations establish the bidirectional links in the queue. The `||` memory order typically denotes sequential consistency, ensuring these stores are immediately visible to all other processors. Following this, a crucial fairness mechanism is engaged: `if pred->role.load(W ||) != active_reader`. If the `pred`ecessor is not an 'active_reader' (implying it is a writer, or a reader that is still waiting), the current reader `I` must wait. This is managed by a spin loop: `while I->role.load(R ||) == waiting.load(||)`. The thread continuously checks its own `role` and `waiting` status. The `R ||` memory order on the loads guarantees that the latest state of these flags is observed. This busy waiting continues until the predecessor, or a subsequent mechanism, unblocks this reader.
+
+A significant optimization for throughput in reader-writer locks is then applied: `if succ != null and succ->role.load(R ||) == reader`. After `I` has potentially waited and is now active, it inspects its immediate successor in the queue, `succ`. If a successor exists and is also a reader, `I` proactively activates it by setting `succ->role.store(active_reader, R W ||)`. This enables a contiguous block of readers to become active simultaneously, avoiding individual acquisition waits for each reader in the queue. The `I->role` is then also set to `active_reader` with `R W ||` memory ordering, solidifying its active state.
+
+The `r w_lock.reader_release` routine is considerably more complex, dealing with the safe detachment of a `qnode` from the queue and the transition of lock ownership. It commences with `fence(R || W)`, a full memory barrier. This ensures that all memory operations performed within the critical section guarded by the lock are committed and visible to other processors before any subsequent operations of the release routine proceed. This is vital for maintaining memory consistency across the system.
+
+The release logic first attempts to disconnect the current `qnode` `I` from its `pred`ecessor. It loads `I->prev` into `pred`. If `pred` is not 'null', `I` must coordinate with its `pred`ecessor. This involves acquiring the `pred`ecessor's per-node mutex: `pred->mutex.acquire()`. This mutex protects the links and state of the `pred`ecessor `qnode`. A challenging aspect of concurrent queue manipulation, especially when threads might be removing themselves from the queue, is handling stale pointers. The `while pred != I->prev.load(||)` loop addresses this. If `I->prev` changes during this process (indicating another thread concurrently modified the queue structure affecting `I`), the current thread releases the stale `pred`ecessor's mutex, reloads `pred`, and retries. Once the correct `pred` mutex is held, and `pred` is confirmed not to be 'null', `I` acquires its own mutex (`I->mutex.acquire()`). It then logically disconnects itself from its `pred`ecessor by setting `pred->next.store(null, ||)` and `I->prev.store(null, ||)`. The per-node mutexes are then released. This sequence ensures atomic updates to the queue links, preventing race conditions during detachment.
+
+After handling the `pred`ecessor, the routine shifts focus to the `succ`essor and the global `tail` pointer. `I->mutex.acquire()` ensures exclusive access to `I`'s state. It then loads `succ := I->next.load(||)`. A crucial conditional check is then performed: `if succ == null and ¬tail.C A S(I, null, ||)`. This attempts an atomic `Compare And Swap` on the global `tail` pointer. If `I` is currently the `tail` of the queue, and no new node has been concurrently added, `tail` is set to 'null', effectively emptying the queue. The negation `¬` signifies that if the `C A S` fails (meaning `I` was not the `tail`, or another node has already become the `tail`), or if `succ` was initially 'null' but a new `succ`essor appeared during the check, then a `repeat` loop `succ := I->next.load(||) until succ != null` is executed. This loop spins until a `succ`essor becomes visible, which is necessary if `I` was briefly the `tail` but then another node was enqueued.
+
+Finally, `if succ != null` indicates that there is a successor node waiting. The essential act of unblocking the successor is `succ->waiting.store(false, R ||)`. By setting the successor's `waiting` flag to 'false', the successor's spin loop (in its own `acquire` routine) will terminate, allowing it to become active. The current `qnode` `I` then updates its `role` to reflect its released state. This `store` operation includes `R W ||` memory ordering, which is a strong barrier ensuring visibility of the `waiting` flag update to the successor. The `I`'s mutex is then released.
+
+This sophisticated lock implementation exemplifies several key computer science principles: the atomic `Compare And Swap` (C A S) operation for lock-free queue management at the `tail`, explicit memory ordering semantics (`R`, `W`, `R || W`, `||`) to control hardware memory reordering and ensure inter-thread visibility, the use of per-node mutexes to localize contention and protect individual `qnode` states, and an intricate `pred`ecessor disconnection protocol that robustly handles concurrent modifications to the queue structure. The reader contiguity optimization showcases how domain-specific knowledge can significantly improve performance for common access patterns in a concurrent data structure. The complexity of the `release` logic highlights the inherent challenges of guaranteeing correctness and fairness in highly concurrent, distributed synchronization primitives, particularly when attempting to minimize global contention points.

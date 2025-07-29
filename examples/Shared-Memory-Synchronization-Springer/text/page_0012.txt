@@ -1,0 +1,69 @@
+2.1 Cores and Caches: Basic Shared-Memory Architecture 13
+
+cores each. Server-class machines are architecturally similar, but with the potential for many
+more processors and cores. Small machines often employ a symmetric architecture for the
+sake of simplicity. The physical distances in larger machines often motivate a switch to
+NUMA architecture, so that memory accesses can be somewhat faster when they happen to
+be local.
+
+On some machines, each core may be multithreaded—capable of executing instructions
+from more than one thread at a time (current per-core thread counts range from 1 to 8). Each
+core typically has a private level-1 (LL1) cache, and shares a level-2 cache with other cores
+in its local cluster. Clusters on the same processor of a symmetric machine then share a
+common L3 cache. Each cache holds a temporary copy of data currently in active use by
+cores above it in the hierarchy, allowing those data to be accessed more quickly than they
+could be if kept in memory. On a NUMA machine in which the L2 connects directly to the
+global interconnect, the L3 may sometimes be thought of as “belonging” to the memory.
+
+In a machine with more than one processor, the global interconnect may have vari-
+ous topologies. On small machines, broadcast buses and crossbars are common; on large
+machines, a network of point-to-point links 1s more common. For synchronization purposes,
+broadcast has the side effect of imposing a total order on all inter-processor messages; we
+shall see in Sec. 2.2 that this simplifies the design of concurrent algorithms—synchronization
+algorithms in particular. Ordering is sufficiently helpful, in fact, that some large machines
+(notably those sold by Oracle) employ two different global networks: one for data requests,
+which are small, and benefit from ordering, and the other for replies, which require signifi-
+cantly more aggregate bandwidth, but do not need to be ordered.
+
+As the number of cores per processor increases, on-chip interconnects—the connections
+among the L2 and L3 caches in particular—can be expected to take on the complexity of
+current global interconnects. Other forms of increased complexity are also likely, includ-
+ing, perhaps, additional levels of caching, non-hierarchical topologies, and heterogeneous
+implementations or even instruction sets among cores. |
+
+The diversity of current and potential future architectures notwithstanding, multilevel
+caching has several important consequences for programs on almost any modern machine;
+we explore these in the following subsections.
+
+2.1.1 Temporal and Spatial Locality
+
+In both sequential and parallel programs, performance can usually be expected to correlate
+with the temporal and spatial locality of memory references. If a given location / is accessed
+more than once by the same thread (or perhaps by different threads on the same core or
+cluster), performance is likely to be better if the two references are close together in time
+
+I The most obvious example of heterogeneity is the now-ubiquitous programmable GPU. Recent
+GPU architectures pose intriguing challenges for synchronization but are beyond the scope of this
+monograph.
+Section two point one: Cores and Caches: Basic Shared Memory Architecture.
+
+Server class machines are architecturally similar, but with the potential for many more processors and cores. Small machines often employ a symmetric architecture for the sake of simplicity. The physical distances in larger machines often motivate a switch to N U M A architecture, so that memory accesses can be somewhat faster when they happen to be local.
+
+On some machines, each core may be multithreaded, capable of executing instructions from more than one thread at a time. Current per core thread counts range from one to eight. Each core typically has a private level one cache and shares a level two cache with other cores in its local cluster. Clusters on the same processor of a symmetric machine then share a common level three cache. Each cache holds a temporary copy of data currently in active use by cores above it in the hierarchy, allowing those data to be accessed more quickly than they could be if kept in memory. On a N U M A machine in which the level two connects directly to the global interconnect, the level three may sometimes be thought of as "belonging" to the memory.
+
+In a machine with more than one processor, the global interconnect may have various topologies. On small machines, broadcast buses and crossbars are common. On large machines, a network of point to point links is more common. For synchronization purposes, a broadcast has the side effect of imposing a total order on all inter processor messages. We shall see in Section two point two that this simplifies the design of concurrent algorithms, synchronization algorithms in particular. Ordering is sufficiently helpful, in fact, that some large machines, notably those sold by Oracle, employ two different global networks: one for data requests, which are small and benefit from ordering, and the other for replies, which require significantly more aggregate bandwidth, but do not need to be ordered.
+
+As the number of cores per processor increases, on chip interconnects, specifically the connections among the level two and level three caches, can be expected to take on the complexity of current global interconnects. Other forms of increased complexity are also likely, including perhaps additional levels of caching, non hierarchical topologies, and heterogeneous implementations or even instruction sets among cores. Footnote one: The most obvious example of heterogeneity is the now ubiquitous programmable G P U. Recent G P U architectures pose intriguing challenges for synchronization but are beyond the scope of this monograph. The diversity of current and potential future architectures notwithstanding, multilevel caching has several important consequences for programs on almost any modern machine. We explore these in the following subsections.
+
+Section two point one point one: Temporal and Spatial Locality.
+
+In both sequential and parallel programs, performance can usually be expected to correlate with the temporal and spatial locality of memory references. If a given location is accessed more than once by the same thread, or perhaps by different threads on the same core or cluster, performance is likely to be better if the two references are close together in time.
+Modern computer architectures, particularly those designed for server-class systems, are fundamentally built upon the principle of shared memory, enabling multiple processors or cores to access a common address space. While smaller machines often leverage Symmetric Multi-Processing, or S M P, where all C P U s have uniform memory access times, larger systems frequently transition to a Non-Uniform Memory Access, or N U M A, architecture. This architectural shift is necessitated by the increasing physical distances between processors and memory in larger configurations, leading to a disparity in memory access latencies. In a N U M A system, accessing local memory—memory directly connected to a processor's node—is significantly faster than accessing remote memory on another node, which has profound implications for data placement and program performance.
+
+A key component of modern processor design is the implementation of hardware multithreading. This capability allows a single physical core to concurrently execute multiple instruction streams, or threads, typically ranging from one to eight threads per core. This concurrency mechanism improves processor utilization by effectively hiding latency, such as that incurred during memory accesses or pipeline stalls, by switching execution to another ready thread. Accompanying this is a sophisticated multilevel cache hierarchy. Each core typically possesses a private, high-speed L one cache. Within a cluster of cores, an L one cache often shares a larger L two cache, and all cores on a single processor often share a common L three cache. This hierarchical structure, with increasing size and latency from L one to L three, is designed to exploit the principle of locality of reference, ensuring that frequently accessed data is stored closer to the C P U for faster retrieval. In a N U M A environment, the L two cache is often directly associated with the local memory of its N U M A node, forming an integral part of the memory domain.
+
+Interprocessor communication and synchronization are paramount in shared-memory multiprocessor systems. The global interconnect, which facilitates communication between processors, can adopt various network topologies. Historically, smaller machines might use broadcast buses or crossbars. However, large, scalable machines increasingly rely on point to point links forming complex networks, often on-chip networks, or N o C s. For effective synchronization, imposing a total order on all interprocessor messages simplifies the design of concurrent algorithms by ensuring a consistent view of shared state across all processing elements. Some advanced systems might even employ distinct global networks: one optimized for high-bandwidth data transfers where ordering is less critical, and another dedicated to ordered messages for synchronization purposes, balancing throughput with consistency requirements.
+
+As processor designs continue to evolve, driven by increasing core counts and transistor densities, the complexity of on-chip interconnects, particularly those connecting L two and L three caches, is growing. This trend may lead to non-hierarchical cache topologies and even heterogeneous processing elements, such as General Purpose G P U s, as a common example. Such architectural diversity introduces significant challenges for synchronization and coherence, highlighting the need for robust software and hardware solutions to manage these complexities.
+
+The performance of both sequential and parallel programs is heavily dependent on two fundamental principles of memory access patterns: temporal locality and spatial locality. Temporal locality asserts that if a particular memory location is accessed at one point in time, it is highly probable that the same location will be accessed again in the near future. Spatial locality, conversely, predicts that if a specific memory location is accessed, nearby memory locations are likely to be accessed soon thereafter. For instance, iterating through an array elements sequentially exhibits strong spatial locality. Caches are precisely engineered to leverage these properties. When a cache line is fetched from main memory into a faster cache level, it typically brings in a block of contiguous data, anticipating future accesses due to spatial locality. Similarly, keeping frequently used data in the cache exploits temporal locality. Programs exhibiting strong temporal and spatial locality achieve higher cache hit rates, thereby minimizing expensive accesses to slower main memory and significantly improving overall execution speed.

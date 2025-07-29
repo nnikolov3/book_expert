@@ -1,0 +1,65 @@
+56 3 Essential Theory
+
+program are sequentially consistent: any total order consistent with happens-before will
+explain the program’s reads. Moreover, since our (first) definition of a data race was based
+only on sequentially consistent executions, we can provide the programmer with a set of
+rules that, if followed, will always lead to sequentially consistent executions, with no need
+to reason about possible relaxed behavior of the underlying hardware. Such a set of rules 1s
+said to constitute a programmer-centric memory model (Adve and Hill 1990).
+
+In effect, a programmer-centric model 1s a contract between the programmer and the
+implementation: if the programmer follows the rules (i.e., writes data-race-free programs),
+the implementation will provide the illusion of sequential consistency. Moreover, given
+the absence of races, any region of code that contains no synchronization (and that does
+not interact with the “outside world” via I/O or syscalls) can be thought of as atomic: it
+cannot—by construction—interact with other threads.
+
+But what about programs that do have data races? Many experts argue that such programs
+are simply buggy, and need not have well-defined behavior. This 1s the position adopted by
+default in C++ (Boehm and Adve 2008) and, subsequently, C: if a program has a data race
+on a given input, its behavior is undefined; otherwise, it behaves according to one of its
+sequentially consistent executions. As we shall see, however, the designers of both Java and
+C/C++ have felt the need to extend semantics to additional executions, for the sake of safety
+in Java and performance in C/C++.
+
+Synchronization Races
+
+The definition of a data race is designed to capture cases in which program behavior may depend on
+the order in which two ordinary accesses occur, and this order is not constrained by synchronization.
+In a similar fashion, we may wish to consider cases in which program behavior depends on the order
+in which synchronization operations occur.
+
+For each form of synchronization operation, we can define a notion of conflict. Acquire operations
+on the same lock, for example, conflict with one another, while an acquire and a release do not—nor
+do operations on different locks. A program is said to have a synchronization race if it has two
+sequentially consistent executions with a common prefix, and the first steps that differ are conflicting
+synchronization operations. Together, data races and synchronization races constitute the class of
+general races (Netzer and Miller 1992).
+
+Because we assume the existence of a total order on synchronizing steps, synchronization races never
+compromise sequential consistency. Rather, they provide the means of controlling and exploiting
+nondeterminism in parallel programs. In any case where we wish to allow conflicting high-level
+operations to occur in arbitrary order, we design a synchronization race into the program to mediate
+the conflict.
+Program are sequentially consistent: any total order consistent with happens-before will explain the program's reads. Moreover, since our first definition of a data race was based only on sequentially consistent executions, we can provide the programmer with a set of rules that, if followed, will always lead to sequentially consistent executions, with no need to reason about possible relaxed behavior of the underlying hardware. Such a set of rules is said to constitute a programmer centric memory model (Adve and Hill nineteen ninety).
+
+In effect, a programmer centric model is a contract between the programmer and the implementation: if the programmer follows the rules (that is, writes data race free programs), the implementation will provide the illusion of sequential consistency. Moreover, given the absence of races, any region of code that contains no synchronization (and that does not interact with the "outside world" via I O or syscalls) can be thought of as atomic: it cannot—by construction—interact with other threads.
+
+But what about programs that do have data races? Many experts argue that such programs are simply buggy, and need not have well-defined behavior. This is the position adopted by default in C plus plus (Boehm and Adve two thousand eight) and, subsequently, C: if a program has a data race on a given input, its behavior is undefined; otherwise, it behaves according to one of its sequentially consistent executions. As we shall see, however, the designers of both Java and C slash C plus plus have felt the need to extend semantics to additional executions, for the sake of safety in Java and performance in C slash C plus plus.
+
+Synchronization Races
+
+The definition of a data race is designed to capture cases in which program behavior may depend on the order in which two ordinary accesses occur, and this order is not constrained by synchronization. In a similar fashion, we may wish to consider cases in which program behavior depends on the order in which synchronization operations occur.
+
+For each form of synchronization operation, we can define a notion of conflict. Acquire operations on the same lock, for example, conflict with one another, while an acquire and a release do not—nor do operations on different locks. A program is said to have a synchronization race if it has two sequentially consistent executions with a common prefix, and the first steps that differ are conflicting synchronization operations. Together, data races and synchronization races constitute the class of general races (Netzer and Miller nineteen ninety two).
+
+Because we assume the existence of a total order on synchronizing steps, synchronization races never compromise sequential consistency. Rather, they provide the means of controlling and exploiting nondeterminism in parallel programs. In any case where we wish to allow conflicting high level operations to occur in arbitrary order, we design a synchronization race into the program to mediate the conflict.
+In the realm of concurrent systems, understanding program execution consistency is paramount. A program is considered sequentially consistent if any total order of operations, consistent with the happens-before relationship, can explain the results of its reads. The happens-before relation is a fundamental concept in concurrent computing, defining a partial order of events where, if event A happens-before event B, then the effects of A are visible to B. This model implies that if a program is designed to be data race-free, meaning no two conflicting memory accesses occur without explicit synchronization, its execution will always appear sequentially consistent to the programmer, even when the underlying hardware employs a more relaxed memory model. This abstraction is critical because modern processors frequently reorder memory operations for performance optimization, a behavior often hidden from the programmer by adhering to specific consistency models.
+
+The concept of a programmer-centric memory model formalizes this contract. It stipulates that if the programmer adheres to a set of rules, specifically by writing data race-free programs, the system implementation – encompassing both the compiler and the hardware – is obligated to provide the illusion of sequential consistency. Within such a framework, any region of code that does not involve synchronization or interactions with the external environment via I O operations or system calls can effectively be considered atomic; it is guaranteed not to interfere with other concurrent threads.
+
+However, the landscape changes dramatically for programs that do contain data races. In C and C plus plus, for instance, the presence of a data race typically leads to undefined behavior. This means that for a given input, the program's output and state transitions are not predictable, potentially varying across different executions, compilers, or hardware platforms. This non-determinism poses significant challenges for debugging and verifying correctness. In contrast, languages like Java, and more recent evolutions of C plus plus, have attempted to mitigate this by extending their semantics to define behavior more precisely, even for certain types of concurrent accesses that might otherwise constitute a data race. This design choice represents a trade off: it enhances program safety and predictability by reducing the incidence of truly undefined behavior, sometimes at the cost of peak performance that more aggressive, race-prone optimizations might otherwise achieve.
+
+Moving beyond ordinary memory accesses, the notion of synchronization races enters the discussion. A data race is traditionally defined as a situation where program behavior depends on the arbitrary ordering of two ordinary memory accesses that lack explicit synchronization. Synchronization races, however, focus on the ordering of synchronization operations themselves. A conflict in synchronization operations occurs when two such operations simultaneously attempt to manipulate the same synchronization primitive, such as two threads attempting to acquire the same lock. Crucially, an acquire operation on one lock and a release operation on another do not inherently conflict. A program is said to exhibit a synchronization race if there exist two distinct sequentially consistent executions that share a common prefix, but diverge on subsequent steps due to conflicting synchronization operations. This distinction separates synchronization races from general data races, which typically involve raw memory access conflicts.
+
+Unlike data races, the existence of synchronization races does not necessarily undermine the fundamental sequential consistency of the program's memory model. Instead, they represent a mechanism by which non-determinism within parallel programs can be controlled and even exploited. By allowing high level, conflicting synchronization operations to occur in an arbitrary order, synchronization races enable the program itself to mediate the conflict through its logical flow, rather than yielding to undefined behavior or uncontrolled system level non-determinism. This theoretical framework provides a means to reason about and design concurrent systems where predictable yet flexible interaction patterns between threads are crucial for both correctness and performance.

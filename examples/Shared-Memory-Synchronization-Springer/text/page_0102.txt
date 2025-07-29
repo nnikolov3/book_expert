@@ -1,0 +1,81 @@
+6.1 Reader-Writer Locks 105
+
+class rw_lock
+atomic<int>n :=0
+/l low-order bit indicates whether a writer is active;
+// remaining bits are a count of active or waiting readers
+const int WA flag = 1
+const int RC.inc = 2
+
+const int base, limit, multiplier =... /[ tuning parameters
+rw_lock.writer_acquire(): rw_lock.reader_acquire():
+int delay := base (void) n.FAA(RC.inc, ||R)
+while —=n.CAS(0, WA flag, ||) while (n.load(]|) & WA_flag) = 1; // spin
+pause(delay) fence(R||R)
+
+delay := min(delay x multiplier, limit)
+fence(R||RW)
+
+rw_lock.writer_release(): rw_lock.reader_release():
+(void) n.FAA(—WA flag, RW]||) (void) n.FAA(—RC.inc, R||)
+
+Figure 6.1 A centralized reader-preference reader-writer lock, with exponential backoff for writers.
+
+until there are no active readers. Because writers are unordered (in this particular lock),
+they use exponential backoff to minimize contention. Readers, on the other hand, can use
+ticket-style proportional backoff to defer to all waiting writers.
+
+Our third centralized example—a fair reader-writer lock—appears in Figure 6.3. It is
+patterned after the ticket lock (Sec. 4.2.2), and is represented by two pairs of counters. Each
+pair occupies a single word: the upper half of each counts readers; the lower half counts
+writers. The counters of the request word indicate how many threads have requested the lock.
+The counters of the completion word indicate how many have already acquired and released
+it. With arithmetic performed modulo the precision of half-word quantities (and with this
+number assumed to be significantly larger than the total number of threads), overflow is
+harmless. Readers spin until all earlier writers have completed. Writers spin until all earlier
+readers and writers have completed. For both readers and writers, we use the difference
+between requested and completed numbers of writers to estimate the expected wait time.
+Depending on how many (multi-)reader episodes are interleaved with these, this estimate
+may be off by as much as a factor of 2.
+
+Brandenburg and Anderson (2010) have introduced a fourth reader-writer lock variant,
+which they call a phase-fair lock. In phase-fair locking, readers and writers alternate, so
+long as there is a continuing supply of each. A centralized implementation is similar to that
+of Figure 6.3, but each reader waits for at most one writer, rather than all writers with earlier
+arrival times. When a writer finishes its critical section, all waiting readers are permitted
+to proceed. Newly arriving readers are permitted to join the current read session if there
+are no writers waiting; otherwise they wait until after the first waiting writer. Brandenburg
+and Anderson demonstrate, both analytically and experimentally, that phase-fair ordering is
+particularly effective for locks in real-time systems.
+The code defines a class named r w lock. It includes an atomic integer N initialized to zero. A comment indicates the low order bit of N shows if a writer is active. Another comment explains the remaining bits are a count of active or waiting readers. A constant integer W A flag is one. A constant integer R C inc is two. Constants for base, limit, and multiplier are defined as tuning parameters.
+
+The r w lock writer acquire function is defined. Inside, an integer variable delay is initialized to base. A while loop continues as long as the atomic compare and swap operation on N with zero and W A flag or fails. It then pauses for the current delay. The delay is then updated to the minimum of delay times multiplier or limit. A fence operation is performed for R or R W.
+
+The r w lock writer release function is defined. Inside, it performs a fetch and add operation on N with negative W A flag and R W or.
+
+The r w lock reader acquire function is defined. Inside, it performs a fetch and add operation on N with R C inc and or R. A while loop spins as long as loading N and W A flag is equal to one.
+
+The r w lock reader release function is defined. Inside, it performs a fetch and add operation on N with negative R C inc and R or.
+
+Figure six point one. A centralized reader preference reader writer lock, with exponential backoff for writers.
+
+Until there are no active readers. Because writers are unordered in this particular lock, they use exponential backoff to minimize contention. Readers, on the other hand, can use ticket style proportional backoff to defer to all waiting writers.
+
+Our third centralized example—a fair reader writer lock—appears in Figure six point three. It is patterned after the ticket lock (Section four point two point two), and is represented by two pairs of counters. Each pair occupies a single word: the upper half of each counts readers; the lower half counts writers. The counters of the request word indicate how many threads have requested the lock. The counters of the completion word indicate how many have already acquired and released it. With arithmetic performed modulo the precision of half word quantities (and with this number assumed to be significantly larger than the total number of threads), overflow is harmless. Readers spin until all earlier writers have completed. Writers spin until all earlier readers and writers have completed. For both readers and writers, we use the difference between requested and completed numbers of writers to estimate the expected wait time. Depending on how many multi reader episodes are interleaved with these, this estimate may be off by as much as a factor of two.
+
+Brandenburg and Anderson (two thousand ten) have introduced a fourth reader writer lock variant, which they call a phase fair lock. In phase fair locking, readers and writers alternate, so long as there is a continuing supply of each. A centralized implementation is similar to that of Figure six point three, but each reader waits for at most one writer, rather than all writers with earlier arrival times. When a writer finishes its critical section, all waiting readers are permitted to proceed. Newly arriving readers are permitted to join the current read session if there are no writers waiting; otherwise they wait until after the first waiting writer. Brandenburg and Anderson demonstrate, both analytically and experimentally, that phase fair ordering is particularly effective for locks in real time systems.
+The underlying technical concepts presented describe various approaches to implementing reader-writer locks, a fundamental synchronization primitive in concurrent programming. These locks are designed to allow multiple threads to read shared data concurrently, but require exclusive access for any thread attempting to write to that data. This approach enhances parallelism compared to simple mutual exclusion locks, which would serialize all read and write operations.
+
+The initial pseudocode illustrates a centralized reader preference reader-writer lock, employing an atomic integer variable, `n`, as its core state. This variable ingeniously packs multiple pieces of synchronization information within its bits. Specifically, the low order bit of `n`, indicated by `W A flag` being one, signifies if a writer is currently active. The remaining, higher order bits of `n`, manipulated by `R C inc` (a value of two), encode the count of active or waiting readers. This packing strategy minimizes memory overhead and can improve cache locality by consolidating state into a single atomic word.
+
+When a writer attempts to acquire the lock through `r w lock dot writer acquire`, it first initializes a `delay` parameter for backoff. The critical step is a `while` loop that continuously attempts an atomic `C A S`, or Compare And Swap, operation. This `C A S` attempts to atomically transition the state variable `n` from `zero` to `W A flag` (one). If successful, it means no readers were active and no writer held the lock, thus the current writer successfully acquires exclusive access. If the `C A S` fails, indicating that `n` was not `zero` (either a writer was active or readers were present), the writer enters a contention management phase. This phase involves `pause`ing for a calculated `delay` period, effectively yielding the processor or introducing a short busy wait, to reduce active spinning and bus contention. The `delay` then increases exponentially, up to a `limit`, by multiplying it with a `multiplier`, a technique known as exponential backoff. This strategy mitigates the thrashing effect that occurs when many threads repeatedly attempt to acquire a lock, by progressively increasing their wait times, thus smoothing out contention spikes. After acquisition, a `fence` operation with `R or R W` ordering is executed. This memory barrier ensures that all memory operations preceding the `fence`, particularly the writes associated with acquiring the lock, are globally visible and completed before any subsequent operations within the critical section begin, guaranteeing memory consistency.
+
+To release the writer lock, `r w lock dot writer release` performs an atomic `F A A`, or Fetch And Add, operation on `n`, subtracting `W A flag`. This clears the writer active bit, allowing waiting readers or other writers to proceed. The `F A A` operation is atomic, ensuring that the state transition of `n` occurs as a single, indivisible step.
+
+For readers, the `r w lock dot reader acquire` method first increments the reader count within `n` by `R C inc` using an atomic `F A A` operation. This registers the presence of a new reader. Following this, the reader enters a `while` loop, performing an atomic `load` of `n` and checking if the `W A flag` bit is set. If the `W A flag` is one, indicating an active writer, the reader spins, busy waiting until the writer releases the lock. Once `W A flag` is `zero`, the reader can proceed. A `fence` operation with `R or R` ordering (likely signifying a read memory barrier) ensures that the latest state of `n` and other shared data is visible to the reader. Releasing the reader lock through `r w lock dot reader release` involves an atomic `F A A` operation that subtracts `R C inc` from `n`, decrementing the active reader count. This design exhibits writer preference because readers, once they increment their count, must wait for any active writer to complete, potentially leading to reader starvation under continuous writer load.
+
+Beyond this basic writer-preference model, the text delves into more advanced "fair" reader-writer lock designs, particularly a centralized variant patterned after a ticket-style lock. This approach aims to prevent starvation and provide more predictable access times. It fundamentally operates using pairs of counters. For instance, one pair tracks reader requests and completions, while another tracks writer requests and completions, often packed into single words, where, for example, the upper half of a word counts readers and the lower half counts writers. The "request word" indicates the total number of threads that have asked for the lock, while the "completion word" tracks those that have successfully acquired and released it. Arithmetic operations on these counters are performed modulo the precision of the half word to handle overflow gracefully, ensuring the counters wrap around harmlessly, which is a common technique for bounded counters.
+
+In these fair lock designs, readers typically spin until all *earlier* writers have completed their critical sections. This strict ordering for writers ensures that readers do not bypass writers who arrived before them, promoting fairness. The difference between the requested and completed numbers is then used to estimate the expected wait time for incoming requests. The text notes that multi-reader episodes can be interleaved, and this estimation can be off by a factor of two, highlighting the complexities of predicting precise wait times in highly concurrent scenarios.
+
+A sophisticated variant, the Brandenburg and Anderson `phase-fair` lock, introduces an alternating access pattern between readers and writers. This design ensures that readers wait for at most one writer to complete, rather than all preceding writers. Crucially, when a writer finishes its critical section, all *currently waiting* readers are permitted to enter the critical section simultaneously, thereby maximizing concurrency for reads. Furthermore, newly arriving readers are allowed to join an ongoing read session if no writers are presently waiting. Conversely, if a writer is waiting, new readers must defer and wait until after that first waiting writer has completed and a new read phase can begin. This `phase-fair` ordering is demonstrated to be particularly effective for providing bounded, predictable performance in `real-time` systems, where latency guarantees are paramount, by balancing throughput and fairness across different types of requests. These advanced lock mechanisms underscore the intricate trade-offs between parallelism, fairness, and performance in the design of robust concurrent data structures.

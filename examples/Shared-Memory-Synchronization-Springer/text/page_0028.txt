@@ -1,0 +1,77 @@
+2.3 Atomic Primitives 29
+
+fetch_and_® operations implemented with CAS are nonblocking (more specifically, lock
+free), a property we will consider in more detail in Sec. 3.2.
+
+Fetch-and-® from LL /SC One problem with CAS, from an architectural point of view, is
+that it combines a load and a store into a single instruction, which complicates the implemen-
+tation of pipelined processors. LL/SC was designed to address this problem. In the fetch_
+and_® idiom above, it replaces the load at line 4 with a special instruction that has the
+side effect of “tagging” the associated cache line so that the processor will “notice” any
+subsequent eviction of the line. A subsequent SC will then succeed only if the line 1s still
+present in the cache:
+
+word fetch_and_® (function ®, atomic<word> *w):
+word old, new
+repeat
+old := w—LL(||)
+new = ®(old)
+until w—SC(new, R||)
+return old
+
+Here any argument for forward progress requires an understanding of why SC might
+fail. Details vary from machine to machine. In all cases, SC 1s guaranteed to fail if another
+thread has modified *w (the location pointed at by w) since the LL was performed. On most
+machines, SC will also fail if a hardware interrupt happens to arrive in the post-LL window.
+On some machines, it will fail if the cache suffers a capacity or conflict miss, or if the
+processor mispredicts a branch. To avoid deterministic, spurious failure, the programmer
+may need to limit (perhaps severely) the types of instructions executed between the LL and
+SC. If unsafe instructions are required in order to compute the function ®, one may need a
+hybrid approach:
+
+Emulating CAS
+
+Note that while LL / SC can be used to emulate CAS, the emulation requires a loop to deal with spurious
+SC failures. This issue was recognized explicitly by the designers of the C++’11 atomic types and
+operations, who introduced two variants of CAS. The atomic_compare_exchange_strong
+operation has the semantics of hardware CAS: it fails only if the expected value was not found. On
+an LL/SC machine, it is implemented with a loop. The atomic_compare_exchange_weak
+operation admits the possibility of spurious failure: it has the interface of CAS, but is implemented
+without a loop on an LL/SC machine. For algorithms that already require a source-level loop (e.g., to
+implement fetch_and_®), atomic_compare_exchange_weak may result in more terse and
+efficient assembly code.
+Section two point three Atomic Primitives.
+
+Fetch and Phi operations implemented with C A S are nonblocking, more specifically, lock free, a property we will consider in more detail in Section three point two.
+
+Fetch and Phi from L L S C. One problem with C A S, from an architectural point of view, is that it combines a load and a store into a single instruction, which complicates the implementation of pipelined processors. L L S C was designed to address this problem. In the fetch and Phi idiom above, it replaces the load at line four with a special instruction that has the side effect of tagging the associated cache line so that the processor will notice any subsequent eviction of the line. A subsequent S C will then succeed only if the line is still present in the cache.
+
+The code block defines a function called 'fetch and Phi'. This function accepts two parameters: a function named Phi, and a pointer to an atomic less than word greater than, named W. Inside the function, two word variables, 'old' and 'new', are declared. The function then enters a loop. In each iteration, the variable 'old' is assigned the result of calling the L L method on W, represented as W arrow L L. Subsequently, 'new' is assigned the result of calling the Phi function with 'old' as its argument. This loop continues until the S C method on W successfully stores 'new' with the second argument 'R or', represented as W arrow S C with arguments new and R or. Once the loop terminates, the function returns the 'old' value.
+
+Here any argument for forward progress requires an understanding of why S C might fail. Details vary from machine to machine. In all cases, S C is guaranteed to fail if another thread has modified the location pointed at by W since the L L was performed. On most machines, S C will also fail if a hardware interrupt happens to arrive in the post L L window. On some machines, it will fail if the cache suffers a capacity or conflict miss, or if the processor mispredicts a branch. To avoid deterministic, spurious failure, the programmer may need to limit, perhaps severely, the types of instructions executed between the L L and S C. If unsafe instructions are required in order to compute the function Phi, one may need a hybrid approach.
+
+Emulating C A S.
+
+Note that while L L S C can be used to emulate C A S, the emulation requires a loop to deal with spurious S C failures. This issue was recognized explicitly by the designers of the C plus plus eleven atomic types and operations, who introduced two variants of C A S. The atomic compare exchange strong operation has the semantics of hardware C A S: it fails only if the expected value was not found. On an L L S C machine, it is implemented with a loop. The atomic compare exchange weak operation admits the possibility of spurious failure. It has the interface of C A S, but is implemented without a loop on an L L S C machine. For algorithms that already require a source level loop, for example, to implement fetch and Phi, atomic compare exchange weak may result in more terse and efficient assembly code.
+The discussion centers on atomic primitives, fundamental constructs in concurrent computing that guarantee operations on shared memory locations appear to occur instantaneously and indivisibly, even in the presence of multiple concurrently executing threads. This atomicity is critical for maintaining data integrity and correctness in parallel systems.
+
+The `fetch and Phi` operation exemplifies a generalized atomic read-modify-write primitive. Its essence is to atomically read a value from a memory location `w`, apply a function `Phi` to that value, and then atomically write the result back to `w`. The designation "nonblocking" implies that, when implemented using mechanisms like `C A S`, no thread can indefinitely halt the progress of other threads, a property known as lock free progress. This is a crucial distinction from traditional locking mechanisms, where a thread holding a lock can stall all other threads waiting for that lock.
+
+One common architectural approach to implementing such atomic primitives is through the `L L slash S C` (Load Link/Store Conditional) instruction pair. The `L L` instruction performs a load from a specified memory address and sets an internal monitor or "link" on that cache line. Subsequently, an `S C` instruction attempts to perform a store to the same address. The `S C` succeeds only if the monitored memory location has not been modified by another processor between the `L L` and `S C` operations, and crucially, if the cache line containing the address has not been evicted from the processor's cache. If the `S C` succeeds, the store is performed atomically. If it fails, the store does not occur, and the operation typically returns an indication of failure, necessitating a retry.
+
+From an architectural viewpoint, the `L L slash S C` paradigm introduces complexity, particularly in deeply pipelined processors. The need to "tag" the associated cache line and for the processor to "notice" any subsequent eviction of that line means that `S C` success is contingent not only on logical contention (another processor modifying the data) but also on various spurious, hardware related events. This is why a `fetch and Phi` operation, when implemented with `L L slash S C`, utilizes a `repeat until` loop, as shown in the provided pseudo-code.
+
+Let us analyze the pseudo-code for `fetch and Phi`:
+The function `fetch and Phi` takes a function `Phi` and an `atomic word` pointer `w` as arguments. It declares local variables `old` and `new` to hold data.
+The `repeat` block begins by reading the current value of `w` into `old` using the `L L` operation, denoted as `old is assigned w accesses L L`.
+Next, the `new` value is computed by applying the function `Phi` to `old`, expressed as `new is assigned Phi old`. This represents the "modify" step of the read-modify-write sequence.
+The loop continues `until w accesses S C, with new and R or or`. This line attempts to conditionally store the `new` value back to `w`. The `S C` will only succeed if the memory location `w` has not been altered by another processor since the preceding `L L` instruction. The `R or or` typically signifies the expected return value or a specific memory order requirement for the `S C` operation. If `S C` fails, the `repeat` loop re-executes, fetching the latest value and recomputing, thus ensuring atomicity despite contention or spurious failures.
+Finally, the function returns the `old` value, which was the value of `w` before the atomic update.
+
+The success of the `S C` operation is not solely dependent on the absence of concurrent writes. It can fail due to several practical, machine specific conditions. For instance, if another thread modifies the location pointed to by `w`, the `S C` is guaranteed to fail, reflecting a genuine data conflict. However, on many machines, `S C` can also fail spuriously. This includes scenarios where a hardware interrupt occurs within the critical window between `L L` and `S C`, a cache conflict or miss causes the monitored cache line to be evicted, or the processor mispredicts a branch, leading to pipeline flushes that invalidate the `L L`'s context. Furthermore, certain "unsafe" instructions executed between the `L L` and `S C` can cause the `S C` to fail, or necessitate a re-computation of `Phi`. This non-deterministic failure behavior is a key challenge when working with `L L slash S C` directly and often requires careful consideration of the instruction sequence.
+
+While `L L slash S C` is a powerful primitive, `C A S` (Compare And Swap) is often considered a more abstract and widely supported atomic operation. `C A S` checks if a memory location's current value is equal to an expected value; if so, it atomically updates it to a new value. `L L slash S C` can indeed be used to emulate `C A S`. This emulation, however, typically involves a loop to handle the potential spurious failures of `S C`.
+
+The `C++` eleven standard introduced explicit atomic types and operations, including two variants of `C A S`: `atomic compare exchange strong` and `atomic compare exchange weak`. The distinction between these two lies in their failure guarantees. `atomic compare exchange strong` guarantees that it will only fail if the expected value was genuinely not found, meaning a concurrent modification occurred. It will not fail spuriously. On `L L slash S C` based architectures, `atomic compare exchange strong` might be implemented with an internal `repeat until` loop to abstract away the spurious failures of the underlying `S C` instruction.
+
+Conversely, `atomic compare exchange weak` admits the possibility of spurious failures, much like `S C`. It might return false even if the expected value was present and no actual data conflict occurred. This behavior, while potentially less intuitive for the programmer, can sometimes map more directly and efficiently to `L L slash S C` hardware, as it avoids the overhead of preventing or masking spurious failures. For algorithms that inherently require a retry loop, such as the `fetch and Phi` implementation shown, using `atomic compare exchange weak` can lead to more terse and efficient assembly code, as the retry logic is already part of the algorithm's design and aligns with the hardware's characteristics. The choice between `strong` and `weak` versions hinges on the specific performance characteristics of the underlying hardware and the algorithmic design, balancing strict guarantees against potential execution efficiency.

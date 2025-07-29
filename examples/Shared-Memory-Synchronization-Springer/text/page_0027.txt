@@ -1,0 +1,83 @@
+28 2 Architectural Background
+
+Table 2.4 Common atomic (read-modify-write) instructions. For notational consistency with load
+and store, we have written these as methods of an atomic word of type bool, int, or simply “word”
+(when type 1s immaterial). In the literature they are also commonly written as stand-alone functions
+that take a pointer to the to-be-accessed word as an additional first operand. As described in the text,
+we also permit an optional final operand that specifies non-default local ordering.
+
+test_and_set
+
+bool (atomic<bool> a).TAS(): atomic { bool t := a.load(); a.store(true); returnt}
+
+swap
+
+word (atomic<word> a).swap(word w): atomic { word t := a.load(); a.store(w); returnt}
+
+fetch_and_ increment
+
+int (atomic<int> a).FAI(): atomic {int t:= a.load(); a.store(t + 1); return t}
+
+fetch _and_ add
+int (atomic<int> a).FAA(int n): atomic {int t:= a.load(); a.store(t + n); return t}
+
+compare_and_swap
+bool (atomic<word> a).CAS(word old, word new):
+atomic { bool t := (a.load() = old); if (t) a.store(new); return t}
+
+load_linked/store_conditional
+word (atomic<word> a).LL(): atomic { remember a; return a.load() }
+bool (atomic<word> a).SC(word w):
+atomic { t := (a is remembered, and has not been evicted since LL)
+if (t) a.store(w); return t}
+
+Fetch-and-® from CAS Given CAS, fetch_and_® can be written as follows, for any given
+
+function &:
+1: word fetch_and_®(function ®, atomic<word> *w):
+2 word old, new
+3 repeat
+4: old := w—load(||)
+5: new := ®(old)
+6 until w— CAS(old, new, ||)
+7 return old
+
+In effect, this code computes ®(*w) speculatively and then updates w atomically if its value
+has not changed since the speculation began. The only way the CAS can fail to perform its
+update (and return false at line 6) is if some other thread has recently modified w. If several
+threads attempt to perform a fetch_and_® on w simultaneously, one of them is guaranteed
+to succeed, and the system as a whole will make forward progress. This guarantee impliesthat
+Table two point four. Common atomic read modify write instructions. For notational consistency with load and store, we have written these as methods of an atomic word of type boolean, integer, or simply word when type is immaterial. In the literature, they are also commonly written as stand alone functions that take a pointer to the to be accessed word as an additional first operand. As described in the text, we also permit an optional final operand that specifies non default local ordering.
+
+The `test and set` function, for an atomic boolean variable `a`, loads the current value of `a` into a temporary boolean variable `t`, then stores `true` into `a`, and finally returns the original value `t`.
+
+The `swap` function, for an atomic word variable `a` and a word `w`, loads the current value of `a` into a temporary word variable `t`, then stores the new word `w` into `a`, and finally returns the original value `t`.
+
+The `fetch and increment` function, for an atomic integer variable `a`, loads the current value of `a` into a temporary integer variable `t`, then stores `t increment by one` into `a`, and finally returns the original value `t`.
+
+The `fetch and add` function, for an atomic integer variable `a` and an integer `n`, loads the current value of `a` into a temporary integer variable `t`, then stores `t increment by n` into `a`, and finally returns the original value `t`.
+
+The `compare and swap` function, for an atomic word variable `a` with an `old` word value and a `new` word value, loads the current value of `a`. It sets a temporary boolean `t` to `true` if the loaded value `is equal to` the `old` value. If `t` is true, it stores the `new` value into `a`. Finally, it returns the boolean `t`.
+
+The `load linked` function, for an atomic word `a`, marks `a` as remembered and then loads and returns its value. The `store conditional` function, for an atomic word `a` and a word `w`, sets a temporary boolean `t` to `true` if `a` is still remembered and has not been evicted since the `load linked` operation. If `t` is true, it stores `w` into `a`. Finally, it returns the boolean `t`.
+
+Given `C A S`, `fetch and Phi` can be written as follows, for any given function `Phi`. The `fetch and Phi` function takes a function `Phi` and a pointer to an atomic word `w` as input. It declares two word variables, `old` and `new`. The function then enters a loop. Inside the loop, it loads the current value of `w` into `old` using a `load linked` operation. It then calculates the `new` value by applying the function `Phi` to `old`. The loop continues `until` a `compare and swap` operation on `w` succeeds, attempting to change `old` to `new` using a `load linked` memory ordering. Once the loop exits, the original `old` value is returned.
+
+In effect, this code computes `Phi` of the dereferenced pointer `w` speculatively and then updates `w` atomically if its value has not changed since the speculation began. The only way the `C A S` can fail to perform its update, and return `false` at line six, is if some other thread has recently modified `w`. If several threads attempt to perform a `fetch and Phi` on `w` simultaneously, only one of them is guaranteed to succeed, and the system as a whole will make forward progress. This guarantee implies that
+The information presented elucidates fundamental read modify write instructions, which are critical building blocks for achieving atomicity and consistency in concurrent programming environments. These operations ensure that a sequence of memory access, computation, and write back occurs as an indivisible unit, preventing data corruption from race conditions in multi threaded or multi processor systems. The table illustrates these primitives as methods of an atomic word type, which could represent a boolean, integer, or a generic data word, signifying that the operation applies to various data sizes and types. The concept of an optional final operand for non default local ordering hints at the nuances of memory models and consistency guarantees beyond strict sequential consistency, allowing for more performant, albeit complex, relaxed ordering semantics.
+
+First, consider the `test and set` operation. This is a boolean function operating on an atomic boolean variable `a`. Conceptually, it attempts to acquire a lock or flag. The core mechanism is a single, indivisible operation: it loads the current value of `a` into a temporary variable `t`, then unconditionally stores `true` back into `a`. Finally, it returns the previously loaded value `t`. If `t` was `false`, the thread has successfully acquired the lock and set it to `true`. If `t` was already `true`, another thread held the lock. This primitive forms the basis for spinlocks and other low level synchronization mechanisms, guaranteeing mutual exclusion by atomically updating a shared flag.
+
+Next, the `swap` operation, applicable to a generic atomic word `a` and taking a new word `w` as input, performs an atomic exchange. Similar to `test and set`, it first loads the current value of `a` into `t` atomically, then writes the new value `w` into `a`, and finally returns the original value `t`. This operation is highly versatile, enabling atomic updates where the previous value is needed for subsequent logic or for constructing lock free data structures like queues or stacks where elements are exchanged without explicit locks.
+
+The `fetch and increment` and `fetch and add` operations are fundamental for atomic arithmetic. `fetch and increment` operates on an atomic integer `a`, loading its current value into `t`, then atomically writing `t` increment by one back into `a`, and returning the original value `t`. Similarly, `fetch and add` takes an integer `n` and atomically adds `n` to the value of `a`, returning the original value before the addition. These are indispensable for maintaining atomic counters, managing shared resource counts, or implementing distributed barriers, ensuring that increments or decrements occur without loss due to interleaved operations from multiple threads.
+
+The `compare and swap`, or C A S, is a powerful and widely used atomic primitive. It takes an atomic word `a`, an `old` expected value, and a `new` value. The operation is conditional: it atomically checks if the current value of `a` is logically equivalent to `old`. If they are equal, it proceeds to store `new` into `a`. The function returns a boolean `t` indicating whether the swap actually occurred (`true` for success, `false` for failure). The `(a.load() is equal to old)` expression performs the comparison, and the subsequent `if (t) a.store(new)` block ensures the store is conditional on this comparison result, all within a single atomic window. C A S is the cornerstone of many lock free and wait free algorithms, enabling optimistic concurrency control where threads attempt an update and retry if the underlying value changed unexpectedly.
+
+The `load linked/store conditional`, or L L/S C, pair provides an alternative and often more flexible approach to atomic read modify write operations than C A S. The `load linked` function, `a.L L()`, loads the value of atomic word `a` and sets a monitor or reservation on that memory location. Subsequently, the `store conditional` function, `a.S C(w)`, attempts to store `w` back into `a`. This store only succeeds if the memory location `a` has not been modified by any other processor and its reservation has not been "evicted" since the corresponding `load linked` was performed. The `S C` operation returns a boolean `t`, where `true` indicates a successful store. This pair is more flexible than C A S because arbitrary computations can be performed between the `load linked` and `store conditional` operations, allowing for more complex atomic updates that might involve multiple memory locations or intricate logical transformations, provided the monitored location remains untouched.
+
+Finally, the section on `fetch and Phi` from C A S demonstrates a crucial concept in concurrent algorithm design: synthesizing complex atomic operations from simpler primitives. This pseudo code describes a function `fetch and Phi` that takes a generic function `Phi` and an atomic word pointer `w`. The `Phi` function represents an arbitrary transformation or computation to be applied to the value pointed to by `w`.
+
+The algorithm proceeds in a `repeat` loop, characteristic of optimistic concurrency control. In line four, `old := w less than less than load()`, the current value of `w` is loaded. This `old` value is then passed to the `Phi` function in line five to compute a `new` value: `new := Phi(old)`. This is the speculative part of the operation, where the new value is calculated based on the assumption that `w` has not changed. The critical step is line six: `until w less than greater than C A S(old, new, less than less than)`. This line attempts to atomically update `w` from `old` to `new` using `compare and swap`. If the C A S operation succeeds, it means `w` was still equal to `old` when the C A S was executed, confirming the speculative computation was valid, and the loop terminates. If the C A S fails, it indicates that another thread modified `w` between the initial load (line four) and the C A S attempt. In this case, the loop retries, fetching the new `old` value and re-evaluating `Phi`. The `less than less than` operands likely indicate relaxed memory ordering, allowing for increased performance by not enforcing strict synchronization beyond what the C A S itself provides.
+
+Upon successful completion of the C A S, the function returns the `old` value that was initially loaded (line seven), effectively providing the value of `w` *before* the atomic update, consistent with the "fetch and" semantics. This pattern demonstrates how `compare and swap` can be used to implement arbitrary read modify write operations in a lock free manner. The accompanying text emphasizes that `Phi(*w)` is computed speculatively, and a failed C A S means another thread modified the value, necessitating a retry. The guarantee that "if several threads attempt to perform a `fetch and Phi` on `w` simultaneously, one of them is guaranteed to succeed" underscores a key property of lock free algorithms: system wide progress. Even if individual threads might experience contention and retries, the overall system is ensured to make forward progress, preventing deadlock and offering strong liveness guarantees, a cornerstone of robust concurrent system design.

@@ -1,0 +1,82 @@
+4.2 Centralized Algorithms 67
+
+class lock
+atomic<bool> f := false
+const int base =... // tuning parameters
+const int limit := ...
+const int multiplier := ...
+
+lock.acquire():
+int delay := base lock.release():
+while f.TAS(]|) f.store(false, RW)
+pause(delay)
+delay := min(delay x multiplier, limit)
+fence(R||RW)
+
+Figure 4.6 The test_and_set lock with exponential backoff. The pause(k) operation is typically an
+empty loop that iterates k times. Ideal choices of base, limit and multiplier values depend on the
+machine architecture and, typically, the application workload.
+
+test_and_set lock is still extremely simple (Figure 4.5), and tends to perform well on
+machines with a small handful of cores. Whenever the lock is released, however, every com-
+peting thread will fall out of its inner loop and attempt another TAS, each of which induces
+coherence traffic. With n threads continually attempting to execute a critical sections, total
+time per acquire-release pair will be O(n), which is still unacceptable on a machine with
+more than a handful of cores.
+
+Drawing inspiration from the classic Ethernet contention protocol Metcalfe and Boggs
+(1976), Anderson et al. (1990) proposed an exponential backoff strategy for test_and_set
+locks (Figure 4.6). Experiments indicate that it works quite well in practice, leading to near-
+constant overhead per acquire-release pair on many machines. Unfortunately, it depends
+on constants (the base, multiplier, and limit for backoff) that have no single best value in
+all situations. Ideally, they should be chosen individually for each machine and workload.
+Note that test_and_set suffices in the presence of backoff; test-and-test_and_set is not
+required.
+
+4.2.2 TheTicket Lock
+
+Test_and_set locks are potentially unfair. While most machines can be expected to “ran-
+domize” the behavior of TAS (e.g., so that some particular core doesn’t always win when
+more than one attempts a TAS at roughly the same time), and while exponential backoff can
+be expected to inject additional variability into the lock’s behavior, it 1s still entirely possible
+for a thread that has been waiting a very long time to be passed up by a relative newcomer;
+in principle, a thread can starve.
+
+The ticket lock (Fischer et al. 1979; Reed and Kanodia 1979) (Figure 4.7) addresses
+this problem. Like Lamport’s bakery lock, it grants the lock to competing threads in first-
+Four point two: Centralized Algorithms.
+
+The code defines a class named lock. Inside this class, there is an atomic boolean variable F, initialized to false. It also defines constant integers for base, limit, and multiplier, which are used as tuning parameters.
+
+The lock acquire method is defined as follows: An integer variable, delay, is assigned to the base value. A while loop is entered, which continues as long as the F dot T A S or or operation returns true. Inside this loop, the execution pauses for the current delay duration. The delay is then updated to be the minimum of the current delay multiplied by the multiplier, and the specified limit. After the loop, there is a memory fence operation with read or read write memory visibility.
+
+The lock release method is defined as follows: It stores the value false into F, using read write or or memory semantics.
+
+Figure four point six describes the test and set lock with exponential backoff. The pause K operation is typically an empty loop that iterates K times. Ideal choices of base, limit, and multiplier values depend on the machine architecture and, typically, the application workload.
+
+The test and set lock is still extremely simple, as shown in Figure four point five, and tends to perform well on machines with a small handful of cores. Whenever the lock is released, however, every competing thread will fall out of its inner loop and attempt another T A S, each of which induces coherence traffic. With N threads continually attempting to execute a critical section, the total time per acquire release pair will be O of N, which is still unacceptable on a machine with more than a handful of cores.
+
+Drawing inspiration from the classic Ethernet contention protocol, Metcalfe and Boggs, nineteen seventy six, Anderson and others, nineteen ninety, proposed an exponential backoff strategy for test and set locks, depicted in Figure four point six. Experiments indicate that it works quite well in practice, leading to near-constant overhead per acquire release pair on many machines. Unfortunately, it depends on constants such as the base, multiplier, and limit for backoff that have no single best value in all situations. Ideally, they should be chosen individually for each machine and workload. Note that test and set suffices in the presence of backoff; test and test and set is not required.
+
+Four point two point two: The Ticket Lock.
+
+Test and set locks are potentially unfair. While most machines can be expected to "randomize" the behavior of T A S, for example, so that some particular core does not always win when more than one attempts a T A S at roughly the same time, and while exponential backoff can be expected to inject additional variability into the lock's behavior, it is still entirely possible for a thread that has been waiting a very long time to be passed up by a relative newcomer; in principle, a thread can starve.
+
+The ticket lock, described by Fischer and others, nineteen seventy nine, and Reed and Kanodia, nineteen seventy nine, and shown in Figure four point seven, addresses this problem. Like Lamport's bakery lock, it grants the lock to competing threads in first-
+In the domain of concurrent computing, ensuring mutual exclusion, where only one thread can access a shared resource at any given time, is paramount to maintaining data integrity and program correctness. The section on centralized algorithms elucidates fundamental mechanisms for achieving this, particularly through the use of locks.
+
+The provided code snippet illustrates a basic `class lock` implementation utilizing an atomic boolean variable and the `test and set`, or `T A S`, instruction, augmented with an exponential backoff strategy. The `atomic<bool> f` is a crucial element, representing the lock's state. Its atomic nature ensures that operations on `f` are indivisible and cannot be interleaved by other threads, thus preventing race conditions on the lock variable itself. The `f` is initialized to `false`, signifying an available lock.
+
+The `lock.acquire()` method is responsible for gaining entry to a critical section. It initializes an integer `delay` with a `base` value, one of the `tuning parameters`. The core of the acquisition logic lies within a `while` loop, which continues as long as `f.T A S(false)` returns `true`. The `T A S` operation is an atomic read modify write instruction. When called with `false` as its argument, it atomically reads the current value of `f` and simultaneously sets `f` to `true`. If the original value of `f` was `false` (meaning the lock was free), `T A S` returns `false`, and the loop terminates, indicating successful acquisition. If `f` was already `true` (lock was held), `T A S` returns `true`, and the thread continues to spin within the loop.
+
+Inside this spinning loop, a `pause(delay)` function is invoked. This `pause` operation is typically implemented as a busy wait or a yield operation, consuming processor cycles for the specified `delay` period. This constitutes the backoff mechanism. Following the pause, the `delay` is updated exponentially by multiplying it with a `multiplier` and capping it at a `limit` value. These `base`, `limit`, and `multiplier` constants are critical `tuning parameters`, influencing the performance of the lock under varying contention levels. The exponential increase in delay aims to reduce the rate at which threads retry the `T A S` operation, thereby mitigating contention on the shared lock variable and reducing cache coherence traffic.
+
+Crucially, after successfully acquiring the lock and before exiting the `acquire` method, a `fence(R or or R W)` instruction is executed. This is a memory barrier, often an `acquire fence`, which ensures that all memory operations performed *after* this fence in program order are not reordered by the processor to occur *before* it. This guarantees that all memory writes made by the thread that previously released the lock are visible to the thread that just acquired it, upholding sequential consistency for critical data.
+
+Conversely, the `lock.release()` method is straightforward. It simply invokes `f.store(false, R W)`. The `store` operation writes `false` to the atomic variable `f`, making the lock available. The `R W` argument specifies a `release` memory order. This ensures that all memory writes performed *before* this `store` operation by the releasing thread are made visible to other threads *before* they observe the lock being released. This forms a critical pair with the `acquire` fence, establishing a happens before relationship necessary for correct synchronization.
+
+While the `test and set` lock with exponential backoff is conceptually simple, its performance characteristics in multi core environments are problematic. As noted, on machines with more than a handful of cores, its scalability diminishes rapidly. The fundamental issue stems from cache coherence. Every `T A S` operation, even when it fails to acquire the lock, constitutes a write to the shared lock variable. This invalidates the cache lines of other competing cores that are also spinning on the same lock variable. Consequently, each attempt triggers a cache miss and a request for the updated cache line from main memory or another core's cache, leading to significant bus contention and excessive coherence traffic. For `n` competing threads, the total time per `acquire release pair` can degrade to `O(n)`, rendering it unacceptable for highly parallel systems.
+
+The exponential backoff strategy, inspired by classic contention protocols like Ethernet's, helps to alleviate this by making threads wait increasingly longer after failed attempts, thus reducing the rate of cache invalidations. However, its effectiveness is highly dependent on careful tuning of `base`, `limit`, and `multiplier` values, which vary based on machine architecture and application workload. There is no universally optimal set of parameters. Moreover, despite the backoff, `test and set` locks inherently exhibit unfair behavior. A thread that has been waiting for a long time can be passed over by a relative newcomer, leading to potential starvation, because the `T A S` operation does not guarantee any order of acquisition. The "randomize" effect of multiple cores attempting `T A S` operations simultaneously means that any core could win the race.
+
+To address this critical fairness issue and prevent starvation, more sophisticated lock mechanisms are required. One such mechanism is the ticket lock, which is designed to provide first in, first out (F I F O) ordering of lock acquisitions. Like Lamport's bakery algorithm, the ticket lock assigns each requesting thread a unique "ticket" number and grants access to the critical section in increasing order of these tickets, thereby ensuring fairness and eliminating starvation, a crucial improvement over the simple `test and set` with exponential backoff.

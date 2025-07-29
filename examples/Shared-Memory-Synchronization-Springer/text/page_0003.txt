@@ -1,0 +1,64 @@
+1.1 Atomicity 3
+
+nothing else appears to occur in the middle of its execution. (Note that the very concept of
+interleaving is based on the assumption that underlying machine instructions are themselves
+atomic.) Condition synchronization ensures that a specified operation does not occur until
+some necessary precondition is true. Often, this precondition is the completion of some other
+operation in some other thread.
+
+1.1 Atomicity
+
+The example on page | requires only atomicity: correct execution will be guaranteed (and
+incorrect interleavings avoided) if the instruction sequence corresponding to an increment
+operation executes as a single indivisible unit:
+
+thread 1: thread 2:
+atomic atomic
+Clr++ ctr++
+
+The simplest (but not the only!) means of implementing atomicity is to force threads
+to execute their operations one at a time. This strategy 1s known as mutual exclusion. The
+code of an atomic operation that executes in mutual exclusion is called a critical section.
+Traditionally, mutual exclusion is obtained by performing acquire and release operations
+on an abstract data object called a lock:
+
+lock L
+thread 1: thread 2:
+L.acquire() L.acquire()
+Clr++ ctr++
+L.release() L.release()
+
+The acquire and release operations are assumed to have been implemented (at some lower
+level of abstraction) in such a way that (1) each is atomic and (2) acquire waits if the lock
+1s currently held by some other thread.
+
+Concurrency and Parallelism
+
+Sadly, the adjectives “concurrent” and “parallel” are used in different ways by different authors.
+For some authors (including the current ones), two operations are concurrent if both have started
+and neither has completed; two operations are parallel if they may actually execute at the same
+time. Parallelism is thus an implementation of concurrency. For other authors, two operations are
+concurrent if there is no correct way to assign them an order in advance; they are parallel if their
+executions are independent of one another, so that any order is acceptable. An interactive program
+and its event handlers, for example, are concurrent with one another, but not parallel. For yet other
+authors, two operations that may run at the same time are considered concurrent (also called task
+parallel) if they execute different code; they are parallel if they execute the same code using different
+data (also called data parallel).
+Nothing else appears to occur in the middle of its execution. Note that the very concept of interleaving is based on the assumption that underlying machine instructions are themselves atomic. Condition synchronization ensures that a specified operation does not occur until some necessary precondition is true. Often, this precondition is the completion of some other operation in some other thread.
+
+One point one Atomicity.
+
+The example on page one requires only atomicity. Correct execution will be guaranteed, and incorrect interleavings avoided, if the instruction sequence corresponding to an increment operation executes as a single indivisible unit. Consider two threads attempting to increment a counter atomically. For thread one, the operation is declared as atomic, and it performs a counter increment, written as 'c t r increment by one'. Similarly, for thread two, the operation is atomic, performing the same counter increment 'c t r increment by one'.
+
+The simplest, but not the only, means of implementing atomicity is to force threads to execute their operations one at a time. This strategy is known as mutual exclusion. The code of an atomic operation that executes in mutual exclusion is called a critical section. Traditionally, mutual exclusion is obtained by performing acquire and release operations on an abstract data object called a lock. To illustrate this, consider a lock named 'L'. Thread one first acquires lock L, written as 'L dot acquire parenthesis'. It then performs the counter increment 'c t r increment by one', and finally releases the lock, written as 'L dot release parenthesis'. Thread two follows the same sequence: first, it acquires lock L with 'L dot acquire parenthesis', then increments the counter 'c t r increment by one', and lastly releases the lock with 'L dot release parenthesis'. The acquire and release operations are assumed to have been implemented, at some lower level of abstraction, in such a way that, first, each is atomic, and second, acquire waits if the lock is currently held by some other thread.
+
+Concurrency and Parallelism.
+
+Sadly, the adjectives 'concurrent' and 'parallel' are used in different ways by different authors. For some authors, including the current ones, two operations are concurrent if both have started and neither has completed. Two operations are parallel if they may actually execute at the same time. Parallelism is thus an implementation of concurrency. For other authors, two operations are concurrent if there is no correct way to assign them an order in advance. They are parallel if their executions are independent of one another, so that any order is acceptable. An interactive program and its event handlers, for example, are concurrent with one another, but not parallel. For yet other authors, two operations that may run at the same time are considered concurrent, also called task parallel, if they execute different code. They are parallel if they execute the same code using different data, also called data parallel.
+The concept of atomicity is fundamental in designing robust concurrent systems, particularly when managing shared resources. An operation is defined as atomic if it appears to execute as a single, indivisible unit from the perspective of any other concurrently executing operation. This implies that no partial results or intermediate states of an atomic operation are ever visible to other threads, nor can any other operation interleave its execution with an atomic operation. The underlying assumption is that rudimentary machine instructions themselves are atomic, completing their execution without interruption. However, higher level operations, such as an increment by one on a shared counter, are typically composed of multiple machine instructions: a read, an increment, and a write. Without proper synchronization, these constituent instructions can be interleaved by multiple threads, leading to race conditions where the final state of the shared variable is incorrect, for instance, a lost update.
+
+To ensure correct behavior in such scenarios, a form of condition synchronization known as mutual exclusion is employed. Mutual exclusion guarantees that only one thread can execute a specific segment of code, termed a critical section, at any given time. This effectively transforms a multi-instruction operation into an atomic one at a higher level of abstraction. The most common mechanism for implementing mutual exclusion is the use of locks. As illustrated with `lock L`, a thread wishing to enter a critical section first calls `L dot acquire()`. If the lock is available, the thread proceeds; otherwise, it blocks until the lock is released by the thread currently holding it. Upon completing the critical section, the thread calls `L dot release()` to make the lock available for other waiting threads. The correctness of this mechanism hinges on the atomic nature of the `acquire` and `release` operations themselves, which typically rely on low level hardware primitives ensuring their indivisibility. Furthermore, the `acquire` operation must possess the crucial property of waiting if the lock is currently held, preventing simultaneous entry into the critical section.
+
+Beyond atomicity, a clear understanding of concurrency and parallelism is essential. While often used interchangeably, these terms represent distinct but related concepts in distributed and parallel computing. Concurrency refers to the composition of independently executing processes or threads. Operations are considered concurrent if their execution lifetimes overlap; that is, they have both started but neither has yet completed. This temporal overlap does not inherently imply simultaneous execution on separate processing units. For example, an interactive program might handle multiple user inputs concurrently through event handlers, where the order of execution may vary, yet these handlers might run on a single processing core through time slicing.
+
+Parallelism, in contrast, is an actual *implementation* of concurrency where multiple operations truly execute simultaneously on distinct computational resources, such as separate C P U cores or G P U processing units. Thus, while concurrent operations can interleave on a single processor, parallel operations exploit multiple processors to achieve simultaneous execution. The text clarifies further distinctions within parallelism: operations can be considered parallel if they are distinct and independent, executing different code on different data, a concept known as task parallelism. Alternatively, operations are also parallel if they execute the same code on different subsets of data simultaneously, which is termed data parallelism, a common paradigm in high performance computing and G P U acceleration. In essence, concurrency focuses on managing multiple interacting computations, while parallelism concerns the actual simultaneous execution of these computations for performance gains.

@@ -1,0 +1,88 @@
+9.2 HardwareTM 205
+
+Figure 9.1 The Ticket lock of class lock
+Figure 4.7, modified to make atomic<int> next_ticket := 0
+use of hardware lock elision. atomic<int> now_serving := 0
+const int base = ... // tuning parameter
+
+lock.acquire():
+
+int my_ticket := XACQUIRE next_ticket.FAI()
+loop
+
+int ns := now_serving.load()
+
+if ns = my_ticket
+
+break
+
+pause(base x (my_ticket — ns))
+
+fence(R||RW)
+
+lock.release():
+int ns := now_serving.load()
+if ~XRELEASE next_ticket. CAS(ns+1, ns, RW||)
+now_serving.store(ns + 1)
+
+On legacy machines, RTM instructions will cause an unsupported instruction exception.
+To facilitate the construction of backward-compatible code, HLE provides an alternative
+interface in which traditional lock acquire and release instructions (typically CAS and store)
+can be tagged with an XACQUIRE or XRELEASE prefix byte. The prefixes were carefully chosen
+from among codes that function as hops on legacy machines; when run on such a machine,
+HLE-enabled code will acquire and release its locks “for real.” On a TSX machine, the
+hardware will refrain from acquiring exclusive ownership of the cache line accessed by
+an XACQUIRE-tagged instruction. Rather, it will enter speculative mode, add the lock to its
+speculative update set, and remember the lock’s original value and location. If the subsequent
+XRELEASE-tagged instruction restores the original value to the same location (and no conflicts
+have occurred in the interim), the hardware will commit the speculation. Crucially, any loads
+of the lock within the critical section will see its value as “locked,” even though its line 1s
+never acquired in exclusive mode. The only way for code in a critical section to tell whether
+1t 1s speculative or not is to execute a (non-backward-compatible) explicit XTEST instruction.
+
+Because an XRELEASE-tagged instruction must restore the original value of a lock, several
+of the lock algorithms in Chapter 4 must be modified to make them HLE-compatible. The
+ticket lock (Figure 4.7), for example, can be rewritten as shown in Figure 9.1. Speculation
+will succeed only if ns = next_ticket on the first iteration of the loop in acquire, and no
+other thread increments next_ticket during the critical section. Note in particular that if
+now_serving # next_ticket when a thread first calls acquire, the loop will continue to
+execute until the current lock holder updates either now_serving or next_ticket, at which
+point HLE will abort and retry the FAI “for real.” More significantly, if no two critical sections
+conflict, and if no aborts occur due to overflow or other “spurious” reasons, then an arbitrary
+number of threads can execute critical sections on the same lock simultaneously, each of
+them invisibly incrementing and restoring next_ticket, and never changing now_serving.
+9.2 Hardware T M
+
+Figure 9.1 The Ticket lock of Figure 4.7, modified to make use of hardware lock elision.
+
+class lock
+  atomic integer next underscore ticket is equal to 0
+  atomic integer now underscore serving is equal to 0
+  const int base is equal to ... // tuning parameter
+
+lock dot acquire
+  int my underscore ticket is equal to X Acquire next underscore ticket dot F A I
+loop
+  int ns is equal to now underscore serving dot load
+  if ns is equal to my underscore ticket
+    break
+  pause base multiplied by my underscore ticket minus ns
+  fence R or RW
+
+lock dot release
+  int ns is equal to now underscore serving dot load
+  if not X Release next underscore ticket dot C A S ns plus one comma ns comma R W or
+    now underscore serving dot store ns plus one
+
+On legacy machines, R T M instructions will cause an unsupported instruction exception. To facilitate the construction of backward compatible code, H L E provides an alternative interface in which traditional lock acquire and release instructions typically C A S and store can be tagged with an X Acquire or X Release prefix byte. The prefixes were carefully chosen from among codes that function as nops on legacy machines. When run on such a machine, H L E enabled code will acquire and release its locks for real. On a T S X machine, the hardware will refrain from acquiring exclusive ownership of the cache line accessed by an X Acquire tagged instruction. Rather, it will enter speculative mode, add the lock to its speculative update set, and remember the lock's original value and location. If the subsequent X Release tagged instruction restores the original value to the same location and no conflicts have occurred in the interim, the hardware will commit the speculation. Crucially, any loads or of the lock within the critical section will see its value as locked, even though its line is never acquired in exclusive mode. The only way for code in a critical section to tell whether it is speculative or not is to execute a non backward compatible explicit X T E S T instruction.
+
+Because an X Release tagged instruction must restore the original value of a lock, several of the lock algorithms in Chapter 4 must be modified to make them H L E compatible. The ticket lock, for example, can be rewritten as shown in Figure 9.1. Speculation will succeed only if ns is equal to next underscore ticket on the first iteration of the loop in acquire, and no other thread increments next underscore ticket during the critical section. Note in particular that if now underscore serving is not equal to next underscore ticket when a thread first calls acquire, the loop will continue to execute until the current lock holder updates either now underscore serving or next underscore ticket, at which point H L E will abort and retry the F A I for real. More significantly, if no two critical sections conflict, and if no aborts occur due to overflow or other spurious reasons, then an arbitrary number of threads can execute critical sections on the same lock simultaneously. Each of them invisibly increments and restores next underscore ticket, and never changing now underscore serving.
+Figure 9.1 presents a conceptual implementation of a ticket lock, a synchronization primitive. The lock class is defined with two atomic integer members: `next_ticket`, which represents the next available ticket to be issued, initialized to zero, and `now_serving`, which indicates the ticket of the thread currently holding the lock, also initialized to zero. A constant `base` value is also declared, implicitly used in scheduling or timing.
+
+The `lock.acquire()` method begins by atomically fetching and incrementing `next_ticket` to obtain a unique `my_ticket` for the requesting thread. It then enters a loop. Inside the loop, it atomically loads the current value of `now_serving` into `ns`. The loop continues until `ns` is equal to `my_ticket`, signifying that the thread's turn has arrived. To prevent excessive spinning and to yield the processor, a `pause` instruction is executed, scaled by the difference between `base` and `my_ticket`. This pause introduces a delay proportional to how far down the queue the current thread is, a common technique in busy-waiting loops to reduce contention. Finally, a `fence(R | RW)` instruction ensures that memory operations are ordered appropriately before the thread can proceed.
+
+The `lock.release()` method first atomically loads `now_serving`. It then attempts to atomically update `now_serving` by incrementing it by one using a Compare-And-Swap (CAS) operation. The `next_ticket` is compared to the old value of `now_serving` plus one, and if they match, `now_serving` is updated. This operation is performed using `XRELEASE` tagged instructions, indicating a release operation. The `fence(R | RW)` ensures that the update to `now_serving` is visible to other processors.
+
+The accompanying text discusses Hardware Lock Elision (HLE), an optimization technique often employed on architectures like those supporting TSX (Transactional Synchronization Extensions). On legacy machines without HLE, executing RTM (Restricted Transactional Memory) instructions would result in an unsupported instruction exception. HLE provides a backward-compatible approach by allowing traditional lock acquire and release instructions to be tagged with `XACQUIRE` or `XRELEASE` prefixes. On systems supporting HLE, these tagged instructions are treated as no-operations by the hardware. Instead, the hardware speculatively acquires exclusive ownership of the cache line associated with the lock. If no conflicts are detected within the critical section, the hardware effectively commits the speculative updates. Crucially, loads within the critical section will appear to observe the lock as "locked" even if the hardware has not acquired it through traditional means. The thread can then exit the critical section speculatively. The only way for code in a critical section to execute a non-backward-compatible explicit `XTEST` instruction is if it actually acquired the lock.
+
+The text further explains that an `XRELEASE`-tagged instruction must restore the original value of a lock. This is elaborated by referencing the ticket lock algorithm from Figure 4.7, suggesting it can be modified to be HLE-compatible. Specifically, the `acquire` loop can be rewritten to succeed only if `ns` is equal to `next_ticket` on the first iteration, and no other thread increments `next_ticket` during the critical section. The note emphasizes that if `now_serving` is not equal to `next_ticket` at the point where a thread first calls `acquire`, the loop will continue. If the lock holder updates `now_serving` either before or after the current thread's `my_ticket` is issued, the current thread will retry the `FAI` operation for real. More significantly, if two critical sections conflict, and no aborts occur due to overflow or other spurious reasons, an arbitrary number of threads might execute critical sections on the same lock simultaneously. This occurs because each thread might be invisibly incrementing `now_serving` during its speculative execution.

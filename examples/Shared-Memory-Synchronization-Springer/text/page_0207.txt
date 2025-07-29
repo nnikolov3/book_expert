@@ -1,0 +1,70 @@
+212 9 Transactional Memory
+
+could wait for a precondition in a critical section. But a transaction cannot wait: because it
+1s isolated, changes to the state of the world, made by other threads, will not be visible to it.
+
+There is an analogy here to nonblocking operations, which cannot wait and still be
+nonblocking. The analogy suggests a potential solution: insist that transactions be total—
+that their preconditions always be true—but allow them to commit “reservation” notices in
+the style of dual data structures (Sec. 8.8). If, say, a dequeue operation on a transactional
+queue finds no data to remove, it can enqueue a reservation atomically instead, and return
+an indication that it has done so. The surrounding code can then wait for the reservation to
+be satisfied in normal, nontransactional code.
+
+A second alternative, suggested by Smaragdakis et al. (2007), 1s to suspend (“punctuate”)
+a transaction at a conditional wait, and to make the sections of the transaction before and
+after the wait individually (but not jointly) atomic. This alternative requires, of course, that
+any invariants maintained by the transaction be true at the punctuation point. If a wait may
+be nested inside called routines, the fact that they may wait probably needs to be an explicit
+part of their interface.
+
+Perhaps the most appealing approach to transactional condition synchronization is the
+retry primitive of Harris et al. (2005). When executed by a transaction, it indicates that the
+current operation cannot proceed, and should abort, to be retried at some future time. Exactly
+when to retry 1s a question reminiscent of conditional critical regions (Sec. 7.4.1). There 1s
+a particularly elegant answer for STM: The transaction is sure to behave the same the next
+time around if it reads the same values from memory. Therefore, it should become a visible
+reader of every location in its read set, and wait for one of those locations to be modified by
+another transaction. (Modification by nontransactional code would imply the existence of
+a data race.) The wakeup mechanism for condition synchronization is then essentially the
+same as the abort mechanism for visible readers, and can share the same implementation.
+
+Other Uses of Speculation
+
+Transactional memory is not the only potential use of speculation. Given a speculation and
+rollback mechanism implemented for TM, we may consider using it for other things as well.
+Possibilities include
+
+e try blocks that roll back to their original state instead of stopping where they are when an
+exception arises. Shinnar et al. (2004) refer to such blocks as “try-all.” They are supported
+explicitly in hardware on Power 8, as “rollback-only” (non-isolated) transactions (Le et al.
+2015).
+
+e automatic or semi-automatic (programmer-hint-driven) parallelization of semantically
+sequential loops (Ding et al. 2007; Berger et al. 2009). In such a loop, each iteration is
+essentially a transaction, but conflicts are always resolved in favor of the earlier iteration,
+and no iteration is permitted to commit until all its predecessors have done so. Blue
+Gene/Q provided explicit hardware support for such ordered speculation. It can also
+Two hundred twelve. Nine Transactional Memory.
+
+could wait for a precondition in a critical section. But a transaction cannot wait; because it is isolated, changes to the world, made by other threads, will not be visible to it. There is an analogy here to nonblocking operations, which cannot wait and still be nonblocking. The analogy suggests a potential solution: insist that transactions be total—that their preconditions always be true—but allow them to commit "reservation" notices in the style of dual data structures. Section eight point eight. If, say, a dequeue operation on a transactional queue finds no data to remove, it can enqueue a reservation atomically instead, and return an indication that it has done so. The surrounding code can then wait for the reservation to be satisfied in normal, non-transactional code.
+
+A second alternative, suggested by Smaragidakis et al. two thousand seven, is to suspend, or punctuate, a transaction at a conditional wait, and to make the sections of the transaction before and after the wait individually, but not jointly, atomic. This alternative requires, of course, that any invariants maintained by the transaction be true at the punctuation point. If a wait may be nested inside called routines, the fact that they may wait probably needs to be an explicit part of their interface.
+
+Perhaps the most appealing approach to transactional condition synchronization is the retry primitive of Harris et al. two thousand five. When executed by a transaction, it indicates that the current operation cannot proceed, and should abort, to be retried at some future time. Exactly when to retry is a question reminiscent of conditional critical regions. Section seven point four point one. There is a particularly elegant answer for S T M: The transaction is sure to behave the same the next time around if it reads the same values from memory. Therefore, it should become a visible reader of every location in its read set, and wait for one of those locations to be modified by another transaction. Modification by non-transactional code would imply the existence of a data race. The wakeup mechanism for condition synchronization is then essentially the same as the abort mechanism for visible readers, and can share the same implementation.
+
+Other Uses of Speculation
+
+Transactional memory is not the only potential use of speculation. Given a speculation and rollback mechanism implemented for T M, we may consider using it for other things as well. Possibilities include
+
+* try blocks that roll back to their original state instead of stopping where they are when an exception arises. Shinnar et al. two thousand four refer to such blocks as "try all." They are supported explicitly in hardware on Power eight, as "rollback only" non isolated transactions. Le et al. two thousand fifteen.
+* automatic or semi automatic, programmer hint driven, parallelization of semantically sequential loops. Ding et al. two thousand seven; Berger et al. two thousand nine. In such a loop, each iteration is essentially a transaction, but conflicts are always resolved in favor of the earlier iteration, and no iteration is permitted to commit until all its predecessors have done so. Blue Gene slash Q provided explicit hardware support for such ordered speculation. It can also
+The text delves into techniques for managing transactional memory, particularly addressing the challenge of transactions that cannot immediately proceed due to dependencies on other operations. One proposed solution involves a form of conditional waiting, drawing an analogy to nonblocking operations. In this approach, transactions would ensure their preconditions are always met, but they could "reserve" access to data. If a dequeue operation, for instance, finds no data, it could atomically enqueue a reservation for the data it expects, allowing other threads to proceed. The surrounding code would then wait for this reservation to be satisfied, in contrast to normal, non-transactional execution.
+
+A second strategy, credited to Smaragdakis et al. in two thousand seven, suggests suspending a transaction conditionally. This involves making sections of the transaction, which might need to wait, atomic without being jointly atomic. The key here is that the wait condition itself needs to be evaluated at a precise point in execution. If a wait is necessary, the transaction could effectively "punctuate" itself, recording its state and requiring a subsequent reevaluation. This approach necessitates that any invariants maintained by the transaction are managed, possibly by nesting the waiting logic within called routines.
+
+The most compelling approach to transactional condition synchronization is attributed to Harris et al. in two thousand five. When a transaction encounters a condition that prevents its immediate progress, it can defer its execution and schedule a retry at a later time. This mechanism is akin to conditional critical regions, providing an elegant solution for Software Transactional Memory, or S T M. The transaction can proceed optimistically, assuming its read set will not be modified by other transactions. Should a modification occur to data it has read, or if the condition it was waiting for is still not met, the transaction can abort and reschedule. This abort and retry mechanism is essential for ensuring correctness. The concept of a "visible reader" is also introduced, implying that modifications made within a transaction might not be immediately visible to other threads until the transaction commits. The synchronization mechanism for conditional execution is described as being similar to, and potentially sharing implementation details with, the abort mechanism.
+
+The document then transitions to "Other Uses of Speculation," noting that transactional memory's speculative capabilities extend beyond simple condition synchronization. It highlights the potential for implementing speculative execution in other scenarios. One such possibility involves "try blocks" that rollback to their original state upon an exception, rather than simply stopping. Shinmar et al. in two thousand four refer to these as "rollback only" or non isolated transactions. These are supported in hardware, as seen in systems like Power eight.
+
+Another application of speculation is in automatic or semi automatic parallelization of semantically sequential loops, as described by Ding et al. in two thousand seven and Berger et al. in two thousand nine. In these loops, each iteration is treated as a transaction. Conflicts between iterations are resolved in favor of the earlier iteration, and a transaction is not permitted to commit until all its predecessor transactions have successfully committed. This creates an ordered execution flow. The text mentions that systems like Blue Gene Q provided explicit hardware support for such ordered speculation, enabling efficient parallel execution of inherently sequential loop structures through transactional mechanisms.

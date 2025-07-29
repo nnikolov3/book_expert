@@ -1,0 +1,57 @@
+208 9 Transactional Memory
+
+cost. Vallejo et al. (2011) move much of this instrumentation inside if (hw_txn) conditions,
+thereby reducing the overhead when calling shared routines from nontransactional code. For
+object-oriented languages, Tabba et al. (2009) show how instrumented hardware transactions
+can safely make in-place updates to objects that are cloned by software transactions.
+
+To obviate instrumentation on the hardware path entirely, Lev et al. (2007) suggest switch-
+ing between hardware and software phases on a global basis, so the two types of transactions
+never run concurrently. Performance can be excellent, but also somewhat brittle: unless soft-
+ware phases are rare, global phase changes can introduce significant delays.
+
+Arguably the most appealing approach to best-effort hybrid TM is to employ an STM
+algorithm that can detect the execution of concurrent hardware transactions without the
+need to instrument HTM loads and stores. Dalessandro et al. (2011) achieve this goal by
+using NOrec (Sec. 9.1.4) on the software path, to leverage value-based validation. Hardware
+transactions must still subscribe to the global NOrec sequence lock, ensuring that they will
+abort if a software transaction 1s currently in its commit phase. Significantly, however, the
+scalability limitation imposed by NOrec’s serial write-back is mitigated in the hybrid version
+by counting on most transactions to finish in hardware—STM is only a fallback. In addition,
+if the hardware supports nontransactional loads within transactions, the compiler can use
+these to implement safe and precise sandboxing, enabling lazy subscription without false
+conflicts. Riegel et al. (2011) suggest an alternative approach that relies on nontransactional
+read and FAI instructions.
+
+Matveev and Shavit (2013) propose a three-level system that avoids both the need for
+nontransactional instructions and (when many transactions fail to commit in hardware) the
+potential scalability problems of Hybrid NOrec. Their approach is named for the middle
+level: reduced hardware transactions. In this middle level, the bulk of the transaction is
+executed in software, building read and write sets using an algorithm like TL2 or TinySTM
+(Sec.9.1.4). The reads are then validated—and the writes effected—in a single hardware
+transaction whose memory footprint is likely to be much smaller than that of the transaction
+as a whole and whose instruction stream is almost certain to be free of anything that would
+deterministically abort best-effort HTM. In the rare event that a middle-level transaction fails
+to commit, its thread reverts to a third-level, all-software code path that precludes concurrent
+execution of hardware transactions. Top- and middle-level transactions must update the per-
+Orec version numbers that all-software transactions use for conflict detection, but they do not
+need to instrument loads: because all-software transactions are rare, top- and middle-level
+transactions can simply read a global count of committed software transactions, secure in
+the knowledge that they will abort if such a transaction has been active.
+
+9.3 Challenges
+
+To serve its original purpose—to facilitate the construction of small, self-contained concur-
+rent data structures—TM need not be exposed at the programming language level. Much
+two hundred eight. nine Transactional Memory cost. Vallejo et al. two thousand eleven move much of this instrumentation inside if hardware transaction conditions, thereby reducing the overhead when calling shared routines from nontransactional code. For object oriented languages, Tabba et al. two thousand nine show how instrumented hardware transactions can safely make in place updates to objects that are cloned by software transactions. To obviate instrumentation on the hardware path entirely, Lev et al. two thousand seven suggest switching between hardware and software phases on a global basis, so the two types of transactions never run concurrently. Performance can be excellent, but also somewhat brittle: unless software phases are rare, global phase changes can introduce significant delays. Arguably the most appealing approach to best effort hybrid transaction processing is to employ an S T M algorithm that can detect the execution of concurrent hardware transactions without the need to instrument H T M loads and stores. Dalessandro et al. two thousand eleven achieve this goal by using N Orec (Section nine point one point four) on the software path, to leverage value based validation. Hardware transactions must still subscribe to the global N Orec sequence lock, ensuring that they will abort if a software transaction is currently in its commit phase. Significantly, however, the scalability limitation imposed by N Orec’s serial write back is mitigated in the hybrid version by counting on most transactions to finish in hardware; S T M is only a fallback. In addition, if the hardware supports nontransactional loads within transactions, the compiler can use these to implement safe and precise sandboxing, enabling lazy subscription without false conflicts. Riegel et al. two thousand eleven suggest an alternative approach that relies on nontransactional read and F A I instructions. Matveev and Shavit two thousand thirteen propose a three level system that avoids both the need for nontransactional instructions and (when many transactions fail to commit in hardware) the potential scalability problems of Hybrid N Orec. Their approach is named for the middle level: reduced hardware transactions. In this middle level, the bulk of the transaction is executed in software, building read and write sets using an algorithm like T L two or TinyS T M (Section nine point one point four). The reads are then validated, and the writes effected in a single hardware transaction whose memory footprint is likely to be much smaller than that of the transaction as a whole and whose instruction stream is almost certain to be free of anything that would deterministically abort best effort H T M. In the rare event that a middle level transaction fails to commit, its thread reverts to a third level, all software code path that precludes concurrent execution of hardware transactions. Top and middle level transactions must update the performance version numbers that all software transactions use for conflict detection, but they do not need to instrument loads; because all software transactions are rare, top and middle level transactions can simply read a global count of committed software transactions, secure in the knowledge that they will abort if such a transaction has been active.
+
+nine point three Challenges
+
+To serve its original purpose—to facilitate the construction of small, self contained concurrent data structures—T M need not be exposed at the programming language level. Much
+Vallejo et al. in two thousand eleven demonstrated how instrumentation within transactional memory, specifically for object oriented languages, can be shifted to hardware. This approach significantly reduces overhead by minimizing the instrumentation residing in software. The core problem addressed is the instrumentation of concurrent hardware transactions, which introduces complexity and potential performance bottlenecks. Lev et al. in two thousand seven proposed a categorization of transactions into two types, highlighting that while software transactions can be brittle, hardware transactions offer better performance unless there are substantial delays.
+
+The text describes a "best effort hybrid T M" approach, suggesting an algorithm designed to detect concurrent hardware transaction execution and instrument load and store operations. Dalessandro et al. in two thousand eleven proposed using the N Orec system, which leverages value based validation for transactional memory. In this model, transactions must still abort if a software transaction is concurrently executing and has reached its commit phase. A significant scalability limitation arises when a hybrid system relies on N Orec's serial write back, particularly if transactions are forced to complete in hardware. This is because non transactional loads within transactions can lead to issues. To mitigate this, the compiler can employ precise sandboxing, enabling lazy subscription without false conflicts. Riegel et al. in two thousand eleven suggested an alternative using read and F A I instructions.
+
+Matveev and Shavit in two thousand thirteen proposed a three level system that aims to avoid the necessity of non transactional instructions. This system addresses potential scalability problems of Hybrid N Orec by structuring transactions in three tiers: top, middle, and bottom levels. The middle level is characterized by transactional memory implementations like T L two or T iny S T M, which manage the bulk of the transaction. The reads and writes are then validated, with writes effected in a single hardware transaction. This approach aims for a smaller memory footprint compared to solely hardware transactions. The instruction stream is expected to be largely free of anything that would deterministically cause an abort. In the rare event of a middle level transaction failure, the execution transitions to a third level, entirely software based code path. This indicates a fallback mechanism for more complex or problematic transactions. Top and middle level transactions utilize version numbers, such as N Orec version numbers, for conflict detection. However, they do not inherently require instrumentation for load operations. All software transactions, in contrast, rely on a global count of committed software transactions to ensure correctness, and can simply abort if such a transaction has already been acknowledged.
+
+Section nine point three, titled "Challenges," addresses the fundamental difficulties in transactional memory. The objective is to facilitate the creation of small, self contained concurrent data structures, implying that the complexities of transactional memory should ideally be hidden from the programmer, existing at the programming language level. This suggests a desire for abstraction and simplification in the use of transactional memory.

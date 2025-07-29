@@ -1,0 +1,69 @@
+74 4 Practical Spin Locks
+
+4.3.2 The CLH Lock
+
+Because every thread spins on a field of its own gnode, the MCS lock achieves a constant
+bound on the number of remote accesses per lock acquisition, even on a NRC-NUMA
+machine. The cost of this feature is the need for a newly arriving thread to write the address
+of its gnode into the gnode of its predecessor, and for the predecessor to wait for that write
+to complete before it can release a lock whose tail pointer no longer refers to its own gnode.
+
+Craig (1993) and, independently, Magnussen et al. (1994) observed that this extra “hand-
+shake” can be avoided by arranging for each thread to spin on its predecessor’s gnode, rather
+than its own. On a globally cache-coherent machine, the spin will still be local, because the
+predecessor’s node will migrate to the successor’s cache. The downside of the change is that
+a thread’s gnode must potentially remain accessible long after the thread has left its criti-
+cal section: we cannot bound the time that may elapse before a successor needs to inspect
+that node. This requirement is accommodated by having a thread provide a fresh gnode to
+acquire, and return with a different gnode from release.
+
+In their original paper, Magnussen et al. presented two versions of their lock: a simpler
+“LH” lock and an enhanced “M” lock; the latter reduces the number of cache misses in the
+uncontended case by allowing a thread to keep its original gnode when no other thread is
+trying to acquire the lock. The M lock needs CAS to resolve the race between a thread that
+1s trying to release a heretofore uncontended lock and the arrival of a new contender. The
+LH lock has no such races; all it needs is swap.
+
+Craig’s lock is essentially identical to the LH lock: it differs only in the mechanism used
+to pass gnodes to and from the acquire and release methods. It has become conventional
+to refer to this joint invention by the initials of all three inventors: CLH.
+
+Code for the CLH lock appears in Figure 4.12. An illustration of its operation appears
+in Figure 4.13. A free lock (line 1 of the latter figure) contains a pointer to a gnode whose
+succ_must_wait flag is false. Newly arriving thread A (line 2) obtains a pointer to this
+node (dashed arrow) by executing a swap on the lock tail pointer. It then spins on this node
+(or simply observes that its succ_must_wait flag is already false). Before returning from
+acquire, it stores the pointer into its own gnode so it can find it again in release. (In the
+LH version of the lock (Magnussen et al. 1994), there was no pointer in the gnode; rather,
+the API for acquire returned a pointer to the predecessor gnode as an explicit parameter.)
+
+To release the lock (line 4), thread A writes false to the succ_must_wait field of its own
+gnode and then leaves that gnode behind, returning with its predecessor’s gnode instead
+(here previously marked ‘X’). Thread B, which arrived at line 3, releases the lock in the
+same way. If no other thread 1s waiting at this point, the lock returns to the state in line 1.
+
+In his original paper, Craig (1993) explored several extensions to the CLH lock. By
+introducing an extra level of indirection, one can eliminate remote spinning even on an
+NRC-NUMA machine—without requiring CAS, and without abandoning strict either FIFO
+ordering or wait-free entry. By linking the list both forward and backward, and traversing
+it at acquire time, one can arrange to grant the lock in order of some external notion of
+The C L H Lock.
+
+Because every thread spins on a field of its own qnode, the M C S lock achieves a constant bound on the number of remote accesses per lock acquisition, even on an N R C Numa machine. The cost of this feature is the need for a newly arriving thread to write the address of its qnode into the qnode of its predecessor, and for the predecessor to wait for that write to complete before it can release a lock whose tail pointer no longer refers to its own qnode. Craig, one nine nine three, and independently, Magnussen and others, one nine nine four, observed that this extra hand shake can be avoided by arranging for each thread to spin on its predecessor's qnode, rather than its own. On a globally cache coherent machine, the spin will still be local, because the predecessor's node will migrate to the successor's cache. The downside of the change is that a thread's qnode must potentially remain accessible long after the thread has left its critical section. We cannot bound the time that may elapse before a successor needs to inspect that node. This requirement is accommodated by having a thread provide a fresh qnode to acquire, and return with a different qnode from release.
+
+In their original paper, Magnussen and others presented two versions of their lock: a simpler L H lock and an enhanced M lock. The latter reduces the number of cache misses in the uncontended case by allowing a thread to keep its original qnode when no other thread is trying to acquire the lock. The M lock needs C A S to resolve the race between a thread that is trying to release a heretofore uncontended lock and the arrival of a new contender. The L H lock has no such races; all it needs is swap.
+
+Craig's lock is essentially identical to the L H lock. It differs only in the mechanism used to pass qnodes to and from the acquire and release methods. It has become conventional to refer to this joint invention by the initials of all three inventors: C L H. Code for the C L H lock appears in Figure four point twelve. An illustration of its operation appears in Figure four point thirteen. A free lock, shown in line one of the latter figure, contains a pointer to a qnode whose success or must wait flag is false. Newly arriving thread A, shown in line two, obtains a pointer to this node by executing a swap on the lock tail pointer. This is indicated by a dashed arrow. It then spins on this node, or simply observes that its success or must wait flag is already false. Before returning from acquire, it stores the pointer into its own qnode so it can find it again in release. In the L H version of the lock, Magnussen and others, one nine nine four, there was no pointer in the qnode. Rather, the A P I for acquire returned a pointer to the predecessor qnode as an explicit parameter.
+
+To release the lock, shown in line four, thread A writes false to the success or must wait field of its own qnode and then leaves that qnode behind, returning with its predecessor's qnode instead. This was previously marked as X. Thread B, which arrived at line three, releases the lock in the same way. If no other thread is waiting at this point, the lock returns to the state in line one. In his original paper, Craig, one nine nine three, explored several extensions to the C L H lock. By introducing an extra level of indirection, one can eliminate remote spinning even on an N R C Numa machine without requiring C A S, and without abandoning strict either F I F O ordering or wait free entry. By linking the list both forward and backward, and traversing it at acquire time, one can arrange to grant the lock in order of some external notion of.
+The C L H lock, or Craig, Landin, and Hagersten lock, represents a sophisticated approach to managing concurrent access in multi-processor systems, particularly excelling on N R C-Numa architectures. Its core innovation lies in bounding the number of remote memory accesses during lock acquisition, achieving a constant overhead regardless of system scale. This contrasts with simpler spinlocks which can suffer from increased cache coherence traffic under contention, especially on Numa machines where memory latency varies significantly based on proximity to the processor.
+
+The fundamental principle behind the C L H lock is the use of 'qnodes', where each thread attempting to acquire the lock is associated with its own dedicated qnode data structure. When a thread seeks to acquire the lock, it conceptually enqueues itself by atomically linking its qnode into a system-wide logical queue. Specifically, it uses an atomic swap operation to place its own qnode at the tail of this queue, simultaneously retrieving a pointer to the qnode that was previously at the tail. This returned pointer identifies the current thread's immediate predecessor in the waiting queue. The thread then enters a localized spin loop, continuously monitoring a flag within this predecessor's qnode. This spinning is highly efficient because the predecessor's qnode resides either in the current thread's local cache or a closely associated memory region, minimizing costly remote cache line transfers and maintaining cache coherence locally. The thread waits until this flag, often named `succ_must_wait`, transitions from true to false, signaling that its predecessor has completed its critical section and released the lock.
+
+To release the lock, a thread simply modifies the state of its *own* qnode, specifically setting its `succ_must_wait` flag to false. This action inherently notifies the next thread in the queue, its successor, which has been spinning on this very qnode, that the lock is now available. This elegant design ensures F I F O fairness, as threads acquire the lock in the strict order they requested it.
+
+Early analyses, such as that by Craig in one thousand nine hundred ninety three, and independently by Magnussen and colleagues in one thousand nine hundred ninety four, highlighted a potential efficiency concern: an "extra handshake" involved in the initial C L H design. This handshake referred to the requirement for a newly arriving thread to write the address of its qnode into its predecessor's qnode, and for the predecessor to wait for that write to complete before it could release the lock. This introduced a dependency that could extend the time before a lock became truly free. To address this, an optimization was proposed: instead of a thread's qnode being its release point, a *different* qnode could be used for release. This ensures that the qnode on which a successor is spinning remains local to the successor's cache, even if the predecessor thread has moved beyond its critical section or its original qnode has been reused. The fundamental insight here is that the global cache coherence traffic is minimized by allowing each thread to spin on a memory location local to its processor, a crucial consideration for Numa architectures.
+
+Further evolutions of the C L H lock, notably the L H and M lock variants, refine its behavior. The L H lock is presented as being conceptually identical to the C L H, with distinctions primarily arising in the precise mechanisms of passing qnodes during acquire and release operations. The M lock variant further optimizes the uncontended lock acquisition scenario by reducing the number of cache misses. While the M lock may utilize an atomic Compare And Swap operation to resolve contention during acquisition, the C L H lock, in its core form, primarily relies on atomic swap operations for pointer manipulation, demonstrating its efficiency without the need for the more complex C A S primitive in all cases. This also means the C L H lock handles the transition between an uncontended state and a new contender more smoothly, requiring only a swap.
+
+Craig's original work explored several extensions to the C L H lock. One significant extension involves introducing an additional level of indirection. This can completely eliminate remote spinning, making it suitable even for N R C-Numa machines, without requiring C A S and without compromising strict F I F O ordering or wait-free entry properties. By maintaining a doubly linked list of qnodes—allowing both forward and backward traversal—the system can arrange to grant the lock based on an external notion of order or priority, moving beyond simple F I F O if desired, while still preserving the localized spinning advantage that defines the C L H lock's efficiency. These enhancements underscore the versatility and robustness of queue-based lock designs in managing concurrency challenges in highly scalable multi-core environments.

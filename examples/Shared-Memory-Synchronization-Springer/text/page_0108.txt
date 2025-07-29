@@ -1,0 +1,103 @@
+6.1 Reader-Writer Locks 111
+
+class seqlock bool seqlock.become _writer(int seq):
+atomic<int>n :=0 if n.CAS(seq, seq+1, R||)
+fence(R||W)
+
+int seqlock.reader_start(): return true
+
+int seq
+repeat // spin until even relum false
+
+seq := n.load(]|) seqlock.writer_acquire():
+until seq = 0 mod 2 int seq
+fence(R||R) repeat // spin
+return seq seq := n.load(]|)
+
+until seq = 0 mod 2 and n.CAS(seq, seq+1, ||)
+fence(R||RW)
+
+seqlock.writer_release():
+int seq := n.load(]))
+n.store(seg+1, RW|))
+
+bool seqlock.reader_validate(int seq):
+return (n.load(R||) = seq)
+
+Figure 6.6 Centralized implementation of a sequence lock. The CAS instructions in writer_acquire
+and become_writer need to be write atomic.
+
+6.2 Sequence Locks
+
+For read-mostly workloads, reader-writer locks still suffer from two significant limitations.
+First, a reader must know that it is a reader, before it begins its work. A deeply nested
+conditional that occasionally—but very rarely—needs to modify shared data will force the
+surrounding critical section to function as a writer every time. Second, a reader must write
+the metadata of the lock itself to ward off simultaneous writers. Because the write requires
+exclusive access, it is likely to be a cache miss (in a non-distributed, constant-size lock) when
+multiple readers are active. Given the cost of a miss, lock overhead can easily dominate the
+cost of other operations in the critical section.
+
+Sequence locks (seqlocks) (Lameter 2005) address these limitations. A reader is allowed to
+“change its mind” and become a writer in the middle of a critical section. More significantly,
+readers only read the lock—they do not update it. In return for these benefits, a reader must
+be prepared to repeat its critical section if it discovers, at the end, that it has overlapped the
+execution of a writer. Moreover, the reader’s actions must be simple enough that nothing a
+writer might do can cause the reader to experience an unrecoverable error—divide by zero,
+dereference of an invalid pointer, infinite loop, etc. Put another way, seqlocks provide mutual
+exclusion among writers, but not between readers and writers. Rather, they allow a reader to
+discover, after the fact, that its execution may not have been valid, and needs to be retried.
+
+A simple, centralized implementation of a sequence lock appears in Figure 6.6. The lock
+1s represented by single integer. An odd value indicates that the lock is held by a writer; an
+even value indicates that it is not. For writers, the integer behaves like a test-and- test_and_
+set lock. We assume that writers are rare.
+
+A reader spins until the lock is even and then proceeds, remembering the value it saw.
+If it sees the same value in reader validate, it knows that no writer has been active, and
+Six point one Reader Writer Locks.
+
+The following describes the code for a `seqlock` class. The class contains an atomic integer variable named `n`, which is initialized to zero.
+
+The function `int seqlock.reader_start()` is defined as follows: It declares an integer variable `seq`. It then enters a `repeat until` loop. Inside the loop, `seq` is assigned the value of `n dot load` with `or or`. The loop continues until `seq` is equal to zero modulo two. After the loop, a `fence` with `R or or R` memory ordering is performed. Finally, the function returns `seq`.
+
+The boolean function `seqlock.become_writer(int seq)` takes an integer `seq` as an argument. It checks if `n dot C A S` with `seq comma seq increment by one` is successful. If it is, a `fence` with `R or or W` memory ordering is performed, and the function returns `true`. Otherwise, it returns `false`.
+
+The boolean function `seqlock.reader_validate(int seq)` takes an integer `seq` as an argument. It returns `true` if `n dot load` with `R or or` is equal to `seq`.
+
+The function `seqlock.writer_acquire()` is defined as follows: It declares an integer variable `seq`. It then enters a `repeat until` loop. Inside the loop, `seq` is assigned the value of `n dot load` with `or or`. The loop continues until `seq` is equal to zero modulo two and `n dot C A S` with `seq comma seq increment by one comma or or` is successful. After the loop, a `fence` with `R or or R W` memory ordering is performed.
+
+The function `seqlock.writer_release()` is defined as follows: It initializes an integer variable `seq` with the value of `n dot load` with `or or`. Then, it calls `n dot store` with `seq increment by one comma R W or or`.
+
+Figure six point six shows a centralized implementation of a sequence lock. The `C A S` instructions in `writer_acquire` and `become_writer` need to be write atomic.
+
+Six point two Sequence Locks.
+
+For read mostly workloads, reader writer locks still suffer from two significant limitations. First, a reader must know that it is a reader, before it begins its work. A deeply nested conditional that occasionally but very rarely needs to modify shared data will force the surrounding critical section to function as a writer every time. Second, a reader must write the metadata of the lock itself to ward off simultaneous writers. Because the write requires exclusive access, it is likely to be a cache miss, in a non distributed, constant size lock, when multiple readers are active. Given the cost of a miss, lock overhead can easily dominate the cost of other operations in the critical section.
+
+Sequence locks, or `seqlocks`, described by Lameter in two thousand five, address these limitations. A reader is allowed to "change its mind" and become a writer in the middle of a critical section. More significantly, readers only read the lock; they do not update it. In return for these benefits, a reader must be prepared to repeat its critical section if it discovers, at the end, that it has overlapped the execution of a writer. Moreover, the reader's actions must be simple enough that nothing a writer might do can cause the reader to experience an unrecoverable error, such as a divide by zero, dereference of an invalid pointer, or an infinite loop. Put another way, `seqlocks` provide mutual exclusion among writers, but not between readers and writers. Rather, they allow a reader to discover, after the fact, that its execution may not have been valid, and needs to be retried.
+
+A simple, centralized implementation of a sequence lock appears in Figure six point six. The lock is represented by a single integer. An odd value indicates that the lock is held by a writer; an even value indicates that it is not. For writers, the integer behaves like a test and test and set lock. We assume that writers are rare.
+
+A reader spins until the lock is even and then proceeds, remembering the value it saw. If it sees the same value in `reader_validate`, it knows that no writer has been active, and
+The foundational challenge in concurrent computing lies in managing shared mutable state, where multiple threads or processors access and modify the same data. Traditional locking mechanisms, such as mutexes, provide exclusive access, ensuring data consistency by preventing simultaneous modifications. However, in scenarios dominated by read operations, where writes are infrequent, these mutexes can become performance bottlenecks. Reader-Writer locks address this by permitting multiple concurrent readers while still enforcing exclusive access for a single writer. This design optimizes for read concurrency. Yet, even Reader-Writer locks present significant limitations, particularly in highly dynamic or read heavy workloads.
+
+One limitation arises when a thread initially acting as a reader needs to transition to a writer within a critical section. This often necessitates the reader releasing its read lock, thereby allowing other readers to potentially proceed, and then re-acquiring an exclusive write lock. This re-acquisition process can be complex, introducing overhead and potentially forcing a complete re-execution of the critical section if the data changes in the interim. Furthermore, the act of a writer acquiring an exclusive lock can incur substantial system overhead. Beyond the direct cost of lock acquisition and release, a writer's modifications to shared data often invalidate cached copies held by readers on other C P U cores. This cache invalidation leads to cache misses for subsequent reader accesses, forcing them to retrieve data from slower memory hierarchies, significantly degrading performance. The text highlights this as a "constant size lock" overhead, which refers to the fixed computational cost associated with managing the lock state itself, a cost that can become disproportionately high when compounded by cache coherence protocols in multi processor systems.
+
+To address these limitations, the concept of Sequence Locks, often referred to as `seqlocks`, was introduced. Sequence locks represent a form of optimistic concurrency control, particularly suited for read mostly workloads where read operations are significantly more frequent than write operations. The core principle of a sequence lock is to allow readers to proceed concurrently with writers, fundamentally eliminating the blocking of readers by writers. This is achieved by having readers validate the consistency of their read operations *after* the fact. If a writer has intervened and modified the shared data during a reader's access, the reader detects this inconsistency and must retry its operation. Writers, however, still maintain mutual exclusion among themselves to ensure their updates are atomic and consistent.
+
+The provided code, `Figure 6.6`, illustrates a centralized implementation of a sequence lock using a single atomic integer `n`. This integer acts as the sequence number, encoding the state of the lock. An even value of `n` indicates that no writer currently holds the lock, while an odd value signifies that a writer is active. This parity based mechanism is crucial.
+
+Let us dissect the implementation. The `seqlock` class contains an `atomic<int>` named `n`, initialized to zero. The `atomic` keyword is paramount, guaranteeing that operations on `n`—such as loading, storing, or performing a Compare And Swap—are indivisible and visible across all threads, eliminating race conditions on the lock variable itself.
+
+The `reader_start` method facilitates a reader's entry into the critical section. A reader first enters a `repeat` loop, continuously loading the current value of `n` using `n.load` with a relaxed memory order, as indicated by `||`. The loop continues `until` the loaded `seq` value is `zero modulo two`, meaning `seq` is even. This spin loop ensures the reader waits until no writer currently holds the lock, which is represented by an odd sequence number. After observing an even sequence number, a `fence` instruction with `R or or R` ordering is executed. This memory barrier ensures that all prior memory reads, including the read of `n`, are completed and properly ordered before any subsequent data reads within the critical section commence. The observed `seq` value is then returned; this value is critical for the subsequent validation step.
+
+The `reader_validate` method is the lynchpin of the optimistic concurrency model. After performing its read operations on the protected data, the reader invokes this method, passing the `seq` value it obtained from `reader_start`. The method then loads the *current* value of `n` using `n.load` with a relaxed memory order. If the currently observed `n` is `equal to` the original `seq` value, and assuming `seq` was even when read at the start, it implies that no writer has modified the lock state or completed a write operation while the reader was active. If `n` has changed, especially if it became odd and then even again (indicating a writer completed its operation), or if it's currently odd (meaning a writer is still active), the read is considered invalid, and the method returns `false`, prompting the reader to retry its entire critical section. This `return` statement effectively checks if the data remained consistent by verifying that the lock was not acquired and released by a writer during the reader's operation.
+
+The `become_writer` method allows an existing reader to attempt to upgrade its access to a writer, an operation known as "lock promotion". This is performed using a `compare and swap` atomic operation. The method attempts to change the value of `n` from the `seq` value (which the reader observed as even) to `seq increment by one` (making it odd). If the `compare and swap` succeeds, it means no other writer or reader-to-writer promotion occurred simultaneously, and the thread has successfully acquired the writer lock. A `fence` with `R or or W` ordering is then executed. This read-write memory barrier ensures that any memory reads performed by the thread *before* the `compare and swap` (e.g., as part of its reader critical section) are completed and visible before any subsequent memory writes associated with its new writer role are committed.
+
+The `writer_acquire` method handles the primary acquisition of the writer lock. Similar to `reader_start`, it includes a `repeat` loop. Inside this loop, it loads the current `seq` value of `n`. It spins `until` two conditions are met: `seq` is `equal to zero modulo two` (meaning the lock is currently free for writers) `and and` a `compare and swap` operation successfully changes `n` from `seq` to `seq increment by one`. The `compare and swap` operation is crucial for guaranteeing mutual exclusion among writers, ensuring only one writer can transition `n` from an even to an odd value at any given time. Once the `compare and swap` succeeds, a strong `fence` with `R or or R W` ordering is issued. This full memory barrier acts as an `acquire` semantic, ensuring that all memory writes performed by other threads *before* the current writer acquired the lock are visible to the current writer, and that any reordering of instructions by the processor or compiler that would violate program order across the lock acquisition point is prevented.
+
+Finally, the `writer_release` method increments the sequence number `n` to `seq increment by one`, restoring it to an even value. This operation is performed using `n.store` with an `R W or or` memory ordering. This strong `release` semantic ensures that all memory writes performed by the writer within its critical section are made globally visible to other threads *before* the lock is released and the sequence number is updated. This guarantees that any subsequent reader or writer observing the newly even sequence number will also see all of the writer's data modifications.
+
+In summary, sequence locks offer a powerful alternative to traditional Reader-Writer locks for read-mostly scenarios by optimizing for reader concurrency at the expense of potential reader retries. This design effectively shifts the burden of synchronization from blocking operations to a validation-and-retry mechanism, minimizing lock overhead, particularly cache coherence costs, and allowing greater parallelism for readers. The underlying technical principles rely heavily on atomic operations and explicit memory barriers to maintain consistency in complex multi threaded environments, showcasing a sophisticated approach to concurrent system design.

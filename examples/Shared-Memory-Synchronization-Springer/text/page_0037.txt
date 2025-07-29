@@ -1,0 +1,64 @@
+38 3 Essential Theory
+
+3.1.2 Atomicity
+
+In Sec. 2.2 we introduced the notion of sequential consistency, which requires that low-level
+memory accesses appear to occur in some global total order—i.e., “one at a time”—with
+each core’s accesses appearing in program order (the order specified by the core’s sequen-
+tial program). When considering the order of high-level operations on a concurrent object,
+it 1s tempting to ask whether sequential consistency can help. In one sense, the answer 1s
+clearly no: correct sequential code will typically not work correctly when executed (with-
+out synchronization) by multiple threads concurrently—even on a system with sequentially
+consistent memory. Conversely, as we shall see in Sec. 3.3, one can (with appropriate syn-
+chronization) build correct high-level objects on top of a system whose memory is more
+relaxed.
+
+At the same time, the notion of sequential consistency suggests a way in which we might
+define atomicity for a concurrent object, allowing us to infer what it means for code to be
+properly synchronized. After all, the memory system is a complex concurrent object from
+the perspective of a memory architect, who must implement load and store instructions via
+messages across a distributed cache-cache interconnect. Just as the designer of a sequentially
+consistent memory system might seek to achieve the appearance of a total order on memory
+accesses, consistent with per-core program order, so too might the designer of a concurrent
+object seek to achieve the appearance of a total order on high-level operations, consistent
+with the order of each thread’s sequential program. In any execution that appeared to exhibit
+such a total order, each operation could be said to have executed atomically.
+
+Sequential Consistency for High-Level Objects
+
+The implementation of a concurrent object O 1s said to be sequentially consistent if, in every
+possible execution, the operations on O appear to occur in (have the same arguments and
+return values that they would have had in) some total order that is consistent with program
+order in each thread. Unfortunately, there is a problem with sequential consistency that limits
+its usefulness for high-level concurrent objects: lack of composable orders.
+
+A multiprocessor memory system is, in effect, a single concurrent object, designed at one
+time by one architectural team. Its methods are the memory access instructions. A high-level
+concurrent object, by contrast, may be designed in isolation, and then used with other such
+objects in a single program. Suppose we have implemented object A, and have proved that
+In any given program, operations performed on A will appear to occur in some total order
+consistent with program order in each thread. Suppose we have a similar guarantee for object
+B. We should like to be able to guarantee that in any given program that uses both A and B,
+operations on those objects will appear to occur in some single total order consistent with
+program order in each thread. That is, we should like the implementations of A and B to
+compose. Sadly, they may not.
+Section three point one point two, Atomicity.
+
+In Section two point two, we introduced the notion of sequential consistency, which requires that low level memory accesses appear to occur in some global total order, that is, one at a time, with each core's accesses appearing in program order, the order specified by the core's sequential program. When considering the order of high level operations on a concurrent object, it is tempting to ask whether sequential consistency can help. In one sense, the answer is clearly no: correct sequential code will typically not work correctly when executed without synchronization by multiple threads concurrently, even on a system with sequentially consistent memory. Conversely, as we shall see in Section three point three, one can, with appropriate synchronization, build correct high level objects on top of a system whose memory is more relaxed.
+
+At the same time, the notion of sequential consistency suggests a way in which we might define atomicity for a concurrent object, allowing us to infer what it means for code to be properly synchronized. After all, the memory system is a complex concurrent object from the perspective of a memory architect, who must implement load and store instructions via messages across a distributed cache cache interconnect. Just as the designer of a sequentially consistent memory system might seek to achieve the appearance of a total order on memory accesses, consistent with per core program order, so too might the designer of a concurrent object seek to achieve the appearance of a total order on high level operations, consistent with the order of each thread's sequential program. In any execution that appeared to exhibit such a total order, each operation could be said to have executed atomically.
+
+Sequential Consistency for High Level Objects.
+
+The implementation of a concurrent object O is said to be sequentially consistent if, in every possible execution, the operations on O appear to occur in, and have the same arguments and return values that they would have had in, some total order that is consistent with program order in each thread. Unfortunately, there is a problem with sequential consistency that limits its usefulness for high level concurrent objects: lack of composable orders.
+
+A multiprocessor memory system is, in effect, a single concurrent object, designed at one time by one architectural team. Its methods are the memory access instructions. A high level concurrent object, by contrast, may be designed in isolation, and then used with other such objects in a single program. Suppose we have implemented object A, and have proved that in any given program, operations performed on A will appear to occur in some total order consistent with program order in each thread. Suppose we have a similar guarantee for object B. We should like to be able to guarantee that in any given program that uses both A and B, operations on those objects will appear to occur in some single total order consistent with program order in each thread. That is, we should like the implementations of A and B to compose. Sadly, they may not.
+The fundamental concept of atomicity in concurrent systems, as detailed in this section, builds upon the foundational idea of sequential consistency. Sequential consistency mandates that all memory accesses across multiple processing units appear to execute in a single, global total order, as if they were executed one at a time. Crucially, within this global order, each individual processing core's or thread's memory operations must still appear in the order specified by its own program.
+
+A key question arises when considering high-level operations on a concurrent object: can sequential consistency simplify the design of such operations? The answer is generally negative in the absence of proper synchronization. Without explicit coordination mechanisms, sequentially consistent memory alone does not guarantee correct execution for concurrent code that modifies shared data. In fact, many modern systems employ more relaxed memory consistency models for performance, relying on well-defined synchronization primitives, such as fences or locks, to enforce necessary ordering and visibility among concurrent operations. The correct construction of high-level concurrent objects often necessitates careful application of these synchronization mechanisms, even on memory systems with strong consistency guarantees.
+
+From the perspective of a memory architect, who is responsible for designing the complex interplay of load and store instructions across distributed cache-coherent interconnects, the goal is to provide a memory model that simplifies reasoning for software developers. Similarly, a designer of concurrent objects aims to make high-level operations appear atomic. An operation is considered atomic if its internal steps, which might involve multiple low-level memory accesses, appear to complete instantaneously and indivisibly from the viewpoint of any other concurrent operation. This means that either all of its effects are visible, or none are; there is no intermediate state observable by other threads. Achieving this "all or nothing" property for high-level operations, even when composed of many smaller steps, is the essence of atomicity in this context. Any execution trace where a high-level operation appears to complete as a single, indivisible unit, consistent with the per-thread program order, signifies an atomically executed operation.
+
+Expanding on this, a concurrent object, denoted as O, is said to be sequentially consistent if, for every possible execution trace, the sequence of operations applied to O can be reordered into some hypothetical total order. This total order must preserve the individual program order of operations within each thread and must yield the same return values and final state as if the operations had actually occurred in that exact, reconstructed total order. This formal definition provides a strong guarantee about the observable behavior of the object.
+
+However, a significant challenge arises when composing multiple high-level concurrent objects, even if each individually satisfies sequential consistency. This is the problem of lack of composability. Consider a multiprocessor memory system itself as a large, complex concurrent object; its individual memory access instructions are its fundamental methods. While such a system might be designed to enforce sequential consistency for its primitive memory operations, this property does not automatically extend to higher-level abstractions. For instance, imagine one has implemented a concurrent object A, and rigorously proven that all its operations appear sequentially consistent when A is used in isolation within any program. Suppose a second concurrent object B also possesses this same guarantee when used alone. The critical and often problematic issue is that when a program utilizes *both* object A and object B concurrently, there is no inherent guarantee that the operations across *both* A and B will collectively appear in a single, overarching total order that remains consistent with each thread's individual program flow. This non-composability of sequential consistency for high-level objects means that simply combining individually correct, sequentially consistent components does not automatically result in a correct, sequentially consistent composite system, often necessitating more complex verification or additional synchronization mechanisms.

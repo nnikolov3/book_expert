@@ -1,0 +1,67 @@
+110 6 Read-Mostly Atomicity
+
+after incorporating one of these, code for the lock of Krieger et al. appears in Figures 6.4
+and 6.5.
+
+As in the MCS spin lock, the acquire and release routines expect a gnode argument,
+which they add to the end of the list. Each contiguous group of readers maintains both
+forward and backward pointers in its segment of the list; segments consisting of writers are
+singly linked. A reader can begin reading if its predecessor is a reader that is already active,
+though 1t must first unblock its successor (if any) if that successor 1s a waiting reader.
+
+In Mellor—Crummey and Scott’s reader-writer locks, as in the MCS spin lock, queue
+nodes could be allocated in the stack frame of the routine that calls acquire and release. In
+the lock of Krieger et al., this convention would be unsafe: it is possible for another thread
+to modify a node an arbitrary amount of time after the node’s owner has removed it from the
+queue. To avoid potential corruption, queue nodes must employ some form of safe memory
+reclamation—for example, by using a dynamic type-preserving allocator, as described in
+the box on page 140 or, in general, as described in Sec. 8.7.
+
+When a reader finishes its critical section, it removes itself from its doubly-linked group
+of contiguous readers. To avoid races during the unlink operation, the reader acquires mutex
+locks on its predecessor’s gnode and its own. (These can be very simple, since at most
+two threads will ever contend for access.) If a reader finds that it is the last member of its
+reader group, it unblocks its successor, if any. That successor will typically be a writer; the
+exception to this rule is the subject of the bug repaired by Dice et al.
+
+In their paper on phase-fair locks, Brandenburg and Anderson (2010) also present a
+queue-based implementation with local-only spinning. As of this writing, their lock and the
+code of Figures 6.4 and 6.5 appear to be the best all-around performers on medium-sized
+machines (up to perhaps a few dozen hardware threads). For heavily contended locks on
+very large machines, Lev et al. (2009b) show how to significantly reduce contention among
+concurrent readers, at the cost of higher overhead when the thread count is low, using a
+variant of the scalable nonzero indicator described in Sec. 5.4.
+
+One additional case merits special attention. If reads are much more common than writes,
+and the total number of threads is not too large, the fastest performance may be achieved
+with a distributed reader-writer lock consisting of |7 | “reader locks”’—one per thread—and
+one “writer lock” (Hsieh and Weihl 1992). The reader_acquire routine simply acquires the
+reader lock corresponding to the calling thread. The writer_acquire routine acquires first the
+writer lock and then all the reader locks, one at a time. The corresponding release routines
+release these same component locks (in reverse order in the case of writer_release). Reader
+locks can be very simple, since they are accessed only by a single reader and the holder of
+the writer lock. Moreover reader_acquire and reader_release will typically be very fast:
+assuming reads are more common than writes, the needed reader lock will be unheld and
+locally cached. The writer operations will be slow of course, and each lock will consume
+space linear in the number of threads. Linux uses locks of this sort to synchronize some
+kernel-level operations, with per-core kernel instances playing the role of threads.
+After incorporating one of these, code for the lock of Krieger et al. appears in Figures six point four and six point five.
+
+As in the M C S spin lock, the acquire and release routines expect a qnode argument, which they add to the end of the list. Each contiguous group of readers maintains both forward and backward pointers in its segment of the list; segments consisting of writers are singly linked. A reader can begin reading if its predecessor is a reader that is already active, though it must first unblock its successor, if any, if that successor is a waiting reader.
+
+In Mellor Crummey and Scott’s reader writer locks, as in the M C S spin lock, queue nodes could be allocated in the stack frame of the routine that calls acquire and release. In the lock of Krieger et al., this convention would be unsafe: it is possible for another thread to modify a node an arbitrary amount of time after the node’s owner has removed it from the queue. To avoid potential corruption, queue nodes must employ some form of safe memory reclamation, for example, by using a dynamic type preserving allocator, as described in the box on page one hundred forty or, in general, as described in Section eight point seven.
+
+When a reader finishes its critical section, it removes itself from its doubly linked group of contiguous readers. To avoid races during the unlink operation, the reader acquires mutex locks on its predecessor’s qnode and its own. These can be very simple, since at most two threads will ever contend for access. If a reader finds that it is the last member of its reader group, it unblocks its successor, if any. That successor will typically be a writer; the exception to this rule is the subject of the bug repaired by Dice et al.
+
+In their paper on phase fair locks, Brandenburg and Anderson, two thousand ten, also present a queue based implementation with local only spinning. As of this writing, their lock and the code of Figures six point four and six point five appear to be the best all around performers on medium sized machines, up to perhaps a few dozen hardware threads. For heavily contended locks on very large machines, Lev et al., two thousand nine b, show how to significantly reduce contention among concurrent readers, at the cost of higher overhead when the thread count is low, using a variant of the scalable non zero indicator described in Section five point four.
+
+One additional case merits special attention. If reads are much more common than writes, and the total number of threads is not too large, the fastest performance may be achieved with a distributed reader writer lock consisting of the absolute value of T reader locks, one per thread, and one writer lock, Hsieh and Weihl, nineteen ninety two. The reader acquire routine simply acquires the reader lock corresponding to the calling thread. The writer acquire routine acquires first the writer lock and then all the reader locks, one at a time. The corresponding release routines release these same component locks, in reverse order in the case of writer release. Reader locks can be very simple, since they are accessed only by a single reader and the holder of the writer lock. Moreover, reader acquire and reader release will typically be very fast: assuming reads are more common than writes, the needed reader lock will be unheld and locally cached. The writer operations will be slow of course, and each lock will consume space linear in the number of threads. Linux uses locks of this sort to synchronize some kernel level operations, with per core kernel instances playing the role of threads.
+The underlying discourse revolves around the intricate challenges of concurrent programming, specifically focusing on the design and implementation of reader writer locks in multi processor and multi core environments. These synchronization primitives are critical for managing shared data access, allowing multiple threads to read concurrently while ensuring exclusive access for writing operations.
+
+The discussion initiates with a particular lock mechanism, that attributed to Krieger et al., which fundamentally relies on a queue-based structure employing `qnode` arguments. The architectural design of this lock involves a sophisticated management of pointers: forward and backward pointers maintain the ordering of readers within their respective segments of the list, while segments dedicated to writers are managed through a simpler singly linked structure. A key aspect is the admission policy for readers: a reader is only permitted to commence its critical section if its immediate predecessor in the queue is already actively reading or is a waiting reader itself. This sequential admission helps maintain a fair order and reduces starvation. A crucial technical challenge highlighted in this context is the appropriate handling of queue node memory. If these nodes are allocated on the stack frame of the routine that calls the lock, a fundamental concurrency issue arises. It becomes possible for a thread to deallocate its `qnode` while other threads still hold references to it, leading to a classic use after free vulnerability or memory corruption. To mitigate such hazards, the design necessitates the employment of robust memory reclamation schemes, such as dynamic type preserving allocators, which ensure that memory remains valid for the entire duration it might be accessed by any concurrent thread.
+
+When a reader successfully completes its critical section and exits, it performs a self removal operation from its doubly linked group of readers. This unlink operation itself is a critical section and must be atomic to prevent race conditions. Therefore, it requires the reader to acquire specific mutex locks on both its predecessor's `qnode` and its own. This two phase locking ensures data consistency during the structural modification of the queue. A particularly sensitive state transition occurs when a reader is the last member of its contiguous reader group; in such a scenario, it assumes the responsibility of unblocking its successor, which is typically a writer. This precise handoff mechanism is vital for maintaining lock fairness and preventing deadlocks. The reference to a specific bug repaired by Dice et al. underscores the subtle complexities and potential pitfalls in implementing correct synchronization logic, even in seemingly straightforward operations.
+
+Further exploration introduces the concept of phase fair locks, as presented by Brandenburg and Anderson in two thousand ten. These are another class of queue based lock implementations, distinguished by their emphasis on achieving fairness by balancing the access opportunities between readers and writers. A notable feature of these locks is their use of local only spinning, a performance optimization where threads attempting to acquire a lock will spin on a locally cached variable rather than repeatedly accessing shared memory locations. This reduces contention on shared cache lines or memory buses, improving scalability on systems with a few dozen hardware threads. The work by Lev et al. in two thousand nine b further elaborates on strategies to reduce contention in heavily used locks, particularly when the thread count is low, by incorporating a nonzero indicator. This mechanism allows for adaptive contention management, where the lock's behavior adjusts based on the observed load, preventing unnecessary overhead.
+
+An additional case meriting detailed attention is a distributed reader writer lock, as proposed by Hsieh and Weihl in nineteen ninety two. This design is particularly well suited for scenarios where read operations are significantly more frequent than write operations and the overall number of threads is not excessively large. The architecture of this distributed lock comprises two conceptual components: a single, global writer lock and a set of per thread reader locks, where there is one dedicated reader lock for each participating thread. The operational protocols for acquisition and release are distinct and critical to its performance characteristics. The `reader_acquire` routine is remarkably simple and fast: a thread merely acquires its own specific reader lock. Because these individual reader locks are rarely contended by other threads and can often be locally cached, read operations typically exhibit very low latency. Conversely, the `writer_acquire` routine is more involved and inherently slower. A writer must first acquire the global writer lock, and subsequently, it must acquire *all* of the per thread reader locks, one by one. This serial acquisition of all reader locks ensures that no readers are active while a write operation proceeds, guaranteeing strong consistency. The corresponding `release` routines mirror this pattern, with writer release occurring in reverse order of acquisition to properly transition the lock state. The design inherently trades off increased memory consumption for synchronization structures, which is linear in the number of threads, for superior reader performance. This balance is often acceptable in read heavy workloads. Such designs are not merely theoretical constructs; the Linux operating system, for instance, employs similar locking strategies for various kernel level operations to manage concurrency and shared data integrity.

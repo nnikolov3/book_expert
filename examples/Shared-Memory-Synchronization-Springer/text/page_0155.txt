@@ -1,0 +1,55 @@
+159
+
+There have been many recent developments improving various properties of skip lists.
+We discuss a few notable examples. Dick et al. (2016) replaced towers with wheels that
+contain many keys for improved memory locality, and that allow the height of a skip list
+to shrink if many keys are deleted, enabling more efficient searches. Crain et al. (2013)
+proposed having a background thread lazily construct towers for inserted keys, allowing
+insertions to proceed more quickly (at the cost of searches for those keys being temporarily
+slower until the background thread finishes constructing towers as appropriate). Daly et al.
+(2018) presented a practical skip list (NUMASK) that is especially efficient on systems with
+multiple processor sockets. In NUMASK, the bottom level of the skip list is distributed across
+sockets, and the top levels of the skip list are replicated (cached) on each socket to reduce
+inter-socket communication during searches. Aksenov et al. (2020) introduced a distribution
+aware skip list called a splay list in which operations dynamically move frequently accessed
+keys closer to the top of the skip list where they can be accessed more efficiently.
+
+8.6 Search Trees
+
+You might wonder why this doesn’t use some kind of search tree instead, which would support
+somewhat faster search operations. The reason is that there are no known efficient lock-free
+insertion and deletion algorithms for search trees.
+
+— A comment by Doug Lea in the code for Java’s ConcurrentSkipListMap (2006).
+
+8.6.1 The EFRB Tree
+
+Four years after Doug Lea’s comment, the first provably correct (linearizable) lock-free
+binary search tree (BST) with efficient insertions and deletions was published by Ellen et al.
+(2010a). Even though lock-free linked list designs were published as early as 1995 (Valois
+1995), it took 15 years for a binary search tree to appear. This might seem surprising, since
+in the single-threaded context, it 1s not much more difficult to implement a BST (without
+balancing) than it is a linked list.
+
+New Challenges in BSTs There are two new challenges to overcome in BST's that do not arise
+in lists. First, in the traditional internal (or node-oriented) BST taught in most undergraduate
+computer science curricula, deleting a leaf, or a node with one child, is straightforward.
+However, deleting a node n with two children involves locating its successor s (the node
+in the tree with the next larger key), and swapping the keys of n and s, so the key to be
+deleted 1s now in s, which is either a leaf or has one child. Finally, s is deleted using the
+simpler algorithms for deleting a leaf or node with one child. In a multithreaded setting,
+swapping the keys of n and s atomically would require complex synchronization. Worse, as
+Figure 8.12 illustrates, even atomically deleting a key while a search is running can cause
+the search to return the wrong answer.
+One hundred fifty nine. There have been many recent developments improving various properties of skip lists. We discuss a few notable examples. Dick et al. (two thousand sixteen) replaced towers with wheels that contain many keys for improved memory locality, and that allow the height of a skip list to shrink if many keys are deleted, enabling more efficient searches. Crain et al. (two thousand thirteen) proposed having a background thread lazily construct towers for inserted keys, allowing insertions to proceed more quickly at the cost of searches for those keys being temporarily slower until the background thread finishes constructing towers as appropriate. Daly et al. (two thousand eighteen) presented a practical skip list, N u M A S K, that is especially efficient on systems with multiple processor sockets. In N u M A S K, the bottom level of the skip list is distributed across sockets, and the top levels of the skip list are replicated cached on each socket to reduce inter socket communication during searches. Aksenov et al. (two thousand twenty) introduced a distribution aware skip list called a splay list in which operations dynamically move frequently accessed keys closer to the top of the skip list where they can be accessed more efficiently.
+
+Search Trees. You might wonder why this doesn't use some kind of search tree instead, which would support somewhat faster search operations. The reason is that there are no known efficient lock free insertion and deletion algorithms for search trees. A comment by Doug Lea in the code for Java's ConcurrentSkipListMap (two thousand six).
+
+The E F R B Tree. Four years after Doug Lea's comment, the first provably correct linearizable lock free binary search tree B S T with efficient insertions and deletions was published by Ellen et al. (two thousand ten a). Even though lock free linked list designs were published as early as nineteen ninety five Valois nineteen ninety five, it took fifteen years for a binary search tree to appear. This might seem surprising, since in the single threaded context, it is not much more difficult to implement a B S T without balancing than it is a linked list.
+
+New Challenges in B S Ts. There are two new challenges to overcome in B S Ts that do not arise in lists. First, in the traditional internal or node oriented B S T taught in most undergraduate computer science curricula, deleting a leaf, or a node with one child, is straightforward. However, deleting a node n with two children involves locating its successor s the node in the tree with the next larger key, and swapping the keys of n and s, so the key to be deleted is now in s, which is either a leaf or has one child. Finally, s is deleted using the simpler algorithms for deleting a leaf or node with one child. In a multithreaded setting, swapping the keys of n and s atomically would require complex synchronization. Worse, as Figure eight point twelve illustrates, even atomically deleting a key while a search is running can cause the search to return the wrong answer.
+The text discusses advancements in skip lists and introduces binary search trees, particularly their efficient, lock free implementations.  Early work by Dick et al. in two thousand sixteen explored skip lists with wheels, enhancing memory locality and enabling more efficient searches by shrinking the list height.  This approach allows for faster insertions and deletions, even when many keys are removed.  Crain et al. in two thousand thirteen introduced background threads to lazily construct these towers, potentially improving insertion speed at the cost of search performance until the background thread completes.  Daly et al. presented a practical skip list implementation called N U M A S K, designed for systems with multiple processor sockets, where the bottom level of the skip list is replicated across sockets to reduce inter-socket communication. Aksenov et al. in two thousand twenty introduced a distribution aware skip list, termed a splay list, which dynamically moves frequently accessed keys to the top of the list for faster access.
+
+The text then pivots to search trees, questioning why a skip list might be preferred over a search tree for certain operations. The primary reason cited is the lack of known efficient lock-free algorithms for search trees, a contrast to the advancements in lock-free linked list designs. Doug Lea's comment highlights that while the first provably correct, linearizable lock-free linked lists emerged in the mid-nineties, the development of efficient lock-free binary search trees lagged significantly. This delay suggests inherent complexities in achieving lock-freedom for tree structures compared to linear ones.
+
+The section "The EFRB Tree" further elaborates on the challenges of binary search trees, especially in concurrent settings. It notes that even though lock-free linked list designs existed as early as nineteen ninety-five, it took fifteen years for comparable binary search tree implementations to appear. This implies that the algorithms for maintaining the search tree property in a concurrent, lock-free manner are considerably more intricate. Two specific challenges are presented for binary search trees that do not typically manifest in lists. The first is the complexity of deleting a node with two children in a traditional, internal or node-oriented binary search tree. While deleting a leaf or a node with one child is straightforward, deleting a node with two children requires finding its in-order successor, swapping keys, and then deleting the successor. In a multithreaded, lock-free environment, atomically performing these steps is particularly challenging. The text warns that if a search operation is concurrently active while a deletion is being processed in this manner, it could lead to an incorrect search result, underscoring the need for careful synchronization mechanisms.

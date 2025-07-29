@@ -1,0 +1,63 @@
+116 6 Read-Mostly Atomicity
+
+td
+Cd
+”
+”
+
+@
+
+a
+
+Figure 6.7 Rebalancing of a binary tree via internal subtree replacement (rotation). Adapted from
+Clements et al. (2012, Figure 8b). Prior to the replacement, node z is the right child of node x. After
+the replacement, x’ is the left child of z’.
+
+the latter to be effected with single-pointer updates to a leaf. Assuming that the tree 1s linked
+only from parents to children, they then observe that rofation-based rebalancing can be
+designed to change only a small internal subtree, with a single incoming pointer. One can
+effect an RCU rotation by creating a new version of the subtree and then swinging the pointer
+to its root. The portion of the structure above the subtree can safely remain unchanged under
+the usual single-pointer-update rule. More important, most of the tree fragments below the
+subtree can also safely remain unchanged, and need not be copied.
+
+As an example, suppose we wish to rotate nodes x and z in Figure 6.7. We create new
+nodes x” and Zz’, and initialize their child pointers to refer to trees A, B, and C. Then, with
+a single store (for atomicity with respect to readers) and under protection of a write lock
+(for atomicity with respect to other writers), we swing p’s left or right child pointer (as
+appropriate) to refer to z’ instead of x. Trees A, B, and C will remain unchanged. Once a
+grace period has expired, nodes x and z can be reclaimed. In the meantime, readers that have
+traveled through x and z will still be able to search correctly down to the fringe of the tree.
+
+In-Place Updates. As described above, RCU is designed to incur essentially no overhead for
+readers, at the expense of very high overhead for writers. In some cases, even this property
+can be relaxed, extending the low-cost case to certain kinds of writers. In the same paper
+that introduced RCU balanced trees, Clements et al. (2012) observed that trivial updates
+to tree-based page tables—specifically, single-leaf modifications associated with demand
+page-in—are sufficiently common to be a serious obstacle to scalability on large shared-
+memory multiprocessors. Their solution is essentially a hybrid of RCU and sequence locks.
+Major (multi-page) update operations continue to function as RCU writers: they exclude
+one another in time, install their changes via single-pointer update, and wait for a grace
+period before reclaiming no-longer-needed space. The page fault interrupt handler, however,
+functions as an RCU reader. If it needs to modify a page table entry to effect demand page-in,
+1t makes its modifications in place.
+Figure six point seven illustrates the rebalancing of a binary tree through an internal subtree replacement, also known as rotation. The diagram shows an initial tree structure and its transformation. At the top, there is a root node, denoted 'r', which is indirectly connected to a node 'p'. Initially, node 'p' points to node 'x'. Node 'x' has a right child, 'z', and an implied left child. Node 'z' is shown with a child node 'B'. The nodes 'x' and 'z' are involved in the rotation. The diagram shows an 'update' arrow from 'p' pointing to a new node, 'z prime'. After the update, 'p' now points to 'z prime'. Node 'z prime' has a new left child, 'x prime', and an implied right child. 'x prime' in turn has two children: 'A' as its left child, and 'C' as its right child. The original nodes 'x' and 'z' are depicted in a lighter shade, indicating they are being replaced or are no longer part of the active tree structure after the rotation. Trees 'A', 'B', and 'C' represent subtrees or leaf nodes that are rearranged during the rotation. This figure is adapted from Clements et al. two thousand twelve, Figure eight B. Prior to the replacement, node 'z' is the right child of node 'x'. After the replacement, 'x prime' is the left child of 'z prime'.
+
+The latter is to be effected with single pointer updates to a leaf. Assuming that the tree is linked only from parents to children, they then observe that rotation based rebalancing can be designed to change only a small internal subtree, with a single incoming pointer. One can effect an R C U rotation by creating a new version of the subtree and then swinging the pointer to its root. The portion of the structure above the subtree can safely remain unchanged under the usual single pointer update rule. More important, most of the tree fragments below the subtree can also safely remain unchanged, and need not be copied.
+
+As an example, suppose we wish to rotate nodes 'x' and 'z' in Figure six point seven. We create new nodes 'x prime' and 'z prime', and initialize their child pointers to refer to trees A, B, and C. Then, with a single store, for atomicity with respect to readers, and under protection of a write lock, for atomicity with respect to other writers, we swing 'p's left or right child pointer, as appropriate, to refer to 'z prime' instead of 'x'. Trees A, B, and C will remain unchanged. Once a grace period has expired, nodes 'x' and 'z' can be reclaimed. In the meantime, readers that have traveled through 'x' and 'z' will still be able to search correctly down to the fringe of the tree.
+
+Regarding in place updates, as described above, R C U is designed to incur essentially no overhead for readers, at the expense of very high overhead for writers. In some cases, even this property can be relaxed, extending the low cost case to certain kinds of writers. In the same paper that introduced R C U balanced trees, Clements et al. two thousand twelve, observed that trivial updates to tree based page tables, specifically, single leaf modifications associated with demand page in, are sufficiently common to be a serious obstacle to scalability on large shared memory multiprocessors. Their solution is essentially a hybrid of R C U and sequence locks. Major, multi page, update operations continue to function as R C U writers: they exclude one another in time, install their changes via single pointer update, and wait for a grace period before reclaiming no longer needed space. The page fault interrupt handler, however, functions as an R C U reader. If it needs to modify a page table entry to effect demand page in, it makes its modifications in place.
+The illustration depicts a binary tree rebalancing operation performed through an internal subtree replacement, a technique fundamental to maintaining the performance characteristics of tree-based data structures. Central to this process is the concept of a tree rotation, which rearranges nodes to alter the tree's structure while preserving the inorder traversal of its elements, thereby maintaining the semantic ordering of the data.
+
+Spatially, the diagram, labeled Figure six point seven, presents a hierarchical structure with a root node `r` at the top. Below `r`, connected by a dashed line, is node `p`. From `p`, a solid line descends to node `z prime`, which is the newly created version of an existing node. To the right of `z prime` and slightly below it, the original node `z` is shown in a faded, greyed out representation, indicating its eventual obsolescence. Below `z prime`, two children, `x prime` and `x`, are depicted. `x prime` is a new node, similar to `z prime`, connected to `z prime` by a solid line. The original `x` node, also greyed out, is positioned slightly to the left and above `x prime`. From `x prime` and `z prime`, solid lines descend to three distinct subtrees, labeled A, B, and C. Subtree A is the left child of `x prime`. Subtree B is the right child of `x prime` and also the left child of `z prime`. Subtree C is the right child of `z prime`. The flow of modification is indicated by an arrow labeled "update" originating near `x` and pointing towards `z prime`, signifying the transformation. Black arrows within the main structure indicate current pointer relationships, while grey arrows represent relationships prior to the update.
+
+This rebalancing mechanism is particularly relevant in the context of concurrent data structures, where atomicity, consistency, isolation, and durability, often abbreviated as A C I D properties, are paramount. The text explains that rotation-based rebalancing can be designed to affect only a small internal subtree. This localization of change is critical for concurrent systems. By restricting modifications to a small, self-contained portion of the tree, the complexity of atomic updates is significantly reduced. The strategy described involves creating a new version of the affected subtree and then atomically swinging a single pointer from the parent node to the root of this new subtree. This "single incoming pointer" ensures that the update from the perspective of an external observer appears instantaneous.
+
+The underlying principle here is Read Copy Update, or R C U, a synchronization mechanism designed for read-mostly workloads in which readers incur essentially no synchronization overhead. When a writer needs to modify the data structure, it creates a new version of the affected nodes, makes its changes to these new nodes, and then updates a single pointer to point to the new structure. In the diagram, `x prime` and `z prime` represent these new nodes. The old nodes, `x` and `z`, are not immediately deallocated. Instead, they remain in memory for a "grace period," during which any readers traversing the old pointers can complete their operations. Once the grace period expires, meaning all active readers are guaranteed to have either finished or switched to the new version of the data structure, the old nodes can be safely reclaimed. This avoids the need for read locks, allowing readers to proceed without contention, which is highly beneficial for performance in multi core and multi processor systems.
+
+The text also highlights a crucial trade off inherent in Read Copy Update: while it provides extremely low overhead for readers, it incurs significant overhead for writers. This writer overhead stems from the need to copy parts of the data structure, perform the actual modifications, and then wait for a grace period before the memory for the old versions can be deallocated. For operations like trivial updates, specifically single leaf modifications associated with demand page in operations in an O S kernel, this write overhead can become a performance bottleneck, especially for page tables which are frequently accessed and modified.
+
+To mitigate this, a hybrid approach combining Read Copy Update with other synchronization primitives like sequence locks is proposed. Sequence locks provide a mechanism for concurrent readers and writers where readers can check if a write has occurred and retry their operation if necessary, offering a different balance of overheads. The solution discussed is a hybrid of Read Copy Update and sequence locks, indicating that different synchronization strategies can be composed to address specific performance requirements and access patterns.
+
+The application of Read Copy Update to page tables is a sophisticated example. A page table is a critical data structure in virtual memory management, mapping virtual addresses to physical addresses. When an O S performs a demand page in operation, it modifies a page table entry to establish this mapping. This modification must be atomic and non blocking to other concurrent operations, such as other page faults or memory accesses. By using Read Copy Update, the O S can update page table entries without blocking active C P U cores that are performing memory accesses, allowing them to continue traversing the old page table structure until the next context switch or synchronization point effectively updates their view. The Read Copy Update writers coordinate by excluding one another, installing their changes via single pointer updates, and then waiting for the grace period before the no longer needed space is reclaimed. This approach underscores the theoretical and practical significance of Read Copy Update in achieving high concurrency and responsiveness in kernel level operations.

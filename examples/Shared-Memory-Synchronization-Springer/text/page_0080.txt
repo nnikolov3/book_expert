@@ -1,0 +1,64 @@
+82 4 Practical Spin Locks
+
+foo* p := null atomic<foo*> p := null
+lock L lock L
+foo* get_p(): foo* get_p():
+L.acquire() foo *rtn := p.load(|[RW)
+if p = null if rtn = null
+p := new foo() L.acquire()
+foo* rtn :=p rtn :=p
+L.release() // double check:
+return rtn if rtn = null
+
+rtn := new foo()
+p.store(rtn, W/[|) // init. before making visible
+L.release()
+return rtn
+
+Figure 4.16 Lazy initialization (left) and double-checked locking idiom (right).
+
+threads, a possibility that will arise in Secs. 5.3.3, 7.4.3, and 8.3.2. It is also a key feature of
+flat combining, which we will consider briefly in Sec. 5.4.
+
+4.5.2 Double-Checked Locking
+
+Many applications employ shared variables that must be initialized before they are used for
+the first time. A canonical example can be seen on the left side of Figure 4.16. Unfortunately,
+this idiom imposes the overhead of acquiring L on every call to get_p. With care, we can
+use the double-checked locking idiom instead (right side of Figure 4.16).
+
+The synchronizing accesses in the idiom are critical. In Java, variable p must be declared
+volatile; in C++, atomic. Without the explicit ordering, the initializing thread may set p to
+point to not-yet-initialized space, or a reading thread may use fields of p that were prefetched
+before initialization completed. On machines with highly relaxed memory models (e.g.,
+Arm and Power), the cost of the synchronizing accesses may be comparable to the cost of
+locking 1n the original version of the code, making the “optimization” of limited benefit. On
+machines with a TSO memory model (e.g., the x86 and SPARC), the optimization is much
+more appealing, since R||R, R||W, and W||W orderings are essentially free. Used judiciously,
+(e.g., in the Linux kernel for x86), double-checked locking can yield significant performance
+benefits. Even in the hands of experts, however, it has proven to be a significant source of
+bugs: with all the slightly different forms the idiom takes in different contexts, one can easily
+forget a necessary synchronizing access (Bacon et al. 2001). Windows Vista introduced a
+special InitOnce API that regularizes usage and encapsulates all necessary ordering.
+A common pattern initializes a pointer to type foo, named p, to null, and defines a lock L. The function get p, which returns a pointer to foo, first acquires the lock L. Inside the critical section, it checks if p is equal to null. If it is, a new instance of foo is created and assigned to p. A local variable, a pointer to foo named rtn, is then set to the value of p. The lock L is released, and the function returns rtn.
+
+For the double-checked locking idiom, an atomic pointer to type foo, also named p, is initialized to null, and a lock L is defined. The get p function first loads the value of p into a local variable rtn, using an atomic load operation with acquire semantics. If rtn is equal to null, the lock L is acquired. Inside the critical section, rtn is again set to the current value of p. A comment indicates a double check. If rtn is still equal to null, a new instance of foo is created and assigned to rtn. Then, rtn is stored atomically into p, using release semantics, ensuring it is initialized before becoming visible to other threads. The lock L is released, and the function returns rtn.
+
+Figure four point sixteen illustrates lazy initialization, shown on the left, and the double-checked locking idiom, shown on the right.
+
+This pattern handles concurrent threads, a possibility that will arise in Sections five point three point three, seven point four point three, and eight point three point two. It is also a key feature of flat combining, which we will consider briefly in Section five point four.
+
+Section four point five point two: Double-Checked Locking.
+
+Many applications employ shared variables that must be initialized before they are used for the first time. A canonical example can be seen on the left side of Figure four point sixteen. Unfortunately, this idiom imposes the overhead of acquiring L on every call to get p. With care, we can use the double-checked locking idiom instead, as shown on the right side of Figure four point sixteen.
+
+The synchronizing accesses in this idiom are critical. In Java, a volatile variable p must be declared volatile; in C plus plus, an atomic type is used. Without explicit ordering, the initializing thread may set p to point to not yet initialized space, or a reading thread may use fields of p that were pre-fetched before initialization completed. On machines with highly relaxed memory models, for example, Arm and Power, the cost of the synchronizing accesses may be comparable to the cost of locking in the original version of the code, making the optimization of limited benefit. On machines with a T S O memory model, for example, the x eighty six and S P A R C, the optimization is much more appealing, since read read, read write, and write write orderings are essentially free. Used judiciously, for example, in the Linux kernel for x eighty six, double-checked locking can yield significant performance benefits. Even in the hands of experts, however, it has proven to be a significant source of bugs. With all the slightly different forms the idiom takes in different contexts, one can easily forget a necessary synchronizing access, as noted by Bacon and others in two thousand one. Windows Vista introduced a special Init Once A P I that regularizes usage and encapsulates all necessary ordering.
+The page delineates the fundamental concepts of lazy initialization and the intricate double checked locking idiom within the broader context of practical spin locks in concurrent programming.
+
+At its core, lazy initialization is an optimization technique where the creation of an object or resource is deferred until it is first accessed or required. This approach conserves system resources, such as memory and C P U cycles, by avoiding the allocation and construction of objects that might never be utilized during program execution. The left-hand code snippet illustrates a basic, thread safe lazy initialization pattern. A shared pointer `p` of type `foo*` is initialized to `null`, and a lock `L` is declared. The `get_p` function is designed to return an instance of `foo`. Upon invocation, a thread first acquires the lock `L` using `L.acquire()`. Inside the critical section protected by the lock, it checks if `p` is `null`. If `p` is indeed `null`, a new `foo` object is instantiated and assigned to `p`. A local return variable `rtn` is then assigned the value of `p`. Finally, the lock `L` is released via `L.release()`, and `rtn` is returned. This method guarantees thread safety by ensuring that only one thread can execute the initialization logic at any given time, thus preventing race conditions where multiple threads might attempt to create the `foo` object simultaneously, leading to undefined behavior or resource leaks. However, a significant drawback of this naive approach is that the lock `L` must be acquired on *every* subsequent call to `get_p`, even after the object has been successfully initialized. This introduces unnecessary synchronization overhead, particularly in scenarios where `get_p` is invoked frequently, diminishing performance.
+
+To mitigate this performance overhead, the double checked locking idiom, displayed in the right-hand code snippet, was devised. This pattern attempts to reduce contention on the lock by performing an initial check for `null` *outside* the synchronized block. If the initial check reveals that the object `p` is not `null`, the thread can proceed without acquiring the lock, thereby avoiding the synchronization overhead. The variable `p` is declared as `atomic<foo*>`, signifying that operations on it are atomic, meaning they are indivisible and appear to happen instantaneously relative to other operations. The `get_p` function begins by atomically loading the value of `p` into a local return variable `rtn` using `p.load` with a `R W` memory ordering tag. This `R W` tag typically denotes an acquire semantic, ensuring that all memory operations that happened *before* the store that made `p` non-null are visible to the current thread *after* `p` is read. If this initial `rtn` is `null`, it indicates that the object has not yet been initialized, and the thread must enter the synchronized block. The lock `L` is then acquired. Crucially, a *second* check for `rtn is equal to null` is performed *inside* the lock. This is the "double check" that gives the idiom its name. This second check is vital because multiple threads might pass the first `null` check concurrently and then queue up to acquire the lock. The first thread to acquire the lock will perform the initialization. Without the second check, subsequent threads that enter the lock would also attempt to initialize `p`, leading to redundant object creation and potential issues. If `rtn` is still `null` after acquiring the lock, a new `foo` object is created and assigned to a temporary variable `new_foo`. This `new_foo` is then atomically stored into `p` using `p.store(rtn, W||)`. The `W||` tag typically represents a release semantic, guaranteeing that all memory operations performed *before* this store operation (including the initialization of the new `foo` object) are made visible to other threads *before* `p` itself becomes non-null. The comment `// init. before making visible` underscores this crucial memory ordering requirement. Finally, the lock `L` is released, and `rtn` is returned.
+
+The correctness and safety of the double checked locking idiom are profoundly dependent on the underlying memory model of the processor architecture and the specific programming language. In weakly ordered or relaxed memory models, such as those found in A R M or Power processors, the compiler and hardware are permitted to reorder memory operations for performance optimization. Without explicit memory barriers or atomic operations with appropriate ordering semantics, it's possible for the pointer `p` to be assigned a non-null value *before* the actual `foo` object it points to has been fully constructed and initialized. A thread reading `p` might then observe a non-null value but access an incompletely initialized object, leading to crashes or incorrect behavior. This phenomenon is a classic example of a "reordering bug." While stronger memory models, like T S O on x86 and S P A R C architectures, offer some inherent ordering guarantees (specifically R||R, R||W, and W||W orderings, which dictate that read operations cannot pass other reads, and reads cannot pass writes, while write operations from a single processor become visible in program order), the complexity of ensuring correct behavior across various architectures makes manual double checked locking inherently error prone. Many experts have historically found it to be a source of subtle bugs. The page notes that for x86, the optimization can yield significant performance benefits because of its stronger memory model, making the explicit ordering less of an overhead and the optimization more appealing. However, on highly relaxed memory models, the cost of the synchronizing accesses (which might require full memory fences) can be comparable to or even outweigh the cost of simple locking, making the "optimization" of limited benefit.
+
+Due to the inherent complexity and proneness to error, particularly when dealing with nuances of different memory models and compiler optimizations, modern programming languages and operating systems often provide higher-level, safer abstractions for one time initialization. For instance, Windows Vista introduced a specialized `InitOnce A P I`, which encapsulates all the necessary synchronization and memory ordering guarantees, providing a robust and easy to use mechanism for single time initialization without the pitfalls of manual double checked locking. This evolution highlights a fundamental principle in concurrent programming: whenever possible, rely on well tested, system provided synchronization primitives rather than attempting to implement complex idioms manually.

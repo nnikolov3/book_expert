@@ -1,0 +1,98 @@
+5.2 Barrier Algorithms 91
+
+type node = record
+const int k // fan-in of this node
+atomic<int> count := k
+atomic<bool> sense := false
+node* const parent =... /[ initialized appropriately for tree
+
+class barrier
+bool local_sense[7] := {true... }
+node* my_leaf[7] =... // pointer to starting node for each thread
+// initialization must create a tree of nodes (each in its own cache line)
+// linked by parent pointers
+
+barrier.cycle():
+fence(RW||W)
+combining_helper(my_leaf[self], local_sense[self]) / join the barrier
+local_sense[self] := —local_sense[self] // for next barrier
+
+fence(R||RW)
+
+combining_helper(node* n, bool my_sense):
+
+if n—count.FAD(W||) = 1 // last thread to reach this node
+
+if n—parent # null
+combining_helper(n— parent, my_sense)
+
+n—ocount.store(n—k, W/||) // prepare for next barrier episode
+n—sense.store(—n—sense, W||) // release waiting threads
+
+else
+while n—sense.load(R||) # my_sense; // spin
+
+Figure 5.2 A software combining tree barrier. FAD is fetch_and_decrement.
+
+switching nodes on a p-processor machine), near-simultaneous requests to the same location
+combine at the switching nodes. For example, if operations |.FAA(a) and |. FAA(b) landed in
+the same internal queue at about the same point in time, they would be forwarded on as a
+single |. FAA(a+b) operation. When the result (the original value—call it v) returned (over
+the same path), it would be split into two responses—uv and either (v+a) or (v+b)—and
+returned to the original requesters.
+
+While hardware combining tends not to appear on modern machines, Yew et al. (1987)
+observed that similar benefits could be achieved with an explicit tree in software. A shared
+variable that 1s expected to be the target of multiple concurrent accesses is represented as a
+tree of variables, with each node in the tree assigned to a different cache line. Threads are
+divided into groups, with one group assigned to each leaf of the tree. Each thread updates
+the state in its leaf. If it discovers that it is the last thread in its group to do so, it continues
+up the tree and updates its parent to reflect the collective updates to the child. Proceeding in
+this fashion, late-coming threads eventually propagate updates to the root of the tree.
+
+Using a software combining tree, Tang and Yew (1990) showed how to create a log-time
+barrier. Writes into one tree are used to determine that all threads have reached the barrier;
+reads out of a second are used to allow them to continue. Figure 5.2 shows a variant of this
+Section five point two, Barrier Algorithms.
+
+The algorithm defines a `node` record type with several fields. `const int k` represents the fan in of this node. `atomic<int> count` is an atomic integer initialized to `k`. `atomic<bool> sense` is an atomic boolean initialized to `false`. `node* const parent` is a constant pointer to a node, initialized appropriately for the tree structure.
+
+It also defines a `barrier` class. This class includes a boolean array called `local_sense`, indexed by `T`, which is initialized with `true` values. It also has an array of node pointers called `my_leaf`, indexed by `T`, which serves as a pointer to the starting node for each thread. The initialization process for the barrier must create a tree of nodes, with each node residing in its own cache line, and nodes are linked by parent pointers.
+
+The `barrier.cycle()` method performs the following steps:
+First, it issues a memory fence for read write or write operations.
+Then, it calls a `combining_helper` function, passing `my_leaf index self` and `local_sense index self` as arguments. This step is intended to join the barrier.
+Next, it updates `local_sense index self` by inverting its current boolean value. This action is performed for the next barrier cycle.
+Finally, it issues another memory fence for read or read write operations.
+
+The `combining_helper` function takes a node pointer `n` and a boolean `my_sense` as arguments.
+Inside this function, it checks if the result of a `fetch and decrement` operation on `n`'s `count` (with write or write memory order) is equal to one. If this condition is true, it indicates that the current thread is the last one to reach this node. In this case, it performs further actions:
+It checks if `n` has a parent, meaning if `n`'s parent pointer is not null. If a parent exists, it recursively calls `combining_helper` on `n`'s parent, passing `my_sense`.
+After handling the parent, it stores `n`'s `k` value into `n`'s `count` with a write memory order. This step prepares the node for the next barrier episode.
+Subsequently, it stores the inverted value of `n`'s `sense` into `n`'s `sense` with a write memory order. This action serves to release any waiting threads.
+If the initial condition, `n`'s `fetch and decrement` result being equal to one, is false, meaning it is not the last thread to reach this node, then the thread enters a spin loop. It continuously loads `n`'s `sense` (with a read memory order) and continues spinning as long as `n`'s `sense` is not equal to `my_sense`.
+
+Figure five point two shows a software combining tree barrier. `F A D` stands for `fetch and decrement`.
+
+A software combining tree barrier is useful in a p processor machine where near simultaneous requests to the same memory location can occur. For example, if two operations, `fetch and add a` and `fetch and add b`, land in the same internal queue at about the same point in time, they would be forwarded on as a single `fetch and add a plus b` operation. When the result, which is the original value, let's call it `v`, is returned over the same path, it would be split into two responses: `v` and either `v plus a` or `v plus b`, and returned to the original requesters.
+
+While hardware combining tends not to appear on modern machines, Yew et al., in nineteen eighty seven, observed that similar benefits could be achieved with an explicit tree in software. A shared variable that is expected to be the target of multiple concurrent accesses is represented as a tree of variables, with each node in the tree assigned to a different cache line. Threads are divided into groups, with one group assigned to each leaf of the tree. Each thread updates the state in its leaf. If it discovers that it is the last thread in its group to do so, it continues up the tree and updates its parent to reflect the collective updates to the child. Proceeding in this fashion, late coming threads eventually propagate updates to the root of the tree.
+
+Using a software combining tree, Tang and Yew, in nineteen ninety, showed how to create a log time barrier. Writes into one tree are used to determine that all threads have reached the barrier; reads out of a second are used to allow them to continue. Figure five point two shows a variant of this.
+In the domain of parallel computing, synchronization barriers serve as fundamental primitives to ensure that all participating threads reach a specific point in execution before any of them are allowed to proceed. This mechanism is crucial for maintaining data consistency and correct program flow in multi threaded environments, particularly when phases of computation must be strictly ordered. The presented code and accompanying text detail a sophisticated approach to barrier implementation: the software combining tree barrier.
+
+The core concept revolves around ameliorating the performance bottleneck of contention that arises when many threads attempt to access a single shared synchronization variable simultaneously. While hardware combining, where concurrent memory requests to the same address are merged by the memory system, offers an ideal solution, it is rarely available in modern `C P U` architectures. Therefore, software combining techniques are employed to achieve similar benefits.
+
+The foundation of this software barrier is a tree structure, represented by the `node` record. Each `node` possesses three critical fields: `k`, an integer constant representing the fan in or degree of the node, defining how many children it expects to join before it can proceed; `count`, an atomic integer initialized to `k`, which tracks the number of threads that have arrived at this node; and `sense`, an atomic boolean variable used to signal the release of threads from this node. Finally, `parent` is a pointer to the node's immediate ancestor in the tree, linking nodes upwards toward the root. The deliberate design choice to place each node in its own cache line is paramount, as it mitigates false sharing, a performance detriment where unrelated data items reside within the same cache line, causing unnecessary cache coherency traffic when accessed by different `C P U` cores.
+
+The `barrier` class encapsulates the thread specific state for participating in this synchronization mechanism. `local_sense` is a per thread boolean array, enabling a sense reversing protocol which allows the barrier to be reused repeatedly without requiring explicit reinitialization. `my_leaf` is a pointer to the specific leaf `node` in the tree assigned to a given thread, serving as its initial entry point into the tree structure. The overall tree is initialized so that each thread is associated with a unique leaf node.
+
+The `barrier.cycle` method describes the sequence of operations a thread executes to synchronize. The `fence` instructions, specifically `fence parentheses R W or or W parentheses` and `fence parentheses R or or R W parentheses`, are critical for enforcing a strong memory ordering. These memory fences ensure that all memory operations preceding the fence are completed and globally visible to other threads before any subsequent memory operations after the fence are initiated. This is vital for guaranteeing that updates to shared variables like `count` and `sense` are consistently observed across all `C P U` caches and main memory, preventing stale data reads or incorrect execution sequences.
+
+The heart of the algorithm lies within the `combining_helper` function. When a thread invokes `combining_helper`, it initiates an upward traversal of the tree. The initial step is an atomic `F A D`, or Fetch And Decrement, operation on the current node's `count` variable, `n arrow count`. The `F A D parentheses W or or W parentheses` semantic ensures that this read modify write operation is atomic and globally ordered. The `F A D` returns the value of `count` *before* it was decremented. If this returned value is one, it signifies that the current thread is the very last one to arrive at this specific node.
+
+Upon being the last thread, two crucial actions occur. First, if the node is not the root of the tree, indicated by `n arrow parent is not null`, the thread recursively calls `combining_helper` on its parent node. This action effectively propagates the arrival signal upwards, combining groups of threads at each level until the root is reached. This upward propagation phase is the "arrival" or "combining" part of the barrier. Second, once the root is reached, or after returning from a recursive call to its parent, the last thread takes on the responsibility of resetting the `count` for the current node back to its initial fan in value, `k`, using `n arrow count.store parentheses n arrow k comma W or or W parentheses`. Simultaneously, it flips the `sense` variable of the current node using `n arrow sense.store parentheses not n arrow sense comma W or or W parentheses`. This `sense` flip acts as the release signal for all threads waiting at this node.
+
+Conversely, if a thread invokes `combining_helper` and the `F A D` operation reveals that it is *not* the last thread to arrive at that specific node (i.e., `n arrow count.FAD` returns a value greater than one), that thread enters a busy wait, or spin, loop. The `while n arrow sense.load parentheses R or or R parentheses is not my sense` loop causes the thread to continuously poll the `sense` variable of the current node. It will only exit this loop when the node's `sense` variable flips to match its own `my_sense` value, indicating that the barrier has been released by the last thread that traversed up to the root and propagated the release signal back down. This downward propagation of the `sense` variable is the "release" phase of the barrier.
+
+This tree based structure offers significant performance advantages. By distributing the contention across multiple nodes in a tree, instead of concentrating it on a single shared variable, the combining barrier reduces cache line bouncing and memory bus traffic. This effectively transforms a potentially linear time barrier (where all threads contend for a single variable) into a logarithmic time barrier with respect to the number of threads. As threads arrive at the leaves and propagate upwards, contention is localized to smaller groups. The two phase approach, with an upward combining phase and a downward release phase, ensures that all threads are properly synchronized before proceeding, illustrating an elegant solution to the challenge of scaling synchronization in highly parallel systems.

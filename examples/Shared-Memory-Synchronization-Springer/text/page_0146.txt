@@ -1,0 +1,67 @@
+150 8 Nonblocking Algorithms
+
+workloads by arranging for multiple pending operations to be performed by a single thread.
+Morrison and Afek (2013) observe that both the overhead of memory management and the
+contention caused by failed-and-repeating CAS operations can be dramatically reduced by
+structuring the queue as an ordered list of array-based ring buffers. Elements of this Linked
+Concurrent Ring Queue can in most cases be enqueued and dequeued using fetch_and_
+increment.
+
+8.3.2 Double-Ended Queues
+
+Unlike a stack, which permits insertions and deletions at one end of a list, and a queue,
+which permits insertions at one end and deletions at the other, a double-ended queue, or
+deque (pronounced “deck” or “deek’) permits insertions and deletions at both ends (but still
+not in the middle). In comparison to stacks and queues, deques have fewer practical uses. The
+most compelling sequential use, perhaps, occurs in the elegant O(n) convex hull algorithm
+of Melkman (1987). The most familiar is probably the history or undo list of an interactive
+application: new operations are pushed onto the head of the list, undone operations are
+popped off the head, and old operations are dropped off the tail as the list continues to grow
+(there are, however, no insertions at the tail).
+
+For nonblocking concurrent programming, deques have long been a subject of intrinsic
+intellectual interest, because they are more complex than stacks and queues, but still simpler
+than structures like search trees. The original CAS-based lock-free deque is due to Michael
+(2003). Where the enqueue operation of the M&S queue employed a two-step update
+(in which the second step could be helped by any thread), the push_left and push_right
+operations of Michael’s dequeue both employ three-step updates. We describe this algorithm
+in the first subsection below. We then consider an algorithm due to Herlihy et al. (2003a),
+which achieves a significant reduction in complexity by using obstruction freedom rather
+than lock freedom as its liveness criterion. Michael’s deque employs an unbounded, doubly
+linked list. The deque of Herlihy et al. employs a circular array. Graichen et al. (2016) show
+how to extend the latter to be unbounded and still extremely simple. Other algorithms can be
+found in the literature; in particular, Sundell and Tsigas (2008b) use their lock-free doubly
+linked lists to construct an unbounded nonblocking dequeue in which operations on the head
+and tail can proceed in parallel.
+
+In addition to uses inherited from sequential programming, concurrent deques have a
+compelling application of their own: the management of tasks in a work-stealing scheduler.
+We consider this application in the final subsection below.
+
+Unbounded Lock-Free Deques
+The lock-free deque of Michael (2003) uses a single, double-width, CAS-able memory
+location (the “anchor”) to hold the head and tail pointers of the list, together with a 2-bit
+one hundred fifty, eight Nonblocking Algorithms. Workloads by arranging for multiple pending operations to be performed by a single thread. Morrison and Afek (two thousand thirteen) observe that both the overhead of memory management and the contention caused by failed and repeating C A S operations can be dramatically reduced by structuring the queue as an ordered list of array based ring buffers. Elements of this linked concurrent ring queue can in most cases be enqueued and dequeued using fetch and increment.
+
+eight point three point two Double Ended Queues. Unlike a stack, which permits insertions and deletions at one end of a list, and a queue, which permits insertions at one end and deletions at the other, a double ended queue, or deque (pronounced deck or deek) permits insertions and deletions at both ends (but still not in the middle). In comparison to stacks and queues, deques have fewer practical uses. The most compelling sequential use, perhaps, occurs in the elegant O(n) convex hull algorithm of Melkman (nineteen eighty seven). The most familiar is probably the history or undo list of an interactive application; new operations are pushed onto the head of the list, undone operations are popped off the head, and old operations are dropped off the tail as the list continues to grow (there are however, no insertions at the tail).
+
+For nonblocking concurrent programming, deques have long been a subject of intrinsic intellectual interest, because they are more complex than stacks and queues, but still simpler than structures like search trees. The original C A S based lock free deque is due to Michael (two thousand three). Where the enqueue operation of the M and S queue employed a two step update (in which the second step could be helped by any thread), the push left and push right operations of Michael's deque both employ three step updates. We describe this algorithm in the first subsection below. We then consider an algorithm due to Herlihy et al. (two thousand three a), which achieves a significant reduction in complexity by using obstruction freedom rather than lock freedom as its liveness criterion. Michael's deque employs an unbounded, doubly linked list. The deque of Herlihy et al. employs a circular array. Graichen et al. (two thousand sixteen) show how to extend the latter to be unbounded and still extremely simple. Other algorithms can be found in the literature; in particular, Sundell and Tsigas (two thousand eight b) use their lock free doubly linked lists to construct an unbounded nonblocking deque in which operations on the head and tail can proceed in parallel.
+
+In addition to uses inherited from sequential programming, concurrent deques have a compelling application of their own: the management of tasks in a work stealing scheduler. We consider this application in the final subsection below.
+
+Unbounded Lock Free Deques
+
+The lock free deque of Michael (two thousand three) uses a single, double width, C A S able memory location (the anchor) to hold the head and tail pointers of the list, together with a two bit
+The foundational principle here is the design and analysis of nonblocking concurrent data structures, specifically focusing on double-ended queues, or deques.  Nonblocking algorithms aim to ensure that the progress of a system as a whole does not depend on the responsiveness of any single thread. This is achieved through mechanisms that prevent threads from blocking each other indefinitely, a common issue in lock-based concurrency.
+
+The initial paragraphs discuss how workloads can be managed by efficiently handling multiple pending operations. Morrison and Afek's 2013 work is cited, highlighting that the overhead associated with memory management and repeated Compare And Swap, or C A S, operations can be significantly reduced by structuring queues as ordered lists of array-based ring buffers. These structures are amenable to enqueue and dequeue operations using fetch and increment operations, which are atomic memory operations fundamental to many nonblocking algorithms.
+
+The section titled "Double-Ended Queues" elaborates on the deque data structure. Unlike a stack, which supports insertions and deletions at a single end, and a queue, which supports insertions at one end and deletions at the other, a deque permits operations at both ends. While deques offer fewer practical uses compared to stacks and queues in sequential contexts, their utility in concurrent programming is substantial. The text mentions Melkman's 1987 work as providing a compelling sequential deque implementation, perhaps referring to its efficiency or its role in algorithms like the convex hull algorithm, or a history or undo list. This sequential implementation allows new operations to be pushed onto the head of a list, with operations popped off the tail.
+
+The transition to nonblocking deque implementations introduces significant complexity. The intrinsic interest in nonblocking deques stems from their potential to offer simpler solutions than traditional lock-based structures, even though their implementation is more intricate. The Michael and Scott (M&S) queue, a well-known lock-free queue, is referenced as a precursor, employing a two-step update mechanism where a second step might be assisted by another thread. In contrast, other lock-free deques, like those described by Herlihy and Shavit (2008), often involve three-step updates. The complexity arises from managing concurrent access to both the head and tail of the deque, requiring careful handling of potential race conditions.
+
+Michael's deque algorithm, detailed in a later subsection, is presented as an improvement that achieves a significant reduction in complexity by using obstruction freedom as its correctness criterion. Obstruction freedom guarantees that a thread will complete its operation in a finite number of steps if all other threads stop executing. Herlihy et al.'s work (2003a) is associated with this, and their approach often relies on C A S operations for atomicity. The discussion contrasts this with Herlihy et al.'s (2003a) own work, which uses a C A S-able memory list, and Graichen et al.'s (2016) contribution, which employs a circular array to build unbounded, doubly linked lists. This enables the creation of unbounded deques that are remarkably simple. Sundell and Tsigas (2008b) are also cited for their work on unbounded nonblocking deques that can support concurrent operations on both the head and tail.
+
+The concept of a "work-stealing" scheduler is also introduced, implying that deques can be used to manage tasks in a distributed or parallel computing environment, where idle processors can "steal" work from busy ones. This demonstrates a practical application of efficient concurrent data structures in task distribution and load balancing.
+
+The final subsection, "Unbounded Lock-Free Deques," specifically focuses on Michael's lock-free deque implementation. This design utilizes a single, double-word-aligned C A S-able memory location to store both the head and tail pointers of the deque. This is augmented with a two-bit field. This approach is an optimization that reduces the number of atomic operations needed to update the deque's state, thereby improving performance and reducing contention in a concurrent environment. The use of a double-word-aligned C A S operation is crucial here as it allows the atomic update of two related memory locations, which are essential for maintaining the integrity of both head and tail pointers simultaneously.

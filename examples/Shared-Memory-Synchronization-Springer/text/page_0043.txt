@@ -1,0 +1,72 @@
+44 3 Essential Theory
+
+// initially x=y=0
+
+transaction 1: transaction 2:
+t1:=x t2:=y
+y++ X++
+
+Left unsynchronized, this code could result in t1 =t2 = 0, even on a sequentially consistent
+machine—something that should not be possible if the transactions are to serialize. A global
+lock would solve the problem, but would be far too conservative for transactions larger than
+the trivial ones shown here. If we associate fine-grain locks with individual variables, we
+still run into trouble if thread 1 releases its lock on x before acquiring the lock on y, and
+thread 2 releases its lock on y before acquiring the lock on x.
+
+It turns out (Eswaran et al. 1976) that serializability can always be guaranteed if threads
+acquire all their locks (in an “expansion phase”) before releasing any of them (in a “contrac-
+tion phase”). As we have observed, this two-phase locking convention admits the possibility
+of deadlock: in our example, transaction 1 might acquire a lock on x and transaction 2
+might acquire a lock on y before either attempts to acquire a lock on the other. To detect
+the problem and trigger rollback, a system based on two-phase locking may construct and
+maintain a dependence graph at run time. Alternatively (and more conservatively), it may
+simply limit the time it is willing to wait for locks, and assume the worst when this timeout
+1s exceeded.
+
+Strict Serializability
+
+The astute reader may have noticed the strong similarity between the definitions of sequential
+consistency (for high-level objects) and serializability (with the extension that allows a single
+thread to perform a series of transactions). The difference 1s simply that transactions need
+to be able to access a dynamically chosen set of objects, while sequential consistency 1s
+limited to a predefined set of single-object operations.
+
+The similarity between sequential consistency and serializability leads to a common
+weakness: the lack of required consistency with other orders that may be observed by a thread.
+It was by requiring such “real-time” ordering that we obtained composable orders for single-
+object operations in the definition of linearizability. Real-time ordering is also important for
+its own sake in many applications. Without it, for example, we might make a large deposit
+to a friend’s bank account and tell the friend about it, but the friend might still encounter an
+“insufficient funds” message in response to a (subsequent!) withdrawal request. To avoid
+such arguably undesirable scenarios, many database systems—and most TM systems—
+require strict serializability, which 1s simply ordinary serializability augmented with real-
+time order: transactions are said to be strictly serializable if they have the same effect they
+would have had if executed one at a time in some total order that is consistent with program
+order (if any) in each thread, and with any other order the threads may be able to observe. In
+particular, if transaction A finishes before transaction B begins, then A must appear before
+Initially, variable x is equal to variable y, and both are initialized to zero.
+Transaction one performs two operations: first, the variable t one is assigned the value of x; second, variable y is incremented by one.
+Transaction two also performs two operations: first, the variable t two is assigned the value of y; second, variable x is incremented by one.
+
+Left unsynchronized, this code could result in t one is equal to t two is equal to zero, even on a sequentially consistent machine. This outcome is something that should not be possible if the transactions are to serialize. A global lock would solve the problem, but would be far too conservative for transactions larger than the trivial ones shown here. If we associate fine grain locks with individual variables, we still run into trouble if thread one releases its lock on x before acquiring the lock on y, and thread two releases its lock on y before acquiring the lock on x.
+
+It turns out, as demonstrated by Eswaran et al. one thousand nine hundred seventy six, that serializability can always be guaranteed if threads acquire all their locks in an expansion phase before releasing any of them in a contraction phase. As we have observed, this two phase locking convention admits the possibility of deadlock. In our example, transaction one might acquire a lock on x and transaction two might acquire a lock on y before either attempts to acquire a lock on the other. To detect the problem and trigger rollback, a system based on two phase locking may construct and maintain a dependence graph at run time. Alternatively, and more conservatively, it may simply limit the time it is willing to wait for locks, and assume the worst when this timeout is exceeded.
+
+**Strict Serializability**
+
+The astute reader may have noticed the strong similarity between the definitions of sequential consistency for high level objects and serializability, with the extension that allows a single thread to perform a series of transactions. The difference is simply that transactions need to be able to access a dynamically chosen set of objects, while sequential consistency is limited to a predefined set of single object operations.
+
+The similarity between sequential consistency and serializability leads to a common weakness: the lack of required consistency with other orders that may be observed by a thread. It was by requiring such real time ordering that we obtained composable orders for single object operations in the definition of linearizability. Real time ordering is also important for its own sake in many applications. Without it, for example, we might make a large deposit to a friend's bank account and tell the friend about it, but the friend might still encounter an insufficient funds message in response to a subsequent withdrawal request. To avoid such arguably undesirable scenarios, many database systems and most T M systems require strict serializability, which is simply ordinary serializability augmented with real time order. Transactions are said to be strictly serializable if they have the same effect they would have had if executed one at a time in some total order that is consistent with program order, if any, in each thread, and with any other order the threads may be able to observe. In particular, if transaction A finishes before transaction B begins, then A must appear before B in the total order.
+The fundamental challenge in concurrent computing, as elucidated by the initial code fragment, revolves around maintaining data consistency and transactional integrity when multiple threads or processes access and modify shared resources. The presented scenario illustrates two distinct transactions, initially operating on variables `x` and `y` both set to zero. Transaction one reads `x` into its local variable `t one` and subsequently increments `y`. Concurrently, transaction two reads `y` into its local variable `t two` and increments `x`.
+
+The possibility of both `t one` and `t two` evaluating to zero, even in a system exhibiting sequential consistency, highlights a crucial distinction between individual operation atomicity and transactional atomicity. Sequential consistency guarantees that the outcome of any execution is the same as if the operations of all processes were executed in some sequential order, and the operations of each individual process appear in this sequence in the order specified by its program. However, it does not inherently group multiple, interdependent operations into an atomic unit. In the given example, a problematic interleaving could involve transaction one reading `x` as zero, then transaction two reading `y` as zero, before either increment operation completes. This leads to an inconsistent state, as the subsequent increments of `x` and `y` would not be reflected in the initial reads, violating the expectation that the combined operations of each transaction appear as a single, indivisible unit.
+
+To address such inconsistencies and ensure that concurrent transactions yield the same result as some serial execution, a core principle is serializability. While a coarse-grained approach like a global lock on all shared variables could enforce serializability by effectively forcing sequential execution, it severely limits parallelism and is too conservative for most real world applications, especially those involving numerous or complex transactions. A more nuanced strategy involves fine-grain locking, where locks are acquired only on the specific data items relevant to a transaction. However, even with fine-grain locks, careful protocol adherence is necessary. If transaction one were to release its lock on `x` before acquiring a lock on `y`, or if transaction two were to release its lock on `y` before acquiring a lock on `x`, race conditions could still lead to anomalous outcomes.
+
+The widely adopted mechanism to guarantee serializability in concurrent systems is the two-phase locking protocol. This protocol dictates that a transaction progresses through two distinct phases: an expansion phase, during which it can acquire new locks but cannot release any, and a contraction phase, during which it can release locks but cannot acquire any new ones. This strict adherence to lock acquisition and release ordering prevents non-serializable interleavings. However, the very nature of two-phase locking introduces the possibility of deadlocks. For instance, transaction one might acquire a lock on `x` and then attempt to acquire a lock on `y`, while concurrently, transaction two acquires a lock on `y` and then attempts to acquire a lock on `x`. Both transactions become indefinitely blocked, each waiting for a resource held by the other. To mitigate deadlocks, systems employ strategies such as constructing and analyzing a dependency graph at run time to detect cycles, leading to transaction rollback and retry. Alternatively, a more pragmatic, albeit less precise, approach involves setting a maximum wait time, where a transaction is aborted and its changes are rolled back if it fails to acquire a necessary lock within a predefined duration.
+
+Building upon the concept of serializability, strict serializability imposes an additional and stronger constraint: if a transaction A completes its execution before transaction B begins its execution, then in the equivalent serial schedule, transaction A must appear to execute entirely before transaction B. This requirement integrates the real time order of transaction completion into the logical serial order, providing a more intuitive and predictable behavior from an external observer's perspective.
+
+The relationship between sequential consistency, linearizability, and strict serializability is profound. Sequential consistency, as previously noted, ensures an interleaved execution consistent with program order for individual operations. Linearizability, a stronger form of consistency often applied to single-object operations, mandates that each operation appears to take effect atomically at some point between its invocation and its response, and this point must fall within its real time execution interval. Strict serializability extends these notions from individual operations to multi operation transactional units. The core difference is that while sequential consistency and linearizability typically apply to individual reads and writes on shared memory locations, serializability (and by extension, strict serializability) applies to higher level logical units of work that span multiple operations and multiple data items. The perceived "weakness" shared by basic sequential consistency and some forms of serializability is their potential decoupling from external real time order. Linearizability addresses this for single object operations, and strict serializability addresses it for transactions.
+
+The practical implications of strict serializability are paramount, especially in domains like database management systems and transactional memory systems. Consider a financial transaction involving a deposit and a subsequent withdrawal. If strict serializability were not enforced, it might be possible for a withdrawal to proceed, receive an "insufficient funds" message, and then for the deposit to appear in the account *after* the withdrawal attempt, even if the deposit transaction logically completed before the withdrawal started. Strict serializability prevents such anomalous real time orderings, ensuring that the system behaves predictably and correctly, reflecting a total order of transactions consistent with their external observation. Therefore, many advanced concurrent systems, including most transactional memory architectures, strive to implement or approximate strict serializability to provide robust and reliable operation in the face of complex concurrent interactions.

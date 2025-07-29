@@ -1,0 +1,63 @@
+170 8 Nonblocking Algorithms
+
+based search tree, a trie stores a set of keys that are encoded as k-bit binary strings, and a
+path from the root to a key 1s determined by the bits of the key. For example, in a binary
+trie, where each node has up to two children, to find the key 17, which has bit encoding
+10001, a search would move to the right child of the root, then move left, left, left and
+finally right. Patricia tries implement a clever form of path compression, and can be used
+to encode d-dimensional data. In addition to the usual concurrent set operations, a Patricia
+trie offers a ReplaceKey(old, new) operation that can be used to, for example, update the
+locations of objects in a spatial data set. As a single atomic operation, ReplaceKey checks
+whether the old key is in the trie, and if so, inserts the new key and deletes the old key. If
+not, ReplaceKey has no effect. The implementation of atomicity entails “locking” of the old
+and new locations, with a helping scheme to ensure lock-free progress.
+
+Doubly Logarithmic Search Recently, some sequential tree algorithms that offer doubly
+logarithmic search times have been implemented in the concurrent setting. Brown et al.
+(2020) presented a lock-free concurrent interpolation search tree (C-IST). In a C-IST con-
+taining n keys, the root node contains an array of O(n) keys, the children of the root
+contain O(n) keys each, the grandchildren O(n) keys each, and so on, resulting in
+a tree of height ®(loglogn). Within a given node of the tree, the search algorithm hunts
+for the appropriate key using interpolation rather than, say, binary search. As an example,
+suppose we are looking for key 200 in a node containing 500 keys, with minimum key O
+and maximum key 1000. If the keys in the node were distributed uniformly in [0, 1000], we
+could expect to find our key about a fifth of the way through the array—at index 100 out of
+500—so we would look there first, and scan left or right as appropriate. It turns out that linear
+interpolation is effective for a large class of input key distributions dubbed smooth distribu-
+tions by Mehlhorn and Tsakalidis (1993). For arbitrary distributions, the C-IST ensures that
+operations complete in worst case time O (logn + ¢), where c is the number of concurrent
+operations. For smooth distributions, its operations complete in amortized expected time
+O(loglogn + ¢).
+
+The SkipTrie of Oshman and Shavit (2013) combines ideas from x-fast tries and y-fast tries
+(Willard 1983) to implement a lock-free trie with amortized expected time O(c loglog U)
+inserts and deletes, and amortized expected time O (loglog U + c¢) searches, where U is
+the size of the universe of keys (i.e., the number of keys that could possibly be inserted), and
+c 1s the level of contention in the recent past. The algorithm is quite sophisticated, combining
+concurrent hash tables, skip lists, doubly-linked lists, and an x-fast trie.
+
+8.7 Safe Memory Reclamation (SMR)
+
+Over the course of this chapter so far, we have made several references to the problem
+of memory management in nonblocking data structures: in contrast to the situation with
+lock-based structures, when a node is unlinked from a nonblocking structure, the unlinking
+thread generally has no way to tell whether other active threads have references to that node.
+one hundred seventy
+eight Nonblocking Algorithms
+
+based search tree, a trie stores a set of keys that are encoded as k bit binary strings, and a path from the root to a key is determined by the bits of the key. For example, in a binary trie, where each node has up to two children, to find the key seventeen, which has bit encoding one zero zero zero one, a search would move to the right child of the root, then move left, left, left and finally right. Patricia tries implement a clever form of path compression, and can be used to encode d dimensional data. In addition to the usual concurrent set operations, a Patricia trie offers a ReplaceKey (old, new) operation that can be used to, for example, update the locations of objects in a spatial data set. As a single atomic operation, ReplaceKey checks whether the old key is in the trie, and if so, inserts the new key and deletes the old key. If not, ReplaceKey has no effect. The implementation of atomicity entails "locking" of the old and new locations, with a helping scheme to ensure lock free progress.
+
+Doubly Logarithmic Search Recently, some sequential tree algorithms that offer doubly logarithmic search times have been implemented in the concurrent setting. Brown et al. (two thousand twenty) presented a lock free concurrent interpolation search tree (C IST). In a C IST containing n keys, the root node contains an array of theta(square root of n) keys, the children of the root contain theta(square root of n) keys each, the grandchildren theta(eighth root of n) keys each, and so on, resulting in a tree of height theta(log log n). Within a given node of the tree, the search algorithm hunts for the appropriate key using interpolation rather than, say, binary search. As an example, suppose we are looking for key two hundred in a node containing five hundred keys, with minimum key zero and maximum key one thousand. If the keys in the node were distributed uniformly in [zero, one thousand], we could expect to find our key about a fifth of the way through the array—at index one hundred out of five hundred—so we would look there first, and scan left or right as appropriate. It turns out that linear interpolation is effective for a large class of input key distributions dubbed smooth distributions by Mehlhorn and Tsakalidis (nineteen ninety three). For arbitrary distributions, the C IST ensures that operations complete in worst case time O(log log n + c), where c is the number of concurrent operations. For smooth distributions, its operations complete in amortized expected time O(log log n + c).
+
+The SkipTrie of Oshman and Shavit (two thousand thirteen) combines ideas from x fast tries and y fast tries (Willard nineteen eighty three) to implement a lock free trie with amortized expected time O(c log log U + c) searches, where U is the size of the universe of keys (i.e., the number of keys that could possibly be inserted), and c is the level of contention in the recent past. The algorithm is quite sophisticated, combining concurrent hash tables, skip lists, doubly linked lists, and an x fast trie.
+
+eight point seven Safe Memory Reclamation (S M R)
+
+Over the course of this chapter so far, we have made several references to the problem of memory management in nonblocking data structures: in contrast to the situation with lock based structures, when a node is unlinked from a nonblocking structure, the unlinking thread generally has no way to tell whether other active threads have references to that node.
+The text discusses various advanced data structures and algorithms, primarily focusing on efficient search and concurrent operations. It begins by describing a Patricia trie, a space-optimized form of a trie data structure where each node stores a set of keys encoded as binary strings. The path from the root to a leaf or a node indicates the key. In a binary trie, each node has at most two children, determined by the bits of the key. A search operation, for instance, for the key seventeen, would involve traversing left or right based on the key's binary representation. The text highlights a specific implementation using a Patricia trie that allows for atomic "locking" of old keys and replacement with new ones, facilitating lock-free programming. This mechanism enables atomic operations like "ReplaceKey" to ensure data integrity in concurrent environments.
+
+The discussion then shifts to "Doubly Logarithmic Search," referencing work by Brown et al. (2020) on a lock-free concurrent interpolation search tree, termed C-IST. In this structure, nodes contain arrays of keys, and the search within a node uses interpolation search rather than binary search. For example, if a node contains five hundred keys and we are searching for key two hundred, and the keys are uniformly distributed between zero and one thousand, we would expect to find our key approximately at index one hundred. This interpolation strategy is particularly effective for "smooth distributions" of keys, where operations can complete in amortized expected time of O(log log n + c), with c being the number of concurrent operations. For arbitrary key distributions, the worst-case time is O(log n + c).
+
+The text further introduces the "SkipTrie" by Oshman and Shavit (2013). This structure combines concepts from skip lists and tries to implement a lock-free trie with amortized expected time complexity for insertions and deletions. The performance is described as O(c log log U), where U represents the size of the universe of possible keys, and c is the level of contention. This implies that the efficiency is influenced by the range of possible values and the degree of concurrent access. This SkipTrie is noted for its sophistication, potentially combining features of concurrent hash tables, skip lists, doubly linked lists, and x-fast tries.
+
+Finally, the text briefly touches upon "Safe Memory Reclamation (SMR)" in the context of nonblocking data structures. It points out that a critical challenge in nonblocking structures arises when a node is unlinked from a structure. Without proper synchronization, other threads might still hold references to this unlinked node, leading to potential errors or memory corruption. This section sets the stage for discussing techniques to safely manage memory in concurrent scenarios where nodes can be removed from data structures without resorting to traditional locking mechanisms.

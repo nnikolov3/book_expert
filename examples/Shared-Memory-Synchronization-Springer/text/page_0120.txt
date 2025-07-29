@@ -1,0 +1,67 @@
+no best words!!
+124 7 Synchronization and Scheduling
+
+That thread will, in turn, reacquire the lock and disable signals before calling back into
+the scheduler.) The V operation disables signals, acquires the scheduler lock, and checks to
+see whether the queue of waiting threads is empty. If so, it moves a thread from that queue
+to the ready list; if not, it increments the counter. Finally, it releases the scheduler lock,
+reenables signals, and returns.
+
+With very similar implementation techniques, we can implement native support for
+scheduler-based reader-writer locks (we could also build them on top of semaphores). Mod-
+est changes to the internal representation (protected, of course, by the disabling of signals
+and the scheduler lock), would lead to fair, reader-preference, or writer-preference versions.
+In a similar vein, while we have described the behavior of counting semaphores in terms of
+a “queue” of waiting threads (suggesting FIFO ordering), the choice of thread to resume in
+V could just as easily be arbitrary, randomized, or based on some notion of priority.
+
+7.3 Monitors
+
+To a large extent, the enduring popularity of semaphores can be attributed to their simple
+subroutine-call interface: implemented by a run-time library or operating system, they can
+be used in almost any language. At the same time, the subroutine-call interface can be seen
+as a liability. To start with, while mutual exclusion constitutes the most common use case
+for semaphores, the syntactic independence of P and V operations makes it easy to omit
+one or the other accidentally—especially in the presence of deeply nested conditions, break
+and return statements, or exceptions. This problem can be addressed fairly easily by adding
+syntax in which lock acquisition introduces a nested scope, €.g.:
+
+with_lock(L) {
+∕∕
+
+}
+The compiler can ensure that the lock 1s released on any exit from the critical section,
+including those that occur via break, return, or exception. (Note, however, that syntactic
+nesting does not accommodate the hand-over-hand locking of Sec. 3.1.2.) In languages like
+C++, which provide a destructor mechanism for objects, a similar effect can be achieved
+without extending language syntax:
+
+{std::lock_guard<std: :mutex> _ (L) ;
+//
+
+}
+This construct declares a dummy object (here named simply with an underscore) of class
+lock_guard. The constructor for this object takes a parameter L of class mutex, and
+calls its acquire method. The destructor for the unnamed object, which will be called
+automatically on any exit from the scope, calls L’s release method. Both mutex and
+lock_guard are defined in the C++ standard library.
+That thread will, in turn, reacquire the lock and disable signals before calling back into the scheduler. The V operation disables signals, acquires the scheduler lock, and checks to see whether the queue of waiting threads is empty. If so, it moves a thread from that queue to the ready list. If not, it increments the counter. Finally, it releases the scheduler lock, reenables signals, and returns.
+
+With very similar implementation techniques, we can implement native support for scheduler based reader writer locks. We could also build them on top of semaphores. Modest changes to the internal representation, protected, of course, by the disabling of signals and the scheduler lock, would lead to fair, reader preference, or writer preference versions. In a similar vein, while we have described the behavior of counting semaphores in terms of a queue of waiting threads, suggesting F I F O ordering, the choice of thread to resume in V could just as easily be arbitrary, randomized, or based on some notion of priority.
+
+Section seven point three, Monitors.
+
+To a large extent, the enduring popularity of semaphores can be attributed to their simple subroutine call interface. Implemented by a run time library or operating system, they can be used in almost any language. At the same time, the subroutine call interface can be seen as a liability. To start with, while mutual exclusion constitutes the most common use case for semaphores, the syntactic independence of P and V operations makes it easy to omit one or the other accidentally, especially in the presence of deeply nested conditions, break and return statements, or exceptions. This problem can be addressed fairly easily by adding syntax in which lock acquisition introduces a nested scope. For example, the text provides a code example structure that begins with `with underscore lock` applied to a variable `L`, followed by an opening curly brace. Inside the block, a comment `slash slash dot dot dot` indicates further code, and then the block closes with a curly brace. This structure suggests a scope where a lock `L` is managed.
+
+The compiler can ensure that the lock is released on any exit from the critical section, including those that occur via break, return, or exception. Note, however, that syntactic nesting does not accommodate the hand over hand locking of Section three point one point two. In languages like C plus plus, which provide a destructor mechanism for objects, a similar effect can be achieved without extending language syntax. Another code example is presented, starting with an opening curly brace. It declares a `standard double colon lock underscore guard` object, which is a template instance specialized for `standard double colon mutex`, and is initialized with the variable `L`. A comment `slash slash dot dot dot` follows, and the block concludes with a closing curly brace.
+
+This construct declares a dummy object, here named simply with an underscore, of class `lock underscore guard`. The constructor for this object takes a parameter `L` of class `mutex`, and calls its acquire method. The destructor for the unnamed object, which will be called automatically on any exit from the scope, calls `L`'s release method. Both `mutex` and `lock underscore guard` are defined in the C plus plus standard library.
+The semaphore `V` operation, fundamental to concurrent programming, embodies a complex interplay with the operating system's thread scheduler and signal handling mechanisms. Upon execution, the `V` operation first necessitates the reacquisition of any associated locks and the disabling of system signals to ensure atomicity. This critical step prevents preemption or interruption of the `V` operation itself, preserving the integrity of the shared state, particularly the internal state of the scheduler. The `V` operation then acquires the scheduler lock, which protects the scheduler's internal data structures, such as its ready queue and waiting queues. It subsequently inspects the queue of threads currently waiting on the semaphore. If this waiting queue is not empty, one thread is selected and moved from the waiting queue to the scheduler's ready list, making it eligible for execution. If the waiting queue is empty, indicating no threads are currently blocked on this semaphore, the semaphore's internal counter is simply incremented by one. Finally, the operation releases the scheduler lock, re-enables any previously disabled signals, and returns control, completing the atomic release of the resource or signaling of an event.
+
+This intricate sequence, particularly the explicit management of scheduler locks and signals, underlies the robust implementation of higher-level synchronization constructs, such as reader writer locks. These locks often necessitate precise control over thread scheduling to optimize for specific access patterns, for instance, favoring readers or writers, or implementing fair access policies. While basic semaphores can form the foundation, more sophisticated scheduler based reader writer locks integrate directly with the thread scheduling policies to manage concurrent access to shared resources efficiently. Such integration allows for dynamic adjustments to the internal representation of waiting threads, influenced by the disabling of signals and the scheduler lock itself, thus enabling policies like fair queuing, reader preference, or writer preference, where the choice of thread to resume from a queue might be based on First In First Out ordering or other priority schemes.
+
+Despite the power of semaphores, their low level, primitive nature often exposes programmers to potential pitfalls, particularly concerning the manual pairing of `P` and `V` operations for mutual exclusion. The conceptual simplicity of a semaphore's subroutine call interface for acquisition and release belies the practical challenges in ensuring correct usage across diverse programming contexts. A common source of errors arises from the accidental omission of a `V` operation, leading to resource starvation or deadlocks. Furthermore, managing semaphores correctly becomes exceedingly difficult in the presence of deeply nested conditional logic, multiple return statements, or exceptional control flows, where an unexpected exit path might bypass the necessary release operation. This class of problems, characterized by the potential for subtle and hard to debug synchronization errors, led to the development of higher-level synchronization abstractions like monitors. Monitors inherently address these issues by abstracting away the explicit lock acquisition and release, guaranteeing mutual exclusion through structural language constructs.
+
+The monitor construct conceptually bundles shared data with the procedures that operate on that data. It ensures that only one thread can execute within any of these procedures at any given time, thus enforcing mutual exclusion for the shared data. A common implementation pattern for monitors involves a block or scope based locking mechanism, as exemplified by a hypothetical `with_lock` construct. Within such a construct, represented perhaps as `with_lock L curly brace` followed by the critical section code and a closing `curly brace`, the lock `L` is automatically acquired upon entry into the block. Crucially, the system or compiler is designed to ensure that this lock is automatically released upon any form of exit from that block, whether through normal completion, a `break` statement, a `return` statement, or the propagation of an exception. This automatic management significantly reduces the probability of errors compared to manual semaphore operations, as the programmer is relieved of the burden of explicitly writing release logic for all possible exit paths.
+
+This principle of automatic resource management is a cornerstone of robust concurrent programming and is prominently implemented in object oriented languages through techniques like Resource Acquisition Is Initialization, often abbreviated as R A I I. In C++, for instance, the `std::lock_guard` class within the standard library provides a canonical example. The declaration, `std colon colon lock guard less than std colon colon mutex greater than underscore L parenthesis L parenthesis semicolon`, instantiates a temporary or local object of type `lock_guard`. The constructor of this `lock_guard` object takes a reference to a `std::mutex` object, denoted here as `L`, and immediately acquires the mutex. Upon the object's destruction, which occurs automatically when it goes out of scope—for example, at the end of the surrounding block or function, or during stack unwinding due to an exception—its destructor is invoked. This destructor, in turn, automatically releases the mutex `L`. This elegant design ensures that the mutex is always properly released, even in the face of complex control flow or exceptions, thereby guaranteeing the integrity of critical sections and preventing common synchronization errors like forgotten lock releases or deadlocks due to unhandled exceptions.

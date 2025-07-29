@@ -1,0 +1,82 @@
+2.1 Cores and Caches: Basic Shared-Memory Architecture 15
+
+dated] coverage of Culler and Singh (1998, Chaps. 5, 6, & 8)). Most protocols in use today
+descend from the four-state protocol of Goodman (1983). In this protocol (using modern
+names for the states), each line in each cache is either invalid (empty) or holds a block that 1s
+shared (read-only, and possibly present in more than one cache), exclusive (present in only
+one cache, and up-to-date in memory), or modified (present in only one cache, and in need
+of write-back).
+
+To maintain the at-most-one-writable-copy invariant, the coherence protocol arranges,
+on any write to an invalid or shared line, to invalidate (evict) any copies of the block in all
+other caches in the system. In a system with a broadcast-based interconnect, invalidation 1s
+straightforward. In a system with point-to-point connections, the coherence protocol typi-
+cally maintains some sort of directory information that allows it to find all other copies of a
+block.
+
+2.1.3 Processor (Core) Locality
+
+On a single-core machine, misses occur on an initial access (a “cold miss”) and as a result of
+limited cache capacity or associativity (a “conflict miss”).” On a cache-coherent machine,
+misses may also occur because of the need to maintain coherence. Specifically, a read or
+write may miss because a previously cached block has been written by some other core,
+and has reverted to invalid state; a write may also miss because a previously exclusive or
+modified block has been read by some other core, and has reverted to shared state.
+
+Absent program restructuring, coherence misses are inevitable if threads on different
+cores access the same datum (and at least one of them writes it) at roughly the same point
+
+No-remote-caching Multiprocessors
+
+Most of this monograph assumes a shared-memory multiprocessor with global (distributed) cache
+coherence, which we have contrasted with machines in which message passing provides the only
+means of interprocessor communication. There 1s an intermediate option. Some NUMA machines
+(notably many of the offerings from Cray, Inc.) support a single global address space, in which
+any processor can access any memory location, but remote locations cannot be cached. We may
+refer to such a machine as a no-remote-caching (NRC-NUMA) multiprocessor. (Globally cache
+coherent NUMA machines are sometimes known as CC-NUMA..) Any access to a location in some
+other processor’s memory will traverse the interconnect of an NRC-NUMA machine. Assuming the
+hardware implements cache coherence within each node—in particular, between the local processor(s)
+and the network interface—memory will still be globally coherent. For the sake of performance,
+however, system and application programmers will need to employ algorithms that minimize the
+number of remote references.
+
+2 A cache is said to be k-way associative if its indexing structure permits a given block to be cached
+in any of k distinct locations. If k is 1, the cache is said to be direct mapped. If a block may be held
+in any line, the cache is said to be fully associative.
+dated coverage of Cullen and Singh (one nine nine eight, Chapters five, six, and eight)). Most protocols in use today descend from the four state protocol of Goodman (one nine eight three). In this protocol (using modern names for the states), each line in each cache is either invalid (empty) or holds a block that is shared (read only, and possibly present in more than one cache), exclusive (present in only one cache, and up to date in memory), or modified (present in only one cache, and in need of write back).
+
+To maintain the at most one writable copy invariant, the coherence protocol arranges, on any write to an invalid or shared line, to invalidate (evict) any copies of the block in all other caches in the system. In a system with a broadcast based interconnect, invalidation is straightforward. In a system with point to point connections, the coherence protocol typically maintains some sort of directory information that allows it to find all other copies of a block.
+
+Section two point one point three, Processor Core Locality.
+
+On a single core machine, misses occur on an initial access (a cold miss) and as a result of limited cache capacity or associativity (a conflict miss). Footnote two. On a cache coherent machine, misses may also occur because of the need to maintain coherence. Specifically, a read or write may miss because a previously cached block has been written by some other core, and has reverted to invalid state; a write may also miss because a previously exclusive or modified block has been read by some other core, and has reverted to shared state.
+
+Absent program restructuring, coherence misses are inevitable if threads on different cores access the same datum (and at least one of them writes it) at roughly the same point.
+
+No remote caching Multiprocessors.
+
+Most of this monograph assumes a shared memory multiprocessor with global (distributed) cache coherence, which we have contrasted with machines in which message passing provides the only means of interprocessor communication. There is an intermediate option. Some N U M A machines (notably many of the offerings from Cray, Incorporated) support a single global address space, in which any processor can access any memory location, but remote locations cannot be cached. We may refer to such a machine as a no remote caching (N R C hyphen N U M A) multiprocessor. (Globally cache coherent N U M A machines are sometimes known as C C hyphen N U M A.) Any access to a location in some other processor's memory will traverse the interconnect of an N R C hyphen N U M A machine. Assuming the hardware implements cache coherence within each node—in particular, between the local processor(s) and the network interface—memory will still be globally coherent. For the sake of performance, however, system and application programmers will need to employ algorithms that minimize the number of remote references.
+
+Footnote two. A cache is said to be k way associative if its indexing structure permits a given block to be cached in any of k distinct locations. If k is one, the cache is said to be direct mapped. If a block may be held in any line, the cache is said to be fully associative.
+In the realm of modern shared memory multiprocessors, ensuring cache coherence is paramount to maintaining a consistent view of memory across multiple processor cores. The fundamental challenge arises when multiple caches hold copies of the same data, and one of those copies is modified. Without a robust coherence mechanism, the system could experience incorrect program execution due to stale data.
+
+The text outlines a foundational four-state cache coherence protocol, which serves as a conceptual basis for many contemporary designs, tracing its lineage back to early work by Goodman in nineteen eighty three. These four states define the permissible status of a cache line within a processor's cache relative to main memory and other caches.
+
+The first state is 'invalid', signifying that a cache line either does not hold any data for a particular memory block or, if it does, that the data is outdated and must not be used. A cache line becomes invalid typically when another processor modifies the corresponding memory block.
+
+The 'shared' state indicates that a cache line contains a valid copy of a memory block, but this copy is read only. Furthermore, the same memory block might be present in the 'shared' state in other caches across the system. This state supports multiple readers concurrently.
+
+The 'exclusive' state means the cache line holds the *only* copy of the memory block within the entire cache hierarchy, and this copy is up to date with main memory. Although it is the sole copy, it has not yet been modified by the local processor. This state allows for a fast transition to the 'modified' state without needing to inform other caches immediately, as no other cache holds a copy.
+
+Finally, the 'modified' state indicates that the cache line contains the only copy of the memory block, and this copy has been altered by the local processor. This modified data is inconsistent with main memory and must eventually be written back to it to maintain global consistency.
+
+A critical invariant upheld by these protocols is the "at most one writable copy" principle. This ensures that for any given memory block, only one cache can hold a writable copy, namely a cache line in the 'modified' or 'exclusive' state, as 'exclusive' can transition to 'modified' without an external coherence transaction. When a processor initiates a write operation to a memory block, if its local cache line for that block is in an 'invalid' or 'shared' state, the coherence protocol must ensure that all other cached copies of that block in the system are 'invalidated'. This invalidation process is typically achieved through a broadcast mechanism on an interconnect, allowing all other caches to snoop on the transaction and update their states accordingly. More sophisticated systems, especially those with point to point connections, might employ a directory based coherence scheme, where a centralized or distributed directory tracks the locations of all cached copies of memory blocks, enabling more targeted invalidation messages instead of system wide broadcasts.
+
+Moving to the concept of processor core locality, cache misses are fundamental to understanding memory access performance. On a single core machine, a "cold miss" occurs on the very first access to a memory block, as the data has not been brought into the cache yet. A "conflict miss" arises even if the cache has available capacity, but the cache's limited associativity or mapping function forces a new block to evict an existing one, despite sufficient overall capacity. For instance, in a 'direct mapped' cache, where each memory block maps to a single, specific cache line, a conflict miss occurs if two frequently accessed blocks map to the same line, causing thrashing. In contrast, a 'k-way associative' cache allows a block to reside in any of 'k' distinct locations within a set, reducing conflict misses, while a 'fully associative' cache allows a block to be placed in any available cache line, virtually eliminating conflict misses, though at increased hardware complexity and access latency.
+
+In the context of multi core, cache coherent machines, additional types of misses, known as "coherence misses", emerge. A read operation might incur a coherence miss if the desired memory block was previously cached by the local processor but was subsequently written to by another core, forcing its local copy into an 'invalid' state. Similarly, a write operation can cause a coherence miss if the block was previously held in an 'exclusive' or 'modified' state by the current processor, but another core then read that block, causing the current processor's copy to transition to a 'shared' state. This transition occurs because a 'read' by another core indicates a desire for a shared copy, compelling the current owner to relinquish its exclusive or modified status and write back any changes if it was modified, before allowing others to read. Such coherence misses highlight the performance overhead inherent in maintaining a globally consistent memory view and necessitate careful program restructuring to minimize data sharing patterns that induce frequent coherence transactions.
+
+The discussion then transitions to 'non-uniform memory access', or N U M A, multiprocessors, which represent a significant departure from traditional 'uniform memory access' systems. In a N U M A architecture, memory access times depend on the physical location of the memory relative to the accessing processor. This design is often employed in large scale systems to scale memory bandwidth and capacity beyond what a single shared bus can support. Unlike systems that rely solely on message passing for interprocessor communication, N U M A machines present a single global address space, allowing any processor to directly address any memory location, albeit with varying latencies.
+
+A particular variant, often referred to as 'no remote caching N U M A', or N R C-N U M A, and sometimes as 'coherent cache N U M A', or C C-N U M A, maintains cache coherence within each processing node. However, it specifically stipulates that memory blocks located in remote nodes cannot be cached in a local processor's cache. Accessing such remote data necessitates traversing the system interconnect, which introduces significantly higher latency compared to accessing local memory or local cache. While this architecture offers advantages in terms of scalability and simplifies the coherence protocol by limiting its scope to within a node, it places a substantial burden on system and application programmers. To achieve optimal performance, they must employ algorithms and data structures that explicitly minimize remote memory references, often by trying to keep data used by a processor localized to its physically proximate memory. This design choice underscores a critical trade off in parallel system architecture: simplifying hardware complexity or scalability often shifts the burden of performance optimization to software.

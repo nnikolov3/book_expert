@@ -1,0 +1,85 @@
+132 7 Synchronization and Scheduling
+
+passed, but may not actually be used for some time. In Multilisp, any expression—but most
+commonly a function argument—could be enclosed in a future construct:
+
+(future expression)
+
+Evaluation of the expression might then proceed in parallel with continued execution in the
+caller, up until the point (if any) at which the caller actually needs the value of the expression.
+
+Futures embody synchronization in the sense that evaluation of the enclosed expression
+will not begin until execution in the parent thread reaches the point at which the future
+appears, and execution in the parent thread will not proceed beyond the point where the
+value is needed until evaluation has completed. Using futures, the key recursive step in
+quicksort might be written as follows:
+
+(append (future (sort elements less than or equal to pivot))
+(list pivot)
+(future (sort elements greater than pivot)))
+
+In general, a future and the continuation of its caller need to be independent, up to
+the point where the value of the future is needed. If the threads executing the future and
+the continuation share a data or synchronization race, behavior of the program may be
+nondeterministic or even undefined. As recognized by Halstead, futures are thus particularly
+appealing in purely functional programs, in which the lack of side effects means that an
+expression will always evaluate to the same value in a given context.
+
+Some thread libraries provide futures outside the language core—typically as a generic
+(polymorphic) object whose constructor accepts a closure (a subroutine and its parameters)
+and whose get method can be used to retrieve the computed value (waiting for it if necessary).
+In Java, given a Callable < T > object c, the code
+
+T val = c.call();
+
+can be replaced by
+
+Future<T> f = new FutureTask<T>(c) ;
+// Class FutureTask implements interface Future
+f.run();
+
+T val = f.get();
+
+Because Java is not a functional language, the programmer must exercise special care to
+ensure that a future will execute safely. Welc et al. (2005) have proposed that futures
+be made safe in all cases, using an implementation reminiscent of transactional memory.
+Specifically, they use multiversioning to ensure that a future does not observe changes made
+by the continuation of its caller, and speculation in the caller to force it to start over if it fails
+to observe a change made by the future.
+One hundred thirty two
+Seven Synchronization and Scheduling
+
+passed, but may not actually be used for some time. In Multilisp, any expression—but most commonly a function argument—could be enclosed in a future construct:
+
+(future expression)
+
+Evaluation of the expression might then proceed in parallel with continued execution in the caller, up until the point (if any) at which the caller actually needs the value of the expression. Futures embody synchronization in the sense that evaluation of the enclosed expression will not begin until execution in the parent thread reaches the point at which the future appears, and execution in the parent thread will not proceed beyond the point where the value is needed until evaluation has completed. Using futures, the key recursive step in quicksort might be written as follows:
+
+(append (future (sort elements less than or equal to pivot))
+(list pivot)
+(future (sort elements greater than pivot)))
+
+In general, a future and the continuation of its caller need to be independent, up to the point where the value of the future is needed. If the threads executing the future and the continuation share a data or synchronization race, behavior of the program may be nondeterministic or even undefined. As recognized by Halstead, futures are thus particularly appealing in purely functional programs, in which the lack of side effects means that an expression will always evaluate to the same value in a given context.
+
+Some thread libraries provide futures outside the language core—typically as a generic (polymorphic) object whose constructor accepts a closure (a subroutine and its parameters) and whose get method can be used to retrieve the computed value (waiting for it if necessary). In Java, given a Callable less than T greater than object c, the code
+
+T val = c.call();
+
+can be replaced by
+
+Future less than T greater than f = new FutureTask less than T greater than (c);
+// Class FutureTask implements interface Future
+f.run();
+...
+T val = f.get();
+
+Because Java is not a functional language, the programmer must exercise special care to ensure that a future will execute safely. Welc et al. (2005) have proposed that futures be made safe in all cases, using an implementation reminiscent of transactional memory. Specifically, they use multiversioning to ensure that a future does not observe changes made by the continuation of its caller, and speculation in the caller to force it to start over if it fails to observe a change made by the future.
+The concept of a future, often implemented as a placeholder for a value that may not be immediately available, is crucial in managing asynchronous computation. A future expression can be evaluated in parallel with the caller's ongoing execution. The evaluation of this enclosed expression proceeds until the point at which the caller actually requires its result. This mechanism allows for speculative execution, where computations that are likely to be needed can be initiated preemptively.
+
+Futures embody a form of synchronization in that the evaluation of the enclosed expression, and thus the availability of its result, can delay the parent thread. The parent thread will not proceed beyond the point where the future's value is needed until that evaluation is complete. This pattern is particularly useful in recursive algorithms, such as quicksort, where subproblems can be delegated to futures.
+
+In general, a future and the continuation of its caller have a dependency: the caller needs the future's value to proceed. If multiple threads are involved in executing a future and its continuation, without proper synchronization, this can lead to data races or race conditions, resulting in nondeterministic or undefined program behavior. As noted by Halstead, futures are particularly well-suited for purely functional programs where side effects are minimized, and consequently, the lack of explicit synchronization mechanisms is less problematic, as computations tend to evaluate to the same value regardless of execution order.
+
+Some thread libraries offer futures as a language-level construct, typically implemented as a generic object. This object might accept a closure, which is essentially a subroutine along with its parameters, and provides a method to retrieve the computed value, blocking if necessary until it is available. In Java, for instance, a Callable object `c` could be used to obtain a value `T val` via `c.call()`. This can be equivalently represented using Java's `FutureTask`, where a `Future<T> f` is created with the callable, potentially run asynchronously using `f.run()`, and the value is later retrieved with `f.get()`.
+
+Given that Java is not a purely functional language, programmers must be particularly diligent when using futures to ensure safe execution. Welc et al. (2005) proposed using an implementation reminiscent of transactional memory to ensure that a future's state does not change unexpectedly by another thread. Specifically, this approach would involve using multiversioning to detect race conditions where the continuation of a future observes a change made by another thread, and if such a conflict is detected, the operation is retried.

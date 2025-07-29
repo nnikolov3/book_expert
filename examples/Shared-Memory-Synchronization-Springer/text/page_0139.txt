@@ -1,0 +1,59 @@
+8.2 Linked Lists 143
+
+20. In Figure 8.3b, deletion of the node containing 20 requires only that we swing the next
+pointer of the node containing 10.
+
+The problem with this expectation is that insertion after the node containing 20 is correct
+only if that node remains a member of the list. If the deletion in Figure 8.3(b) happens
+immediately before the insertion in Figure 8.3(a), we shall be left with the configuration of
+Figure 8.3(¢), in which the node containing 25 has inadvertently been lost.
+
+The solution to this problem, first used in an early queue algorithm by Prakash etal. (1994)
+and then adapted to the general linked-list case by Harris (2001), is to perform deletion in
+two steps. The first step, shown in Figure 8.3(d), marks the to-be-deleted node by flipping
+a bit in its own next pointer (this is suggested in the figure by shading the box containing
+the pointer). A second, separate step (not shown in the figure) updates the next pointer of
+the node containing 10 to actually remove the deleted node from the list. In between these
+two steps, the list remains intact, and can safely be traversed, but lookup operations will
+decline to “see” the deleted node, and insert operations will decline to update its marked
+next pointer. Moreover, because the state of the list remains well defined, and the second
+step can be effected with a single CAS, any thread that comes upon a deleted node can safely
+remove 1t, without waiting for help from any other thread. Assuming the desired key was
+in the list, deletion linearizes at the initial, pointer-marking CAS; assuming the desired key
+was absent, insertion linearizes at the single CAS that adds its node to the list. (Linearization
+points differ for lookups and for failed deletions and insertions; see below.)
+
+As in the Treiber stack, the ABA problem becomes an issue if nodes can be reused.
+Harris’s algorithm assumes the existence of general-purpose garbage collection (e.g., based
+on reference counts) that will refrain from reclaiming nodes until all existing references have
+disappeared. Michael (2002b) refined the algorithm to accommodate memory management
+based either on counted pointers and a type-preserving allocator (as in the Treiber stack) or
+on hazard pointers (Michael 2004b) (to be discussed in Sec. 8.7). This refinement hinged on
+a key observation that general garbage collection can be avoided as long as threads do not
+dereference marked pointers. Thus, whereas Harris’s algorithm allows traversal of marked
+nodes, Michael’s refinement does not.
+
+The counted pointer version of the list, adapted from Michael’s paper and augmented with
+appropriate synchronizing instructions, appears in Figures 8.4 and 8.5. While it requires a
+double-width CAS to update a pointer and count simultaneously, it has the advantage of easy
+adaptation to applications in which a node must be moved from one list to another, without
+waiting for stale references to expire.
+
+The heart of the Harris & Michael algorithm is the search routine, shown in Figure 8.4,
+and called in turn by insert, delete, and lookup (Figure 8.5). For the sake of notational
+convenience, search is designed to “return” three values—PREVp, CURR, and NEXT as
+thread-local variables. CURR is a counted-pointer reference to the first node, if any, with a
+key greater than or equal to the searched-for value. PREVp is a conventional pointer to the
+counted pointer in the list that refers to CURR. NEXT is a counted-pointer reference to the
+8.2 Linked Lists 143. 20. In Figure 8.3b, deletion of the node containing twenty requires only that we swing the next pointer of the node containing ten. The problem with this expectation is that insertion after the node containing twenty is correct only if that node remains a member of the list. If the deletion in Figure 8.3b happens immediately before the insertion in Figure 8.3a, we shall be left with the configuration of Figure 8.3c, in which the node containing twenty five has inadvertently been lost. The solution to this problem, first used in an early queue algorithm by Prakash et al. (1994) and then adapted to the general linked list case by Harris (2001), is to perform deletion in two steps. The first step, shown in Figure 8.3d, marks the to be deleted node by flipping a bit in its own next pointer (this is suggested in the figure by shading the box containing the pointer). A second, separate step (not shown in the figure) updates the next pointer of the node containing ten to actually remove the deleted node from the list. In between these two steps, the list remains intact, and can safely be traversed, but lookup operations will decline to see the deleted node, and insert operations will decline to update its marked next pointer. Moreover, because the state of the list remains well defined, and the second step can be effected with a single C A S, any thread that comes upon a deleted node can safely remove it, without waiting for help from any other thread. Assuming the desired key was in the list, deletion linearizes at the initial, pointer marking C A S; assuming the desired key was absent, insertion linearizes at the single C A S that adds its node to the list. Linearization points differ for lookups and for failed deletions and insertions; see below. As in the Treiber stack, the A B A problem becomes an issue if nodes can be reused. Harris's algorithm assumes the existence of general purpose garbage collection (e.g., based on reference counts) that will refrain from reclaiming nodes until all existing references have disappeared. Michael (2002b) refined the algorithm to accommodate memory management based either on counted pointers and a type preserving allocator (as in the Treiber stack) or on hazard pointers (Michael 2004b) (to be discussed in Section 8.7). This refinement hinged on a key observation that general garbage collection can be avoided as long as threads do not dereference marked pointers. Thus, whereas Harris's algorithm allows traversal of marked nodes, Michael's refinement does not. The counted pointer version of the list, adapted from Michael's paper and augmented with appropriate synchronizing instructions, appears in Figures 8.4 and 8.5. While it requires a double width C A S to update a pointer and count simultaneously, it has the advantage of easy adaptation to applications in which a node must be moved from one list to another, without waiting for stale references to expire. The heart of the Harris and Michael algorithm is the search routine, shown in Figure 8.4, and called in turn by insert, delete, and lookup. For the sake of notational convenience, search is designed to return three values—PREVP, CURR, and NEXT—as thread local variables. CURR is a counted pointer reference to the first node, if any, with a key greater than or equal to the searched for value. PREVP is a conventional pointer to the counted pointer in the list that refers to CURR. NEXT is a counted pointer reference to the
+The discussion elaborates on the intricacies of linked list operations, particularly focusing on deletion and its potential pitfalls in concurrent environments, drawing upon concepts from Harris's algorithm and its subsequent refinements by Michael.
+
+A critical aspect highlighted is the problem of deletion in a singly linked list, specifically when a node is removed but its successor is still being traversed by another thread. If a thread is examining the node containing twenty, and the node containing ten preceding it is deleted, the deletion operation involves "swinging" the next pointer of the node before the deleted one to point to the node after the deleted one. The described scenario in question 20 posits that the deletion of the node containing twenty requires swinging the next pointer of the node containing ten. The concern arises if an insertion operation occurs immediately after the node containing ten, but before the deletion of the node containing twenty is fully committed. Specifically, if a deletion in Figure eight point three b happens, and then an insertion occurs in Figure eight point three a before the deletion is fully processed, the node containing twenty-five, which should have been inserted after twenty, might inadvertently be linked to the wrong predecessor. This situation, where a node is logically deleted but its pointer is still in use, can lead to data loss or corruption if not handled carefully.
+
+The presented solution, adapted from an early queue algorithm and generalized to linked lists by Harris, involves a two-step deletion process. The first step marks the node for deletion, often by flipping a bit in its next pointer, indicated by shading in a diagram. This marking signals to other threads that the node is being removed, without immediately severing its connection. The second step, which might not be explicitly shown, involves the actual removal. This two-step approach ensures that lookups and traversals can still proceed past the marked node, preventing premature termination or incorrect path following. If the list remains consistent during this marking phase, subsequent operations like lookups are safe. However, the text notes that deletion linearization occurs at the initial pointer-marking CAS, while insertion linearizes at the CAS that adds its node. This subtle difference can lead to issues if node reuse is permitted, as the ABA problem can manifest. The ABA problem occurs when a thread reads a value (A), then another thread modifies it to B, and then back to A before the first thread performs its intended operation. In this context, if a node is deleted and its memory is immediately reused for a new node, a thread might mistakenly believe it is operating on the original node.
+
+Harris's algorithm, as described, relies on the availability of general-purpose garbage collection, such as reference counting, to reclaim nodes that are no longer referenced. Michael's refinement (2002b) addressed this by developing an algorithm that does not require garbage collection for correctness. This refinement utilized counted pointers and a type-preserving allocator, or more commonly, hazard pointers (Michael, 2004b). A key observation enabling this was that as long as threads do not dereference marked pointers, they can safely traverse the list even if nodes are in a transitional deletion state. Michael's algorithm, therefore, avoids the need for garbage collection by ensuring safe traversal.
+
+The text also introduces the concept of counted pointers, which are augmented with synchronization instructions, and are illustrated in Figures eight point four and eight point five. A double-width CAS, which atomically updates a pointer and a count simultaneously, is employed. This mechanism provides the advantage of easily moving a node from one list to another without causing race conditions, particularly when dealing with stale references.
+
+The core of the Harris and Michael algorithm, as detailed in Figure eight point five, is a search routine that supports insert, delete, and lookup operations. For notational convenience, this routine returns three values: PREVp, CURR, and NEXT. PREVp represents a counted-pointer reference to the predecessor of the node being searched for, CURR is a counted-pointer reference to the first node, and NEXT is a counted-pointer reference to the node following CURR. If CURR itself is the node being searched for, then PREVp is a counted-pointer reference to the node that refers to CURR. This structured return of information is crucial for the correct implementation of atomic operations on the linked list.

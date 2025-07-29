@@ -1,0 +1,69 @@
+34 Memory Models 55
+
+Synchronizes-with order is a subset of synchronization order induced by language seman-
+tics. In a language based on transactional memory, the subset may be trivial: all trans-
+actions are globally ordered. In a language based on locks, each release operation may
+synchronize with the next acquire of the same lock in synchronization order, but may be
+unordered with respect to other synchronizing steps.
+
+Happens-before order is the transitive closure of program order and synchronizes-with
+order. It captures all the ordering the language guarantees.
+
+To complete a memory model, these order definitions must be augmented with a writes-seen
+relation. To understand such relations, we first must understand the notion of a data race.
+
+3.4.2 Data Races
+
+Language semantics specify classes of ordinary program steps that conflict with one another.
+A write, for example, is invariably defined to conflict with either a read or a write to the same
+variable in another thread. A program is said to have a data race if, for some input, it has a
+sequentially consistent execution in which two conflicting ordinary steps are adjacent in the
+total order. Data races are problematic because we don’t normally expect an implementation
+to force ordinary steps in different threads to occur in a particular order. If an implementation
+yields (a concrete execution corresponding to) an abstract execution in which the conflicting
+steps occur in one order, we need to allow it to yield another abstract execution (of the same
+program on the same input) in which all prior steps are the same but the conflicting steps
+are reversed. It is easy to construct examples (e.g., as suggested in Figure 2.3) in which the
+remainder of this second execution cannot be sequentially consistent.
+
+Given the definitions in Sec. 3.4.1, we can also say that an abstract execution has a
+data race if it contains a pair of conflicting steps that are not ordered by happens-before.
+A program then has a data race if, for some input, it has an execution containing a data
+race. This definition turns out to be equivalent to the one based on sequentially consistent
+executions. The key to the equivalence is the observation that arcs in the synchronizes-with
+order, which contribute to happens-before, correspond to ordering constraints in sequentially
+consistent executions. The same language rules that induce a synchronizes-with arc from,
+say, the release of a lock to the subsequent acquire also force the release to appear before
+the acquire in the total order of any sequentially consistent execution.
+
+In an execution without any data races, the writes-seen relation is straightforward: the
+lack of unordered conflicting accesses implies that all reads and writes of a given location
+are ordered by happens-before. Each read can then return the value written by the (unique)
+most recent prior write of the same location in happens-before order—or the initial value if
+there 1s no such write. More formally, one can prove that all executions of a data-race-free
+Section three point four, Memory Models.
+
+Synchronizes-with order is a subset of synchronization order induced by language semantics. In a language based on transactional memory, the subset may be trivial: all transactions are globally ordered. In a language based on locks, each release operation may synchronize with the next acquire of the same lock in synchronization order, but may be unordered with respect to other synchronizing steps. Happens-before order is the transitive closure of program order and synchronizes-with order. It captures all the ordering the language guarantees.
+
+To complete a memory model, these order definitions must be augmented with a writes-seen relation. To understand such relations, we first must understand the notion of a data race.
+
+Section three point four point two, Data Races.
+
+Language semantics specify classes of ordinary program steps that conflict with one another. A write, for example, is invariably defined to conflict with either a read or a write to the same variable in another thread. A program is said to have a data race if, for some input, it has a sequentially consistent execution in which two conflicting ordinary steps are adjacent in the total order. Data races are problematic because we don't normally expect an implementation to force ordinary steps in different threads to occur in a particular order. If an implementation yields, a concrete execution corresponding to an abstract execution in which the conflicting steps occur in one order, we need to allow it to yield another abstract execution, of the same program on the same input, in which all prior steps are the same but the conflicting steps are reversed. It is easy to construct examples, for example, as suggested in Figure two point three, in which the remainder of this second execution cannot be sequentially consistent.
+
+Given the definitions in Section three point four point one, we can also say that an abstract execution has a data race if it contains a pair of conflicting steps that are not ordered by happens-before. A program then has a data race if, for some input, it has an execution containing a data race. This definition turns out to be equivalent to the one based on sequentially consistent executions. The key to the equivalence is the observation that arcs in the synchronizes-with order, which contribute to happens-before, correspond to ordering constraints in sequentially consistent executions. The same language rules that induce a synchronizes-with arc from, say, the release of a lock to the subsequent acquire also force the release to appear before the acquire in the total order of any sequentially consistent execution.
+
+In an execution without any data races, the writes-seen relation is straightforward: the lack of unordered conflicting accesses implies that all reads and writes of a given location are ordered by happens-before. Each read can then return the value written by the unique most recent prior write of the same location in happens-before order, or the initial value if there is no such write. More formally, one can prove that all executions of a data race free
+The discussion centers on fundamental concepts within concurrent programming and memory consistency models, crucial for understanding the predictable and correct operation of multi-threaded systems.
+
+The first concept presented is the "synchronizes-with order." This is a foundational relation in memory models, defining a subset of the overall synchronization order imposed by a programming language's semantics. For instance, in systems utilizing transactional memory, operations are globally ordered, yet some transitions, particularly for non-conflicting actions, might be considered trivial. More concretely, in a language that employs locks for synchronization, a "release" operation on a particular lock is defined to "synchronize-with" a subsequent "acquire" operation on the very same lock. This establishes a critical ordering guarantee: all memory writes performed by the thread that executes the release operation are guaranteed to be visible to any thread that subsequently acquires that same lock. This principle ensures that critical sections protected by locks behave as expected, preventing race conditions by establishing a coherent view of shared memory.
+
+Building upon this, the "happens-before order" is introduced as the transitive closure of the "program order" and the "synchronizes-with order." Program order refers to the sequential execution of operations within a single thread. The "happens-before" relation captures all causality and ordering guarantees provided by the programming language and its underlying memory model. If operation A "happens-before" operation B, then A's effects are visible to B, and B cannot be observed to occur before A. This forms the bedrock for defining memory consistency. To fully specify a robust memory model, this ordering must be augmented by a "writes-seen" relation, which determines precisely which write an individual read operation observes.
+
+The crucial concept of "data races" is then explored. A "conflict" between program steps is defined as a situation where two operations access the same memory location, and at least one of them is a write. A "data race" occurs when a program contains two such conflicting ordinary steps that are "adjacent" in a sequentially consistent execution, meaning they could potentially execute concurrently without a "happens-before" relationship enforcing their order. This implies that these conflicting steps are not ordered by the "happens-before" relation.
+
+Data races are profoundly problematic because they lead to non-deterministic program behavior, making it exceedingly difficult to reason about correctness. If an implementation allows conflicting steps to execute in an order different from a hypothetical sequentially consistent order, or even reverses them, the resulting execution is no longer sequentially consistent. Consider an execution where conflicting steps, for example, a write by one thread and a read by another, are not ordered by "happens-before." The outcome of the read becomes dependent on the unpredictable timing of the threads, potentially returning an outdated or inconsistent value.
+
+The text clarifies that an abstract execution possesses a data race if it involves a pair of conflicting steps not ordered by "happens-before." This definition is demonstrated to be equivalent to the one based on sequentially consistent executions. The core insight for this equivalence is that "synchronizes-with" arcs, which contribute to the "happens-before" ordering, impose the necessary constraints in sequentially consistent executions. For instance, the release of a lock by one thread must "synchronize-with" the subsequent acquire of that same lock by another thread, compelling the release to appear before the acquire in any sequentially consistent execution, thus preventing a data race on variables protected by that lock.
+
+Conversely, an execution free of data races guarantees a much stronger and more predictable behavior for memory accesses. In such an execution, the "writes-seen" relation simplifies considerably: all read operations are guaranteed to observe the value written by the unique most recent prior write to that location in "happens-before" order. If no such prior write exists, the read observes the initial value of the memory location. This property is fundamental, as it allows one to formally prove that all executions of a data-race-free program are sequentially consistent. This connection between the absence of data races and the guarantee of sequential consistency is a cornerstone of modern memory model design, providing the formal basis for ensuring program determinism in concurrent environments.

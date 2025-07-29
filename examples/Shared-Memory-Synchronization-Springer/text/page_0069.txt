@@ -1,0 +1,74 @@
+4.3 Queued Spin Locks 71
+
+;
+©) iii ALT pW] =
+
+i
+0 [0 WH WH
+
+o [1 EL
+A
+
+iN
+
+0 [1 IE
+ua [F
+
+@ | RI
+
+Figure 4.9 Operation of the MCS lock. An ‘R’ indicates that the thread owning the given gnode
+1s running its critical section (parentheses indicate that the value of the waiting flag is immaterial).
+A ‘W’ indicates that the corresponding thread is waiting. A dashed arrow represents a local pointer
+(returned to the thread by swap).
+
+Modifications for a Standard Interface
+
+One disadvantage of the MCS lock is the need to pass a ghode pointer to acquire and release.
+Test_and_set and ticket locks pass only a reference to the lock itself. If a programmer
+wishes to convert code from traditional to queued locks, or to design code in which the
+lock implementation can be changed at system configuration time, it is natural to wish for a
+version of the MCS lock that omits the extra parameters, and can be substituted in without
+rewriting all the call points. Auslander et al. (2003) devised such a version as part of the
+K42 project at IBM Research (Appavoo et al. 2005). Their code exploits the fact that once
+a thread has acquired a lock, its gnode serves only to hold a reference to the next thread in
+line. Since the thread now “owns” the lock, it can move its next pointer to an extra field of
+the lock, at which point the gnode can be discarded.
+
+Code for the K42 variant of the MCS lock appears in Figure 4.10. Operation of the lock
+is illustrated in Figure 4.11. An idle, unheld lock is represented by a gnode containing two
+null pointers (line 1 of Figure 4.11). The first of these is the usual tail pointer from the MCS
+lock; the other is a “next” pointer that will refer to the gnode of the first waiting thread,
+if and when there is one. Newly arriving thread A (line 2) uses CAS to replace a null tail
+Four point three Queued Spin Locks.
+
+Figure four point nine depicts the operation of the M C S lock. An 'R' in a block indicates that the thread owning the given qnode is running its critical section, and any value within parentheses indicates the value of the waiting flag is immaterial. A 'W' indicates that the corresponding thread is waiting. A dashed arrow represents a local pointer returned to the thread by swap.
+
+The diagram shows a sequence of seven states:
+One: The lock, represented by 'L', points to an empty block, indicating the lock is available.
+Two: A thread 'A' arrives. The lock 'L' now points to block 'A', which contains 'R', signifying that thread 'A' is running in its critical section. Thread 'A' has a pointer to an empty block.
+Three: Thread 'B' arrives while 'A' holds the lock. Lock 'L' still points to 'A' which contains 'R'. Thread 'A' now points to block 'B', which contains 'W', indicating thread 'B' is waiting. There is a dashed local pointer from 'B' back to 'A'.
+Four: Thread 'C' arrives while 'A' holds the lock and 'B' is waiting. Lock 'L' still points to 'A' containing 'R'. Thread 'A' points to 'B' containing 'W'. Thread 'B' now points to block 'C', which contains 'W', indicating thread 'C' is waiting. There is a dashed local pointer from 'C' back to 'B'.
+Five: Thread 'A' exits its critical section. The lock 'L' now points to block 'B', which transitions to 'R', indicating thread 'B' has acquired the lock and is running. Thread 'B' points to 'C' containing 'W'. There is a dashed local pointer from 'C' back to 'B'.
+Six: Thread 'B' exits its critical section. The lock 'L' now points to block 'C', which transitions to 'R', indicating thread 'C' has acquired the lock and is running.
+Seven: Thread 'C' exits its critical section. The lock 'L' now points to an empty block, similar to the initial state, indicating the lock is available again.
+
+Modifications for a Standard Interface.
+
+One disadvantage of the M C S lock is the need to pass a qnode pointer to acquire and release. Test and set and ticket locks pass only a reference to the lock itself. If a programmer wishes to convert code from traditional to queued locks, or to design code in which the lock implementation can be changed at system configuration time, it is natural to wish for a version of the M C S lock that omits the extra parameters, and can be substituted in without rewriting all the call points. Auslander et al. two thousand three devised such a version as part of the K forty two project at I B M Research, Appavoo et al. two thousand five. Their code exploits the fact that once a thread has acquired a lock, its qnode serves only to hold a reference to the next thread in line. Since the thread now "owns" the lock, it can move its next pointer to an extra field of the lock, at which point the qnode can be discarded.
+
+Code for the K forty two variant of the M C S lock appears in Figure four point ten. Operation of the lock is illustrated in Figure four point eleven. An idle, unheld lock is represented by a qnode containing two null pointers, line one of Figure four point eleven. The first of these is the usual tail pointer from the M C S lock; the other is a "next" pointer that will refer to the qnode of the first waiting thread, if and when there is one. Newly arriving thread A, line two, uses C A S to replace a null tail.
+The management of shared resources in concurrent systems necessitates robust synchronization primitives. Traditional spin locks, while simple, introduce significant performance bottlenecks due to cache line contention and excessive bus traffic under high concurrency. This arises as multiple processors repeatedly attempt to read and modify the same lock variable, leading to cache invalidations and memory system thrashing. To mitigate this, queued spin locks, such as the M C S lock, were devised. The core principle of a queued spin lock is to distribute the waiting overhead among the contending threads, thereby reducing global contention on a single lock variable.
+
+Consider the operational mechanics of the M C S lock, illustrated through a series of states. Initially, in state one, the global lock variable, denoted as 'L', points to a null or empty state, indicating that no thread holds the lock and the waiting queue is empty. When a thread, let us call it A, attempts to acquire the lock, as seen in state two, it performs an atomic Compare And Swap operation on 'L'. If 'L' is null, A successfully acquires the lock, and 'L' is updated to point to A's own dedicated queue node, or 'Q node'. This Q node for thread A is depicted as a rectangular box, and the '(R)' inside it signifies that thread A is currently running its critical section, having successfully acquired the lock. Importantly, with M C S locks, each waiting thread spins on a flag within its *own* Q node, rather than on the global lock variable, thus localizing cache invalidations to only the Q node memory location.
+
+In state three, while thread A holds the lock, a second thread, B, arrives and attempts to acquire it. Since 'L' is not null, B cannot acquire the lock immediately. Instead, B atomically updates 'L' to point to its own Q node, and critically, it sets its predecessor pointer to A's Q node. This forms a linked list structure for the queue. B's Q node is shown to the right of A's, with a solid arrow from A's Q node pointing to B's. The '(W)' in B's Q node indicates that thread B is waiting. A dashed arrow originates from an abstract point associated with B's Q node and points back to A's Q node, representing B's local pointer to its predecessor in the queue, which is essential for the handoff mechanism.
+
+As concurrency increases, depicted in state four, a third thread, C, arrives while A is running and B is waiting. Similar to B, C cannot acquire the lock directly. C appends its Q node to the end of the queue, atomically updating 'L' to point to its Q node, and B's Q node's successor pointer is updated to point to C's Q node. C's Q node also contains '(W)', signifying it is waiting, and a dashed arrow from C's Q node points back to B's, representing C's local pointer to its predecessor. At this juncture, the lock 'L' consistently points to the tail of the queue, which is C's Q node, while the queue itself is formed by A pointing to B, and B pointing to C.
+
+The lock release mechanism is a critical aspect of the M C S design. When thread A completes its critical section and releases the lock, as shown in state five, it does not modify the global 'L' variable if there are successors. Instead, it directly notifies its successor in the queue, which is thread B. Thread A does this by writing to a specific field within B's Q node, typically changing its waiting flag from 'W' to 'R' (conceptually, setting a flag that B is spinning on). Upon detecting this change, B ceases spinning and enters its critical section. A's Q node then effectively detaches from the active queue. The global lock 'L' continues to point to C, as C is still the tail of the conceptual queue.
+
+Subsequently, in state six, when thread B finishes its critical section and releases the lock, it follows the same protocol. B notifies its successor, thread C, by modifying C's Q node, changing its state from 'W' to 'R'. Thread C then proceeds into its critical section. Again, the global lock 'L' remains pointing to C.
+
+Finally, in state seven, when thread C completes its critical section and releases the lock, it finds no successor in the queue. In this scenario, C atomically attempts to set the global lock variable 'L' back to null. This C A S operation ensures that if no other thread has concurrently appended itself to the queue, the lock is properly released and reset to its initial idle state. If another thread had managed to append its Q node after C acquired the lock but before C released it and attempted to nullify 'L', C's C A S would fail, and it would then proceed to notify that newly appended thread, maintaining the queue integrity.
+
+A notable design consideration for the M C S lock, highlighted in the discussion, is its inherent requirement to pass a Q node pointer to the acquire and release routines. This deviates from more traditional spin lock Application Programming Interfaces, such as those for simple Test And Set or ticket locks, which typically only require a reference to the lock variable itself. This difference poses a challenge for integrating M C S locks into existing codebases designed for simpler lock interfaces without extensive modifications. To address this, a variant, notably implemented in the K forty two project at I B M Research, proposes a modification to the lock's structure. Instead of a single pointer to the tail, an idle, unheld lock is represented by a Q node that contains two null pointers. One serves as the conventional tail pointer for the M C S queue. The other is a "next" pointer, which specifically refers to the Q node of the *first* waiting thread. This dual pointer structure allows a newly arriving thread to use a C A S operation to replace a null tail pointer, implicitly managing the initial queuing, thus potentially simplifying the A P I for legacy systems. This adaptation effectively embeds some of the Q node management logic directly within the lock's state, enabling a more seamless transition from simpler spin lock paradigms to the more efficient M C S queuing mechanism.

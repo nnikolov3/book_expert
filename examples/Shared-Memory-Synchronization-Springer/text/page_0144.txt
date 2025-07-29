@@ -1,0 +1,180 @@
+148
+
+8 Nonblocking Algorithms
+
+type ptr = (node* p, int c)
+type node
+atomic<value> val
+atomic<ptr> next
+class queue
+atomic<ptr> head
+atomic<ptr> tail
+
+void queue.init()
+node* n := new node(_L, null)
+head.p :=tail.p :=n
+
+void queue.enqueue(value v):
+node* w := new node(v, null);
+
+ptrt, n
+loop
+t := tail.load()
+n:=tp nextload()
+if t = tail.load()
+if n.p = null
+if t.p next.CAS(n, (w, n.c+1))
+break
+else
+
+(void) tail. CAS(t, (n.p, t.c+1))
+(void) tail. CAS(t, (w, t.c+1))
+
+value queue.dequeue():
+ptr h, t, n
+loop
+h := head.load()
+t := tail.load()
+n:=h.p nextload()
+value rtn
+if h = head.load()
+if h.p=1t.p
+if n.p = null return _L
+(void) tail. CAS(t, (n.p, t.c+1))
+else
+
+// counted pointer
+
+// initial dummy node
+
+// allocate node for new value
+
+// counted pointers
+
+/[ are t and n consistent?
+
+// was tail pointing to the last node?
+
+/[ try to add w at end of list
+
+// success; exit loop
+
+/[ tail was not pointing to the last node
+// try to swing tail to next node
+
+/[ try to swing tail to inserted node
+
+// counted pointers
+
+/l are h, t, and n consistent?
+
+// is queue empty or tail falling behind?
+/l empty; return failure
+
+// tail is falling behind; try to update
+
+/l no need to deal with tail
+
+// read value before CAS; otherwise another dequeue might free n
+
+rin := n.p val.load()
+if head.CAS(h, (n.p, h.c+1))
+break
+free_for_reuse(h.p)
+return rtn
+
+/ try to swing head to next node
+
+// success; exit loop
+
+I] type-preserving
+
+/l queue was nonempty; return success
+
+Figure 8.8 The M&S lock-free queue, with counted pointers to solve the ABA problem.
+148 8 Nonblocking Algorithms
+
+type ptr is node star p, int c
+type node
+  atomic value val
+  atomic ptr next
+class queue
+  atomic ptr head
+  atomic ptr tail
+
+void queue init()
+  node star n is new node(null)
+  head p is tail p is n
+
+void queue enqueue(value v)
+  node star w is new node(v, null)
+  ptr t, n
+loop
+  t is tail.load()
+  n is t.p next.load()
+  if t is tail.load()
+    if n.p is null
+      if t.p next.CAS(n, w, n.c plus one) is success
+        break
+    else
+      tail.CAS(t, n, t.c plus one)
+  else
+    tail.CAS(t, w, t.c plus one)
+
+value queue dequeue()
+  ptr h, t, n
+loop
+  h is head.load()
+  t is tail.load()
+  n is h.p next.load()
+  value rtn
+  if h is head.load()
+    if h.p is t.p
+      if n.p is null
+        rtn is n.p val.load()
+        if tail.CAS(t, n, t.c plus one) is success
+          break
+      else
+        tail.CAS(t, n, t.c plus one)
+    else
+      rtn is n.p val.load()
+      if head.CAS(h, n, h.c plus one) is success
+        break
+  free for reuse(h.p)
+  return rtn
+
+// counted pointer
+// initial dummy node
+// allocate node for new value
+// counted pointers
+// are t and n consistent?
+// was tail pointing to the last node?
+// try to add w at end of list
+// success; exit loop
+// tail was not pointing to the last node
+// try to swing tail to next node
+// try to swing tail to inserted node
+// counted pointers
+// are h, t, and n consistent?
+// is queue empty or tail falling behind?
+// empty; return failure
+// tail is falling behind; try to update
+// no need to deal with tail
+// queue might free n
+// try to swing head to next node
+// success; exit loop
+// type preserving
+// queue was nonempty; return success
+
+Figure 8.8 The M&S lock free queue, with counted pointers to solve the ABA problem.
+The provided text describes a lock free queue implementation, specifically the Michael and Scott (M&S) algorithm, which addresses concurrency issues in data structures without using traditional locks.  The core of this algorithm relies on atomic operations, particularly the Compare And Swap, or C A S, operation, to ensure that updates to shared data are performed safely in a multithreaded environment.
+
+The code defines a `node` structure, which is the fundamental building block of the queue. Each node contains an `atomic<value>` field, representing the data stored in that node, and an `atomic<ptr>` field named `next`. This `next` field is a pointer to the subsequent node in the queue. The use of `atomic<ptr>` indicates that operations on this pointer, such as loading its value or attempting to swap it, are atomic, meaning they are indivisible and uninterruptible.
+
+A `queue` class encapsulates the queue's state, holding atomic pointers to the `head` and `tail` of the linked list that forms the queue. The `init` function initializes the queue by creating a sentinel node. This sentinel node acts as a placeholder and simplifies boundary conditions. Both `head` and `tail` are initially set to point to this sentinel node, which itself points to null.
+
+The `enqueue` operation involves adding a new node to the tail of the queue. It begins by allocating a new node with the provided value and a null `next` pointer. Then, it enters a loop, which is characteristic of lock free algorithms. Inside the loop, it first reads the current `tail` of the queue and then reads the `next` pointer of the node currently pointed to by the `tail`. The algorithm checks for consistency: if the `tail` pointer itself hasn't changed since it was last read, and if the `next` pointer of the node indicated by `tail` is null, it proceeds to attempt to link the new node. This linking is done using a C A S operation on the `next` pointer of the current `tail` node. The C A S operation attempts to atomically update the `next` pointer to point to the new node, but only if the `next` pointer still holds its previously read value. If this C A S succeeds, the new node has been successfully appended. The algorithm then attempts to advance the `tail` pointer to the newly added node using another C A S operation. If the C A S to update the `tail` fails, it means another thread has already modified the `tail`, so the current thread retries the entire enqueue operation from the beginning of the loop.
+
+A crucial aspect mentioned in the comments is the use of "counted pointers." These are not explicitly defined in the code snippet but are a common technique in lock free programming to manage memory safely. In a lock free data structure, simply removing a node from the queue does not immediately make it safe to deallocate, as other threads might still be holding pointers to it. Counted pointers typically involve storing both the pointer to the object and a counter indicating how many active references exist. Deallocation occurs only when the counter reaches zero. The M&S algorithm, particularly when dealing with potential ABA problem scenarios, leverages these counted pointers to ensure that nodes are not prematurely freed while other threads are still operating on them. The ABA problem arises when a value is read, then modified, then restored to its original value, leading a C A S operation to succeed incorrectly, believing no change occurred. Counted pointers, by changing the pointer value itself (even if the memory address is reused), help mitigate this.
+
+The `dequeue` operation is more complex. It starts by reading the `head` and `tail` pointers. It then reads the `next` pointer of the node currently pointed to by `head`. The first check is for consistency: ensuring that the `head` pointer has not been modified by another thread. If the `head` is consistent, and if the `head`'s `next` pointer is null, it indicates that the queue is empty, and the operation signals this by returning a null value. If the queue is not empty, the algorithm attempts to dequeue the first actual element, which is the node following the sentinel `head`. It reads the value from this node and then attempts to advance the `head` pointer to this next node using a C A S operation. If this C A S succeeds, the element has been successfully dequeued, and the original sentinel node is then made available for reuse. If the C A S to advance the `head` fails, it implies another thread has already modified the `head`, so the current thread retries the dequeue operation. The comments highlight scenarios like the tail potentially "falling behind" or the queue becoming empty, which are handled by retrying operations until a consistent state is achieved or the operation can be completed. The phrase "otherwise another deque might free n" suggests the careful handling of memory related to the node `n` being dequeued, reinforcing the importance of counted pointers or similar memory reclamation schemes. The code snippet demonstrates the intricate dance of atomic operations and retries required to implement a correct and efficient lock free queue.
