@@ -1,147 +1,167 @@
-# Document Processing Pipeline
+# Document-to-Audiobook Pipeline
 
-**Note:** The `examples` directory contains examples of converting PDF to an audiobook. *PDFs are for reference and educational purposes only and may not be redistributed.*
+A restart-safe, strictly-linted Bash tool-chain that turns any PDF into a polished, single-file MP3.
 
-This repository provides a robust, modular suite of Bash scripts to convert **PDF documents** into **polished text** and then into a **cohesive audio file (WAV/MP3)**. The workflow uses configurable APIs, parallel processing, and strong error handling, and all major settings are maintained in a single TOML configuration file.
+Status
 
-## Table of Contents
+- Fully exercised on **Fedora 42** (stock repos + RPM Fusion)
+- **Untested on Ubuntu** – behaviour there is unknown
+- TTS layer powered by the project-specific fork: `https://github.com/nnikolov3/book_expert_f5-tts`
 
-- [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Setup Instructions](#setup-instructions)
-- [Usage](#usage)
-- [Pipeline Stages](#pipeline-stages)
-- [Code Guidelines](#code-guidelines)
+--------------------------------------------------------------------------------
+1  What the Repository Does
+--------------------------------------------------------------------------------
+1. PDF → high-DPI PNG pages (Ghostscript)
+2. PNG → OCR text (Tesseract)
+3. OCR text → LLM-enhanced narration text (Gemini)
+4. 3-page groups → unified prose (Cerebras)
+5. Unified groups → chapter-sized final narration text (Cerebras)
+6. Final text → WAV chunks (F5-TTS fork)
+7. WAV chunks → 48 kHz mono WAV → MP3 (FFmpeg)
 
+All scripts obey the rules in `CODE_GUIDELINES_LLM.md` (ShellCheck clean, no hidden failures, atomic file ops, variables declared before use, etc.).
 
-## Prerequisites
-
-Ensure your system provides the following:
-
-- **Bash** (with `set -euo pipefail` support)
-- **yq** (for TOML/YAML parsing): `pip install yq`
-- **jq** (`apt install jq`)
-- **ImageMagick** (for `identify` and image utilities): `sudo apt-get install imagemagick`
-- **Ghostscript** (for PDF rasterization): `sudo apt-get install ghostscript`
-- **Tesseract OCR**: `sudo apt-get install tesseract-ocr`
-- **rsync** (robust file sync): `sudo apt-get install rsync`
-- **shellcheck** (bash linter): `sudo apt-get install shellcheck`
-- **nproc, flock, sort, awk, base64, curl** (and other standard GNU tools)
-
-API-based functionality requires:
-
-- **Google Gemini API**: Set your API key as an env variable (e.g., `export GEMINI_API_KEY="..."`)
-- **NVIDIA AI Cloud API key** (for concept and text correction stages): `export NVIDIA_API_KEY="..."`
-- **F5-TTS engine** or compatible engine for TTS inference (ensure it matches your configuration)
-
-
-## Project Structure
-
+--------------------------------------------------------------------------------
+2  Repository Layout (paths can be changed in `project.toml`)
+--------------------------------------------------------------------------------
 ```
 book_expert/
 ├── data/
-│   ├── raw/               # PDF input directory / defined in project.toml
-│   └── <output_dir>/      # Work/output root, matches config  / defined in project.toml
-│       └── <pdf_name>/
-│           ├── png/           # PNG images per page
-│           ├── text/          # OCR’d page text and concepts
-│           ├── polished/      # Polished/narration-ready grouped text
-│           ├── concat/        # Concatenated narration-ready text
-│           ├── final_concat/  # Output of text cleaning
-│           ├── wav/           # TTS-generated .wav files
-│           ├── resampled/     # Resampled .wav for uniformity/FFmpeg
-│           └── mp3/           # Single-file audiobook output
-└── scripts/
-    ├── generate_pngs.sh
-    ├── generate_page_text.sh
-    ├── unify_page_text.sh
-    ├── generate_narration_text.sh
-    ├── clean_text_helper.sh
-    ├── generate_wav.sh
-    ├── generate_final_mp3.sh
-├── project.toml
-├── README.md
+│   ├── raw/                 # Source PDFs (paths.input_dir)
+│   └── <pdf_name>/          # One dir per document
+│       ├── png/             # Per-page images
+│       ├── text/            # OCR + Gemini text
+│       ├── unified_text/    # 3-page groups
+│       ├── final_text/      # Chapter-sized narration text
+│       ├── wav/             # F5-TTS chunks
+│       ├── resampled/       # 48 kHz mono WAVs
+│       └── mp3/             # Finished audiobook
+├── scripts/                 # Pipeline stages
+├── helpers/                 # Logging, config utilities
+├── project.toml             # ★ all directory & pipeline configuration ★
+├── CODE_GUIDELINES_LLM.md
+└── README.md
 ```
 
+The **exact directory names and locations** are not hard-coded; they come from the `[paths]`, `[directories]`, `[processing_dir]` and `[logs_dir]` blocks inside **`project.toml`**. Edit those keys to redirect input, output or temp folders to any location on your system.
 
-## Configuration
+--------------------------------------------------------------------------------
+3  Quick-Start (Fedora 42)
+--------------------------------------------------------------------------------
+1. System packages
 
-**All settings are defined in `project.toml`:**
-
-- `[paths]`: Set `input_dir` (PDFs), `output_dir` (work/output root), and `python_path` for TTS venv
-- `[directories]`: Subdirectory layout for each processing stage
-- `[processing_dir]` \& `[logs_dir]`: Locations for intermediate and log files (favor fast storage, e.g., `/tmp`)
-- `[nvidia_api]` \& `[google_api]` \& `[cerebras_api]`: Model names, endpoints, environment variable key names for API keys
-- `[retry]`: Controls retry count and delay for all external API tasks
-- `[f5_tts_settings]`: Specifies the TTS model and worker limits
-
-**All absolute paths in `project.toml` must match your environment. API keys must be provided as environment variables before running scripts.**
-
-## Setup Instructions
-
-1. **Clone repository**
 ```bash
-git clone <repository_url>
+sudo dnf install \
+  ghostscript tesseract tesseract-langpack-eng \
+  poppler-utils ImageMagick jq yq rsync ffmpeg \
+  shellcheck nproc coreutils awk grep curl flock
+```
+
+2. F5-TTS fork
+
+```bash
+git clone https://github.com/nnikolov3/book_expert_f5-tts.git
+cd book_expert_f5-tts
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+```
+
+3. Clone this repo \& make scripts executable
+
+```bash
+git clone https://github.com/<your-org>/book_expert.git
 cd book_expert
+chmod +x scripts/*.sh helpers/*.sh
 ```
 
-2. **Install prerequisites**
-    - See [Prerequisites](#prerequisites).
-    - Install `yq` via `pip` (`pip install yq`).
-3. **Configure your environment**
-    - Edit `project.toml` to adjust all `[paths]`, `[directories]`, `[api]`, and TTS/model settings to your needs.
-    - Set your API keys for Google Gemini, NVIDIA, and Cerebras as environment variables:
-```bash
-export GEMINI_API_KEY="..."
-export NVIDIA_API_KEY="..."
-export CEREBRAS_API_KEY="..."
-```
-
-4. **Make scripts executable**
-```bash
-chmod +x scripts/*.sh
-```
-
-5. **Prepare input directory**
-    - Place all source PDFs in the directory defined by `paths.input_dir` in your `project.toml`.
-
-## Usage
-
-The pipeline is run **sequentially, stage-by-stage**; each script operates on the outputs of the previous.
-
-**Script usage pattern:**
+4. Supply any API keys you’ll use
 
 ```bash
-./scripts/<stage>.sh
+export GEMINI_API_KEY="sk-…"      # Google Gemini
+export CEREBRAS_API_KEY="cb-…"     # Cerebras inference endpoint
+# export NVIDIA_API_KEY="na-…"     # Optional
 ```
 
-Execute stages in order. Each script will read `project.toml` and log to its designated directory.
+5. Open **`project.toml`** and adjust:
+    - `[paths]` / `[directories]` / `[processing_dir]` / `[logs_dir]` – folder layout
+    - `[settings]` – DPI, `force`, worker counts
+    - `[google_api]` \& `[cerebras_api]` – model names, temps, tokens
+    - `[f5_tts_settings]` – TTS model, worker threads
+    - `[prompts.*]` – full system/user prompts used by each LLM call
 
-## Pipeline Stages
+--------------------------------------------------------------------------------
+4  LLM Integration at a Glance
+--------------------------------------------------------------------------------
+Stage → Script → Default model key (in `project.toml`)
 
-| Script Name | Input Directory | Output Directory | Function |
-| :-- | :-- | :-- | :-- |
-| **generate_pngs.sh** | data/raw/ | data/<pdf_name>/png/ | Converts PDF pages to PNG images per page (handles DPI, blank page skipping) |
-| **generate_page_text.sh** | data/<pdf_name>/png/ | data/<pdf_name>/text/ | OCR + API: PNG images → narration-ready text \& technical concepts per page |
-| **unify_page_text.sh** | data/<pdf_name>/text/ | data/<pdf_name>/polished/ | Groups page text in sets (e.g., 3 at a time), polishes for narration via LLM API |
-| **generate_narration_text.sh** | data/<pdf_name>/polished/ | data/<pdf_name>/concat/ | Concatenates narration-ready, polished files into a single narration text file |
-| **clean_text_helper.sh** | data/<pdf_name>/concat/ | data/<pdf_name>/final_concat/ | Cleans/normalizes full narration text prior to TTS (acronym, code, math normalization, etc.) |
-| **generate_wav.sh** | data/<pdf_name>/final_concat/ | data/<pdf_name>/wav/ | Splits text into semantic chunks, generates WAV per chunk using F5-TTS engine |
-| **generate_final_mp3.sh** | data/<pdf_name>/wav/ | data/<pdf_name>/mp3/ | Validates, resamples, orders and merges WAV chunks, produces single .wav and .mp3 audiobook file |
+```
+OCR enrichment          generate_page_text.sh   google_api.GEMINI_MODELS[^0]
+3-page unification      unify_page_text.sh      cerebras_api.unify_model
+Final polishing         finalize_page_text.sh   cerebras_api.final_model
+```
 
-## Code Guidelines
+Everything—model, temperature, tokens, retries, **and the complete prompt text**—is configured through `project.toml`; no Bash edits required.
 
-All scripts conform to strict guidelines (see `GUIDELINES_LLM.md`):
+--------------------------------------------------------------------------------
+5  Running the Pipeline
+--------------------------------------------------------------------------------
+```bash
+./scripts/generate_pngs.sh          # PDF → PNG
+./scripts/generate_page_text.sh     # PNG → OCR + Gemini
+./scripts/unify_page_text.sh        # page groups → unified text
+./scripts/finalize_page_text.sh     # unified groups → final narration
+./scripts/merge_text.sh             # concat → complete.txt
+./scripts/generate_wav.sh           # text → WAV chunks (F5-TTS)
+./scripts/generate_mp3.sh           # WAVs → single MP3
+```
 
-- **Declare all variables** prior to assignment
-- Use **explicit `if/then/fi`** for clarity
-- All files/loops/blocks are properly closed, and error codes are checked
-- **Atomic operations:** Use `mv`, `flock`, and safe temp dirs to avoid concurrency issues
-- **Dependency checks:** All required binaries and APIs are validated at runtime
-- **Retry logic:** All API stages are robust to failure (see `[retry]` in `project.toml`)
-- **Logging:** Each stage writes its own log file; terminal output is mirrored to disk
-- **No hardcoded values:** All paths/settings use `project.toml`
-- *Comments*: Code uses extensive Markdown comments and descriptive variable names
+Each script
 
-**Note:** For reproducibility, review each script—configuration keys and functions may be updated between versions. Always run scripts in an environment where all dependencies and API keys are set.
+- reads `project.toml` for config and directory paths
+- logs to `data/logs/<stage>/` (also configurable)
+- is idempotent—rerun safely; set `settings.force = 1` to overwrite
+
+--------------------------------------------------------------------------------
+6  Typical Workflow
+--------------------------------------------------------------------------------
+1. Drop PDFs into the folder pointed to by `paths.input_dir` (default `data/raw/`).
+2. Execute the seven scripts in order (can be parallelised).
+3. Find your audiobook at `<output_dir>/<pdf_name>/mp3/<pdf_name>.mp3`.
+
+--------------------------------------------------------------------------------
+7  Configuration Cheat-Sheet (`project.toml`)
+--------------------------------------------------------------------------------
+Most-touched blocks:
+
+- `[paths]`, `[directories]`, `[processing_dir]`, `[logs_dir]` – **all folder locations**
+- `[settings]` – DPI, worker counts, force rebuild flag
+- `[google_api]`, `[cerebras_api]` – model, temp, tokens, key var names
+- `[prompts.*]` – editable multi-paragraph prompts for every LLM stage
+- `[f5_tts_settings]` – TTS model name and worker threads
+- `[retry]` – global max-retries \& back-off seconds
+
+Because every script queries these keys at runtime, you can rearrange directories, switch models, or rewrite prompts without touching the Bash code.
+
+--------------------------------------------------------------------------------
+8  Troubleshooting
+--------------------------------------------------------------------------------
+- Missing binary → install the package shown in the error.
+- Missing API key → script prints which env-var is absent.
+- HTTP 429 from Cerebras → script sleeps `retry.retry_delay_seconds` then retries.
+- Partial runs/crashes → rerun the same script; completed outputs are skipped unless `force = 1`.
+
+--------------------------------------------------------------------------------
+9  Extending
+--------------------------------------------------------------------------------
+- Swap in any other TTS engine—edit `generate_wav.sh` or write a small wrapper that mimics `f5-tts_infer-cli`.
+- Change grouping ratios—edit the constants at the top of `unify_page_text.sh` (default 3 pages) and `finalize_page_text.sh` (default 2 groups).
+- Add additional cleaning rules—extend `helpers/clean_text_helper.sh`.
+
+--------------------------------------------------------------------------------
+10  Contributing
+--------------------------------------------------------------------------------
+1. All Bash files must pass `shellcheck -x`.
+2. Declare variables before use; globals contain the substring `GLOBAL`.
+3. No redirection to `/dev/null`; capture and log every error.
+4. PR commit messages should be prefixed by the stage you touched (e.g., `generate_wav:` …).
+
