@@ -8,10 +8,6 @@
 
 set -euo pipefail
 
-# --- Configuration ---
-declare -r CONFIG_FILE="$PWD/../project.toml"
-export CONFIG_FILE
-
 # --- Global Variables ---
 declare OUTPUT_DIR_GLOBAL=""
 declare INPUT_DIR_GLOBAL=""
@@ -20,7 +16,6 @@ declare -a COMPLETE_DIRS_GLOBAL=()
 declare CUR_PYTHON_PATH_GLOBAL=""
 declare LOG_FILE_GLOBAL=""
 declare LOG_DIR_GLOBAL=""
-declare CHECK_POINT_PATH=""
 # ================================================================================================
 # UTILITY FUNCTIONS
 # ================================================================================================
@@ -53,7 +48,7 @@ create_chunks()
 		if [[ -n $line ]]; then
 			sentences+=("$line")
 		fi
-	done < <(echo "$text" | sed -E 's/([.?!]) /\1\n/g')
+	done < <(echo "$text" | sed -E 's/([;:,.!?；：，。！？])[[:space:]]+/\1\n/g')
 
 	# Aggregate sentences into size-limited chunks
 	for sentence in "${sentences[@]}"; do
@@ -177,16 +172,17 @@ text_chunks_to_wav()
 		log_info "[$chunk_num/$total_chunks] Processing ($chunk_length chars): $chunk_preview"
 
 		# Run F5-TTS with error handling
-		temp_output=$(f5-tts_infer-cli \
-			-m "$F5_TTS_MODEL_GLOBAL" \
-			-t "$chunk" \
-			-o "$output_dir" \
-			-w "$chunk_filename" \
-			--speed 0.9 \
-			--remove_silence \
-			--load_vocoder_from_local \
-			--ref_text "" \
-			--no_legacy_text)
+		temp_output=$(
+			f5-tts_infer-cli \
+				-m "$F5_TTS_MODEL_GLOBAL" \
+				-t "$chunk" \
+				-o "$output_dir" \
+				-w "$chunk_filename" \
+				--remove_silence \
+				--load_vocoder_from_local \
+				--ref_text "" \
+				--no_legacy_text
+		)
 		local tts_exit_code="$?"
 
 		if [[ $tts_exit_code -eq 0 ]]; then
@@ -348,19 +344,14 @@ main()
 	local final_complete_file=""
 	local wav_file_dir=""
 	local cleaned_text=""
-
-	# Validate configuration file exists
-	if [[ ! -f $CONFIG_FILE ]]; then
-		echo "Config file not found: $CONFIG_FILE"
-		exit 1
-	fi
+	local config_helper="helpers/get_config_helper.sh"
 
 	# Load configuration from project.toml
-	OUTPUT_DIR_GLOBAL=$(helpers/get_config_helper.sh "paths.output_dir")
-	INPUT_DIR_GLOBAL=$(helpers/get_config_helper.sh "paths.input_dir")
-	F5_TTS_MODEL_GLOBAL=$(helpers/get_config_helper.sh "f5_tts_settings.model")
-	CUR_PYTHON_PATH_GLOBAL=$(helpers/get_config_helper.sh "paths.python_path")
-	LOG_DIR_GLOBAL=$(helpers/get_config_helper.sh "logs_dir.text_to_wav")
+	OUTPUT_DIR_GLOBAL=$($config_helper "paths.output_dir")
+	INPUT_DIR_GLOBAL=$($config_helper "paths.input_dir")
+	F5_TTS_MODEL_GLOBAL=$($config_helper "f5_tts_settings.model")
+	CUR_PYTHON_PATH_GLOBAL=$($config_helper "paths.python_path")
+	LOG_DIR_GLOBAL=$($config_helper "logs_dir.text_to_wav")
 
 	mkdir -p "$LOG_DIR_GLOBAL"
 	LOG_FILE_GLOBAL="$LOG_DIR_GLOBAL/log_$(date +'%Y%m%d_%H%M%S').log"

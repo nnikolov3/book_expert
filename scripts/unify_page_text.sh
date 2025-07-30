@@ -66,18 +66,17 @@ call_api_cerebras()
 {
 	# All local variables declared at the top
 	local content=""
-	local curl_error_file=""
 	local curl_exit=""
 	local curl_output=""
 	local delta_content=""
 	local full_response=""
 	local http_code=""
+	local jq_exit=""
 	local line=""
 	local payload_file="$1"
 	local response_file=""
 
 	response_file=$(mktemp -p "$PROCESSING_DIR_GLOBAL" "api_response.XXXXXX")
-	curl_error_file=$(mktemp -p "$PROCESSING_DIR_GLOBAL" "curl_error.XXXXXX")
 
 	curl_output=$(curl --fail --silent --show-error -w "%{http_code}" -o "$response_file" \
 		--request POST \
@@ -94,42 +93,48 @@ call_api_cerebras()
 	if [[ $http_code -eq 429 ]]; then
 		log_warn "Rate limit hit (429), sleeping for $RATE_LIMIT_SLEEP_GLOBAL seconds"
 		sleep "$RATE_LIMIT_SLEEP_GLOBAL"
-		rm -f "$response_file" "$curl_error_file"
+		rm -f "$response_file"
 		return 1
 	fi
 
 	if [[ $curl_exit -ne 0 ]] || [[ $http_code -ne 200 ]] || [[ ! -s $response_file ]]; then
 		log_error "Cerebras API call failed with HTTP code: $http_code"
-		if [[ -f $curl_error_file ]]; then
-			log_error "Curl error: $(cat "$curl_error_file")"
-		fi
 		if [[ -f $response_file ]]; then
 			log_error "Response file content: $(cat "$response_file")"
 		fi
-		rm -f "$response_file" "$curl_error_file"
+		rm -f "$response_file"
 		return 1
 	fi
-	rm -f "$curl_error_file"
 
-	# Check if this is a streaming response or regular response
+	# Read the complete response
 	full_response=$(<"$response_file")
 
-	# Handle streaming response (multiple JSON objects separated by newlines)
-	if echo "$full_response" | head -1 | jq -e '.choices[0].delta'; then
-		# Streaming response - concatenate all content from delta messages
+	# Check if this is a streaming response by looking for multiple lines with "data:" prefix
+	if echo "$full_response" | grep -q "^data:"; then
+		# Streaming response - process each data line
 		content=""
 		while IFS= read -r line; do
-			if [[ -n $line ]]; then
-				delta_content=$(echo "$line" | jq -r '.choices[0].delta.content // empty' 2>&1)
-				local jq_exit="$?"
-				if [[ -n $delta_content ]] && [[ $delta_content != "null" ]] && [[ $jq_exit -eq 0 ]]; then
-					content="$content$delta_content"
+			if [[ $line =~ ^data:\ (.*)$ ]]; then
+				local json_data="${BASH_REMATCH[1]}"
+				if [[ $json_data != "[DONE]" ]]; then
+					delta_content=$(echo "$json_data" | jq -r '.choices[0].delta.content // empty' 2>&1)
+					jq_exit="$?"
+					if [[ -n $delta_content ]] && [[ $delta_content != "null" ]] && [[ $jq_exit -eq 0 ]]; then
+						content="$content$delta_content"
+					fi
 				fi
 			fi
-		done <"$response_file"
+		done <<<"$full_response"
 	else
-		# Regular response format
+		# Regular JSON response format
 		content=$(echo "$full_response" | jq -r '.choices[0].message.content // empty')
+		jq_exit="$?"
+		if [[ $jq_exit -ne 0 ]]; then
+			log_error "Failed to parse JSON response"
+			log_error "Full API response: $full_response"
+			rm -f "$response_file"
+			return 1
+		fi
 	fi
 
 	if [[ -z $content ]] || [[ $content == "null" ]]; then
@@ -151,8 +156,8 @@ get_next_start_index()
 	# All local variables declared at the top
 	local index=""
 	local max_index=-1
-	local unified_file=""
 	local storage_dir="$1"
+	local unified_file=""
 
 	if [[ ! -d $storage_dir ]]; then
 		printf '%s' "0"
@@ -183,16 +188,16 @@ process_text_group()
 	local combined_text=""
 	local desc=""
 	local first_file="$1"
+	local jq_exit=""
 	local output_file_path=""
 	local output_index="$4"
 	local payload_file=""
-	local unified_file=""
-	local unified_text=""
 	local retry_count=0
 	local second_file="$2"
 	local storage_dir="$5"
 	local system_prompt=""
 	local third_file="$3"
+	local unified_file=""
 	local user_prompt=""
 	local write_exit=""
 
@@ -219,10 +224,25 @@ process_text_group()
 		combined_text="$combined_text\n$(<"$third_file")"
 	fi
 	system_prompt="$UNIFY_TEXT_PROMPT_GLOBAL"
-
 	user_prompt="TEXT: $combined_text"
 
+	# Ensure the storage directory exists
+	if [[ ! -d $storage_dir ]]; then
+		local mkdir_result=""
+		local mkdir_exit=""
+		mkdir_result=$(mkdir -p "$storage_dir" 2>&1)
+		mkdir_exit="$?"
+		if [[ $mkdir_exit -ne 0 ]]; then
+			log_error "Failed to create storage directory: $storage_dir - $mkdir_result"
+			return 1
+		fi
+	fi
+
 	payload_file=$(mktemp -p "$PROCESSING_DIR_GLOBAL" "api_payload.XXXXXX")
+	if [[ ! -f $payload_file ]]; then
+		log_error "Failed to create temporary payload file."
+		return 1
+	fi
 
 	jq -n \
 		--arg model "$UNIFY_TEXT_MODEL_GLOBAL" \
@@ -232,22 +252,29 @@ process_text_group()
 		--arg system_content "$system_prompt" \
 		--arg user_content "${user_prompt} /no_think" \
 		'{
-  "model": $model,
-  "stream": false,
-  "max_tokens": $max_tokens,
-  "temperature": $temperature,
-  "top_p": $top_p,
-  "messages": [
-    {
-      "role": "system",
-      "content": $system_content
-    },
-    {
-      "role": "user", 
-      "content": $user_content
-    }
-  ]
-}' >"$payload_file"
+          "model": $model,
+          "stream": true,
+          "max_tokens": $max_tokens,
+          "temperature": $temperature,
+          "top_p": $top_p,
+          "messages": [
+            {
+              "role": "system",
+              "content": $system_content
+            },
+            {
+              "role": "user", 
+              "content": $user_content
+            }
+          ]
+        }' >"$payload_file"
+
+	jq_exit="$?"
+	if [[ $jq_exit -ne 0 ]]; then
+		log_error "jq command failed to write API payload."
+		rm -f "$payload_file"
+		return 1
+	fi
 
 	# Retry logic for API calls
 	retry_count=0
@@ -256,7 +283,7 @@ process_text_group()
 	while [[ $retry_count -lt $MAX_API_RETRIES_GLOBAL ]]; do
 		api_response_file=$(call_api_cerebras "$payload_file")
 		call_exit="$?"
-		if [[ $call_exit -eq 0 ]]; then
+		if [[ $call_exit -eq 0 && -f $api_response_file ]]; then
 			sleep 10
 			break
 		fi
@@ -269,34 +296,28 @@ process_text_group()
 
 	rm -f "$payload_file"
 
-	if [[ -z $api_response_file ]]; then
+	if [[ -z $api_response_file || ! -f $api_response_file ]]; then
 		log_error "API call failed after $MAX_API_RETRIES_GLOBAL retries for $unified_file"
-		return 1
-	fi
-
-	# Read the unified content from the API response file
-	unified_text=$(<"$api_response_file")
-	rm -f "$api_response_file"
-
-	if [[ -z $unified_text ]]; then
-		log_error "Empty unified text received for $unified_file"
 		return 1
 	fi
 
 	# Save the unified text to the output file
 	output_file_path="${storage_dir}/${unified_file}"
-	"$unified_text" >"$output_file_path"
+	cat "$api_response_file" >"$output_file_path"
 	write_exit="$?"
-	if [[ $write_exit -eq 0 ]]; then
+
+	if [[ $write_exit -eq 0 && -s $output_file_path ]]; then
 		log_success "Saved $output_file_path"
+		rm -f "$api_response_file"
 		return 0
 	else
-		log_error "Failed to save unified text to $output_file_path"
+		log_error "Failed to save unified text to $output_file_path (exit code $write_exit)"
+		rm -f "$api_response_file"
 		return 1
 	fi
 }
 
-polish_text()
+unify_text()
 {
 	# All local variables declared at the top
 	local candidate=""
@@ -550,20 +571,21 @@ main()
 	local staging_dir_name=""
 	local storage_dir=""
 	local text_path=""
+	local config_helper="helpers/get_config_helper.sh"
 
 	# Load configuration
-	INPUT_DIR_GLOBAL=$(helpers/get_config_helper.sh "paths.input_dir")
-	OUTPUT_DIR_GLOBAL=$(helpers/get_config_helper.sh "paths.output_dir")
-	PROCESSING_DIR_GLOBAL=$(helpers/get_config_helper.sh "processing_dir.unify_text")
-	CEREBRAS_API_KEY_VAR_GLOBAL=$(helpers/get_config_helper.sh "cerebras_api.api_key_variable")
-	UNIFY_TEXT_MODEL_GLOBAL=$(helpers/get_config_helper.sh "cerebras_api.unify_model")
-	MAX_TOKENS_GLOBAL=$(helpers/get_config_helper.sh "cerebras_api.max_tokens")
-	TEMPERATURE_GLOBAL=$(helpers/get_config_helper.sh "cerebras_api.temperature")
-	TOP_P_GLOBAL=$(helpers/get_config_helper.sh "cerebras_api.top_p")
-	LOG_DIR_GLOBAL=$(helpers/get_config_helper.sh "logs_dir.unify_text")
-	MAX_API_RETRIES_GLOBAL=$(helpers/get_config_helper.sh "retry.max_retries")
-	RETRY_DELAY_SECONDS_GLOBAL=$(helpers/get_config_helper.sh "retry.retry_delay_seconds")
-	UNIFY_TEXT_PROMPT_GLOBAL=$(helpers/get_config_helper.sh "prompts.unify_text.prompt")
+	INPUT_DIR_GLOBAL=$($config_helper "paths.input_dir")
+	OUTPUT_DIR_GLOBAL=$($config_helper "paths.output_dir")
+	PROCESSING_DIR_GLOBAL=$($config_helper "processing_dir.unify_text")
+	CEREBRAS_API_KEY_VAR_GLOBAL=$($config_helper "cerebras_api.api_key_variable")
+	UNIFY_TEXT_MODEL_GLOBAL=$($config_helper "cerebras_api.unify_model")
+	MAX_TOKENS_GLOBAL=$($config_helper "cerebras_api.max_tokens")
+	TEMPERATURE_GLOBAL=$($config_helper "cerebras_api.temperature")
+	TOP_P_GLOBAL=$($config_helper "cerebras_api.top_p")
+	LOG_DIR_GLOBAL=$($config_helper "logs_dir.unify_text")
+	MAX_API_RETRIES_GLOBAL=$($config_helper "retry.max_retries")
+	RETRY_DELAY_SECONDS_GLOBAL=$($config_helper "retry.retry_delay_seconds")
+	UNIFY_TEXT_PROMPT_GLOBAL=$(config_helper "prompts.unify_text.prompt")
 	FAILED_LOG_GLOBAL="$LOG_DIR_GLOBAL/failed_pages.log"
 
 	# Reset directories
@@ -600,7 +622,7 @@ main()
 		for text_path in "${TEXT_DIRS_GLOBAL[@]}"; do
 			log_info "PROCESSING: $text_path"
 			staging_dir_name=$(get_last_two_dirs "$text_path")
-			storage_dir="${OUTPUT_DIR_GLOBAL}/$(basename "$(dirname "$text_path")")/unified"
+			storage_dir="${OUTPUT_DIR_GLOBAL}/$(basename "$(dirname "$text_path")")/unified_text"
 			mkdir -p "$storage_dir"
 
 			pre_process_text "$text_path" "$staging_dir_name" "$storage_dir"
@@ -609,7 +631,7 @@ main()
 			if [[ $pre_process_exit -eq 0 ]]; then
 				log_info "Captured ${#RESULT_ARRAY_GLOBAL[@]} files:"
 				print_line
-				polish_text "$storage_dir"
+				unify_text "$storage_dir"
 			fi
 		done
 	fi

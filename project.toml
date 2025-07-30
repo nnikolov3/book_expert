@@ -80,6 +80,9 @@ model = "E2TTS_Base"
 workers = 2
 timeout_duration = 300
 
+[text_concatenation]
+text_type = "unified_text"  # Options: "final_text" or "unified_text"
+
 # ========================================================================
 [retry]
 max_retries = 5
