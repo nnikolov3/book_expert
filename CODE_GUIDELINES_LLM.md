@@ -36,6 +36,7 @@ if ! command -v "$dep"; then
 - **Initialize all variables explicitly** - no implicit empty values
 - **Declare and assign on separate lines** for better error tracking
 - **ALL variables must be declared at the top** - global variables at the top of the script, local variables at the top of functions
+- **LONG COMMANDS SHOULD BE MULTILINE**
 
 ```bash
 # ✅ GOOD - Global variables at top of script
@@ -52,6 +53,7 @@ function process_data() {
     local jq_status_exit=1
     local result=""
     local retry_count=0
+    local tesseract_output
     
     # Function logic starts after all variable declarations
     jq_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
@@ -59,7 +61,14 @@ function process_data() {
     
     if [[ -n "$jq_output" && "$jq_status_exit" -eq 0 ]]; then
         echo "Valid JSON response"
-    fi
+    fi  
+
+	tesseract_output=$(tesseract \
+		"$png_file" \
+		stdout -l "$TESSERACT_LANG_GLOBAL" \
+		--dpi "$DPI_GLOBAL" \
+		--oem 3 \
+		--psm 1 2>&1) 
 }
 
 # ❌ AVOID - Variables scattered throughout

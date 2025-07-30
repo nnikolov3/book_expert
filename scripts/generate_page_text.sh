@@ -22,6 +22,7 @@ declare LOG_FILE_GLOBAL=""
 declare OUTPUT_GLOBAL=""
 declare PROCESSING_DIR_GLOBAL=""
 declare TESSERACT_LANG_GLOBAL=""
+declare DPI_GLOBAL=""
 
 # --- LOGGING & CLEANUP ---
 cleanup_on_exit()
@@ -164,7 +165,16 @@ extract_tesseract_text()
 	local png_file="$1"
 	local tesseract_output
 
-	tesseract_output=$(tesseract "$png_file" stdout -l "$TESSERACT_LANG_GLOBAL" --oem 3 2>&1)
+	tesseract_output=$(
+		tesseract \
+			"$png_file" \
+			stdout \
+			-l 'equ+eng' \
+			-l 'eng' \
+			--dpi "$DPI_GLOBAL" \
+			--oem 3 \
+			--psm 1 2>&1
+	)
 	exit_code=$?
 
 	if [[ $exit_code -eq 0 && -n $tesseract_output ]]; then
@@ -465,6 +475,7 @@ main()
 	OUTPUT_GLOBAL=$(helpers/get_config_helper.sh 'paths.output_dir')
 	PROCESSING_DIR_GLOBAL=$(helpers/get_config_helper.sh 'processing_dir.png_to_text')
 	TESSERACT_LANG_GLOBAL=$(helpers/get_config_helper.sh 'tesseract.language')
+	DPI_GLOBAL=$(helpers/get_config_helper.sh 'settings.dpi')
 
 	# Validate and create directories
 	mkdir -p "$PROCESSING_DIR_GLOBAL"
