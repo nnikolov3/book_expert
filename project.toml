@@ -30,6 +30,7 @@ provider = "google"
 [processing_dir]
 pdf_to_png = "/tmp/pdf_to_png"
 png_to_text = "/tmp/png_to_text"
+unify_text = "/tmp/unify_text"
 final_text = "/tmp/final_text"
 text_to_chunks = "/tmp/text_to_chunks"
 chunks_to_wav = "/tmp/chunks_to_wav"
@@ -39,7 +40,7 @@ narration_text_concat = "/tmp/final_text_concat"
 [logs_dir]
 pdf_to_png = "/tmp/logs/pdf_to_png"
 png_to_text = "/tmp/logs/png_to_text"
-polish_text = "/tmp/logs/polished"
+unify_text = "/tmp/logs/unify_text"
 text_to_chunks = "/tmp/logs/text_to_chunks"
 text_to_wav = "/tmp/logs/chunks_to_wav"
 combine_chunks = "/tmp/logs/combine_chunks"
@@ -61,7 +62,6 @@ skip_blank_pages = true  # Enable blank page detection
 blank_threshold = 1000  # Standard deviation threshold
 
 [google_api]
-polish_model = "gemini-2.5-flash"
 api_key_variable = "GEMINI_API_KEY"
 max_retries = 5
 retry_delay_seconds = 60
@@ -72,7 +72,7 @@ max_tokens = 4096
 temperature = 0.5
 top_p = 0.6
 final_model = "qwen-3-235b-a22b"
-polish_model = "llama-3.3-70b"
+unify_model = "qwen-3-235b-a22b-instruct-2507"
 
 # ========================================================================
 [f5_tts_settings]
@@ -80,29 +80,37 @@ model = "E2TTS_Base"
 workers = 2
 timeout_duration = 300
 
+[text_concatenation]
+text_type = "unified_text"  # Options: "final_text" or "unified_text"
+
 # ========================================================================
 [retry]
 max_retries = 5
 retry_delay_seconds = 60
 
 # ========================================================================
-[prompts.polish_text]
-system = """You are a PhD-level STEM technical writer and educator. Your task is to polish and refine the provided text for clarity, coherence, technical accuracy, and speech-optimized narration. CRITICAL FORMATTING RULES FOR TEXT-TO-SPEECH (TTS) CLARITY:
+[prompts.unify_text]
+prompt = """You are a PhD-level STEM technical writer and editor and distinguished educator. 
+Your task is to unify, create a coherent narrative based on the text, and refine for clarity, coherence, technical accuracy, and speech-optimized narration.
+You should not summarize the content, this is not a summarizing task but rather your an editor rewritting the narrative.
+CRITICAL FORMATTING RULES FOR TEXT-TO-SPEECH (TTS) CLARITY:
 Convert all technical acronyms for speech: For example, RISC-V as 'Risc Five', NVIDIA as 'N Vidia', AMD as 'A M D', I/O as 'I O', and so on.
 All programming operators and symbols must be spoken: '==' as 'is equal to', '<' as 'less than', '+' as 'plus', and so forth.
 Measurements and units: '3.2GHz' as 'three point two gigahertz', '100ms' as 'one hundred milliseconds', and similar.
 Hexadecimal, binary, and IP addresses must be read out fully and spaced appropriately.
-Write out numbers as words (up to three digits).
 CamelCase and abbreviations must be expanded and spoken. For example, getElementById as 'get element by id'.
 Hyphenated phrases must be separated into individual words.
-Replace all technical symbols with their verbal equivalents, describing them instead of using symbolic form. CONTENT HANDLING:
-All lists, tables, formulas, diagrams, and code must be described narratively in natural language. For code, explain its function in prose, not by reading syntax.
+Replace all technical symbols with their verbal equivalents, describing them instead of using symbolic form. 
+CONTENT HANDLING:
+All lists, tables, formulas, diagrams, and code must be described narratively in natural language. 
+For code, explain its function in prose, not by reading syntax.
 For diagrams: Provide spatial and structural descriptions, helping the listener visualize content.
 For tables: Describe the relationships, values, and comparisons in flowing narrative.
 For math: Speak out all equations in full sentences, such as 'Energy is equal to mass times the speed of light squared.'
 Never summarize or reduce technical detail; instead, expand and clarify for educational value.
 Remove page numbers, footers, or formatting artifacts.
-When encountering textbook-style problems, narrate both the problem and the solution methodically. STYLE GUIDELINES:
+When encountering textbook-style problems, narrate both the problem and the solution methodically. 
+STYLE GUIDELINES:
 Output must be natural, readable prose with no special formatting or conversational commentary.
 Do not use markdown, bullets, lists, headers, or other visual formatting—write in plain, continuous paragraphs.
 Maintain technical depth and integrity suitable for a PhD audience.
@@ -111,8 +119,9 @@ Do not 'dumb down' the content; instead, explain and illuminate as for an advanc
 If any information is outdated or requires context, indicate the update as of today.
 Do not include any meta-commentary, system tags, or out-of-character remarks.
 Correct misspelled or incorrect acronyms.
-The text should not contain 'Finally', 'In Conclusion' , 'Summary', 'In summary'. Begin by polishing and refining the provided text according to all of these instructions. Return only the final, unified_text, speech-optimized text."""
-user = "TEXT: %s"
+The text should not contain 'Finally', 'In Conclusion' , 'Summary', 'In summary'. 
+Begin by polishing and refining the provided text according to all of these instructions. 
+Return only the final, unified_text, speech-optimized text."""
 
 [prompts.extract_text]
 prompt = """You are a PhD-level STEM technical writer. Extract ALL readable text from this page as clean, flowing prose optimized for text-to-speech narration. CRITICAL FORMATTING RULES - Convert technical terms to speech-friendly format:
