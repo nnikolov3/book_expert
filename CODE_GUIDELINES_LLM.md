@@ -7,7 +7,8 @@
 ### Strict Mode Settings
 ```bash
 #!/bin/bash
-set -u  # Exit on undefined variables
+set -euo pipefail
+                  
 # Never use: set -e (can mask important errors)
 ```
 

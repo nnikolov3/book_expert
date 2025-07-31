@@ -3,8 +3,7 @@
 # Design: Niko Nikolov
 # Code: Various LLMs + Niko
 
-set -u
-
+set -euo pipefail
 # --- Global Variables (declared at top) ---
 declare CONFIG_HELPER_GLOBAL=""
 declare FAILED_LOG_GLOBAL=""
