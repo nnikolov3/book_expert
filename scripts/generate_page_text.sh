@@ -21,7 +21,6 @@ declare LOG_DIR_GLOBAL=""
 declare LOG_FILE_GLOBAL=""
 declare OUTPUT_GLOBAL=""
 declare PROCESSING_DIR_GLOBAL=""
-declare TESSERACT_LANG_GLOBAL=""
 declare DPI_GLOBAL=""
 
 # --- LOGGING & CLEANUP ---
@@ -474,7 +473,6 @@ main()
 	LOG_DIR_GLOBAL=$(helpers/get_config_helper.sh 'logs_dir.png_to_text')
 	OUTPUT_GLOBAL=$(helpers/get_config_helper.sh 'paths.output_dir')
 	PROCESSING_DIR_GLOBAL=$(helpers/get_config_helper.sh 'processing_dir.png_to_text')
-	TESSERACT_LANG_GLOBAL=$(helpers/get_config_helper.sh 'tesseract.language')
 	DPI_GLOBAL=$(helpers/get_config_helper.sh 'settings.dpi')
 
 	# Validate and create directories
