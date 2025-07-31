@@ -1,0 +1,89 @@
+6.1.1 Export Descriptor Structures
+
+The export data section is defined in the PE/COFF format as a section that contains information
+about symbols in the code image that other images can access through dynamic linking. PRM
+makes use of the export section to pass PRM module metadata known at build-time to the PRM
+loader.
+
+The export descriptor structures are architecturally defined in in this section to contain metadata
+describing the host PRM module and by extension its PRM Handlers. A single PRM Module
+Export Descriptor Structure is required to be present in each PRM Module export table. If the
+PRM Module Export Descriptor is not present, the PE/COFF image is not considered a PRM
+module. The Signature field in the PRM Export Descriptor Structure must also be valid for the
+PRM module to be recognized appropriately.
+
+6.1.1.1 PRM Module Export Descriptor Structure
+
+Field Byte Byte Description
+length offset
+
+Signature 8 0 ‘PRM_MEDT'. Signature of the PRM
+Module Export Descriptor Table.
+
+Revision 2 8 Revision of this PRM Module Export
+Descriptor Table structure.
+
+HandlerCount 2 10 Indicates the number of PRM Handler
+
+Information Structure entries that are
+present in the
+HandlerExportDescriptorStructurel[] field
+of this structure.
+
+PlatformGuid 16 12 The GUID that uniquely identifies the
+platform targeted by this PRM module
+instance. This GUID is used to determine
+if a given PRM module is valid for a
+platform during PRM module update.
+
+Identifier 16 28 The GUID of this PRM module.
+HandlerExportDescriptor = Varies 44 An array of PrmHandlerExportDescriptors
+Structure that describes the PRM handler GUID to
+
+PRM handler ordinal mapping for this
+[HandlerCount] PRM module.
+
+Table 6-1 PRM Module Export Descriptor Structure
+The PRM Export Descriptor Structure is required:
+e To be present in a PRM module export table
+e To have only a single instance per PRM module
+
+e To be named “PrmModuleExportDescriptor”
+Section six point one point one, Export Descriptor Structures.
+
+The export data section is defined in the P E slash C O F F format as a section that contains information about symbols in the code image that other images can access through dynamic linking. P R M makes use of the export section to pass P R M module metadata known at build time to the P R M loader.
+
+The export descriptor structures are architecturally defined in this section to contain metadata describing the host P R M module and by extension its P R M handlers. A single P R M Module Export Descriptor Structure is required to be present in each P R M Module export table. If the P R M Module Export Descriptor is not present, the P E slash C O F F image is not considered a P R M module. The Signature field in the P R M Export Descriptor Structure must also be valid for the P R M module to be recognized appropriately.
+
+Section six point one point one point one, P R M Module Export Descriptor Structure.
+
+The table, titled Table six one P R M Module Export Descriptor Structure, details the fields of the structure, including their byte length, byte offset, and a description.
+
+The first field is 'Signature', with a byte length of eight and a byte offset of zero. It represents the 'P R M underscore M E D T', which is the signature of the P R M Module Export Descriptor Table.
+
+Next is the 'Revision' field, which has a byte length of two and a byte offset of eight. This field indicates the revision of this P R M Module Export Descriptor Table structure.
+
+The 'Handler Count' field has a byte length of two and a byte offset of ten. It indicates the number of P R M Handler Information Structure entries that are present in the Handler Export Descriptor Structure array field of this structure.
+
+The 'Platform G U I D' field has a byte length of sixteen and a byte offset of twelve. This G U I D uniquely identifies the platform targeted by this P R M module instance. This G U I D is used to determine if a given P R M module is valid for a platform during a P R M module update.
+
+The 'Identifier' field has a byte length of sixteen and a byte offset of twenty eight. This field specifies the G U I D of this P R M module.
+
+Finally, the 'Handler Export Descriptor Structure' field, accessed as `Handler Export Descriptor Structure index Handler Count`, has a byte length that varies and a byte offset of forty four. This field represents an array of P R M Handler Export Descriptors that describes the P R M handler G U I D to P R M handler ordinal mapping for this P R M module.
+
+The P R M Export Descriptor Structure is required to be present in a P R M module export table, to have only a single instance per P R M module, and to be named 'Prm Module Export Descriptor'.
+The document details the architecture and purpose of export descriptor structures within the P E slash C O F F file format, specifically tailored for P R M modules. At its core, an export data section facilitates dynamic linking, enabling one compiled code image, such as an executable or a library, to access and utilize symbols—functions, variables, or other entry points—exposed by another. For P R M modules, this section is leveraged to transmit critical metadata from the build environment to the P R M loader during execution.
+
+The P R M Module Export Descriptor structure is a meticulously defined data layout designed to convey essential information about a P R M module and its associated P R M handlers. It functions as a singular, authoritative export table within each P R M module. Its presence is mandatory for a P R M module to be recognized and correctly processed by the system. Furthermore, its 'Signature' field serves as a critical sentinel, validating the structure's identity and integrity. Should this essential descriptor be absent, the P E slash C O F F image is not considered a valid P R M module.
+
+The structure of the P R M Module Export Descriptor is precisely defined by its fields, their respective byte lengths, and their byte offsets from the start of the structure. Visualizing this as a contiguous block of memory, the first field, `Signature`, occupies the initial eight bytes, starting at byte offset zero. This field contains the specific value `P R M underscore M E D T`, which acts as a magic number, uniquely identifying this structure type and confirming its validity. Following this, the `Revision` field, two bytes in length, is located at byte offset eight. This field specifies the version of the P R M Module Export Descriptor structure, a crucial component for managing compatibility across different iterations of the P R M module specification.
+
+Next, at byte offset ten, is the `HandlerCount` field, spanning two bytes. This field quantifies the number of P R M Handler Information structure entries that are subsequently present in the `HandlerExportDescriptorStructure` array. This is a common and robust design pattern for handling variable length arrays within fixed structures, where a preceding count field dictates the extent of a trailing array.
+
+The `PlatformGuid` field, a sixteen byte identifier, is situated at byte offset twelve. This G U I D, or Globally Unique Identifier, serves to uniquely pinpoint the specific platform targeted by this P R M module instance. Its primary use case is to ascertain if a given P R M module is compatible and valid for a particular platform, especially during module updates, ensuring that software components are deployed to their intended environments.
+
+Following this, at byte offset twenty eight, is the `Identifier` field, also a sixteen byte G U I D. This G U I D uniquely identifies the P R M module itself, providing a distinct identity separate from the platform specificity. This hierarchical identification, with a platform G U I D and a module G U I D, allows for fine-grained control and management of P R M modules within a larger ecosystem.
+
+Finally, the `HandlerExportDescriptor Structure` array begins at byte offset forty four. The length of this array `Varies`, as it is determined dynamically by the value held in the `HandlerCount` field. This array comprises `P R M Handler Export Descriptors`, each of which provides a mapping between a P R M handler's G U I D and its ordinal position within the module. This mechanism is fundamental for enabling efficient lookup and invocation of specific P R M handlers by their numerical index, a common optimization in systems programming where string lookups would incur greater overhead.
+
+In summary, the P R M Export Descriptor Structure adheres to several critical requirements: it must always be present within a P R M module's export table, ensuring discoverability and proper loading; only a single instance of this descriptor is permitted per P R M module, preventing ambiguity and ensuring a canonical representation; and it must be precisely named `PrmModuleExportDescriptor` to facilitate its identification by the P R M loader. These strict rules underscore the importance of precise metadata definition and management in complex software module architectures.

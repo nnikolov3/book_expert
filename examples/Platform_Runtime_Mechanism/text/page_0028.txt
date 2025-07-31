@@ -1,0 +1,66 @@
+8. Appendix A: PRM Handler DSM Invocation
+
+There is a significant install base in the industry that relies on DSM mechanisms as an
+abstraction to invoke platform firmware services. In addition to device hardware interrupts,
+category 3 (HW SMils) can generate a SCI event which will enter ACPI context via a _Lxx
+method. Hence, it is essential to provide a mechanism to bridge the ASL code to the PRM
+handler to address these cases.
+
+In essence:
+= PRM provides a mechanism to invoke native code from ACPI context
+= ASL can be the landing point for SW or HW based runtime events
+= ASL will invoke PRM if required (ASL serves as a PRM invocation proxy)
+
+8.1 PRM OpRegion Definition
+
+The syntax for the OperationRegion term is described below:
+OperationRegion (
+RegionName, // NameString
+RegionSpace, // RegionSpaceKeyword
+Offset, // TermArg=>Integer
+Length // TermArg=>Integer
+)
+
+Thus, the PRM Operation Region term in ACPI namespace will be defined as follows:
+
+OperationRegion ([subspace-name], PlatformRtMechanism, 0, 1)
+
+Where:
+
+e RegionName is set to [subspace—-name], which is a unique name for this PRM
+subspace.
+
+eo RegionSpace must be set to Plat formRtMechanism, operation region type 0x0B
+eo Offset must be set to 0.
+
+e Length must be set to 1.
+
+The platformRtMechanism operation region has a single access type allowed.
+
+Address Space Permitted Access Type(s) Description
+
+PlatformRtMechanism | BufferAcc Reads and writes to this operation
+region involve the use of a region
+specific data buffer.
+
+35
+Eight. Appendix A: P R M Handler D S M Invocation.
+
+There is a significant install base in the industry that relies on D S M mechanisms as an abstraction to invoke platform firmware services. In addition to device hardware interrupts, category three H W S M Is can generate a S C I event which will enter A C P I context via a L X X method. Hence, it is essential to provide a mechanism to bridge the A S L code to the P R M handler to address these cases. In essence, P R M provides a mechanism to invoke native code from A C P I context. A S L can be the landing point for S W or H W based runtime events. A S L will invoke P R M if required, where A S L serves as a P R M invocation proxy.
+
+Eight point one. P R M Op Region Definition.
+
+The syntax for the Operation Region term is described below. This describes the syntax for an Operation Region. It consists of `OperationRegion` followed by an opening parenthesis. Inside are `RegionName`, which is a name string; `RegionSpace`, which is a Region Space keyword; `Offset`, which is a term argument indicating an integer; and `Length`, also a term argument indicating an integer. These are followed by a closing parenthesis.
+
+Thus, the P R M Operation Region term in A C P I namespace will be defined as follows: `OperationRegion`, with the arguments subspace name, Platform R T Mechanism, zero, and one. Where: Region Name is set to subspace name, which is a unique name for this P R M subspace. Region Space must be set to Platform R T Mechanism, operation region type hexadecimal zero B. Offset must be set to zero. Length must be set to one.
+
+The table indicates that the Platform R T Mechanism operation region has a single permitted access type. The Address Space is Platform R T Mechanism. The Permitted Access Type is Buffer Access. The Description for this access type states that reads and writes to this operation region involve the use of a region specific data buffer.
+The overarching theme presented concerns the intricate mechanism for invoking platform firmware services from within the Advanced Configuration and Power Interface, or A C P I, framework, particularly in scenarios triggered by hardware interrupts. There exists a substantial installed base in the industry relying on Device Specific Method, or _ D S M, mechanisms as a primary abstraction for invoking these critical platform functions. The complexity arises when certain hardware interrupts, specifically Category three System Management Interrupts, or S M Is, generate a System Control Interrupt, or S C I, event. This S C I event then transitions the system into an A C P I context, often necessitating interaction with platform specific functions through an L X X method. Therefore, a robust mechanism is essential to bridge the A C P I Source Language, or A S L, code with the Platform Runtime Mechanism, or P R M, handler to address these complex invocation cases.
+
+In essence, the P R M provides a structured mechanism to invoke native machine code directly from the A C P I context. A S L, which is the high level language executed by the A C P I interpreter, serves as a designated landing point for runtime events, whether they originate from software or directly from hardware. Crucially, A S L itself is designed to invoke the P R M when specific runtime services are required, thereby acting as an invocation proxy.
+
+To facilitate this interaction, a specific A C P I construct known as an Operation Region is utilized. The definition of an Operation Region, a fundamental concept in A C P I, provides a mechanism to describe a contiguous block of address space that can be accessed by A C P I methods. The syntax `OperationRegion ( RegionName, RegionSpace, Offset, Length )` defines such a region. `RegionName` is a symbolic name, `RegionSpace` specifies the type of address space, `Offset` denotes the starting address, and `Length` indicates the size of the region.
+
+For the P R M specifically, an Operation Region is defined within the A C P I namespace as `OperationRegion ( [subspace-name], Platform R T Mechanism, zero, one )`. Here, `RegionName` is set to `subspace-name`, a unique identifier for this particular P R M subspace. The `RegionSpace` is explicitly `Platform R T Mechanism`, which corresponds to an operation region type of hexadecimal zero X zero B, signifying a specialized, platform-specific address space dedicated to runtime mechanisms. The `Offset` is set to zero, indicating that this region begins at the base of the `Platform R T Mechanism` address space. The `Length` is set to one, implying that the region encompasses a single, minimal unit of access. This configuration suggests a highly specific control point or a single descriptor for P R M operations rather than a large memory block.
+
+The method of interaction with this `Platform R T Mechanism` operation region is further clarified by examining its permitted access types. The table presents the `Platform R T Mechanism` as the `Address Space`, and the `Permitted Access Type(s)` are designated as `Buffer Acc`. The `Description` column explains that reads and writes to this operation region involve the use of a region specific data buffer. This `Buffer Acc` mechanism is critically important. Unlike direct memory mapped I O or I O port accesses, `Buffer Acc` implies an atomic, structured data transfer. Instead of individual byte or word operations, the A C P I interpreter prepares an entire buffer of data for a write operation, or expects a complete buffer of data for a read operation, when interacting with this region. This design choice is common in embedded and system level programming to abstract away complex hardware interfaces. It allows for the exchange of commands, parameters, or status information in a well defined, packetized format, ensuring data integrity and simplifying the underlying firmware's task of parsing and responding to requests. This abstraction decouples the specific hardware I O from the logical operations invoked by the A C P I interpreter, enhancing portability and maintainability of the platform firmware interface.

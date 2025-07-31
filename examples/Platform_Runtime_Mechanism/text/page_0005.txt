@@ -1,0 +1,55 @@
+Example 2: PSHED Plug-in
+
+PSHED drivers are WHEA/APEI OS drivers for error handling. Plug-in model was created to
+enable the driver to cater to platform and silicon variances. But this proved to be a challenge for
+wide deployment, and hence ACPI Tables were created (EINJ, ERST, HEST etc.) using which
+the platform firmware is invoked to handle these variances.
+
+Example 3: NVDIMMs
+
+NVDIMMs have introduced a new set of ACPI DSM interfaces
+(http://pmem.io/documents/NVDIMM DSM Interface-V1.6.pdf) as a way to abstract the
+platform and NVDIMM technology variances from the OS/VMM. These DSM drop into
+SMI to be able to handle the tasks.
+
+There are more such examples of the OS entities using platform abstraction. The SMM
+elimination strategy should ensure compatibility with the existing abstraction interfaces.
+
+2.1 Categories of SMis
+
+SMI handlers can be broadly classified as:
+= (Category 1: SW SMI Handlers that don’t require SMM privileges
+» (Category 2: SW SMI Handlers that require SMM privileges
+= (Category 3: HW SMI Handlers that don’t require SMM privileges
+= Category 4: HW SMI Handler the require SMM privileges
+
+Note: SMM Privileges means that there are certain hardware resources (such as reqisters
+that have SMM-only attributes) that can be written in SMM execution context.
+
+SW SMIs (Category 1 and 2) are invoked by software. HW SMIs (Category 3 and 4) are
+invoked by platform hardware events such as system Errors.
+
+Platform Runtime Mechanism (PRM) provides means to eliminate Category 1 SMM
+Handlers and in some cases can be used to reduce Category 3 SMM Handlers as well.
+Example two: P S H E D Plug in. P S H E D drivers are W H E A slash A P E I O S drivers for error handling. A Plug in model was created to enable the driver to cater to platform and silicon variances. But this proved to be a challenge for wide deployment, and hence A C P I Tables were created, E I N J, E R S T, H E S T, etcetera, using which the platform firmware is invoked to handle these variances.
+
+Example three: N Vidia D I M M S. N Vidia D I M M S have introduced a new set of A C P I D S M interfaces, available at H T T P colon slash slash P M E M dot I O slash documents slash N Vidia D I M M D S M Interface hyphen V one dot six dot P D F, as a way to abstract the platform and N Vidia D I M M technology variances from the O S slash V M M. These D S M drop into S M I to be able to handle the tasks. There are more such examples of the O S entities using platform abstraction. The S M M elimination strategy should ensure compatibility with the existing abstraction interfaces.
+
+Section two point one: Categories of S M I S. S M I handlers can be broadly classified as: Category one, Software S M I Handlers that don't require S M M privileges; Category two, Software S M I Handlers that require S M M privileges; Category three, Hardware S M I Handlers that don't require S M M privileges; and Category four, Hardware S M I Handlers that require S M M privileges.
+
+Note: S M M Privileges means that there are certain hardware resources, such as registers that have S M M only attributes, that can be written in S M M execution context. Software S M I S, Category one and two, are invoked by software. Hardware S M I S, Category three and four, are invoked by platform hardware events such as system Errors. Platform Runtime Mechanism, P R M, provides means to eliminate Category one S M M Handlers and in some cases can be used to reduce Category three S M M Handlers as well.
+The Platform Hardware Error Driver, known as P S H E D, and its associated plug-in model, represent a sophisticated approach to error handling within modern computing systems. P S H E D drivers function in conjunction with the Windows Hardware Error Architecture, or W H E A, and the Advanced Platform Error Interface, or A P E I, which together establish a comprehensive framework for managing hardware errors. The fundamental challenge addressed by this plug-in architecture is the inherent variance across different hardware platforms and silicon implementations. To overcome this, a modular model was devised, allowing device drivers to adapt dynamically to specific hardware characteristics. A critical component of this adaptation involves the creation of A C P I Tables, such as the Error Injection, E I N J, table, the Error Record Serialization Table, E R S T, and the Hardware Error Source Table, H E S T. These tables provide a standardized, firmware-agnostic interface that the operating system can query to understand and interact with platform-specific error handling capabilities. When a hardware error occurs or needs to be managed, the platform firmware invokes the appropriate mechanisms defined within these A C P I Tables to ensure consistent and effective error management, thereby abstracting away the underlying hardware intricacies from the operating system.
+
+The advent of Non-Volatile Dual In-line Memory Modules, or N V D I M Ms, exemplifies another scenario requiring advanced abstraction layers. These persistent memory technologies introduce a new dimension to memory management, necessitating specific interfaces for operating systems and virtual machine monitors to properly control their unique attributes. To achieve this, N V D I M Ms have introduced a new set of A C P I Device Specific Method, or _ D S M, interfaces. The A C P I _ D S M mechanism serves as a pivotal abstraction layer, enabling the operating system and the virtual machine monitor to manage the complexities and variances inherent in N V D I M M technology. This abstraction ensures that higher-level software components do not need to be intimately aware of the myriad implementation details of various N V D I M M products. Consequently, these _ D S M interfaces often necessitate a temporary transition into System Management Mode, or S M M, which means the underlying System Management Interrupt, or S M I, is invoked. This S M I allows the firmware to execute privileged operations required to configure, manage, or respond to events related to these advanced memory devices, tasks that often require direct hardware register manipulation outside the normal operating system context. These examples underscore a broader principle: the importance of robust abstraction interfaces to maintain compatibility and manage diverse hardware in complex system environments. The System Management Mode elimination strategy, for instance, aims to reduce the reliance on S M M for certain operations, promoting greater system transparency and potentially enhancing security and performance by shifting tasks to less privileged domains where feasible.
+
+System Management Interrupt, or S M I, handlers are fundamental components of platform firmware, operating in System Management Mode, S M M, which is the highest privilege level on many processor architectures. These handlers are executed in a context that is isolated from the operating system and hypervisors, making them critical for system integrity and low-level hardware management. S M I handlers can be broadly classified based on their invocation mechanism and their requirement for System Management Mode privileges.
+
+The first category consists of Software System Management Interrupt Handlers that do not require explicit System Management Mode privileges. These are S M I s triggered by software but perform actions that, while within the S M M context, do not necessitate writing to or reading from System Management Mode-exclusive hardware resources. The second category encompasses Software System Management Interrupt Handlers that do require System Management Mode privileges. These S M I s are also software-invoked but perform operations that inherently demand the elevated access rights provided by System Management Mode, such as direct manipulation of sensitive hardware registers or memory regions reserved for S M M.
+
+Moving to hardware-triggered events, the third category includes Hardware System Management Interrupt Handlers that do not require System Management Mode privileges. These S M I s are initiated by physical hardware events but, similar to Category one, their execution within S M M does not involve operations that specifically require System Management Mode-only hardware access. Finally, the fourth category comprises Hardware System Management Interrupt Handlers that do require System Management Mode privileges. These are the most critical, invoked by significant hardware events like system errors, and necessitate full System Management Mode access to perform corrective or reporting actions that interact directly with privileged hardware components.
+
+It is crucial to understand that S M M privileges, in this context, refer to the ability to access and modify particular hardware resources, such as registers, that are exclusively writable only when the processor is executing in the System Management Mode context. This strict access control ensures that critical system management functions remain protected from tampering by the operating system or other software layers.
+
+Software System Management Interrupts, specifically Categories one and two, are typically invoked by system software, often by writing to designated I O ports, signaling the platform to enter System Management Mode. In contrast, Hardware System Management Interrupts, found in Categories three and four, are triggered by direct hardware events, such as system errors, thermal excursions, or power state changes.
+
+The Platform Runtime Mechanism, or P R M, represents an architectural evolution aimed at reducing the reliance on System Management Mode for routine or less critical tasks. P R M provides a means to eliminate certain System Management Interrupt Handlers, particularly those in Category one, by allowing their functionalities to be handled by the operating system or other firmware components outside of the restrictive S M M environment. This not only enhances system transparency, making debugging and analysis simpler, but also improves overall system security by minimizing the code footprint running at the highest privilege level. Furthermore, P R M can also contribute to reducing the scope and complexity of Category three System Management Interrupt Handlers, migrating some of their tasks away from the highly privileged System Management Mode when their operations do not strictly require S M M-only hardware access. This strategic offloading of S M M tasks to less privileged runtime mechanisms is a significant step towards more robust, secure, and manageable computing platforms.

@@ -1,0 +1,69 @@
+10 16 DSM GUID. This value is populated by the
+caller. This GUID must be present in the list
+of available handlers published by the PRMT
+table.
+
+The above byte fields can be manipulated using CreateByteField, CreateQWordField, and CreateField
+operators. By doing so, ASL can read and write values from this buffer using a single store operator.
+
+8.2 PRM Invocation Example
+The following is an example of how data is written to the PRM data buffer:
+/*
+* Control method to Run PRM service
+* Argd contains a buffer of a DSM GUID
+*/
+Method (RUNS, 1)
+{
+/* Local® is the PRM data buffer */
+Local® = buffer (26){}
+
+/* Create byte fields */
+CreateByteField (Local@, 0x0, PSTA)
+CreateQWordField (Local@, ©x1, USTA)
+CreateByteField (Local@, 0x9, CMD)
+CreateField (Local@, 0x50, 0x80, DATA)
+
+/* Fill in the command and data fields of the data buffer */
+CMD = ©
+DATA = Argo
+
+}
+
+In order to invoke the PRM OperationRegion Handler, the contents of Local0 need to be written to a
+PRM OperationRegion FieldUnit. The result of the handler can be acquired by storing the contents of the
+field unit back to LocalO. The following example defines a PRM OperationRegion and FieldUnit and a
+function that will tell the PRM OperationRegion Handler to run the PRM service described by Arg0.
+
+OperationRegion (PRMR, PlatformRtMechanism, 0x0, 0x1)
+Field (PRMR, BufferAcc, NoLock, Preserve)
+
+{
+PRMF, 8
+The table describes a D S M G U I D. This value, spanning from offset ten to sixteen, is populated by the caller. This G U I D must be present in the list of available handlers published by the P R M T table.
+
+The above byte fields can be manipulated using Create Byte Field, Create Q Word Field, and Create Field operators. By doing so, A S L can read and write values from this buffer using a single store operator.
+
+Eight point two P R M Invocation Example
+
+The following is an example of how data is written to the P R M data buffer:
+
+The code defines a method to run a P R M service. The argument `Arg zero` is expected to contain a buffer representing a D S M G U I D. The method `RUNS` is configured to execute once. Inside the method, a local variable named `Local zero` is initialized as the P R M data buffer with a size of twenty six bytes. The code then proceeds to create several fields within `Local zero`. A byte field named `P S T A` is created at offset hexadecimal zero. A Q Word field named `U S T A` is created at offset hexadecimal one. Another byte field named `C M D` is created at offset hexadecimal nine. Finally, a field named `D A T A` is created starting at offset hexadecimal fifty with a size of hexadecimal eighty. After defining these fields, the `C M D` field is assigned a value of zero, and the `D A T A` field is assigned the value from `Arg zero`.
+
+In order to invoke the P R M Operation Region Handler, the contents of `Local zero` need to be written to a P R M Operation Region Field Unit. The result of the handler can be acquired by storing the contents of the field unit back to `Local zero`. The following example defines a P R M Operation Region and Field Unit and a function that will tell the P R M Operation Region Handler to run the P R M service described by `Arg zero`.
+
+The code defines an Operation Region named `P R M R`, utilizing the `PlatformRtMechanism`. This region starts at offset hexadecimal zero and has a length of hexadecimal one. Within the `P R M R` Operation Region, a field is defined. This field is configured with `BufferAcc` access, `NoLock` synchronization, and a `Preserve` write policy. Inside this field definition, `P R M F` is specified with a bit length of eight.
+The content describes a sophisticated mechanism for intercommunication between an operating system and platform firmware, specifically through the Advanced Configuration and Power Interface, or `A C P I`, using its source language, `A S L`. At its core, this involves a request-response protocol facilitated by shared memory buffers and defined hardware interfaces.
+
+The initial table alludes to a `_D S M G U I D`, a Globally Unique Identifier that serves to precisely identify a Device Specific Method. This `G U I D` is crucial for dynamically discovering and invoking specific firmware services or functionalities that are not part of standard hardware abstractions. The `P R M T`, or Platform Runtime Mechanism Table, functions as a registry, publishing a list of available handlers. This ensures that only authorized and recognized `D S M G U I D`s can trigger corresponding operations, thereby maintaining system integrity and security.
+
+The subsequent text highlights the manipulation of byte fields within these interfaces using `A S L` operators. `CreateByteField`, `CreateQWordField`, and `CreateField` are foundational `A S L` constructs. They allow `A S L` code to define and map structured data fields within a contiguous memory region, which could represent a hardware register block or a software buffer. `CreateByteField` allocates a single byte, `CreateQWordField` allocates eight bytes for a sixty four bit quantity, and `CreateField` offers the flexibility to define fields of arbitrary bit length and offset. This abstraction from raw memory addresses allows `A S L` to read and write values to these defined fields using a single store operator, optimizing performance and atomicity in low-level hardware interactions.
+
+The `P R M` Invocation Example provides a concrete illustration of this intercommunication. It begins by defining an `A S L` `Method` named `RUNS`, which accepts a single argument, `Arg0`. Within this method, a local buffer, `Local0`, is allocated with a size of twenty six bytes. This `Local0` buffer serves as the primary data exchange mechanism for the `P R M` service.
+
+Further within the `RUNS` method, specific fields are meticulously defined within `Local0` using the aforementioned `A S L` operators. A `P S T A` field, presumably for Platform Status, is established as a single byte at offset hexadecimal zero. Following this, a `U S T A` field, likely for User Status, is defined as an eight byte `QWord` at offset hexadecimal one. The presence of a `QWord` suggests the potential for storing a memory address, a sixty four bit status code, or a large identifier. A `C M D` field, for the command code, is defined as a single byte at offset hexadecimal nine. Finally, a substantial `D A T A` field, capable of holding up to hexadecimal eighty bytes, or one hundred twenty eight bytes in decimal, is allocated starting at offset hexadecimal fifty. This large `D A T A` field underscores the capacity for `P R M` services to exchange considerable payloads.
+
+The example then demonstrates how these fields are populated: the `C M D` field is set to zero, potentially indicating a default operation, and the `D A T A` field is assigned the value of `Arg0`. Given the comment that `Arg0` contains a buffer representing a `_D S M G U I D`, this means the `G U I D` of the target `D S M` service is passed into the `D A T A` payload of the `P R M` buffer.
+
+The underlying principle for invoking a `P R M` service involves writing the prepared `Local0` buffer to a designated `P R M` Operation Region Field Unit. An `OperationRegion` in `A C P I` establishes a mapping to a physical or logical address range. A `FieldUnit` then defines a specific field within that region. The act of writing the buffer to this `FieldUnit` serves as a trigger, signaling the firmware `P R M` Operation Region Handler to process the request. After the handler completes its task, it writes the results back to the same `FieldUnit`. The `A S L` code can then read the contents of this `FieldUnit` back into `Local0` to retrieve the operation's outcome, embodying a conventional input-output paradigm through shared memory.
+
+The final code snippet illustrates the definition of such an `OperationRegion`. `P R M R` is declared as an `OperationRegion` of type `PlatformRtMechanism`, indicating its role in platform runtime interactions. It's mapped from offset hexadecimal zero with a length of hexadecimal one byte. This suggests that `P R M R` is a compact control register or a simple trigger mechanism. Within `P R M R`, a field named `P R M F` is defined as eight bits, or one byte, with `BufferAcc` for buffer-level access, `NoLock` implying external synchronization or single-threaded access, and `Preserve` for maintaining content integrity. This `P R M F` field is likely the specific byte that is written to initiate the `P R M` service and subsequently read to obtain its immediate status or completion signal. The larger `Local0` buffer containing the `G U I D` and other data would be implicitly linked or pointed to by the `P R M` handler, perhaps via an auxiliary register, to access the full request and response payload. This layered approach separates the compact command trigger from the potentially large data buffer, optimizing the interaction flow.

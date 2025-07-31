@@ -1,0 +1,53 @@
+2. SMM Usages
+
+Understanding SMM usage today is essential for exploring potential alternatives. This
+section classifies SMM applications today and corresponding mechanisms to eliminate
+SMM usages for some of those usage models.
+
+SMIs can be triggered either via software means or by the platform hardware. In Intel
+Architecture (IA) systems, a write to 10 port 0xB2 will trigger a SMI. Software uses this
+path to trigger a SMI in order to invoke BIOS/Platform firmware services during system
+runtime. Hardware SMls, on the other hand, are triggered by the platform hardware in
+response to system events such as errors, GPIO events etc.
+
+SW SMI Usage Model:
+
+As shown in Figure 2 below, OS level entities typically use ACPI and UEFI interfaces as
+an abstraction to invoke runtime platform firmware services. These OS and BIOS
+interfaces then trigger a SW SMI internally, if native code execution is required. In other
+words, the fact that SMI has been generated is kept transparent to the OS by these
+abstraction interfaces.
+
+A key to reduce the SMM footprint with compatibility to existing software is to the retain
+the same software interface to OS entities but provide an alternate means for invoking
+platform code execution context from ACPI. Platform Runtime Mechanism (PRM), as
+explained in subsequent sections provides such an alternative for certain cases.
+
+HW SMI Usage Model:
+
+Hardware SMIs are events triggered by the platform hardware in response to platform
+events such as memory and other system errors, thermal events, GPIOs etc. These are
+transparent to the OS as well. Migrating some of these usages out of SMM would a
+combination of PRM and assistance from an Out-Of-Band agent, such as BMC.
+Two. S M M Usages.
+
+Understanding S M M usage today is essential for exploring potential alternatives. This section classifies S M M applications today and corresponding mechanisms to eliminate S M M usages for some of those usage models.
+
+S M Is can be triggered either via software means or by the platform hardware. In Intel Architecture I A systems, a write to I O port hexadecimal B two will trigger an S M I. Software uses this path to trigger an S M I in order to invoke B I O S Platform firmware services during system run time. Hardware S M Is, on the other hand, are triggered by the platform hardware in response to system events such as errors, G P I O events, et cetera.
+
+S W S M I Usage Model:
+As shown in Figure two below, O S level entities typically use A C P I and U E F I interfaces as an abstraction to invoke run time platform firmware services. These O S and B I O S interfaces then trigger an S W S M I internally, if native code execution is required. In other words, the fact that S M I has been generated is kept transparent to the O S by these abstraction interfaces.
+
+A key to reduce the S M M footprint with compatibility to existing software is to retain the same software interface to O S entities but provide an alternate means for invoking platform code execution context from A C P I. Platform Run time Mechanism P R M, as explained in subsequent sections, provides such an alternative for certain cases.
+
+H W S M I Usage Model:
+Hardware S M Is are events triggered by the platform hardware in response to platform events such as memory and other system errors, thermal events, G P I Os, et cetera. These are transparent to the O S as well. Migrating some of these usages out of S M M would be a combination of P R M and assistance from an out of band agent, such as B M C.
+System Management Mode, or S M M, represents a highly privileged operational state within I A, or Intel Architecture, processors, critical for encompassing various system level functions that demand the highest degree of control and isolation from the conventional O S environment. Understanding its precise usage patterns is paramount for engineers and architects seeking to develop alternative, more efficient, and potentially more secure mechanisms for platform management.
+
+The transition into S M M is primarily facilitated by a System Management Interrupt, or S M I. These interrupts can be initiated through two distinct pathways: either by software means or directly by platform hardware. In the case of software induced S M Is, a write operation to a specific I O port, such as hexadecimal B two, serves as the trigger. This mechanism is typically leveraged by B I O S or U E F I firmware to invoke critical platform services during the system's runtime. For instance, tasks like complex power management state transitions, system error logging, or certain security functions that require atomic, non-interruptible execution often rely on this software triggered S M I path.
+
+The Software S M I Usage Model describes how higher level software entities, particularly O S level components, utilize standardized interfaces such as A C P I and U E F I to abstractly request platform firmware services. When these O S and B I O S interfaces necessitate the execution of native code within the S M M context, they internally generate a software S M I. A key architectural characteristic here is that the underlying generation of the S M I, and the subsequent execution within S M M, are meticulously designed to be transparent to the O S. This transparency ensures that system management operations can occur without the O S explicitly being aware of the mode switch, thus maintaining system integrity and responsiveness from the O S perspective. However, this transparency also presents challenges for debugging and performance analysis due to the O S's lack of visibility into S M M execution.
+
+A fundamental objective in modern system design is to reduce the overall S M M footprint, which refers to the duration and frequency of processor operation within S M M. This reduction is sought because S M M execution often entails a complete stop of all other processor activities, leading to potential latency spikes and a significant impact on real time system performance. To address this, an alternative approach is to retain compatibility with existing software interfaces while providing an entirely different mechanism for invoking platform code execution context. One such proposed alternative is the Platform Runtime Mechanism, or P R M. This mechanism aims to shift certain functions traditionally handled by S M M, especially those initiated through A C P I, into a less intrusive execution environment, thereby mitigating the performance overhead associated with S M M.
+
+In contrast to software initiated S M Is, hardware S M Is are autonomously triggered by the platform hardware itself in response to various asynchronous system events. These events encompass critical occurrences such as memory errors, general system errors, thermal excursions, or specific G P I O events. Similar to their software counterparts, these hardware triggered S M Is are also architecturally transparent to the O S. This invisibility is by design, as these are low level, immediate responses that must bypass O S scheduling and processing to ensure system stability and integrity. For example, a severe thermal event might trigger a hardware S M I to initiate an emergency shutdown sequence, a task that cannot be delayed by O S context switches or scheduling. Moving some of these hardware triggered S M M usages to alternative management paradigms would involve a combination of P R M, for functions that can be managed within the main processor's context but outside S M M, and more critically, offloading to Out Of Band agents. An Out Of Band agent, such as a B M C or Baseboard Management Controller, operates as an independent, embedded microcontroller that can monitor and manage platform hardware autonomously, even when the main C P U is powered off or unresponsive. This allows critical system events to be handled without interrupting the main C P U or entering S M M, thereby enhancing system availability, reliability, and diagnosability.

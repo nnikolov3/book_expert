@@ -1,0 +1,93 @@
+6. PRM Software Organization
+
+At a high-level, PRM collateral can be viewed as three levels of increasing granularity:
+
+1. PRM interface — A software interface that encompasses the entirety of firmware
+functionalities available to OS runtime
+
+2. PRM module — An independently updatable package of PRM handlers. The PRM
+Interface can be composed of one or more updatable PRM modules. This requirement
+allows for independent authoring and packaging of OEM and IHV PRM code.
+
+3. PRM handler — The implementation of a single piece of PRM functionality as identified
+by a GUID.
+
+6.1 PRM Module Image Format
+The PRM module format is designed to be loaded during boot by the BIOS (Baseline PRM), and
+to be replaced in OS runtime without needing a reboot, if so desired.
+
+A PRM module is composed of a PE/COFF binary image with certain characteristics that
+uniquely identify the image as a PRM module. These characteristics are described in
+this section.
+
+A PRM-compliant PE/COFF image contains the following notable sections:
+
+oe An Optional header with the MajorimageVersion and MinorlmageVersion fields
+set to appropriate value for the PRM module.
+
+o In most environments, this allows the image version to be obtained using
+filesystem APIs. For example, an OS loader could determine whether a
+given binary version is greater than the current version without needing to
+load the binary into memory and computing an address to an object using
+a relative virtual address.
+
+e An .edata section that contains references to the following elements:
+
+o PRM Module Export Descriptor - A structure that describes the PRM
+Module and contains an array of PRM Handler Export Descriptors to
+identify the PRM Handlers present in the PRM Module. The PRM Module
+identifier (a 128-bit GUID) is included in the metadata to uniquely identify
+the module.
+
+= PRM Handler Export Descriptor - A structure that describes a
+given PRM Handler. Each entry in the structure associates a PRM
+Handler with a GUID.
+
+o An Export Address Table, Name Pointer Table, and Ordinal Table that
+contain an entry to the PRM Module Export Descriptor and each PRM
+Handler.
+
+oe A .text section that contains executable PRM Handler code. The RVAs to each
+PRM Handler are computed at compile-time and placed into image export table.
+
+The PRM module PE/COFF image is required to have a valid relocation table so the PRM
+loader software can load the image at a dynamic base address.
+
+27
+Six. P R M Software Organization.
+At a high level, P R M collateral can be viewed as three levels of increasing granularity.
+First, a P R M interface is a software interface that encompasses the entirety of firmware functionalities available to O S runtime.
+Second, a P R M module is an independently updatable package of P R M handlers. The P R M interface can be composed of one or more updatable P R M modules. This requirement allows for independent authoring and packaging of O E M and I H V P R M code.
+Third, a P R M handler is the implementation of a single piece of P R M functionality as identified by a G U I D.
+
+Six point one. P R M Module Image Format.
+The P R M module format is designed to be loaded during boot by the B I O S, which is Baseline P R M, and to be replaced in O S runtime without needing a reboot, if so desired.
+
+A P R M module is composed of a P E slash C O F F binary image with certain characteristics that uniquely identify the image as a P R M module. These characteristics are described in this section.
+
+A P R M compliant P E slash C O F F image contains the following notable sections.
+First, an optional header with the Major Image Version and Minor Image Version fields set to appropriate values for the P R M module. In most environments, this allows the image version to be obtained using filesystem A P I s. For example, an O S loader could determine whether a given binary version is greater than the current version without needing to load the binary into memory and computing an address to an object using a relative virtual address.
+
+Second, an dot edata section contains references to the following elements.
+The P R M Module Export Descriptor, which is a structure that describes the P R M module and contains an array of P R M Handler Export Descriptors to identify the P R M Handlers present in the P R M Module. The P R M Module identifier, a one hundred twenty eight bit G U I D, is included in the metadata to uniquely identify the module. This P R M Module Export Descriptor includes a P R M Handler Export Descriptor, which is a structure that describes a given P R M Handler. Each entry in this structure associates a P R M Handler with a G U I D.
+Additionally, an Export Address Table, Name Pointer Table, and Ordinal Table are included, which contain an entry to the P R M Module Export Descriptor and each P R M Handler.
+
+Third, a dot text section contains executable P R M Handler code. The R V A s to each P R M Handler are computed at compile time and placed into the image export table.
+The P R M module P E slash C O F F image is required to have a valid relocation table so the P R M loader software can load the image at a dynamic base address.
+The P R M, or Platform Runtime Module, software organization is structured with increasing granularity, forming a hierarchical system for managing firmware functionalities. At the highest level, the P R M interface functions as a comprehensive software A P I that encapsulates the entire suite of firmware functionalities available to the O S runtime. This interface serves as the primary gateway for the O S to interact with underlying platform specific services and hardware abstractions.
+
+Beneath the interface are P R M modules, which represent independently updatable packages of P R M handlers. A P R M module can be composed of one or more such P R M handlers. This design principle fosters modularity, enabling independent authoring and packaging of firmware components by Original Equipment Manufacturers, or O E M, and Independent Hardware Vendors, or I H V. The ability to update these modules independently is critical for system maintenance, security patches, and feature enhancements without requiring a complete firmware image replacement.
+
+At the most granular level within this organization are P R M handlers. Each P R M handler is an implementation of a single, atomic piece of P R M functionality, uniquely identified by a Globally Unique Identifier, or G U I D. This fine grained modularity allows for precise control over specific features and enables the system to discover and invoke exact functionalities through their unique identifiers.
+
+The underlying structure of a P R M module is defined by its image format, which is engineered to be loaded during the platform's boot sequence by the B I O S, or Baseline P R M. A crucial design aspect is its capacity for dynamic replacement within the O S runtime environment, often without necessitating a system reboot. This hot patching capability is vital for applying updates or corrections to system firmware in mission critical or continuously operating systems, minimizing downtime.
+
+A P R M module is fundamentally a P E slash C O F F binary image. P E slash C O F F, standing for Portable Executable slash Common Object File Format, is a standard file format for executables, object code, and D L L s used in various operating systems, providing a well defined structure for metadata, code, and data sections. For a P R M image to be compliant with this standard and properly recognized as a P R M module, it must exhibit specific characteristics, primarily within its internal structure.
+
+One notable section within a P R M compliant P E slash C O F F image is the header, which includes Major Image Version and Minor Image Version fields. These fields are instrumental for versioning and compatibility checks. In diverse computing environments, an O S loader can leverage these A P I s to query the version of a loaded P R M module. By comparing the obtained binary version with the current system's expected version, the O S loader can dynamically determine whether to load a new version without requiring a system reboot. This involves translating relative virtual addresses, or R V A s, contained within the P E slash C O F F image to actual memory addresses, dynamically binding the module to its runtime location.
+
+Another essential component is the `.edata` section. This section specifically houses data related to exported functions and symbols, acting as a directory for callable functionalities within the module. It contains a P R M Module Export Descriptor, which is a structural element describing the P R M module itself. This descriptor holds an array of P R M Handler Export Descriptors. Each of these handler descriptors provides information necessary to identify the specific P R M handlers embedded within the P R M module. The P R M Module's unique identifier, a one hundred twenty eight bit G U I D, is also embedded within this metadata to ensure its global uniqueness and allow precise identification.
+
+Further, within the `.edata` section, each P R M Handler Export Descriptor is a distinct structure that precisely describes a given P R M Handler. Each entry in this structure associates the P R M Handler with its unique G U I D. This hierarchical identification scheme, from the module to individual handlers, ensures robust discovery and invocation of specific functionalities. Complementing these are the Export Address Table, the Name Pointer Table, and the Ordinal Table. These tables are fundamental mechanisms in the P E slash C O F F format for dynamic linking. The Export Address Table maps the entry points of exported functions, while the Name Pointer Table and Ordinal Table facilitate resolution of these functions by their names or numerical ordinals, respectively, effectively providing the necessary information for an O S loader to find and call the P R M Handler code.
+
+Finally, the `.text` section of the P R M module contains the executable code for the P R M Handlers. The Relative Virtual Addresses, or R V A s, to each P R M Handler's entry point are determined during the compilation process and subsequently placed into the image's export table. A critical requirement for any P R M module in P E slash C O F F format is the presence of a valid relocation table. This table is indispensable for enabling the P R M loader software to load the image at an arbitrary or dynamic base address in memory. Without relocation information, the module would be fixed to a specific memory location, potentially leading to conflicts or an inability to load if that address space is already occupied, thus highlighting the importance of position independent code capabilities in such dynamically loaded system components.

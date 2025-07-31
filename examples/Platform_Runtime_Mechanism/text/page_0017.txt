@@ -1,0 +1,86 @@
+5. Invocation of PRM Handlers
+
+As described earlier, PRM handlers can be invoked by two means
+
+1. Directly from an OS driver - if the OS driver and the OS ACPI subsystem is PRM aware.
+2. From ASL context — if the OS driver is not PRM aware and uses DSM instead, or
+platform events that trigger SCI invoking _Lxx methods.
+
+5.1 Direct Call vs ASL Based Invocation
+
+For PRM aware OS and OS drivers, a direct call is recommended and preferred for at least the
+following reasons:
+
+1. DSM implementation brings an programming dependency for PRM into the system
+ACPI FW (as opposed to only a declarative table). This code is required to act in lieu of
+the OS device driver to update the AcpiParameterBuffer for the active PRM handler.
+This requires an AML debugger to debug and if a bug is present, a full system reboot is
+needed to update the ASL code logic loaded by system firmware.
+
+2. DSM constrains the OS driver’s ability to interact with PRM. For example, in the case of
+direct call, the OS device driver can directly call into PRM module update lock and
+unlock APIs around the PRM calls that need to be protected (see section 7). In _DSM
+Invocation, this is outside the control of the device driver and must be handled internally
+within the corresponding _ DSM.
+
+As another example, in the case of direct call, the OS device driver can directly allocate
+and populate a buffer of information shared with a PRM handler. In _DSM invocation,
+data can only be shared using a fixed buffer allocated by firmware that is populated at
+runtime by AML code loaded during boot. If during a runtime PRM update, a PRM
+handler depends upon a parameter buffer that did not previously or the layout of the
+buffer changes, the corresponding ASL must be modified which requires a system
+reboot. In direct call, ASL does not need to be modified.
+
+3. DSM invocation requires more overhead to execute AML bytecode in the ACPI
+interpreter.
+
+On the other hand, there is a significant install base in the industry that relies on _ DSM
+mechanisms as an abstraction to invoke platform firmware services from OS drivers. To
+maintain compatibility with the installed base until they are deprecated, the DSM invocation
+path provides a mechanism to invoke PRM handlers from ASL context. In addition, certain
+hardware events can generate a SCI which will enter ACPI context via a _Lxx method, from
+which PRM handlers can be invoked.
+
+5.2 Invocation Mechanism - Overview
+
+The caller (either from ASL for Direct Call from OS Driver) passes the following information to
+the ACPI Bridge Driver
+
+1. GUID of the PRM handler to be invoked
+
+2. Inthe case of Direct call, the pointer to a ParameterBuffer (allocated by the caller)
+The ACPI Bridge Driver then
+Five. Invocation of P R M Handlers.
+
+As described earlier, P R M handlers can be invoked by two means. First, directly from an O S driver, if the O S driver and the O S A C P I subsystem is P R M aware. Second, from A S L context. This is if the O S driver is not P R M aware and uses underscore D S M instead, or platform events that trigger S C I invoking underscore L x x methods.
+
+Five point one. Direct Call versus A S L Based Invocation.
+
+For P R M aware O S and O S drivers, a direct call is recommended and preferred for at least the following reasons. First, underscore D S M implementation brings a programming dependency for P R M into the system A C P I F W, as opposed to only a declarative table. This code is required to act in lieu of the O S device driver to update the AcpiParameterBuffer for the active P R M handler. This requires an A M L debugger to debug and if a bug is present, a full system reboot is needed to update the A S L code logic loaded by system firmware.
+
+Second, underscore D S M constrains the O S driver’s ability to interact with P R M. For example, in the case of direct call, the O S device driver can directly call into P R M module update lock and unlock A P I s around the P R M calls that need to be protected. Refer to section seven. In underscore D S M invocation, this is outside the control of the device driver and must be handled internally within the corresponding underscore D S M. As another example, in the case of direct call, the O S device driver can directly allocate and populate a buffer of information shared with a P R M handler. In underscore D S M invocation, data can only be shared using a fixed buffer allocated by firmware that is populated at runtime by A M L code loaded during boot. If during a real time P R M update, a P R M handler depends upon a parameter buffer that did not previously, or the layout of the buffer changes, the corresponding A S L must be modified which requires a system reboot. In direct call, A S L does not need to be modified.
+
+Third, underscore D S M invocation requires more overhead to execute A M L bytecode in the A C P I interpreter.
+
+On the other hand, there is a significant install base in the industry that relies on underscore D S M mechanisms as an abstraction to invoke platform firmware services from O S drivers. To maintain compatibility with the installed base until they are deprecated, the underscore D S M invocation path provides a mechanism to invoke P R M handlers from A S L context. In addition, certain hardware events can generate a S C I which will enter A C P I context via a underscore L x x method, from which P R M handlers can be invoked.
+
+Five point two. Invocation Mechanism - Overview.
+
+The caller, either from A S L or for Direct Call from O S Driver, passes the following information to the A C P I Bridge Driver. First, the G U I D of the P R M handler to be invoked. Second, in the case of Direct call, the pointer to a ParameterBuffer, which is allocated by the caller. The A C P I Bridge Driver then
+The document describes the fundamental mechanisms by which P R M handlers are invoked within a computing system, a critical aspect of platform management and the intricate interplay between the O S and system firmware. P R M handlers, which are routines residing in the platform firmware, expose specific hardware capabilities or manage system-level operations.
+
+There are two primary methods for invoking these P R M handlers. The first involves a direct call originating from an O S driver. This mechanism presupposes that both the O S driver itself and the underlying A C P I subsystem within the O S are P R M aware. Such awareness implies a bespoke design where the O S kernel components and device drivers are engineered to directly interface with the P R M handlers via a defined software A P I, thus enabling a more proactive and direct O S role in platform management.
+
+The second invocation method operates from an A S L context. A S L, or A C P I Source Language, is a high-level, declarative language utilized to describe system hardware and define control methods within the A C P I Name Space. This A S L code is subsequently compiled into A M L bytecode, which is executed by the A C P I interpreter within the system firmware. This A S L-based invocation path is typically employed when the O S driver lacks P R M awareness, or when the system utilizes the `_D S M` (Device Specific Method) for abstracting hardware interactions, or in scenarios where platform events trigger specific `_Lxx` methods, such as `_L00` for P C I E hot-plug events. These `_Lxx` methods, integral to the A C P I specification, are designed to intercept hardware-generated interrupts, enter an A C P I execution context, and subsequently execute relevant A M L code that may then invoke P R M handlers.
+
+Section five point one provides a detailed comparison, arguing for the preferential use of the "Direct Call" mechanism when the O S and its drivers are P R M aware, citing several architectural and operational advantages.
+
+Firstly, the implementation of `_D S M` inherently introduces a programming dependency within the A C P I firmware. Unlike purely declarative A C P I tables that merely describe hardware capabilities, `_D S M` methods contain imperative logic. This necessitates the A C P I firmware to dynamically update a `ParameterBuffer` that is then utilized by the active P R M handler. This process indicates a mutable state within the firmware during runtime. From a system engineering standpoint, debugging issues within this A S L-defined logic requires specialized A M L debugging tools. Furthermore, any corrective changes or modifications to the underlying A S L code necessitate a full system reboot to reload the updated firmware, underscoring the static and tightly coupled nature of firmware-resident code and the high cost associated with its modification.
+
+Secondly, the `_D S M` approach restricts the O S driver's direct interaction and control over P R M operations. A "Direct Call" empowers the O S device driver with fine-grained control, enabling it to directly invoke P R M module update lock and unlock A P I s. This allows the O S to manage critical sections and ensure proper synchronization and integrity during P R M operations. In contrast, `_D S M` invocation encapsulates these protected P R M calls internally within the firmware, effectively placing them beyond the direct programmatic control of the O S driver. While this abstraction might simplify the O S driver's design by offloading complexity, it comes at the cost of reduced O S control and flexibility. A concrete example elucidates this trade-off: with a direct call, the O S device driver can dynamically allocate and populate a buffer to facilitate flexible and dynamic information exchange with a P R M handler. However, in a `_D S M` invocation, data sharing is constrained to a fixed-size buffer that is pre-allocated by firmware during the system boot. Should a P R M handler update depend on a parameter buffer not previously defined, or if its layout changes, the corresponding A S L code must be modified, again requiring a full system reboot. This highlights the rigidity and high operational cost of modifications associated with `_D S M`, whereas the direct call approach allows the O S driver to manage such buffers dynamically, circumventing these limitations.
+
+Thirdly, `_D S M` invocation introduces greater performance overhead. This is attributable to the requirement for the A C P I interpreter to execute A M L bytecode, a process that is inherently slower than the direct execution of native code paths typically associated with a "Direct Call" from an O S driver. The interpretive layer adds measurable latency and computational cycles.
+
+Despite these disadvantages, the document acknowledges a substantial installed base of systems that continue to rely on `_D S M` mechanisms. This continued reliance is primarily driven by its role as an abstraction layer, providing a consistent and generalized method for O S drivers to invoke platform firmware services. The ongoing support for `_D S M` in such systems is crucial for maintaining backward compatibility until these legacy invocation paths can be phased out or deprecated. Furthermore, the `_D S M` invocation path is essential for handling certain hardware events that generate an S C I, which subsequently transitions the system into an A C P I execution context to execute `_Lxx` methods, ultimately leading to the invocation of P R M handlers. This illustrates a layered architectural approach where hardware events are abstracted and routed through firmware to trigger appropriate P R M actions.
+
+Section five point two provides an overview of the information conveyed during the invocation process. Regardless of whether a P R M handler is invoked via A S L or a direct call from an O S driver, the caller transmits specific data to the A C P I Bridge Driver. This data includes the G U I D (Globally Unique Identifier) of the specific P R M handler intended for invocation, which serves as a unique identifier in a system potentially containing numerous handlers. Additionally, in the case of a direct call, a pointer to a `ParameterBuffer` is passed. This buffer is explicitly allocated by the caller, signifying the O S driver's responsibility for managing the data payload accompanying the P R M handler invocation. This dynamic allocation capability provides greater flexibility for handling varying parameter sets and data sizes, a key advantage over the fixed buffer paradigm associated with `_D S M`.

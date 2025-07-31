@@ -1,0 +1,59 @@
+}
+/*
+* Control method to invoke PRM OperationRegion handler
+* Argd contains a buffer representing a DSM GUID
+*/
+Method (RUNS, 1)
+{
+/* Local® is the PRM data buffer */
+Local® = buffer (26){}
+
+/* Create byte fields over the buffer */
+CreateByteField (Local@, 0x0, PSTA)
+CreateQWordField (Local@, ©x1, USTA)
+CreateByteField (Local@, 0x9, CMD)
+CreateField (Local@, 0x50, 0x80, GUID)
+
+/* Fill in the command and data fields of the data buffer */
+CMD = @ // run command
+GUID = Argo
+
+/* Invoke PRM OperationRegion Handler and store the result into Locale */
+
+Local® = (PRMF = Local®)
+
+/* PSTA and USTA now contains the status returned by running the handler */
+If (!PSTA)
+{
+
+/* do error handling here */
+If (!USTA)
+
+{
+/* Optionally handle status returned by the PRM service */
+
+/* Return status */
+
+39
+This is a control method designed to invoke a P R M Operation Region handler. The input argument, Arg zero, contains a buffer which represents a D S M G U I D.
+
+The method is named RUNS and accepts one parameter. Inside the method, Local zero is designated as the P R M data buffer. This buffer is initialized with a size of twenty six bytes.
+
+Byte fields are then created over this buffer. A byte field named P S T A is created at offset hexadecimal zero within Local zero. A Q word field named U S T A is created at offset hexadecimal one. Another byte field named C M D is created at offset hexadecimal nine. Finally, a field named G U I D is created at offset hexadecimal fifty with a length of hexadecimal eighty.
+
+The command and data fields of the buffer are then populated. The C M D field is set to zero, indicating a run command. The G U I D field is assigned the value from Arg zero.
+
+The P R M Operation Region Handler is invoked, and its result is stored back into Local zero. This operation effectively assigns the value of Local zero to P R M F, and then P R M F's value to Local zero.
+
+After running the handler, both P S T A and U S T A now contain the status. If P S T A is not true, indicating a failure, an error handling block is executed. Similarly, if U S T A is not true, an optional error handling block for the P R M service status is executed. The method concludes with a return status.
+This segment of code elucidates a fundamental pattern in low level system programming, particularly within environments requiring precise hardware or firmware interaction, such as the Advanced Configuration and Power Interface, or A C P I, often found in U E F I and B I O S implementations. The construct defines a `Method`, specifically named `RUNS`, which is designed to invoke a P R M Operation Region handler. The integer `one` following `RUNS` indicates that this method expects a single input argument, conventionally referred to as `ArgZero`. The leading comment, "Control method to invoke P R M OperationRegion handler," establishes its purpose, while the subsequent comment clarifies that `ArgZero` itself constitutes a buffer representing a D S M G U I D. This suggests a mechanism for dynamically identifying and dispatching to specific device support methods within a firmware context.
+
+The initial action within the method block is the assignment `LocalZero is buffer index twenty six`. This statement establishes a pointer or reference to a preallocated memory buffer, designated as the P R M data buffer. By assigning `LocalZero` to a specific offset within a larger `buffer` structure, the system effectively carves out a dedicated region for parameters and results associated with the P R M operation. This is a common strategy for defining a communication payload in fixed memory locations, often to avoid dynamic allocation overhead in constrained environments or to conform to hardware interface specifications.
+
+Subsequently, the code meticulously defines fields over this `LocalZero` buffer. `CreateByteField` and `CreateQWordField`, along with `CreateField`, are abstract operations that programmatically overlay a structured interpretation onto the raw byte array represented by `LocalZero`. For instance, `CreateByteField (LocalZero, hexadecimal zero, P S T A)` defines a one byte field named `P S T A` at offset `hexadecimal zero` from the base address of `LocalZero`. Similarly, `CreateByteField (LocalZero, hexadecimal one, U S T A)` places a one byte field named `U S T A` at offset `hexadecimal one`. `CreateByteField (LocalZero, hexadecimal nine, C M D)` defines a one byte command field at offset `hexadecimal nine`. The use of `CreateField (LocalZero, hexadecimal fifty, hexadecimal eighty, G U I D)` implies the creation of a G U I D field spanning thirty two bytes, from offset `hexadecimal fifty` to `hexadecimal eighty` (exclusive of `hexadecimal eighty` as a length, but rather an end offset definition, or a length calculation from `hexadecimal eighty` minus `hexadecimal fifty` is `hexadecimal thirty` or forty eight bytes, for a Globally Unique Identifier). These operations are akin to defining members of a C language `struct` and then casting a memory pointer to that `struct` type, providing symbolic access to specific byte sequences within the buffer. This is critical for maintaining a well defined binary interface with the P R M handler.
+
+Following the structural definition, the code populates these newly defined fields. `C M D is equal to zero` initializes the command field to a specific value, here interpreted as a "run" command. This is a fundamental aspect of designing command and control protocols, where numerical codes signify different operations. The `G U I D is equal to ArgZero` statement assigns the globally unique identifier, provided as the input argument to the method, into its designated field within the `LocalZero` buffer. This signifies the specific D S M entity or operation instance that the P R M handler is intended to act upon.
+
+The core of the interaction occurs with the line `LocalZero is equal to (P R M F is equal to LocalZero)`. This is the invocation point for the P R M Operation Region Handler. `P R M F` likely represents a firmware function or an internal A C P I interpreter primitive that executes the P R M operation. It takes the prepared `LocalZero` buffer as its input, which contains the command and G U I D. The result of this execution, typically a status code or a return value indicating success or failure, is then written back into `LocalZero`, demonstrating a common pattern where the same buffer serves as both input and output for the operation. This in place update of the buffer means that the fields within `LocalZero` will now hold the post execution status information.
+
+The subsequent `If (!P S T A)` and `If (!U S T A)` blocks implement crucial error handling logic. After the `P R M F` call, the `P S T A` (P R M Status) and `U S T A` (User Status) fields within `LocalZero` will contain the status returned by the handler. The conditional checks evaluate these status indicators. A logical `not` operation on `P S T A` implies that if `P S T A` indicates an error condition (e.g., zero for error, non zero for success), the corresponding error handling path is taken. The presence of both `P S T A` and `U S T A` suggests a layered error reporting mechanism: `P S T A` might convey the general success or failure of the P R M invocation itself, while `U S T A` could provide more specific, perhaps application-defined or user-level, status information related to the D S M operation. Robust error handling at this level is paramount for system stability, diagnosability, and graceful recovery from unexpected conditions. Finally, the "Return status" comment indicates that the method will convey the overall outcome of the P R M operation back to its caller, completing the control flow.

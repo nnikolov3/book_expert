@@ -1,0 +1,91 @@
+6.1.1.2 PRM Handler Export Descriptor Structure
+
+Field Byte Byte | Description
+length offset
+
+HandlerGuid 16 0 A PRM handler GUID that maps to the
+PRM handler name specified in this
+descriptor.
+
+HandlerName 128 16 A PRM handler name that maps to the
+PRM handler GUID specified in this
+descriptor.
+
+Table 6-2 PRM Handler Export Descriptor Structure
+
+6.2 PRM Module Loader
+
+The PRM loader is a software component that is responsible for the following actions:
+1. Authenticating PRM module binary images
+Validating compliance of the image to the requirements in this document
+
+Loading the PRM module into a valid memory address range that is executable by the
+host OS
+
+4. Performing any updates to system data structures necessary to make the PRM module
+available for use
+
+6.2.1 Firmware PRM Loader
+
+The baseline PRM module is distributed within the platform firmware image and the PRM loader
+for that image will be a BIOS boot time component (such as an UEFI DXE driver). In this case,
+the image will typically be loaded from the non-volatile storage device that stores the system
+boot firmware. Though it is certainly possible and valid to load the image from other storage
+media. A firmware loader also has the special responsibility to produce and publish the PRMT
+ACPI tables based on the PRM modules it discovers.
+
+6.2.2 OS PRM Loader
+
+PRM updates at OS runtime allows for modification of PRM functionality without rebooting the
+platform. In the case of OS runtime PRM updates, an OS software component acts as the PRM
+loader. The OS PRM loader is required to ensure:
+
+1. PRM updates are always applied in monotonically increasing fashion. For instance, a
+PRM update with version number smaller than the current PRM module should never be
+applied.
+
+2. PRM update sequencing minimizes the downtime of PRM functionalities available to OS
+components.
+
+A OS PRM Loader can only replace existing PRM module that is already published as part of
+the BIOS boot process and part of the PRMT table. Such newly loaded PRM Module can only
+replace the functionalities of existing PRM handlers, but will not be able to add a new PRM
+handler.
+
+29
+Six point one point one point two P R M Handler Export Descriptor Structure.
+
+The table, titled "Table six dash two P R M Handler Export Descriptor Structure", describes the fields of the P R M Handler Export Descriptor. It has four columns: Field, Byte length, Byte offset, and Description.
+
+The first entry, under Field, is Handler G U I D. It has a Byte length of sixteen and a Byte offset of zero. Its description states it is a P R M handler G U I D that maps to the P R M handler name specified in this descriptor.
+
+The second entry, under Field, is Handler Name. It has a Byte length of one hundred twenty eight and a Byte offset of sixteen. Its description states it is a P R M handler name that maps to the P R M handler G U I D specified in this descriptor.
+
+Six point two P R M Module Loader.
+
+The P R M loader is a software component that is responsible for the following actions:
+First, authenticating P R M module binary images.
+Second, validating compliance of the image to the requirements in this document.
+Third, loading the P R M module into a valid memory address range that is executable by the host O S.
+And fourth, performing any updates to system data structures necessary to make the P R M module available for use.
+
+Six point two point one Firmware P R M Loader.
+
+The baseline P R M module is distributed within the platform firmware image and the P R M loader for that image will be a B I O S boot time component, such as an U E F I D X E driver. In this case, the image will typically be loaded from the non volatile storage device that stores the system boot firmware. Though it is certainly possible and valid to load the image from other storage media. A firmware loader also has the special responsibility to produce and publish the P R M T A C P I tables based on the P R M modules it discovers.
+
+Six point two point two O S P R M Loader.
+
+P R M updates at O S runtime allows for modification of P R M functionality without rebooting the platform. In the case of O S runtime P R M updates, an O S software component acts as the P R M loader. The O S P R M loader is required to ensure:
+First, P R M updates are always applied in monotonically increasing fashion. For instance, a P R M update with version number smaller than the current P R M module should never be applied.
+Second, P R M update sequencing minimizes the downtime of P R M functionalities available to O S components.
+
+An O S P R M Loader can only replace existing P R M module that is already published as part of the B I O S boot process and part of the P R M T table. Such newly loaded P R M Module can only replace the functionalities of existing P R M handlers, but will not be able to add a new P R M handler.
+The P R M handler export descriptor structure defines the programmatic interface for enumerating and identifying Platform Runtime Mechanism handlers within a system. This structure is fundamentally a record layout, specified by precise byte offsets and lengths, ensuring deterministic parsing across different implementations. The initial field, "Handler G U I D", occupies sixteen bytes starting at byte offset zero. This G U I D, a globally unique identifier, serves as the primary, immutable, and unambiguous reference for a specific P R M handler. Its one hundred twenty eight bit length provides a statistically insignificant probability of collision, which is essential for reliably identifying unique software or hardware components in complex systems. Immediately following the G U I D, at byte offset sixteen, is the "Handler Name" field, spanning one hundred twenty eight bytes. This field stores a human-readable string that correlates to the G U I D, providing a more intuitive label for system administrators or higher-level software components. The fixed length suggests a padded string format, allowing for efficient memory allocation and parsing, although it introduces potential for unused space if the name is shorter than one hundred twenty eight bytes. This design pattern, pairing a unique binary identifier with a human friendly name, is a common and robust approach in system architecture, facilitating both machine level lookup and user comprehension.
+
+Moving to the broader system context, the P R M module loader is a crucial software component responsible for orchestrating the lifecycle of these P R M modules. Its first critical function is the authentication of P R M module binary images. This process typically involves cryptographic validation, such as verifying digital signatures against trusted root keys and computing hash sums to ensure data integrity. This authentication step is paramount for maintaining system security and preventing the execution of unauthorized or tampered code, a foundational principle in secure boot and trusted computing base design. Following authentication, the loader performs a validation step, checking the binary image's compliance against predefined architectural and functional requirements. This might involve parsing metadata within the image or inspecting specific code segments to ensure adherence to a particular Application Binary Interface or service contract, thereby guaranteeing operational compatibility and preventing system instability due to malformed modules.
+
+Once validated, the P R M loader's next responsibility is to load the P R M module into a valid and executable memory address range. This involves dynamic memory allocation, often from a designated memory pool, and copying the module's binary content into this allocated space. Crucially, the loader must configure the memory management unit, or M M U, to mark this memory region as executable by the host O S, ensuring that code can be fetched and executed from it while maintaining memory protection boundaries. Finally, to integrate the newly loaded P R M module into the operational system, the loader performs necessary updates to system data structures. This often includes modifying dispatch tables, updating pointers, or populating control blocks that allow other system components or the O S to discover and invoke the functionalities exposed by the P R M module. This dynamic registration ensures that the P R M module becomes an active and usable part of the system's overall service architecture.
+
+The P R M loading process manifests in distinct phases and contexts. During the initial system startup, a firmware P R M loader, typically integrated within the platform firmware image itself, takes charge. This firmware component, such as a U E F I D X E driver, executes early in the boot sequence, before the operating system is fully initialized. It is responsible for loading baseline P R M modules, which are usually stored on the non volatile storage device containing the system boot firmware. However, the system design allows for flexibility, enabling the loading of P R M modules from alternative storage media, such as networked repositories or external drives. A unique and vital responsibility of this firmware loader is the generation and publication of A C P I tables, specifically the P R M T or P R M Table. This table, constructed dynamically based on the P R M modules discovered and loaded by the firmware, serves as a standardized interface for the operating system to enumerate and understand the available P R M functionalities. This adherence to A C P I standards ensures interoperability and consistent management of platform specific capabilities across diverse operating systems.
+
+In contrast to the firmware phase, the O S P R M loader operates at runtime, allowing for dynamic modification of P R M functionality without necessitating a full platform reboot. This capability is critical for maintaining high system availability and minimizing downtime, particularly in continuously operating environments. When P R M updates occur during O S runtime, an O S software component assumes the role of the P R M loader. This O S based loader must adhere to stringent operational protocols. First, it is mandated that P R M updates are applied in a strictly monotonically increasing version fashion. This means an update with a version number less than or equal to the currently loaded P R M module's version number must be rejected, preventing regressions and ensuring system integrity. This versioning mechanism is a cornerstone of robust software update strategies. Second, the update sequencing must be optimized to minimize the downtime of P R M functionalities available to other O S components. This implies sophisticated update methodologies, potentially involving hot-swapping or atomic updates to critical data structures, to ensure continuous or near-continuous service availability. A key constraint on the O S P R M Loader is its inability to introduce new P R M modules or functionalities that have not been previously published by the firmware as part of the P R M T table. Its role is strictly limited to replacing or updating existing P R M handlers, thereby maintaining the firmware's authoritative control over the base set of available platform runtime mechanisms and ensuring a consistent and controlled hardware abstraction layer.

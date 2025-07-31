@@ -1,0 +1,85 @@
+of DSM calls (which in-turn invoke the corresponding PRM Handlers), then a PRM Module
+update request need to be pended until this sequence is complete.
+
+Expanding on the ARS example above, this operation contains invocation of ARS DSM
+Method with the following functions.
+
+1. Query ARS Capabilities (Function Index 1)
+2. Start ARS (Function Index 2)
+3. Get ARS Status (Function Index 3)
+
+The PMEM Driver will start the sequence by querying the ARS capabilities and invoking the
+Start ARS function. Since the ARS is a long latency operation, the Start ARS function will start
+the ARS process and return back. The PMEM driver can then poll for the ARS status by
+invoking the GetARSStatus function.
+
+Each of these DSM functions will in turn invoke the corresponding PRM Handler to accomplish
+the task.
+
+During an update flow, care must be taken to ensure that a PRM Module that is in a middle of
+such sequence is not updated, until the sequence is complete.
+
+To enable this, a Lock/Unlock semantics is provided (see section 8.1.2 and Table 8-1) as part of
+ACPI sub-system.
+
+A DSM Method which is start of a such a sequence should invoke a Lock request (see Section
+8.2.1) first before starting the sequence of operations, and should invoke an Unlock request
+(see Section 8.2.2) at the end of the sequence.
+
+Going back to the ARS example above,
+
+1. once Query ARS Capabilities is invoked, the ASL code should first invoke a ‘Lock’ by
+passing the PRM Handler GUID corresponding to this _ DSM (which is the _ DSM UUID).
+The ACPI Interpreter will then find the module that this GUID is part of, and will ‘lock’ this
+Module from updates. The PRM Handler will NOT be invoked as part of the ‘Lock’
+Invocation.
+
+2. After this point, any update request received by ACPI will be staged but will not be
+activated until the update is Unlocked.
+
+3. Once the GetARSStatus PRM calls returns as ARS Complete, the ASL code then calls
+the Unlock Method by passing the PRM Hander GUID to the ACPI Interpreter, which will
+then ‘unlock’ this Module to allow for updates.
+
+a. If a previous update is staged (step 2 above), then the ACPI might choose to
+switch the pointers to the staged PRM Module at the Unlock call.
+
+The onus of taking the Lock and Unlock is left to the invoker (_ DSM, in the case of ASL based
+invocation, or an OS driver in the case of direct invocation), as the invoker will have the visibility
+as to if this is start of a sequence or an one-off stateless invocation.
+
+An OS may choose to not support runtime update at all leveraging only a firmware update path
+or provide a robust framework around updates to minimize system downtime. Since this is OS
+dependent, this section cannot provide many generic details to describe how PRM serviceability
+should be implemented in a given OS. However, it does describe the runtime update process
+used in Microsoft Windows to serve as an example of how such a process can be performed.
+
+33
+Of D S M calls, which in turn invoke the corresponding P R M Handlers, a P R M Module update request needs to be pended until this sequence is complete.
+
+Expanding on the A R S example above, this operation involves the invocation of an A R S D S M Method, which includes three primary functions: Query A R S Capabilities, corresponding to Function Index one; Start A R S, corresponding to Function Index two; and Get A R S Status, corresponding to Function Index three.
+
+The P M E M Driver will initiate the sequence by querying the A R S capabilities and then invoking the Start A R S function. Since the A R S is a long latency operation, the Start A R S function will begin the A R S process and return control immediately. The P M E M driver can then poll for the A R S status by invoking the Get A R S Status function.
+
+Each of these D S M functions will in turn invoke the corresponding P R M Handler to accomplish the task.
+
+During an update flow, care must be taken to ensure that a P R M Module that is in the middle of such a sequence is not updated until the sequence is complete.
+
+To enable this, a Lock Unlock semantic is provided as part of the A C P I subsystem. Further details can be found in section eight point one point two and Table eight one.
+
+A D S M Method that initiates such a sequence should first invoke a Lock request, as described in Section eight point two point one, before starting the sequence of operations. Subsequently, it should invoke an Unlock request, as described in Section eight point two point two, at the end of the sequence.
+
+Going back to the A R S example above, the process unfolds in several steps. First, once Query A R S Capabilities is invoked, the A S L code must initially invoke a Lock operation. This is done by passing the P R M Handler G U I D that corresponds to the D S M, which is effectively the D S M U U I D. The A C P I Interpreter then locates the module associated with this G U I D and locks it to prevent updates. Importantly, the P R M Handler is not invoked during this initial Lock invocation. Second, following this point, any update request received by A C P I will be temporarily staged and will not be activated until the update is explicitly Unlocked. Third, once the Get A R S Status P R M call indicates that the A R S process is Complete, the A S L code proceeds to call the Unlock Method. This involves passing the P R M Handler G U I D to the A C P I Interpreter, which then unlocks the Module to permit updates. Specifically, if a previous update has been staged, as described in the second step, the A C P I system has the option to redirect pointers to the staged P R M Module during the Unlock call.
+
+The responsibility for taking the Lock and Unlock is left to the invoker. This could be a D S M in the case of A S L based invocation, or an O S driver in the case of direct invocation. The invoker will have the necessary visibility to determine if this is the start of a sequence or a one off stateless invocation.
+
+An O S may choose not to support runtime update at all, leveraging only a firmware update path, or alternatively, provide a robust framework for updates to minimize system downtime. Since this aspect is O S dependent, this section cannot provide many generic details on how P R M serviceability should be implemented in a given O S. However, it does describe the runtime update process used in Microsoft Windows to serve as an example of how such a process can be performed.
+The discussed technical process details a method for performing a runtime update of a Platform Runtime Mechanism Module, or P R M Module, leveraging the Advanced Configuration and Power Interface, or A C P I, subsystem. The core mechanism involves device specific method, or `_DSM`, calls, which are a standardized way for an operating system to interact with system firmware and hardware functionalities defined in the A C P I tables. These `_DSM` calls, when invoked, trigger corresponding P R M Handlers to execute specific tasks. A critical aspect of this update flow is ensuring data integrity and preventing race conditions, which is managed through a stringent sequence of operations and synchronization mechanisms.
+
+An illustrative example of such an update involves an Asynchronous Read/Write System, or A R S, operation. This A R S process is characterized as a long latency operation, meaning it requires a significant amount of time to complete, which necessitates robust management to avoid system stalls or inconsistencies. The A R S operation is broken down into a three-step sequence: first, `Query A R S Capabilities`, invoked via function index one, to ascertain the A R S module's functionalities; second, `Start A R S`, using function index two, to initiate the long-running process; and finally, `Get A R S Status`, with function index three, which allows a persistent memory, or P M E M, driver to poll for the completion status of the A R S operation. Each of these specific `_DSM` functions, in turn, delegates to the appropriate P R M Handler to execute its designated task.
+
+The integrity of the P R M Module during an update sequence is paramount. To achieve this, a lock and unlock semantic is employed. Before initiating a sequence of operations that modifies a P R M Module, such as the A R S update, an initial `_DSM` method must first invoke a "Lock" operation. This lock request identifies the specific P R M Handler by its Globally Unique Identifier, or G U I D, which also serves as the device specific method, or `_DSM`, U U I D. The A C P I Interpreter, responsible for executing the A C P I Control Method Language, or A C M L, then locates the identified module and places a lock on it. Once locked, the P R M Handler for that module cannot be invoked again until the lock is released. Any subsequent update requests targeting the locked module are staged, meaning they are held pending and will not be activated until the module is explicitly unlocked.
+
+The unlock mechanism is integral to the process. Once the `Get A R S Status` P R M call indicates that the A R S operation has completed, the A C P I Source Language, or A S L, code proceeds to invoke the `Unlock` method. This is again channeled through the A C P I Interpreter, which then releases the lock on the module, making it available for further updates or operations. A crucial consequence of this unlock is that if a previous update was staged, such as in a scenario where a new P R M Module image was prepared, the A C P I system might, at the point of unlock, choose to atomically switch pointers to the newly staged P R M Module, thus completing the runtime update.
+
+The responsibility for correctly implementing and managing this lock and unlock sequence lies with the invoker of the `_DSM` methods. In scenarios where the invocation is A S L based, or driven directly by an operating system driver, the invoker must possess the necessary visibility into whether the current operation is part of a multi-step sequence requiring synchronization or merely a one-off, stateless invocation. The decision of whether to support runtime updates is largely operating system dependent. An O S may choose not to provide this capability, or it may offer a comprehensive framework for managing updates to minimize system downtime. While a generic, O S agnostic framework for P R M serviceability cannot be fully detailed, the described process serves as a concrete example of how such a runtime update procedure can be architected and implemented within an operating system environment like Microsoft Windows. This intricate interplay between the O S, firmware, and low-level hardware control highlights the sophisticated design required for robust and reliable system maintenance in modern computing platforms.

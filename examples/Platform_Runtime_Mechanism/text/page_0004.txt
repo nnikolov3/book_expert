@@ -1,0 +1,69 @@
+Figure 2-1 SMI Triggers
+
+OS / Drivers
+e OS to Platform Firmware Abstraction Interface
+ACPI Tables ACPI DSM UEFI RT a ACPI/RT
+(e.g. PCCT) Methods Services Services Provide
+(e.g. ARS) (e.g. Set Platfarm
+) SW SMI Triggers are Transparent to OS
+
+HW SMI Triggers are Transparent to OS
+
+Platform Hardware
+(CPU/Mem/IIO/PCH
+
+ote \
+
+As shown in Figure 2-1, OS/VMM entities invoke platform functionalities in runtime for a
+plurality of reasons. One of the main factors is that, it is the platform firmware that has intimate
+knowledge of the silicon and platform features and configurations and carrying this knowledge
+as part of the OS entity is a logistical challenge for broader enabling of Off-the-shelf operating
+systems. Hence OS entities rely on platform abstractions such as Advanced Configuration and
+Power Management Interface (ACPI).
+
+Though ACPI Source Language (ASL) provides runtime space for handling platform events,
+development and debug of ASL poses a special challenge due to the interpreted and highly
+restrictive nature of ASL language and runtime environment. Also, being architecture neutral,
+executing ISA specific instructions is not possible in ASL context. To overcome the restrictive
+environment of ASL, BIOS developers often resort to tricks like dropping into SMI handler to
+carry out BIOS tasks.
+
+By providing a mechanism to transition to a environment wherein ASL code can invoke
+platform runtime native code at the same privilege level, we alleviate the need to drop into
+SMI handler only for the sole purpose of executing native code.
+
+Example 1: Address translation from System Physical Address (SPA) to DIMM Address (DA).
+
+Linux distros have an EDAC driver for error handling, and hitherto carried the knowledge of
+doing the address translation as well (e.g. translating a given Physical Address to a
+Socket/Memory Controller/Channel/Rank/Bank/Column/Row). Address translation is a feature
+that is highly silicon dependent and varies between generations of silicon. It might also depend
+on third party silicon such as xXNC (Node controllers) that some OEMs use, and in the future will
+depend on the CXL devices populated in the platform. Hence an ACPI _DSM was created as
+the abstraction interface.
+
+11
+Figure two one, S M I Triggers.
+
+The diagram illustrates the architecture for S M I triggers. At the top level is the O S, or operating system, and its drivers. This layer interacts bidirectionally with three components below it: A C P I Tables, which include examples like the P C C T; A C P I D S M Methods, with examples like A R S; and U E F I R T Services, for instance, Set. These three components, A C P I Tables, A C P I D S M Methods, and U E F I R T Services, are collectively identified as A C P I slash R T Services that provide the platform.
+
+All three of these components interact bidirectionally with the System Management Mode, or S M M, block. The S M M block, in turn, interacts bidirectionally with the Platform Hardware, which consists of the C P U, memory, I I O, P C H, and other components. An arrow from the O S slash Drivers layer, extending to the right, indicates the O S to Platform Firmware Abstraction Interface. Additionally, two gray arrows illustrate that Software S M I Triggers are Transparent to the O S, and Hardware S M I Triggers are also Transparent to the O S.
+
+As shown in Figure two one, O S and V M M entities invoke platform functionalities in runtime for a plurality of reasons. One of the main factors is that it is the platform firmware that has intimate knowledge of the silicon and platform features and configurations, and carrying this knowledge as part of the O S entity is a logistical challenge for broader enabling of Off the shelf operating systems. Hence, O S entities rely on platform abstractions such as Advanced Configuration and Power Management Interface, or A C P I.
+
+Though A C P I Source Language, or A S L, provides runtime space for handling platform events, development and debug of A S L poses a special challenge due to the interpreted and highly restrictive nature of A S L language and runtime environment. Also, being architecture neutral, executing I S A specific instructions is not possible in A S L context. To overcome the restrictive environment of A S L, B I O S developers often resort to tricks like dropping into S M I handler to carry out B I O S tasks.
+
+By providing a mechanism to transition to an environment wherein A S L code can invoke platform runtime native code at the same privilege level, we alleviate the need to drop into S M I handler only for the sole purpose of executing native code.
+
+Example one: Address translation from System Physical Address, or S P A, to D I M M Address, or D A.
+
+Linux distros have an E D A C driver for error handling, and hitherto carried the knowledge of doing the address translation as well, for example, translating a given Physical Address to a Socket slash Memory Controller slash Channel slash Rank slash Bank slash Column slash Row. Address translation is a feature that is highly silicon dependent and varies between generations of silicon. It might also depend on third party silicon such as X N C, or Node controllers, that some O E M s use, and in the future will depend on the C X L devices populated in the platform. Hence an A C P I underscore D S M was created as the abstraction interface.
+This diagram, Figure two dash one, illustrates the architectural layers and interactions involved in System Management Interrupt, or S M I, triggers within a computing platform. At the highest level is the O S, or Operating System, and its associated Drivers, which represent the software environment managing the system. Directly below this, and interacting bi directionally with the O S and Drivers, are three key firmware abstraction components: A C P I Tables, such as the P C C T; A C P I D S M Methods, exemplified by A R S; and U E F I R T Services, like the Set function. These components collectively form the O S to Platform Firmware Abstraction Interface, indicated by the bracketed label on the right, providing a standardized way for the operating system to discover and interact with platform-specific features without requiring intimate knowledge of the underlying hardware implementation.
+
+Below this abstraction layer is the System Management Mode, or S M M, represented as a darker horizontal block. The S M M is a special, highly privileged operating mode of the C P U that handles system wide functions, often those critical to platform integrity, power management, or security. It sits between the O S and the fundamental Platform Hardware, which includes the C P U, Memory, I I O controllers, and the P C H, or Platform Controller Hub. Bi directional arrows connect S M M to both the A C P I / U E F I layer above it and the Platform Hardware below, signifying its role in orchestrating low-level platform operations. Crucially, as indicated by the horizontal arrows, both Software S M I Triggers from the O S and Hardware S M I Triggers from the platform hardware are transparent to the O S. This means that when an S M I occurs, the C P U enters S M M to execute firmware code, pausing the O S, but the O S itself is generally unaware of this context switch and resumes execution seamlessly once the S M M handler completes its task, maintaining the O S's illusion of uninterrupted control.
+
+The fundamental rationale for O S and Virtual Machine Monitor, or V M M, entities to invoke platform functionalities at runtime, often through mechanisms like A C P I, stems from the necessity of abstracting complex hardware behaviors. Platform firmware possesses an intimate and proprietary understanding of the silicon's features and configurations. Forcing every off the shelf operating system to contain this intricate knowledge would be an insurmountable logistical burden, hindering broad system compatibility and feature enablement. Consequently, O S entities rely on well defined platform abstractions, such as those provided by Advanced Configuration and Power Management Interface, or A C P I.
+
+However, the A C P I Source Language, or A S L, while providing runtime space for handling platform events, introduces its own set of challenges in development and debugging. A S L is primarily an interpreted language, which can lead to performance limitations and increased complexity in tracing execution flow. Furthermore, its design emphasizes architecture neutrality, meaning it cannot directly execute Instruction Set Architecture, or I S A, specific instructions. This restriction can be problematic when low-level, C P U-specific operations are required to fulfill B I O S tasks. To circumvent A S L's restrictive environment, B I O S developers frequently employ techniques that involve transitioning the C P U into the S M I handler. This allows the execution of native, highly privileged code directly manipulating hardware, a capability not afforded within the A S L context. The provision of a controlled mechanism to transition to an environment where A S L code can invoke platform runtime native code, ideally at the same privilege level as the S M M handler, alleviates the need for an uncontrolled "drop into" the S M I handler solely for executing such specific, low-level tasks.
+
+Consider the example of address translation from a System Physical Address, or S P A, to a D I M M Address, or D A. This transformation is critical for memory management, particularly for components like Linux's E D A C driver, which is responsible for error handling and memory organization. The E D A C driver requires precise knowledge of how a given physical address maps to the physical location within a D R A M module, encompassing details such as the socket, memory controller, channel, rank, bank, column, and row. This address translation logic is highly silicon dependent, varying significantly across different generations of processors and memory controllers. For instance, some O E M s may utilize third party silicon, such as X N C, or Node controllers, which introduce additional layers of complexity in address mapping. In the future, the integration of C X L, or Compute Express Link, devices into the platform will further complicate these mappings, necessitating even more robust abstraction. Therefore, A C P I D S M methods were explicitly designed to abstract this complex, silicon-dependent address translation, allowing the O S to query for the physical D I M M Address information without needing to encode specific hardware-dependent translation algorithms.

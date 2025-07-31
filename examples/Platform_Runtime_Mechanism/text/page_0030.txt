@@ -1,0 +1,75 @@
+Table 8-1 PRM Data Buffer (ASL Buffer Object)
+
+0 1 Data buffer status value. This value is
+populated by the PRM OperationRegion
+handler. The following are valid status values:
+
+0x0 — success
+
+0x1 — The PRM handler returned an error
+(only valid for command value 0)
+
+0x2 — Invalid command value
+0x3 - Invalid GUID
+0x4 — back to back lock command
+
+0x5 — unlock command called without calling
+lock
+
+0x6 — back to back call to unlock command
+Ox7-0xff - reserved
+
+1 8 PRM handler status value. This value is
+populated by the PRM OperationRegion
+handler only when command value O.
+Otherwise, this field is invalid.
+
+9 1 Command value. This value is populated by
+the caller. The supported command values
+are as follows:
+
+0x0 — run the PRM service associated with
+the GUID parameter.
+
+0x1 — start a sequence of PRM calls. When
+the sequence has been started for a GUID,
+the PRM module containing the GUID must
+not be updated until the terminate command
+for this GUID has been called. This command
+does not run the actual PRM service. lt is a
+way to communicate the start of a sequence
+of PRM calls to the OperationRegion handler.
+
+0x2 — terminate a sequence of PRM calls.
+This command should be called after the start
+sequence has been called. This tells the
+PRM OperationRegion that the sequence of
+PRM calls has ended and that it is safe to
+update the PRM handlers. This command
+does not run the actual PRM service. lt is a
+way to communicate the end of a sequence
+to the PRM OperationRegion handler.
+
+0x3-0xff - reserved
+
+37
+The table, titled eight dash one P R M Data Buffer A S L Buffer Object, describes the structure of a P R M data buffer, detailing its components by byte offset, byte length, and a description of each field.
+
+The first entry, starting at byte offset zero with a byte length of one, represents the data buffer status value. This value is populated by the P R M Operation Region handler. The valid status values are: hexadecimal zero zero for success; hexadecimal zero one, indicating the P R M handler returned an error, which is only valid for command value zero; hexadecimal zero two for an invalid command value; hexadecimal zero three for an invalid G U I D; hexadecimal zero four for a back to back lock command; hexadecimal zero five for an unlock command called without calling a lock; hexadecimal zero six for a back to back call to an unlock command; and hexadecimal zero seven through hexadecimal F F are reserved.
+
+The second entry, at byte offset one with a byte length of eight, is the P R M handler status value. This value is populated by the P R M Operation Region handler only when the command value is equal to zero. Otherwise, this field is invalid.
+
+The third entry, found at byte offset nine with a byte length of one, defines the command value. This value is populated by the caller. The supported command values are as follows: hexadecimal zero zero indicates running the P R M service associated with the G U I D parameter; hexadecimal zero one indicates starting a sequence of P R M calls. When the sequence has been started for a G U I D, the P R M module containing the G U I D must not be updated until the terminate command for this G U I D has been called. This command does not run the actual P R M service but serves as a way to communicate the start of a sequence of P R M calls to the P R M Operation Region handler. Hexadecimal zero two indicates terminating a sequence of P R M calls. This command should be called after the start sequence has been called, signaling to the P R M Operation Region that the sequence of P R M calls has ended and that it is safe to update the P R M handlers. Similar to the start command, this command does not run the actual P R M service but is a way to communicate the end of a sequence to the P R M Operation Region handler. Finally, hexadecimal zero three through hexadecimal F F are reserved.
+This table delineates the structure and semantic meaning of a P R M Data Buffer, which functions as a meticulously defined shared memory region for inter-component communication, likely within a platform's firmware or operating system kernel. This mechanism is a quintessential example of memory mapped I O, enabling a caller to issue commands and receive status updates from a P R M Operation Region handler. The buffer's design adheres to principles of robust interface definition, incorporating explicit byte offsets, data lengths, and comprehensive descriptions for each field, thereby establishing a clear communication protocol.
+
+The initial field, located at byte offset zero and spanning a single byte, conveys the "Data buffer status value." This output field is populated by the P R M Operation Region handler and serves as the primary indicator of the outcome of a requested operation. The defined hexadecimal values represent distinct states. A value of hexadecimal zero signifies success, indicating that the P R M service request was executed without error. In contrast, hexadecimal one denotes an error returned by the P R M handler, specifically indicating an internal failure or exceptional condition. The crucial caveat that this error code is "only valid for command value zero" underscores the specificity of error reporting, implying that internal handler errors are primarily associated with the main service execution command, distinguishing them from protocol or input validation failures. Hexadecimal two signifies an invalid command value, an essential aspect of input validation. This indicates that the command supplied by the caller, located at byte offset nine, was not recognized or supported by the handler, thereby preventing malformed requests from proceeding. A value of hexadecimal three points to an invalid G U I D, highlighting a failure in resolving the requested P R M service. This suggests that the unique identifier provided to select the service does not correspond to an available or valid P R M module, a critical check in a modular service architecture.
+
+The subsequent status values at byte offset zero delve into concurrency control and state management. Hexadecimal four, indicating a "back to back lock command," suggests an attempt to acquire a lock immediately after another lock operation, potentially in a context where re-entrant or nested locking is not permitted, or where a preceding unlock operation was expected. This highlights the importance of precise lock acquisition sequences. Hexadecimal five, "unlock command called without calling lock," is a clear error state pertaining to resource management. It signifies a violation of the expected lock-unlock pairing, implying an attempt to release a resource that was never properly acquired. Such an anomaly can lead to unpredictable system states or security vulnerabilities in concurrent environments. Similarly, hexadecimal six, "back to back call to unlock command," denotes an attempt to unlock a resource that is already in an unlocked state. Both hexadecimal five and six are critical for maintaining the integrity of mutexes or semaphores, ensuring that operations on shared resources adhere to strict pre and post conditions, thereby preventing race conditions and deadlocks. The remaining values from hexadecimal seven through hexadecimal F F are explicitly reserved, a standard practice for forward compatibility and future extensions of the protocol.
+
+Following the status byte, at byte offset one, is an eight byte field designated as "P R M handler status value." This field also serves as an output from the P R M Operation Region handler, providing additional, more granular status information. Critically, this field is populated only when the "Command value" at byte offset nine is hexadecimal zero. Otherwise, its contents are deemed invalid. This conditional population emphasizes that this eight byte field offers extended diagnostics or specific return data primarily for the general "run service" command, allowing for richer feedback than the single status byte. Its length suggests it could contain a G U I D, an error code with extended details, or a pointer to further information, demonstrating a structured approach to result reporting.
+
+Finally, at byte offset nine, a single byte field contains the "Command value," which is the primary input from the caller to the P R M Operation Region handler. This field dictates the specific operation the handler is expected to perform. A command value of hexadecimal zero instructs the handler to "run the P R M service associated with the G U I D parameter." This represents the direct invocation of a specific, identified P R M service. This implies a dispatcher function within the P R M handler that maps G U I Ds to their respective service routines.
+
+The commands hexadecimal one and hexadecimal two introduce a sophisticated mechanism for managing sequences of P R M calls, embodying principles of atomicity and transactional integrity. Command hexadecimal one, "start a sequence of P R M calls," signals the initiation of a multi-step operation. The accompanying description, stating that "the P R M module containing the G U I D must not be updated until the terminate command for this G U I D has been called," defines a critical section. This ensures that the internal state of the specified P R M module remains consistent and protected from concurrent modifications by other entities for the duration of the sequence. This is fundamental for preventing race conditions and maintaining data integrity across a series of dependent operations. It functions as a declarative intent to the handler, establishing a temporary lock on the module's state.
+
+Conversely, command hexadecimal two, "terminate a sequence of P R M calls," explicitly signals the conclusion of a previously initiated sequence. This command informs the P R M Operation Region that "the sequence of P R M calls has ended and that it is safe to update the P R M handlers." This releases the protection established by the start sequence command, allowing the module's state to be updated or modified again. The explicit clarification that neither the start nor terminate sequence commands "run the actual P R M service" underscores their role as meta commands. They do not perform functional operations but rather manage the context and state integrity for subsequent P R M calls. This sequential control mechanism is vital for complex system behaviors that require multiple interactions to be treated as a single, indivisible logical unit, a common requirement in robust system programming. Values from hexadecimal three through hexadecimal F F are reserved for future command definitions, preserving extensibility of the P R M interface.

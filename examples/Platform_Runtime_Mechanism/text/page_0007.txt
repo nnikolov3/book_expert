@@ -1,0 +1,29 @@
+2.3 Category 3 Usages
+
+HW SMls are can be generated for asynchronous platform events such as memory and 10
+errors. In response, the SMI handlers collect more information about the errors and
+surface them to the OS or log them to a BMC. In addition to the above, the SMI handlers
+can trigger RAS events to remediate or mitigate the errors that caused the SMI.
+
+Though PRM is mainly designed with Category 1 SMIs in mind, Category 3 SMI handlers can be
+migrated to PRM, if so desired by the platform vendor / OEM.
+
+Category 3 SMls are commonly used for correctable error harvesting and reporting. By
+generating a SCI instead of SMI for these error conditions, ASL code can be invoked
+which can utilize PRM for error harvesting and reporting.
+Two point three. Category three Usages.
+
+H W S M Is can be generated for asynchronous platform events such as memory and I O errors. In response, the S M I handlers collect more information about the errors and surface them to the O S or log them to a B M C. In addition to the above, the S M I handlers can trigger R A S events to remediate or mitigate the errors that caused the S M I.
+
+Though P R M is mainly designed with Category one S M Is in mind, Category three S M I handlers can be migrated to P R M, if so desired by the platform vendor or O E M.
+
+Category three S M Is are commonly used for correctable error harvesting and reporting. By generating a S C I instead of S M I for these error conditions, A S L code can be invoked which can utilize P R M for error harvesting and reporting.
+Hardware System Management Interrupts, or H W S M I s, represent a foundational mechanism within modern computing architectures, specifically designed to address asynchronous platform events. These events are by nature unpredictable and external to the C P U's normal instruction flow, such as critical memory failures or I O errors. When an H W S M I is triggered, the C P U transitions into System Management Mode, or S M M, a highly privileged operational state that allows the system management interrupt handler to execute code that is completely isolated from, and transparent to, the operating system.
+
+Upon entering S M M, the S M I handlers assume control. Their primary responsibility involves a comprehensive collection of information pertaining to the detected error. This diagnostic phase is crucial for understanding the root cause and scope of the anomaly. Following this, the collected error data is then either surfaced to the operating system for higher-level processing, or logged to a Baseboard Management Controller, or B M C. Surfacing to the O S typically involves transitioning back to a lower privilege level and signaling the O S through a mechanism like a System Control Interrupt, or S C I, thereby allowing the O S to log the event, alert administrators, or take other appropriate actions. Logging to a B M C, on the other hand, provides an out of band channel for system health monitoring and diagnostic data retrieval, particularly vital in server environments where continuous operational oversight is paramount, even in the event of main system failure.
+
+Beyond mere reporting, S M I handlers possess the capability to initiate Reliability, Availability, and Serviceability, or R A S, events. This denotes their role in actively remediating or mitigating the impact of the errors that invoked the S M I. Remediation might involve correcting transient errors, such as those handled by Error Correcting Code memory, or E C C. Mitigation, conversely, focuses on isolating faulty components or dynamically adjusting system parameters to prevent further propagation of the error, thereby enhancing overall system resilience and stability. This deep level of control, inherent to S M M, allows for proactive fault management at the hardware abstraction layer.
+
+While Platform Runtime Module, or P R M, is architecturally conceptualized with a primary focus on Category one S M I s, which typically encompass critical and time sensitive platform management functions, the system design allows for a flexible migration. Specifically, Category three S M I handlers, which are predominantly concerned with error harvesting and reporting, can be transitioned to leverage the P R M framework. This migration is typically a strategic decision made by the platform vendor or Original Equipment Manufacturer, or O E M, suggesting a shift towards a more modular and potentially more efficient runtime environment for system management functions.
+
+The common application for Category three S M I s lies in the realm of correctable error harvesting and reporting. Correctable errors are those transient faults that the hardware can detect and rectify without compromising data integrity or system operation. Instead of invariably invoking a full S M I for these conditions, a more refined approach involves generating a System Control Interrupt, or S C I. An S C I, unlike an S M I, operates within the normal operating system context, reducing the overhead and complexity associated with S M M transitions. When an S C I is generated, it signals the operating system to execute specific code written in A C P I Source Language, or A S L. This A S L code, interpreted by the O S A C P I driver, then interfaces with the P R M to perform the detailed error harvesting and reporting. This architectural choice represents a significant evolution in error management, providing a less intrusive, more standardized, and highly programmable method for handling correctable errors, allowing for sophisticated error analytics and proactive maintenance within a robust, integrated platform management ecosystem.

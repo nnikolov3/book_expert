@@ -1,0 +1,77 @@
+A PRM module consists of a set of PRM handlers. A PRM module is based on a feature that it
+supports. For example, there could be a RAS module, or a NVDIMM Module etc., with each
+module containing multiple handlers.
+
+As shown in Figure 2-1 below, the PRMT table consists of an array of PRM Module Structures.
+
+- Each PRM Module Structure will have a pointer to MMIO Ranges that the PRM handlers
+use in runtime.
+
+- Each PRM Module Structure will have an array of PRM Handler Info Structures
+
+o Each Handler Info Structure will have a GUID Identifying the handler, and the
+corresponding pointer to the handler.
+
+o Each Handler Info Structure may optionally have a pointer to an ACPI Parameter
+Buffer. The ACPI Parameter Buffer is a BIOS reserved range of memory during
+boot, which is used by the invoker (e.g. ASL Code) and the PRM Handler for
+parameter passing. The format of the data is a contract between the invoker and
+the handler.
+
+= For Direct Invocation, the invoker will allocate the parameter buffer
+(explained in section 5)
+
+Figure 3-2 PRMT Topology
+
+PRMT
+
+Standard ACPI
+Header PRM Module Structure
+
+Platform GUID Structure Rev, Len
+
+# of PRM PRM Module GUID, Rev
+Modules (N)
+
+PRM Handler Count (M)
+
+PRM Module
+Structure Pointer to Runtime PRM Handler Info Structure
+
+MMIO Ranges 7 Structure Rev, Len
+
+PRM Handler Info
+Structure
+
+PRM Module
+
+Structure PRM Handler GUID
+
+Pointer to PRM Handler
+
+Pointer to Param Buffer
+
+PRM Module
+Structure
+PRM Handler Info
+Structure
+A P R M module consists of a set of P R M handlers. A P R M module is based on a feature that it supports. For example, there could be a R A S module, or an N V D I M M Module et cetera, with each module containing multiple handlers.
+
+As shown in the accompanying figure, the P R M T table consists of an array of P R M Module Structures.
+
+Each P R M Module Structure will have a pointer to M M I O Ranges that the P R M handlers use in runtime. Each P R M Module Structure will have an array of P R M Handler Info Structures. Each Handler Info Structure will have a G U I D identifying the handler, and the corresponding pointer to the handler. Each Handler Info Structure may optionally have a pointer to an A C P I Parameter Buffer. The A C P I Parameter Buffer is a B I O S reserved range of memory during boot, which is used by the invoker, for example, A S L Code, and the P R M Handler for parameter passing. The format of the data is a contract between the invoker and the handler. For direct invocation, the invoker will allocate the parameter buffer, as explained in section five.
+
+Figure three dash two shows the P R M T Topology. The top level block is the P R M T structure. It contains a Standard A C P I Header, a Platform G U I D, and a field indicating the Number of P R M Modules, denoted by N. Following these fields, the P R M T structure contains an array of N P R M Module Structures.
+
+Each P R M Module Structure contains several fields: Structure Revision and Length, P R M Module G U I D and Revision, a P R M Handler Count denoted by M, and a Pointer to Runtime M M I O Ranges. Within each P R M Module Structure, there is an array of M P R M Handler Info Structures.
+
+Each P R M Handler Info Structure contains its own Structure Revision and Length, a P R M Handler G U I D, a Pointer to the P R M Handler, and a Pointer to a Parameter Buffer.
+The provided diagram illustrates the hierarchical topology of the Platform Runtime Mechanism Table, or `P R M T`, a fundamental data structure for managing platform-specific runtime services within a computing system, often in the context of `A C P I` compliant platforms. A `P R M` module conceptually represents a set of related `P R M` handlers, analogous to a software component or a hardware feature such as a Reliability, Availability, and Serviceability module, or a Non Volatile D Ram module, each encapsulating specific functionality.
+
+At the root of this structure, positioned on the far left, is the `P R M T` itself. This table begins with a `Standard A C P I Header`, signifying its adherence to the Advanced Configuration and Power Interface specification, which defines how operating systems interact with platform firmware to discover and manage hardware. Following the header, a `Platform G U I D`, or Globally Unique Identifier, provides a distinct identification for the specific platform implementation. Critically, the `P R M T` then specifies the total number of `P R M` Modules, denoted as `N`. This `N` acts as a count for an array of `P R M Module Structure` entries that immediately follow. This array, visually represented by the vertical bracket labeled `N` spanning multiple `P R M Module Structure` blocks, allows the system to enumerate and access each distinct `P R M` module.
+
+Moving to the central section of the diagram, each `P R M Module Structure` details a particular functional unit or hardware abstraction. The structure commences with a `Structure Rev, Len` field, providing versioning and total length information, which is essential for parsers to correctly interpret the structure's layout and evolution. A `P R M Module G U I D, Rev` uniquely identifies the module itself and its revision, ensuring precise identification across the system. The `P R M Handler Count`, labeled `M`, indicates the number of individual `P R M` handlers contained within this specific module. This count establishes a sub-array of `P R M Handler Info Structure` entries, similar to the main array in the `P R M T`. A key element within this module structure is the `Pointer to Runtime M M I O Ranges`. This pointer directs to memory mapped `I O` regions that the module's handlers utilize for direct interaction with associated hardware registers. This mechanism is critical for platform firmware and operating systems to configure and control hardware devices by reading from and writing to specific memory addresses, abstracting the physical `I O` operations.
+
+Extending to the rightmost part of the diagram, each `P R M Handler Info Structure` describes an individual callable function or service offered by its parent `P R M` module. Like the module structure, it starts with a `Structure Rev, Len` field for versioning and size. A `P R M Handler G U I D` provides a unique identifier for this specific handler, allowing software components to discover and invoke particular operations without needing prior knowledge of their memory location. The `Pointer to P R M Handler` is a fundamental concept in systems programming: it is an address to the actual entry point of the handler's executable code. When an invoker wishes to utilize the service, it dereferences this pointer to transfer control to the handler. Optionally, the `P R M Handler Info Structure` may include a `Pointer to Param Buffer`. This pointer directs to an `A C P I` Parameter Buffer, which is typically a region of memory reserved by the `B I O S` during system initialization. This buffer serves as a shared data area for parameter passing between the invoker, such as `A S L` Code executing in firmware, and the `P R M` handler. The format and interpretation of data within this buffer constitute an implicit contract between the invoker and the handler. For scenarios involving direct invocation, the invoker is responsible for allocating and populating this parameter buffer, providing flexibility in how arguments are prepared and passed.
+
+In essence, this `P R M T` topology establishes a robust, extensible, and discoverable mechanism for managing platform runtime functionalities. By utilizing `G U I D`s for identification and pointers for dynamic linking to code and data structures, it facilitates modular system design, allowing for the addition or modification of platform features without requiring wholesale changes to the core system software. This architecture supports the dynamic invocation of specialized handlers, enabling advanced system management, error reporting, and power control, all while providing a standardized interface through the `A C P I` framework.

@@ -1,0 +1,93 @@
+6.3
+
+PRM Handler
+
+A PRM handler is a function in a PRM module.
+
+6.3.1
+
+6.3.2
+
+Overview
+
+Each PRM handler must be assigned a GUID by the PRM module author and each
+PRM handler GUID and corresponding function name must be described as a pair in
+the PRM Module Export Descriptor.
+
+The PRM module loader resolves the PRM handler GUID to PRM handler physical
+address mapping.
+
+Function Signature
+
+All PRM handlers are required to follow the architecture-specific calling convention
+defined for UEFI Runtime services in the UEFI specification. The standard PRM handler
+function signature is defined below.
+
+EFI STATUS
+
+PRM EXPORT API
+
+(EFIAPI *PRM HANDLER) (
+IN VOID *ParameterBuffer OPTIONAL,
+IN PRM MODULE CONTEXT BUFFER *ContextBuffer OPTIONAL
+
+) ;
+
+Parameters
+
+ParameterBuffer A virtual address pointer to a caller allocated buffer that may be
+consumed by the PRM handler. The internal data format of the
+ParameterBuffer is a contract between the caller and the PRM
+handler and outside the scope of this document. If the
+ParameterBuffer is not provided, NULL will be passed as this
+argument.
+
+ContextBuffer A virtual address pointer to a
+
+PRM MODULE CONTEXT BUFFER. All addresses
+referenced in the buffer must be virtual addresses. The
+ContextBuffer may be NULL if no context information is
+available and the handler must check for this condition.
+
+The EFI_STATUS and EFI ABI (designated with the EFIAPI modifier in the signature)
+defined in the UEFI specification are adopted for PRM handlers. The
+PRM_EXPORT _API includes the appropriate keyword to add the data or function to the
+export directive in the PRM module object file.
+
+The following requirements are applied to PRM handlers:
+Six point three, P R M Handler.
+
+A P R M handler is a function in a P R M module.
+
+Six point three point one, Overview.
+
+Each P R M handler must be assigned a G U I D by the P R M module author, and each P R M handler G U I D and corresponding function name must be described as a pair in the P R M Module Export Descriptor.
+
+The P R M module loader resolves the P R M handler G U I D to P R M handler physical address mapping.
+
+Six point three point two, Function Signature.
+
+All P R M handlers are required to follow the architecture specific calling convention defined for U E F I Runtime services in the U E F I specification. The standard P R M handler function signature is defined below.
+
+The code block defines the standard P R M handler function signature. It specifies that the function returns an E F I underscore STATUS type, uses the P R M underscore EXPORT underscore A P I keyword, and is a pointer to a P R M underscore HANDLER using the E F I A P I calling convention. The function takes two parameters: an input void pointer named ParameterBuffer, which is optional, and an input P R M underscore MODULE underscore CONTEXT underscore BUFFER pointer named ContextBuffer, which is also optional.
+
+The table describes the parameters for the P R M handler function. The first parameter is ParameterBuffer. This is a virtual address pointer to a caller allocated buffer that may be consumed by the P R M handler. The internal data format of the ParameterBuffer is a contract between the caller and the P R M handler and is outside the scope of this document. If the ParameterBuffer is not provided, N U L L will be passed as this argument.
+
+The second parameter is ContextBuffer. This is a virtual address pointer to a P R M underscore MODULE underscore CONTEXT underscore BUFFER. All addresses referenced in this buffer must be virtual addresses. The ContextBuffer may be N U L L if no context information is available, and the handler must check for this condition.
+
+The E F I underscore STATUS and E F I A B I, designated with the E F I A P I modifier in the signature, defined in the U E F I specification are adopted for P R M handlers. The P R M underscore EXPORT underscore A P I includes the appropriate keyword to add the data or function to the export directive in the P R M module object file.
+
+The following requirements are applied to P R M handlers:
+The presented document elucidates the fundamental architectural and interface requirements for P R M handlers, which are modular functions operating within a P R M module, likely residing in a low-level system environment such as U E F I Runtime Services. This modular approach is a cornerstone of robust system design, promoting compartmentalization, reusability, and maintainability of software components.
+
+Each P R M handler is endowed with a G U I D, a Globally Unique Identifier, assigned by its author. The G U I D serves a critical role in system integrity, providing a collision free namespace for components, akin to assigning a unique molecular signature to each distinct chemical entity. This identifier, coupled with the handler's function name, is formally described within a P R M Module Export Descriptor. This descriptor is not merely documentation; it constitutes a manifest that enables the P R M module loader to dynamically resolve the G U I D to the handler's physical memory address at runtime. This dynamic resolution is a powerful mechanism for late binding and extensibility, allowing systems to load and unload modules, or to update specific functionalities, without requiring a complete recompilation or reboot. It forms the basis of many modern O S kernel module systems and firmware architectures, enhancing system flexibility and resilience.
+
+The interaction with these P R M handlers is strictly governed by a precisely defined function signature and an architecture specific calling convention, stipulated by the U E F I specification for Runtime Services. Adherence to a common A B I, or Application Binary Interface, is paramount. The A B I dictates the low-level details of how functions are invoked, including register usage, stack frame layout, and argument passing mechanisms. This strict contract ensures that components compiled independently can interoperate seamlessly, regardless of their internal implementation languages or toolchains, a critical aspect of creating a cohesive ecosystem from disparate software modules.
+
+The function signature for a P R M handler is defined to return an `E F I_S T A T U S` type, which is a common pattern in system level programming for conveying detailed error or success codes rather than a simple boolean flag. This provides fine-grained feedback on operation outcomes, crucial for robust error handling and diagnostic capabilities. The `P R M_E X P O R T_A P I` keyword signifies that the function is an exported A P I, a directive used by compilers and linkers to ensure the function's symbol is visible and accessible from outside the module, thereby facilitating its discovery and invocation by the P R M module loader. The handler function itself implicitly adheres to the `E F I A P I` calling convention, ensuring binary compatibility with the U E F I environment.
+
+The handler accepts two primary parameters, both optional and passed as virtual address pointers. The first, `ParameterBuffer`, is a pointer to a `V O I D` type, signifying a generic memory block. This buffer is allocated by the caller, underscoring the principle of caller ownership and responsibility for memory management. The internal data format of this buffer constitutes an explicit "contract" between the caller and the P R M handler. This contract is a critical design pattern for inter process or inter module communication, enabling structured data exchange while abstracting away the underlying memory layout from external interfaces. Should no `ParameterBuffer` be necessary or available, a N U L L pointer can be passed, which requires the handler to perform defensive checks, anticipating such conditions.
+
+The second parameter, `ContextBuffer`, is a pointer to a `P R M_M O D U L E_C O N T E X T_B U F F E R` type. This buffer is designed to convey context information, which may include stateful data, configuration parameters, or pointers to other module specific resources. A crucial constraint is that any addresses referenced *within* the `ContextBuffer` must also be virtual addresses, reinforcing the pervasive use of virtual memory in this environment. The ability for `ContextBuffer` to be N U L L necessitates that the P R M handler implement checks for its presence before attempting to dereference it, exemplifying robust error avoidance. This mechanism for context passing is vital for maintaining module state across multiple invocations or for configuring generic handlers for specific operational scenarios without altering their core logic.
+
+In essence, this section outlines a highly structured and disciplined approach to designing modular, interoperable, and robust firmware components within a virtual memory paradigm, relying on explicit A P I contracts, unique identifiers for discovery, and standardized calling conventions for seamless inter-component communication.

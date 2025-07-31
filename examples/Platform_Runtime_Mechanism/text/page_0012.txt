@@ -1,0 +1,117 @@
+4. ACPI Tables
+
+PRM ACPI tables are used to communicate PRM information between the firmware and
+operating system. The ACPI table format is standardized as described in this section. The
+system BIOS (e.g. UEFI firmware) is expected to construct the ACPI tables during the boot
+services portion of the boot flow and then populate the tables before loading the OS boot loader.
+
+4.1 Platform Runtime Mechanism Table (PRMT)
+Table 4-1 PRMT Top-Level Table
+
+Field Byte Byte
+length offset
+Header
+Signature 4 0
+Length 4 4
+Revision 1 8
+Checksum 1 9
+OEM ID 6 10
+OEM Table ID 8 16
+OEM Revision 4 24
+Creator ID 4 28
+Creator Revision 4 32
+PrmPlatformGuid 16 36
+PrmModulelnfoOffset 4 52
+PrmModulelnfoCount 4 56
+PrmModulelnfoStructure Variable | Prm
+[PrmModulelnfoCount] Module
+Info
+Offset
+
+4.1.1 PRM Module Information Structure
+
+Description
+
+‘PRMT’. Signature of the PRM ACPI table.
+Length, in bytes, of the entire PRM ACPI table.
+For this version, the value is 0.
+
+The checksum is computed when the table is
+installed in the firmware boot environment.
+Original equipment manufacturer (OEM) ID.
+The system firmware OEM Table ID.
+
+OEM revision of PRMT for the supplied OEM
+Table ID.
+
+Vendor ID of the utility that created the table.
+Revision of the entity that created the table.
+
+A GUID that uniquely identifies the current
+platform, to assist OSPM in platform targeting
+for runtime PRM Module updates. NOTE: Some
+OSPMs might use proprietary mechanisms for
+targeting instead of this field.
+
+Offset, in bytes, from the beginning of this table
+to the first PRM Module Information entry.
+
+The number of PRM Module Information entries.
+An array of PRM Module Information entries for
+this platform.
+
+Table 4-2 PRM Module Information Structure (PrmModulelnfoStructure)
+
+Field Byte Byte
+length offset
+StructureRevision 2 0
+StructureLength 2 2
+Identifier 16 4
+
+Description
+
+Revision of this PRM Module Information
+Structure.
+
+Length, in bytes, of this structure, including the
+variable length PRM Handler Information
+Structure array.
+
+The GUID for the PRM module represented by
+this PRM Module Information Structure.
+
+19
+four. A C P I Tables
+
+P R M A C P I tables are used to communicate P R M information between the firmware and operating system. The A C P I table format is standardized as described in this section. The system B I O S, for example U E F I firmware, is expected to construct the A C P I tables during the boot services portion of the boot flow and then populate the tables before loading the O S boot loader.
+
+four point one Platform Runtime Mechanism Table (P R M T)
+
+Table four dash one, titled P R M T Top-Level Table, details the fields of this A C P I table. It includes the field name, its byte length, byte offset, and a description.
+
+The initial part of the table defines the header. The Signature field, with a byte length of four and an offset of zero, holds the P R M T signature of the P R M A C P I table. The Length field, also four bytes long and at offset four, specifies the total length in bytes of the entire P R M A C P I table. The Revision field, one byte long at offset eight, indicates that for this version, its value is zero. The Checksum field, one byte long at offset nine, is computed when the table is installed in the firmware boot environment.
+
+Following the header are fields related to identification. The O E M I D field, six bytes long at offset ten, represents the Original Equipment Manufacturer I D. The O E M Table I D, eight bytes long at offset sixteen, is the system firmware O E M Table I D. The O E M Revision field, four bytes long at offset twenty four, provides the O E M revision of P R M T for the supplied O E M Table I D.
+
+Next, fields for the table creator are listed. The Creator I D field, four bytes long at offset twenty eight, is the Vendor I D of the utility that created the table. The Creator Revision field, also four bytes long at offset thirty two, specifies the revision of the entity that created the table. The PrmPlatformGuid field, sixteen bytes long at offset thirty six, is a G U I D that uniquely identifies the current platform. This G U I D assists O S P Ms in platform targeting for runtime P R M Module updates, though some O S P Ms might use proprietary mechanisms for targeting instead of this field.
+
+Finally, the table describes fields related to P R M Module Information. The PrmModuleInfoOffset field, four bytes long at offset fifty two, is an offset in bytes from the beginning of this table to the first P R M Module Information entry. The PrmModuleInfoCount field, four bytes long at offset fifty six, indicates the number of P R M Module Information entries. The PrmModuleInfoStructure array, indexed by PrmModuleInfoCount, has a variable byte length and its offset is determined by Prm Module Info Offset. This field represents an array of P R M Module Information entries for this platform.
+
+four point one point one P R M Module Information Structure
+
+Table four dash two, titled P R M Module Information Structure, describes the components of the PrmModuleInfoStructure. It includes the field name, its byte length, byte offset, and a description.
+
+The first field, StructureRevision, is two bytes long at offset zero, indicating the revision of this P R M Module Information Structure. The StructureLength field, also two bytes long at offset two, specifies the length in bytes of this structure, including any variable length P R M Handler Information Structure array it might contain. The last field, Identifier, is sixteen bytes long at offset four, and serves as the G U I D for the P R M module represented by this P R M Module Information Structure.
+The Advanced Configuration and Power Interface, or A C P I, tables serve as a standardized communication conduit between platform firmware and the operating system. Their primary role is to convey crucial Platform Runtime Mechanism, or P R M, information. During the system boot flow, specifically within the B I O S, or more commonly now, the U E F I firmware environment, these A C P I tables are constructed and populated. This critical process occurs prior to the loading of the operating system's boot loader, ensuring the O S receives essential hardware configuration and power management details from the outset.
+
+The P R M T, or Platform Runtime Mechanism Table, is a foundational A C P I table, whose structure is systematically defined. Its top-level format, as depicted in the first table, organizes system-level P R M data into a series of fields, each with a specific byte length and byte offset from the table's beginning.
+
+The initial segment of the P R M T forms a standard header, fundamental to all A C P I tables. The `Signature` field, spanning four bytes at offset zero, contains the unique string 'P R M T', serving as a crucial identifier for the operating system to confirm the table's type. Following this, the `Length` field, also four bytes long at offset four, specifies the total size of the entire P R M A C P I table in bytes. This aggregate length is vital for the operating system to correctly allocate memory and parse the complete structure. A single byte field at offset eight denotes the `Revision` of this P R M T format, here specified as zero, indicating a particular version of the table's schema. Immediately after, at offset nine, a one byte `Checksum` field is present. This checksum is computed across all bytes of the table when it is instantiated within the firmware boot environment. The purpose of a checksum is to provide a simple yet effective integrity check; by summing all bytes, any inadvertent alteration of the table's data during loading or transfer would result in a mismatch, signaling potential corruption to the operating system.
+
+Beyond the standard header, the P R M T includes identification fields. The `O E M I D` occupies six bytes at offset ten, identifying the Original Equipment Manufacturer. This is followed by the `O E M Table I D`, an eight byte field at offset sixteen, which, in conjunction with the `O E M I D`, uniquely specifies this particular P R M T from that O E M. The `O E M Revision`, a four byte field at offset twenty four, provides a version number for the P R M T relative to the supplied O E M. These identifiers allow operating systems, particularly O S Power Management, or O S P M, modules, to discern specific platform implementations and apply appropriate runtime behaviors or workarounds. Further identification is provided by the `Creator I D` and `Creator Revision` fields, each four bytes long at offsets twenty eight and thirty two respectively, which indicate the vendor and version of the utility that generated the table, aiding in debugging and traceability.
+
+A sixteen byte field at offset thirty six defines the `P R M Platform G U I D`, a Globally Unique Identifier. This G U I D provides an immutable, one hundred twenty eight bit identifier for the specific platform itself. Its role is crucial for operating systems to target runtime P R M module updates, especially as some O S P Ms may leverage proprietary mechanisms for platform specific features, thereby needing a robust identification method beyond generic A C P I attributes.
+
+The table then transitions to defining structures related to P R M modules. The `P R M Module Info Offset` is a four byte field at offset fifty two. This value represents an offset, in bytes, from the very beginning of the P R M T to the location of the first P R M Module Information entry. This mechanism allows for variable-length data sections to follow the fixed-size header, a common design pattern in system firmware to accommodate different numbers of components. The `P R M Module Info Count` is a four byte field at offset fifty six, specifying the total number of P R M Module Information entries that follow. Combined, the offset and count define an array of `P R M Module Information Structure` instances. The entry labeled `P R M Module Info Structure [P R M Module Info Count]` signifies this array, where the `Byte Length` is described as 'Variable' because its total size depends on the `P R M Module Info Count` and the size of each individual structure. Its `Byte Offset` is indicated by the `P R M Module Info Offset` field, meaning the O S must first read that field to find the starting point of this array. This array encapsulates the details of various P R M modules available on the platform, providing a flexible and extensible way to enumerate and describe system runtime capabilities.
+
+Proceeding to the P R M Module Information Structure, detailed in the second table, we delve into the composition of individual P R M module entries. This structure, which forms the elements of the array previously described, contains specific metadata for each module. The `Structure Revision` field, two bytes at offset zero, indicates the version of this particular `P R M Module Information Structure` format, allowing for independent evolution of module descriptions. Following this, the `Structure Length`, a two byte field at offset two, specifies the total length in bytes of this individual `P R M Module Information Structure`, including any variable-length `P R M Handler Information Structure` arrays it might contain. This length field is essential for the operating system to correctly parse each P R M module entry within the larger P R M T array, as each entry's precise boundary must be known. Finally, a sixteen byte `Identifier` field at offset four provides a G U I D that uniquely identifies the specific P R M module represented by this `P R M Module Information Structure`. This module-specific G U I D allows for fine-grained identification and management of individual P R M components, enabling the operating system to interact with, update, or differentiate between various runtime mechanisms on the platform.

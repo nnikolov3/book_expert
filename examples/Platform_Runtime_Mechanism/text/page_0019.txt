@@ -1,0 +1,133 @@
+Revision 2
+Reserved 2
+Identifier 16
+StaticDataBuffer 8
+(PRM _DATA _
+
+BUFFER)
+
+(virtual address)
+
+RuntimeMmio 8
+Ranges
+(PRM_MODULE_
+CONFIG_RUNTIM_
+MMIO RANGES)
+
+(virtual address)
+
+24
+
+32
+
+Revision of this PRM Module Context Buffer structure.
+Reserved
+
+The GUID of the PRM handler represented by this
+structure.
+
+A virtual address pointer to the static data buffer
+allocated for the PRM handler represented by this
+context instance.
+
+The static buffer is intended to be populated in the
+firmware boot environment.
+
+This pointer may be NULL if a static data buffer is not
+needed.
+
+A virtual address pointer to an array of
+PRM_RUNTIME_MMIO_RANGE structures that
+describe MMIO physical address ranges mapped to
+virtual memory addresses for access at OS runtime.
+
+The MMIO ranges are intended to be populated in the
+firmware boot environment. The virtual address pointer
+should also be set in the firmware boot environment.
+
+This pointer may be NULL if runtime memory ranges are
+not needed.
+
+The Context Buffer is allocated by the OS Bridge Driver. This is constructed using data
+discovered in the PRMT ACPI table (StaticDataBuffer and RuntimeMmioPages) and passed as
+an argument to PRM handlers. For any pointer that is NULL in the ACPI table, a NULL pointer
+may be passed to PRM handlers. PRM handler code should expect and handle this case.
+
+Figure 5-1
+OS Driver (e.g
+RAS Handler)
+Invocation through
+PRMOpRegion
+
+(GUID, *ParamBuffer)
+
+Bridge Driver consults PRMT to
+build the ContextBuffer
+
+| al
+
+Invocation Summary
+
+OS Driver (e.g
+
+RAS Handler)
+
+Direct Invocation
+
+(GUID, *ParamBuffer)
+
+ACPI/Bridge *PRM_HANDLER
+
+Driver *ParamBuffer,
+
+PRM
+
+Handlers
+
+PRMT
+The table presents the structure of a P R M Module Context Buffer, detailing its fields, their current and target byte sizes, and their descriptions.
+
+First, the Revision field uses two bytes currently, with a target of four bytes, and describes the revision of this P R M Module Context Buffer structure.
+
+Next, the Reserved field uses two bytes currently, with a target of six bytes, and is marked as reserved.
+
+Following this, the Identifier field uses sixteen bytes currently, with a target of eight bytes. It represents the G U I D of the P R M handler associated with this structure.
+
+The StaticDataBuffer field, also known as P R M data buffer, is a virtual address pointer. It uses eight bytes currently and targets twenty four bytes. This pointer refers to the static data buffer allocated for the P R M handler in this context instance. This static buffer is intended to be populated within the firmware boot environment. The pointer can be N U L L if a static data buffer is not required.
+
+Finally, the RuntimeMmioRanges field, or P R M module config runtime M M I O ranges, is also a virtual address pointer. It uses eight bytes currently and targets thirty two bytes. This pointer points to an array of P R M runtime M M I O range structures. These structures describe M M I O physical address ranges that are mapped to virtual memory addresses for access during O S runtime. The M M I O ranges are intended for population in the firmware boot environment, and this virtual address pointer should also be set within the firmware boot environment. This pointer can be N U L L if runtime memory ranges are not needed.
+
+The Context Buffer is allocated by the O S Bridge Driver. This is constructed using data discovered in the P R M T A C P I table, specifically StaticDataBuffer and RuntimeMmioPages. It is then passed as an argument to P R M handlers. If any pointer in the A C P I table is N U L L, a N U L L pointer may be passed to P R M handlers. P R M handler code should anticipate and handle this scenario.
+
+Figure five dash one illustrates the invocation summary, showing how P R M handlers are invoked and the components involved.
+
+At the top, an O S Driver, exemplified by a R A S Handler, can initiate two types of invocations.
+
+One path is an Invocation through A C P I. Here, the O S Driver sends a request to the A C P I underscore D S M block. From the A C P I underscore D S M block, a P R M Operation Region, defined by a G U I D and a parameter buffer pointer, is invoked. This path has a red cross over S M I, indicating that it avoids S M I.
+
+The second path from the O S Driver is a Direct Invocation, defined by a G U I D and a parameter buffer pointer, which goes to an A C P I slash Bridge Driver block.
+
+The A C P I slash Bridge Driver block can consult the P R M T, or P R M Table, to build the ContextBuffer. It also directly invokes P R M Handlers. The invocation to P R M Handlers is represented by a P R M handler pointer, a parameter buffer pointer, and a context buffer pointer, indicated by the dotted line from the A C P I slash Bridge Driver to P R M Handlers. The P R M T is shown as a table, which is accessed by the A C P I slash Bridge Driver. The P R M Handlers are depicted as a stack of three green blocks on the far right.
+The data presented in the table details the structure of a P R M Module Context Buffer, a critical data construct used for conveying configuration and operational parameters to platform runtime management handlers. The table outlines several key fields within this buffer.
+
+The first field, 'Revision', occupies two bytes initially and then four bytes, indicating a versioning scheme for the Context Buffer structure itself. This enables forward compatibility, allowing future iterations of the system to introduce new fields or modify existing ones while maintaining support for older buffer formats based on the revision number.
+
+The 'Reserved' field, initially two bytes and then six bytes, serves as padding for future expansion or to ensure data alignment within memory. Such reserved fields are standard practice in structured data definitions, allowing for growth without breaking existing software interfaces.
+
+The 'Identifier' field, occupying sixteen bytes and subsequently eight bytes, is described as the G U I D, or Globally Unique Identifier, of the P R M handler that this context buffer is associated with. A G U I D is a one hundred twenty eight bit identifier, ensuring its statistical uniqueness across distributed systems. The sixteen byte allocation directly corresponds to the size of a G U I D. The subsequent eight byte reference might suggest a pointer to the G U I D, a truncated representation, or a context-specific usage.
+
+The 'StaticDataBuffer' field, identified by the constant `P R M _ D A T A _ B U F F E R`, is an eight byte virtual address pointer, with twenty four bytes listed for its size or related allocation. This pointer directs to a static data buffer intended to be populated by the firmware during the boot environment initialization phase. The use of a virtual address signifies that memory translation, typically performed by an M M U or Memory Management Unit, is active when this pointer is dereferenced. This buffer provides a fixed set of data that does not change during runtime, and its optionality, indicated by the possibility of a `N U L L` pointer, means that P R M handlers must be robust enough to check for its presence before attempting to access it.
+
+Following this is the 'RuntimeMmioRanges' field, specified by `P R M _ M O D U L E _ C O N F I G _ R U N T I M E _ M M I O _ R A N G E S`. This is also an eight byte virtual address pointer, with thirty two bytes associated, pointing to an array of structures that describe Memory Mapped I O, or M M I O, physical address ranges. M M I O is a fundamental technique for hardware interaction, where device registers and on-board memory are mapped into the C P U's address space. The firmware boot environment is responsible for populating these M M I O ranges and setting this virtual address pointer. At O S runtime, the operating system's memory management unit translates the virtual addresses to the corresponding physical M M I O addresses, enabling the P R M handlers to directly access and manipulate hardware components. Similar to the static data buffer, this pointer can also be `N U L L`, requiring P R M handlers to handle its absence gracefully.
+
+The descriptive text accompanying the table explains that the O S Bridge Driver is responsible for allocating this Context Buffer. It explicitly states that the data used to construct this buffer, specifically the `StaticDataBuffer` and `RuntimeMmioPages` (referring to the `RuntimeMmioRanges`), are discovered from the P R M T A C P I table. This highlights a crucial interaction model where the O S, through a specialized driver, leverages information published in firmware tables to configure runtime execution environments for specific platform handlers. The emphasis on `N U L L` pointer handling underscores the importance of defensive programming and robust error management in systems programming, where dynamic resource availability is common.
+
+The diagram, titled "Figure 5-1 Invocation Summary", illustrates the architectural flow for invoking P R M handlers. Starting from the top, an "O S Driver", exemplified by a R A S Handler (Reliability, Availability, and Serviceability), initiates operations. This O S Driver can communicate with lower-level system components through two primary paths.
+
+On the left, an "Invocation through A C P I" path shows the O S Driver interacting with the "A C P I _ D S M" method. A C P I, or Advanced Configuration and Power Interface, is an industry standard that provides the operating system with control over power management, device configuration, and other system functions. The `_D S M` method, or Device Specific Method, allows the O S to invoke vendor-defined functions specific to a device or platform. From the "A C P I _ D S M" method, an arrow leads to the "A C P I / Bridge Driver" with the label "P R M O p Region (G U I D, *ParamBuffer)". This signifies that the A C P I `_D S M` method, when executed, can initiate a P R M Operation Region, passing a G U I D to identify the specific P R M operation and a pointer to a parameter buffer. Importantly, a red "X" over an arrow labeled "S M I" stemming downwards from "A C P I _ D S M" indicates that System Management Interrupts are explicitly *not* used for this invocation path. This is a significant architectural decision, as S M I are traditionally used for critical, high-priority firmware operations and can introduce complexity and latency, often operating in System Management Mode, which is opaque to the O S. By avoiding S M I, the system likely aims for more direct O S control and predictable latency for these P R M operations.
+
+On the right, an alternative "Direct Invocation" path shows the O S Driver directly interacting with the "A C P I / Bridge Driver", also passing a G U I D and a parameter buffer. This suggests a more streamlined invocation mechanism that bypasses the A C P I `_D S M` layer for scenarios where direct interaction is sufficient or preferred.
+
+The central component in this architecture is the "A C P I / Bridge Driver". This driver acts as an intermediary, receiving invocations from both the A C P I `_D S M` path and the direct invocation path. Below the "A C P I / Bridge Driver", a callout box states, "Bridge Driver consults P R M T to build the ContextBuffer". This explains a critical step: the Bridge Driver retrieves necessary configuration data from the "P R M T", or Platform Runtime Management Table, which is depicted as a table-like structure below. The P R M T is a firmware table containing the definition and mapping information for P R M modules and their corresponding context data. A dashed arrow pointing from the "P R M T" upwards to the "A C P I / Bridge Driver" reinforces this data flow, indicating the Bridge Driver accesses the P R M T to construct the Context Buffer.
+
+Finally, a curved arrow labeled "*P R M _ H A N D L E R (*ParamBuffer, *ContextBuffer)" extends from the "A C P I / Bridge Driver" to a stack of green boxes labeled "P R M Handlers" on the far right. This represents the ultimate invocation of the specific P R M operation. The asterisk before `P R M _ H A N D L E R` indicates that the Bridge Driver invokes these handlers via a function pointer, allowing for dynamic dispatch based on the G U I D provided in the initial invocation. The Bridge Driver passes two key arguments to the P R M Handler: the `ParamBuffer` received from the O S Driver and the `ContextBuffer` that it dynamically constructed using information from the P R M T. This entire mechanism provides a structured and flexible way for the operating system to trigger and configure platform-specific runtime management tasks, ensuring that the necessary contextual information and memory mappings are correctly provided to the underlying handlers.

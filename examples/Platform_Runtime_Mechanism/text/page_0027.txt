@@ -1,0 +1,90 @@
+7.2 Installation in Windows
+
+1. During OS runtime, an OS-owned updater validates and writes the PRM module update
+to disk in a well- known location (e.g. in Windows: \System32\Prm\Modules\{Guid}).
+
+2. The updater will parse information from the update and persist the following metadata to
+registry (to be used across reboots):
+
+1. Full file path of the PRM module.
+2. The PRM module version number.
+3. The list of PRM handler GUIDs included in the PRM module.
+
+3. The updater loads the PRM module into memory and sends request to ACPI to update
+its PRM handler pointers.
+
+7.2.1 Persisting PRM Module Updates Across Reboot/KSR
+
+After reboot, winload will read the system hive to see if any PRM module updates have been
+updated from the firmware’s base image. For each PRM module, winload will load the latest
+version (as indicated by the system hive) from the on-disk location to memory and describe the
+Instance in the boot start driver list. This is the scheme used for boot start drivers, for which
+existing MM support (relocation of the drivers) exists.
+
+As ACPIl.sys reinitializes post boot, it will consume the information from the loader block and
+reconstruct an up-to-date view of PRM handlers. For both KSR and cold boot scenarios, the
+ACPI interpreter will be paused up until all PRM updates have been processed.
+
+7.3 Rollback
+
+It is imperative that the platforms implementing PRM functionalities support the rolling back of
+updates in the event of problematic updates. This is a similar requirement to that now being
+mandated for microcode updates. To simply the update process, rollbacks will be modeled as
+an update (increment the module version number) that reverts the behavior to a previous
+version.
+
+Module 1
+"A
+
+Module 1 Module 1
+V2 V3
+
+Handler
+Handler?
+Handler3
+
+Handler Handler
+Handler? Handler?
+Handler3 Handler3
+
+Figure 7-1 PRM Module Versioning Update Example
+
+Note: This assumes stateless behavior in hardware. Specifically, if a PRM update causes
+reserved bits to be set in HW, downgrading PRM behavior (moving to V3 in the diagram above)
+needs to ensure the corresponding bits reverted to a known good state or that the presence of
+the set bits do not adversely affect the behavior of the down-level PRM module.
+Seven point two: Installation in Windows.
+
+During O S runtime, an O S owned updater validates and writes the P R M module update to disk in a well known location, for example, in Windows System thirty two P R M Modules G U I D.
+
+The updater will parse information from the update and persist the following metadata to registry, to be used across reboots:
+First, the full file path of the P R M module.
+Second, the P R M module version number.
+Third, the list of P R M handler G U I D s included in the P R M module.
+
+The updater loads the P R M module into memory and sends request to A C P I to update its P R M handler pointers.
+
+Seven point two point one: Persisting P R M Module Updates Across Reboot slash K S R.
+
+After reboot, winload will read the system hive to see if any P R M module updates have been updated from the firmware’s base image. For each P R M module, winload will load the latest version, as indicated by the system hive, from the on disk location to memory and describe the instance in the boot start driver list. This is the scheme used for boot start drivers, for which existing M M support, specifically relocation of the drivers, exists.
+
+As A C P I dot S Y S reinitializes post boot, it will consume the information from the loader block and reconstruct an up to date view of P R M handlers. For both K S R and cold boot scenarios, the A C P I interpreter will be paused up until all P R M updates have been processed.
+
+Seven point three: Rollback.
+
+It is imperative that the platforms implementing P R M functionalities support the rolling back of updates in the event of problematic updates. This is a similar requirement to that now being mandated for microcode updates. To simply the update process, rollbacks will be modeled as an update, specifically incrementing the module version number, that reverts the behavior to a previous version.
+
+The diagram, titled 'P R M Module Versioning Update Example', illustrates a progression of Module one through different versions. It begins with a block representing 'Module one, Version one', containing 'Handler one', 'Handler two', and 'Handler three'. An arrow points from this block to the next, which represents 'Module one, Version two', also containing 'Handler one', 'Handler two', and 'Handler three'. A second arrow then points to the final block, 'Module one, Version three', which again contains 'Handler one', 'Handler two', and 'Handler three'. This visually demonstrates that the handlers remain consistent across module version updates.
+
+Note: This assumes stateless behavior in H W. Specifically, if a P R M update causes reserved bits to be set in H W, downgrading P R M behavior, which is moving to Version three in the diagram above, needs to ensure the corresponding bits are reverted to a known good state, or that the presence of the set bits do not adversely affect the behavior of the down level P R M module.
+The installation of P R M modules within an operating system like Windows involves a meticulous sequence of operations designed to ensure integrity, persistence, and proper system integration. Initially, during O S runtime, an O S owned updater undertakes the critical task of validating the P R M module update. This validation process is fundamental for maintaining system security and stability, preventing the introduction of corrupted or malicious code. Following successful validation, the updater writes the module to a predefined, well known location within the file system, for instance, in Windows, this might be a path resembling `system thirty two P R M modules G U I D`. The use of a G U I D here ensures a globally unique and unambiguous identification for each module instance, facilitating precise management.
+
+Concurrently, the updater parses crucial metadata from the update package and persists this information into the system registry. This persistence mechanism is vital because the registry acts as a centralized hierarchical database that stores configuration settings and options for the operating system and its applications. The specific metadata persisted includes the full file path to the P R M module, its version number, and a list of P R M handler G U I D s. This detailed information allows the system to accurately locate, identify, and manage the module and its associated functions across system sessions. Subsequently, the updater loads the newly acquired P R M module into volatile memory. This is followed by a programmatic request to the A C P I subsystem to update its internal pointers to the P R M handlers. This step is critical; it ensures that the operating system's interfaces to hardware management, which A C P I governs, are correctly redirected to the entry points of the newly loaded module.
+
+The persistence of P R M module updates across system reboots or Kernel State Restores (K S R) is handled meticulously during the boot process. Upon a system reboot, the `winload` component, which is the Windows boot loader, initiates by reading the system hive of the registry. This action allows `winload` to ascertain whether any P R M module updates have been applied beyond the firmware's baseline image. For each detected P R M module, `winload` proceeds to load the most current version from its on disk location into memory. The decision to load a specific version is driven by information found in the boot start driver list within the system hive itself, indicating the version designated for use. This sophisticated scheme also accommodates situations where existing M M U support enables the relocation of drivers in memory, optimizing resource allocation and address space management. Following this, the A C P I dot sys component, which is the kernel mode driver for A C P I, reinitializes post boot. It consumes the configuration data provided by the loader block to construct an up to date view of the P R M handlers. During this critical phase, for both K S R and cold boot scenarios, the A C P I interpreter is deliberately paused until all P R M updates have been comprehensively processed, ensuring a consistent and stable system state before full operational control is handed over.
+
+A fundamental aspect of robust system design, particularly for software and firmware updates, is the provision for rollback. This capability is imperative for platforms implementing P R M functionalities to mitigate issues arising from problematic or incompatible updates. The requirement for rollback is analogous to that mandated for microcode updates, where the ability to revert to a known good state is paramount for system resilience. To simplify the process of update management, rollbacks are conceptualized not as an undo operation in the traditional sense, but rather as a forward progression to a specifically older, stable version. This is achieved by incrementing the module's version number to designate a previous, desired state. This approach ensures that each state, whether a newer version or a stable older one, is a distinct, valid, and addressable version within the system's versioning scheme.
+
+The conceptual flow of P R M module versioning updates is illustrated in the provided diagram, which presents three sequential states of "Module one." Visualizing this from left to right, we first encounter a blue rectangular block labeled "Module one V one." Below this label, within the same block, three components are listed: "Handler one," "Handler two," and "Handler three." This block represents the initial baseline state of the module, indicating its version and the set of interfaces or handlers it exposes. A prominent blue arrow points horizontally from this "Module one V one" block to a second blue rectangular block located directly to its right. This second block is labeled "Module one V two" and similarly lists "Handler one," "Handler two," and "Handler three" beneath it. This transition signifies an update from version one to version two. The key observation here is the increment in the module's version number from V one to V two, while the listed handlers remain consistently "Handler one," "Handler two," and "Handler three." This consistency in handlers across different versions implies an adherence to an Application Programming Interface, or A P I, stability principle, where the contractual interface provided by the module remains unchanged even as its internal implementation evolves. Continuing to the right, another blue arrow connects "Module one V two" to a third blue rectangular block, labeled "Module one V three." This block also displays "Handler one," "Handler two," and "Handler three." This further transition from version two to version three reinforces the pattern of sequential versioning. The diagram fundamentally demonstrates that while the core module progresses through distinct versions, its external facing handlers maintain a stable interface, which is a cornerstone of modular software design, ensuring backward compatibility and predictable interactions for components relying on these handlers.
+
+A critical consideration, particularly when managing P R M modules, is the interaction with hardware state. The diagram implicitly assumes a stateless behavior in the underlying hardware relative to these P R M updates. However, in reality, a P R M update might cause specific reserved bits within the hardware to be set. This setting of hardware bits can represent a persistent change in the hardware's operational mode or configuration, potentially retaining its state across system reboots or even power cycles. Consequently, if a rollback or downgrade is attempted, for instance, moving from "Module one V three" back to "Module one V two" as implied by the versioning example, the system must meticulously ensure that any such hardware reserved bits are reverted to a known good state. This poses a significant challenge because direct manipulation or resetting of hardware bits from software, especially during a downgrade, might not always be straightforward or even possible. Therefore, the design must ensure that the continued presence of these potentially set bits does not adversely affect the behavior or functionality of the down level P R M module. This underscores the importance of a robust hardware software interface design, where older module versions can gracefully operate even in the presence of hardware configurations established by newer, potentially incompatible, module versions.

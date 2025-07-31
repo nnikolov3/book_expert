@@ -24,7 +24,9 @@ if ! command -v "$dep" >/dev/null 2>&1; then
 
 # ✅ GOOD - Captures errors for debugging
 value=$(yq -r "$key" "$CONFIG_FILE")
-if ! command -v "$dep"; then
+if [[ $value ]]; then  ..
+
+if [[ -n command -v "$dep" ]]; then
 ```
 
 ## 2. Variable Management
@@ -37,6 +39,7 @@ if ! command -v "$dep"; then
 - **Declare and assign on separate lines** for better error tracking
 - **ALL variables must be declared at the top** - global variables at the top of the script, local variables at the top of functions
 - **LONG COMMANDS SHOULD BE MULTILINE**
+- **Variables should hint the type** primerily if it is an array, or a reference- **Initialize the variable in the correct order to avoid unbound variables**
 
 ```bash
 # ✅ GOOD - Global variables at top of script
@@ -54,12 +57,11 @@ function process_data() {
     local result=""
     local retry_count=0
     local tesseract_output
+    local -a array_pdf=()
     
-    # Function logic starts after all variable declarations
-    jq_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
-    jq_status_exit="$?"
+
     
-    if [[ -n "$jq_output" && "$jq_status_exit" -eq 0 ]]; then
+    if [[ "$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)" -eq 0 ]]; then
         echo "Valid JSON response"
     fi  
 
@@ -68,11 +70,12 @@ function process_data() {
 		stdout -l "$TESSERACT_LANG_GLOBAL" \
 		--dpi "$DPI_GLOBAL" \
 		--oem 3 \
-		--psm 1 2>&1) 
+		--psm 1)  
 }
 
 # ❌ AVOID - Variables scattered throughout
 function bad_example() {
+    local use_first_var=$(command $first_var) # call unbound variable.
     local first_var=""  # Variable declaration
     
     some_command
@@ -93,12 +96,12 @@ if [[ $jq_check_exit -eq 0 ]]; then  # Redundant check without output validation
 
 ### Variable Naming and Usage
 - **All variables must be declared at the top** of their scope (script or function)
-- Sort variable declarations when possible, preferably alphabetically or by logical grouping
+
 - Quote all variables, especially `"$?"` when assigning exit codes
 - Use meaningful, descriptive names
 
 ```bash
-# ✅ GOOD - All variables at top, sorted logically
+# ✅ GOOD - All variables at top, ensuring NO unbound variables
 local attempt_number=0
 local iteration_count=""
 local pdf_basename=""
@@ -142,9 +145,8 @@ if [[ "$exit_code" -eq 0 ]]; then
     echo "Success: $output"
 fi
 
-# ✅ ALSO GOOD - Direct command testing when output not needed
-# Avoid doing this for long commands that with many pipes
-if some_command; then   
+# ✅ Direct command testing when output not needed
+if [[ "$(some_command)" -eq 0 ]]; then   
     echo "Command succeeded"
 fi
 
@@ -152,6 +154,16 @@ fi
 if some_command; then process; fi  # One-liner
 if (( i++ )); then                 # Compound arithmetic in condition
 if [[ $? -eq 0 ]]; then           # Direct $? usage
+BAD
+  convert_to_mp3 "$final_wav" "$final_mp3"
+
+	if [[ $? -eq 0 ]]; then   # capture the exit code prior.
+		log_success "Completed project: $pdf_name"
+		return 0
+	else
+		log_error "Failed to convert to MP3 for $pdf_name"
+		return 1
+	fi
 ```
 
 ### Arithmetic and Comparisons
@@ -300,6 +312,7 @@ fi
 - **Do more with less** - avoid adding code without clear purpose
 - **Lint all scripts with `shellcheck`** for correctness
 - **Update comments when code changes** to maintain consistency
+- **Remove unused variables - always**
 
 ```bash
 # ✅ GOOD - Self-documenting with clear intent and proper variable organization
@@ -323,7 +336,7 @@ function process_pdf_pipeline() {
     mkdir_exit="$?"
     
     if [[ "$mkdir_exit" -ne 0 ]]; then
-        echo "Failed to create output directories for $pdf_basename: $mkdir_result" >&2
+        echo "Failed to create output directories for $pdf_basename: $mkdir_result" 2>&1
         return 1
     fi
     
@@ -392,5 +405,11 @@ function call_api() {
 - [ ] Error messages are descriptive
 - [ ] Code passes shellcheck validation
 - [ ] Comments explain intent, not mechanics
+- [ ] No unused variables
+- [ ] No unreachable code
+- [ ] No useless echo
+- [ ] Clear scope
+- [ ] EVerything is quoted correctly
+- [ ] Follows modern Bash practices
 
 These guidelines ensure robust, maintainable BASH scripts that handle edge cases gracefully and provide clear debugging information when issues arise.

@@ -1,0 +1,73 @@
+8.1.1 Declaring Fields in the PRM Operation Region
+
+For all Plat formRtMechanism OperationRegion definitions, the field definition format must
+comply with the syntax for the Field as follows:
+
+Field (
+ReglonName,
+AccessType,
+LockRule,
+UpdateRule
+
+) {FieldUnitList}
+
+For PRM Operation Regions:
+eo RegionName specifies the name of the operation region, declared above the field term.
+e Access Type must be set to BufferAcc.
+
+eo [ockRule indicates if access to this operation region requires acquisition of the Global
+Lock for synchronization. This field must be set to NoLock.
+
+eo UpdateRule is not applicable to PRM operation region accesses since each access is
+performed in its entirety.
+
+The FieldUnitList specifies a single field unit of 8 bits. The PRM handler is invoked by
+writing data to this field unit. The following is an example of an OperationRegion and a Field
+declaration using the Plat formRtMechanism subtype.
+
+OperationRegion (PRMR, PlatformRtMechanism, 0x0, 0x1)
+Field (PRMR, BufferAcc, NoLock, Preserve)
+
+PRMF, 8
+
+}
+
+In order to invoke the PRM OperationRegion handler, a buffer object of 26 bytes must be written
+to the field unit. Similar to SMBus, IPMI, and Generic Serial bus, this input buffer will also serve
+as the output buffer. The buffer format and its use will be described in the following sections.
+
+8.1.2 Declaring and Using a PRM Data Buffer
+
+A PRM data buffer is an ASL buffer object that is used as a request and a response buffer for
+the PRM handler. Writing the PRM data buffer to the PRM field unit will result in the invocation
+of the PRM OperationRegion where the result of the handler is stored to the PRM field unit. This
+bidirectionality allows ASL to capture the status of the transaction so that it may perform error
+handling if necessary.
+
+The format of the PRM data buffer are defined as follows:
+Section eight point one point one, Declaring Fields in the P R M Operation Region.
+
+For all Platform R T Mechanism Operation Region definitions, the field definition format must comply with the syntax for the Field. The structure is defined as follows: A `Field` is declared with parameters including `Region Name`, `Access Type`, `Lock Rule`, and `Update Rule`, and it contains a `Field Unit List`.
+
+For P R M Operation Regions, specific rules apply to these parameters. First, `Region Name` specifies the name of the operation region, which is declared above the field term. Second, `Access Type` must be set to `Buffer Acc`. Third, `Lock Rule` indicates if access to this operation region requires acquisition of the Global Lock for synchronization; this field must be set to `No Lock`. Fourth, `Update Rule` is not applicable to P R M operation region accesses since each access is performed in its entirety.
+
+The `Field Unit List` specifies a single field unit of eight bits. The P R M handler is invoked by writing data to this field unit. The following is an example of an `Operation Region` and a `Field` declaration using the Platform R T Mechanism subtype. An `Operation Region` named `P R M R` is defined with type `Platform R T Mechanism` at addresses hexadecimal zero and hexadecimal one. Within this `Operation Region`, a `Field` is defined for `P R M R` with `Access Type` set to `Buffer Acc`, `Lock Rule` set to `No Lock`, and `Update Rule` set to `Preserve`. Inside this `Field` definition, `P R M F` is declared with a size of eight bits.
+
+In order to invoke the P R M `Operation Region` handler, a buffer object of twenty six bytes must be written to the field unit. Similar to S M Bus, I P M I, and Generic Serial bus, this input buffer will also serve as the output buffer. The buffer format and its use will be described in the following sections.
+
+Section eight point one point two, Declaring and Using a P R M Data Buffer.
+
+A P R M data buffer is an A S L buffer object that is used as both a request and a response buffer for the P R M handler. Writing the P R M data buffer to the P R M field unit will result in the invocation of the P R M `Operation Region`, where the result of the handler is stored back to the P R M field unit. This bidirectionality allows A S L to capture the status of the transaction so that it may perform error handling if necessary. The format of the P R M data buffer is defined as follows:
+The definition of `PlatformRtMechanism OperationRegion` constructs mandates a specific syntax for their associated `Field` declarations, ensuring a standardized interface for interaction with platform runtime mechanisms. Each `Field` definition initiates with the keyword `Field` followed by a set of parameters enclosed in parentheses, culminating in a `FieldUnitList` block within curly braces. This structure encapsulates the essential metadata for accessing and manipulating hardware registers or memory mapped regions.
+
+Within this framework, the `RegionName` parameter serves as a symbolic identifier, a logical name for the specific operation region to which the field belongs. This name is established during the declaration of the overarching operation region, providing a human readable and programmatically referable label. The `AccessType` parameter is critically constrained for P R M operation regions, requiring the value `BufferAcc`. This explicit designation dictates that access to the underlying hardware resource is performed through a buffer based mechanism. Instead of direct register reads or writes, data is marshalled into or out of a designated buffer, a common pattern in message oriented or block transfer protocols for device communication.
+
+The `LockRule` parameter specifies the synchronization requirements for accessing the operation region. For P R M operation regions, this field must be set to `NoLock`. This implies that operations on these regions either possess inherent atomicity, ensuring that a single operation completes without interruption, or that the specific `PlatformRtMechanism` itself manages any necessary internal synchronization, obviating the need for a global lock acquisition by the external caller. This design choice is fundamental for performance, as it avoids the overhead associated with broader synchronization primitives, while trusting the underlying mechanism to maintain data consistency.
+
+Furthermore, the `UpdateRule` parameter is declared as non applicable for P R M operation regions. This is attributed to the principle that each access to such a region is performed in its entirety. This concept is foundational to transactional integrity, guaranteeing that an operation either successfully completes all its constituent parts or fails without leaving the system in an inconsistent, partially updated state. This atomicity simplifies error recovery and ensures predictable behavior in complex embedded systems. The `FieldUnitList`, delineated by curly braces in the syntax, precisely defines the granularity of data access. In this context, it specifies a single field unit of eight bits, signifying that data is processed and accessed at the byte level. This byte addressability is a common denominator in hardware interfaces and data transfer protocols.
+
+An illustrative example demonstrates the declaration of an `OperationRegion` named `P R M R`, identified as a `PlatformRtMechanism` subtype. The hexadecimal values zero zero and zero one likely represent specific device addresses, offsets, or command codes within the platform's hardware architecture. This `OperationRegion` is then associated with a `Field` declaration, also named `P R M R`, and configured with `BufferAcc`, `NoLock`, and `Preserve` attributes. The `Preserve` attribute, though not explicitly detailed here, typically indicates that any bits within the field not explicitly written to should retain their prior values, a crucial aspect for maintaining system state in hardware registers. Within this `Field` definition, the `P R M F` element, followed by the integer eight, likely indicates a specific field within `P R M R` that is eight bits wide.
+
+To initiate interaction with the `P R M OperationRegion` handler, a buffer object, specifically twenty six bytes in size, must be prepared and written to the field unit. This buffer serves a dual role: it functions as the input buffer for the request, carrying commands or data to the handler, and subsequently as the output buffer, receiving the handler's response or status. This bidirectional buffer utilization is a prevalent design pattern in low level communication protocols, akin to those employed in S M Bus, I P M I, and various Generic Serial bus implementations. It streamlines data transfer by utilizing a single memory allocation for both directions of a transaction.
+
+The `P R M` data buffer itself is formalized as an A S L buffer object, serving as both the request container and the response receptacle for interactions with the `P R M` handler. Transmitting data within this `P R M` buffer to the `P R M` field unit triggers the invocation of the `P R M OperationRegion` handler. The handler’s computational results or device status are then written back into the same `P R M` data buffer. This inherent bidirectionality is a deliberate architectural choice, enabling the A S L code to not only send commands but also to immediately capture the transactional status or any returned data. This capability is paramount for implementing robust error handling mechanisms, allowing the system to detect and respond to communication failures or device specific error codes. The precise structure and utilization of this `P R M` data buffer are, however, subject to further definition in subsequent specifications, implying a detailed protocol for commands, data, and status codes.

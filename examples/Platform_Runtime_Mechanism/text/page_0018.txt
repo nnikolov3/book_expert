@@ -1,0 +1,78 @@
+1. Identifies the PRM Handler pointer corresponding to the GUID that was passed
+a. Convert the PRM Handler Pointer from a Physical Address to a Virtual Address.
+
+2. Extracts the Static Data Buffer Pointer and the Runtime MMIO Ranges Pointer and
+create a ContextBuffer (see
+
+3. Table 5-1), which is passed to the PRM Handler.
+
+In the case of ASL call, extracts the AcpiParameterBuffer pointer from PRMT. In the
+case of direct call, the ParameterBuffer pointer is passed by the caller and
+AcpiParameterBuffer is ignored.
+
+5. Invokes the PRM handler with the following calling convention
+EFI STATUS
+PRM EXPORT API
+(EFIAPI *PRM HANDLER) (
+IN VOID *ParameterBuffer OPTIONAL,
+IN PRM MODULE CONTEXT BUFFER *ContextBuffer OPTIONAL
+) ;
+
+5.3 Direct Invocation
+
+ACPI Bridge Driver exposes an IOCTL that can be invoked by a PRM aware OS driver. In the
+case of Direct Invocation, the PRM aware OS driver calls into this IOCTL, by passing the GUID
+of the PRM handler to be invoked, and a pointer to the ParameterBuffer.
+
+NOTE: Direct Invocation is a mechanism that is intended for future use, in an environment
+where the OS ACPI subsystem, OS Drivers and BIOS are PRM compatible.
+
+5.4 ASL ( DSM) Based Invocation
+
+To be able to invoke runtime code from ASL, a bridging mechanism needs to be in place. ASL
+provides for an OpRegion handler that is synchronous in nature. The PRM extends this by
+introducing a new ‘PRM’ OpRegion Type. Further details regarding ACPI-specific structures
+introduced for PRM support are described in the DSM invocation section in the appendix.
+
+5.5 Context Buffer
+
+The Context Buffer is a well-defined buffer per PRM handler that describes resources available
+to the handler during its execution. This buffer is allocated within the OS and the OS is
+responsible for converting physical addresses to virtual addresses if applicable.
+
+Table 5-1 Context Buffer Structure (ContextBuffer)
+
+Field Byte Byte Description
+length | offset
+Signature 4 0 ‘PRMC’. Signature of the PRM Module Context Buffer
+structure.
+
+25
+Number one, identifies the P R M Handler pointer corresponding to the G U I D that was passed. Subpoint A, converts the P R M Handler Pointer from a Physical Address to a Virtual Address. Number two, extracts the Static Data Buffer Pointer and the Runtime M M I O Ranges Pointer and creates a Context Buffer. Number three, table five one, which is passed to the P R M Handler. Number four, in the case of A S L call, extracts the Acpi Parameter Buffer pointer from P R M T. In the case of direct call, the Parameter Buffer pointer is passed by the caller and Acpi Parameter Buffer is ignored. Number five, invokes the P R M handler with the following calling convention. The code defines an E F I Status return type for a P R M export A P I function pointer named P R M Handler. This handler accepts two input parameters: an optional void pointer for the Parameter Buffer, and an optional P R M Module Context Buffer pointer for the Context Buffer.
+
+Section five point three, Direct Invocation. The A C P I Bridge Driver exposes an I O C T L that can be invoked by a P R M aware O S driver. In the case of Direct Invocation, the P R M aware O S driver calls into this I O C T L, by passing the G U I D of the P R M handler to be invoked, and a pointer to the Parameter Buffer. Note: Direct Invocation is a mechanism that is intended for future use, in an environment where the O S A C P I subsystem, O S Drivers and B I O S are P R M compatible.
+
+Section five point four, A S L D S M Based Invocation. To be able to invoke runtime code from A S L, a bridging mechanism needs to be in place. A S L provides for an Op Region handler that is synchronous in nature. The P R M extends this by introducing a new P R M Op Region Type. Further details regarding A C P I specific structures introduced for P R M support are described in the D S M invocation section in the appendix.
+
+Section five point five, Context Buffer. The Context Buffer is a well defined buffer per P R M handler that describes resources available to the handler during its execution. This buffer is allocated within the O S and the O S is responsible for converting physical addresses to virtual addresses if applicable.
+
+The table, titled Table five one Context Buffer Structure, describes the Context Buffer. It lists fields, their byte length, byte offset, and a description. The table has one entry. For the Signature field, the byte length is four, the byte offset is zero, and the description states that it is the P R M C signature of the P R M Module Context Buffer structure.
+The document describes a foundational system for managing and invoking platform runtime module, or P R M, handlers within a computing environment, detailing the conceptual mechanisms for their invocation and the structures that facilitate this interaction.
+
+The process of invoking a P R M handler begins with identifying the specific handler using a Globally Unique Identifier, or G U I D. This G U I D acts as a universal identifier, ensuring that the correct handler is targeted. A critical step in this process involves converting the P R M Handler Pointer from a Physical Address to a Virtual Address. This transformation is fundamental in modern computing architectures, where the operating system, or O S, manages memory through virtual addressing. Virtualization provides memory isolation and protection, preventing one module from inadvertently corrupting the memory space of another, and allows for efficient memory allocation and management through techniques such as paging.
+
+Following identification and address translation, the system extracts two crucial pointers: one to a Static Data Buffer and another to the Runtime M M I O Ranges. The Static Data Buffer likely contains immutable configuration or read-only data essential for the P R M handler's operation. The Runtime M M I O Ranges pointer is vital for the handler to interact directly with hardware components by accessing their memory mapped input output, or M M I O, registers. Memory Mapped I O is a direct mechanism for C P U to peripheral communication, where device registers are mapped into the C P U's address space, allowing read and write operations to these memory locations to control hardware. Concurrently, a Context Buffer is created, which encapsulates the specific execution context for the P R M handler.
+
+This Context Buffer, a well defined data structure, is then passed to the P R M Handler. The passing of a context object is a common design pattern in software engineering, allowing a function or module to receive all necessary environmental data in a single, organized structure, improving modularity and maintainability.
+
+Regarding parameter passing, the system employs a flexible approach. In the case of an A S L call, which refers to A C P I Source Language, an A C P I Parameter Buffer pointer is extracted from the P R M T, likely a P R M Table. For a direct invocation, the Parameter Buffer pointer is explicitly supplied by the caller. If both are provided, the directly supplied Parameter Buffer pointer takes precedence, illustrating a mechanism for overriding default or system-defined parameters with caller-specific values.
+
+The P R M handler is ultimately invoked via a defined calling convention, represented by the function signature `E F I_STATUS P R M_EXPORT_A P I` with specific input parameters. The `E F I_STATUS` return type indicates the outcome of the operation, a standard practice for robust error handling. The use of a pointer to the P R M handler, `P R M_HANDLER`, enables dynamic dispatch, allowing the system to call different handlers based on the G U I D provided at runtime. The parameters, `P R M_MODULE_CONTEXT_BUFFER *ParameterBuffer OPTIONAL` and `*ContextBuffer OPTIONAL`, highlight the optional nature of these buffers, suggesting that not all P R M handlers may require them or that default behaviors are invoked if they are absent.
+
+Section five point three, on Direct Invocation, explains how the A C P I Bridge Driver exposes an I O C T L interface. An I O C T L, or Input Output Control, is a system call mechanism in operating systems that allows kernel modules or user-space applications to send control commands to device drivers, enabling fine grained control over hardware. A P R M aware O S driver can then invoke this I O C T L, passing the G U I D of the desired P R M handler and a pointer to its Parameter Buffer. This method is noted as a future mechanism, emphasizing a trajectory towards deeper integration where the O S A C P I subsystem, O S Drivers, and B I O S are P R M compatible, fostering a more unified platform management architecture.
+
+Section five point four, on A S L underscore D S M Based Invocation, describes an alternative invocation path through A C P I Source Language. A C P I is a critical standard for platform configuration and power management, allowing the O S to manage system hardware. A S L is a bytecode language embedded within A C P I tables, defining how the O S interacts with hardware. This mechanism provides a synchronous bridging capability to execute runtime code from A C P I. The P R M framework extends A C P I by introducing a new 'P R M' OpRegion Type. An OpRegion defines an address range that A C P I methods can access. By introducing a 'P R M' OpRegion, P R M specific data and control structures can be exposed directly through A C P I, allowing A S L methods to interact with P R Ms in a standardized manner. The synchronous nature of these calls means the calling entity waits for the P R M handler to complete, which is a crucial aspect for understanding control flow and potential performance implications in a concurrent system.
+
+Section five point five further elaborates on the Context Buffer. This buffer is defined as a well structured block of memory specific to each P R M handler, containing resources available to the handler during its execution. The O S is responsible for allocating this buffer and, if necessary, performing the physical to virtual address conversions. This underscores the O S's role in memory management and ensuring that firmware level operations can correctly access resources within the O S's managed memory space. The Context Buffer effectively serves as a dedicated environment for a P R M handler, analogous to a process's or thread's context block in a multiprogramming O S.
+
+Table five dash one details the structure of this Context Buffer, illustrating it with the 'Signature' field. This field has a byte length of four and is located at a byte offset of zero from the beginning of the structure. Its description indicates it contains 'P R M C', which serves as a unique signature for the P R M Module Context Buffer structure. This use of a "magic number" signature at a fixed offset is a common and robust technique in data structure design and file formats. It allows a parsing entity, such as the O S, to quickly identify the type and validity of the data structure, preventing misinterpretation and aiding in early error detection. The table, as a schema, is essential for ensuring interoperability between the O S and the P R M handler, as both must adhere to the same memory layout for successful communication.

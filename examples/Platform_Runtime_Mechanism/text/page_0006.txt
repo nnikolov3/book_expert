@@ -1,0 +1,100 @@
+Figure 2-2 Categories of SMI Handlers
+
+Current Model
+
+_ Native OS
+CATEGORY 1: Support
+
+SW SMI that don’t require SMM
+privileges
+(e.g. Addr xlation, NVDIMM DSMs etc.
+
+—> ASL+PRM
+
+SW SMI
+
+Capsule Update
+
+CATEGORY 2:
+CATEGORY 3:
+HW SMI and RAS Handlers that don’t Capsule Update
+require privileges + OS Driver +OOB
+» ~~ OOB/PRM
+> |
+=
+—-I
+CATEGORY 4:
+
+HW SMI and RAS Handlers that
+require privileges
+
+>. 0]0]2
+
+Category 1 SMM handler will be migrated to use PRM.
+
+Category 2 SMM Handlers are mainly related to UEFI authenticated variable services. Not in
+scope for this Specification
+
+Certain Category 3 SMM Handlers can be handled by PRM as explained in later sections.
+
+Category 4 SMM Handlers are mainly related to Uncorrectable Hardware Errors and advanced
+RAS features. Not in scope for this Specification
+
+2.2 Category 1 Usages
+
+These are SW SMI triggers from an abstraction interface such as ACPI _DSM methods. There
+is a plethora of such DSM methods that today invoke SW SMI so that complex algorithms and
+tasks can be handled in a native code execution context. Providing an alternate means of
+executing native code using PRM alleviates the need to invoke SMI for this category of
+handlers. Examples include DSMs for RAS (such as address translation) and DSMs for
+supporting Non-Volatile DIMMs.
+
+13
+Figure two two illustrates the Categories of S M I Handlers within the Current Model.
+
+The diagram presents a classification of S M I handlers, divided vertically into two main types: S W S M I, or Software System Management Interrupts, and H W S M I, or Hardware System Management Interrupts.
+
+Under S W S M I, there are two categories.
+Category one specifies S W S M I that do not require System Management Mode privileges. Examples include address translation and N V D I M M D S M s. From Category one, one path leads to Native O S Support, and another path leads to A S L plus P R M.
+Below Category one, a placeholder is shown for Category two, which is also under S W S M I.
+
+Under H W S M I, there are two categories.
+Category three defines H W S M I and R A S, or Reliability Availability and Serviceability, Handlers that do not require privileges.
+Category four defines H W S M I and R A S Handlers that require privileges.
+
+Several connections illustrate the flow and interactions between these categories and system components:
+An arrow originating from both Category two and Category three, labeled "U E F I Variable Services, B I O S update," points to "Capsule Update plus O S Driver plus O O B."
+Another arrow from Category three leads to "O O B slash P R M."
+An arrow from Category four leads to "O O B."
+Additionally, an arrow from an unspecified source, but likely related to a B I O S update process, leads to "Capsule Update."
+
+Category one S M M handler will be migrated to use P R M.
+Category two S M M Handlers are mainly related to U E F I authenticated variable services and are not in scope for this Specification.
+Certain Category three S M M Handlers can be handled by P R M as explained in later sections.
+Category four S M M Handlers are mainly related to Uncorrectable Hardware Errors and advanced R A S features, and are not in scope for this Specification.
+
+Section two point two: Category one Usages.
+These are S W S M I triggers from an abstraction interface such as A C P I underscore D S M methods. There is a plethora of such underscore D S M methods that today invoke S W S M I so that complex algorithms and tasks can be handled in a native code execution context. Providing an alternate means of executing native code using P R M alleviates the need to invoke S M I for this category of handlers. Examples include D S M s for R A S, such as address translation, and D S M s for supporting Non Volatile D I M M s.
+The diagram, labeled Figure two two, illustrates the categorization and interaction pathways of System Management Interrupt, or S M I, Handlers within a current system model. Spatially, the diagram positions a vertical blue bracket on the left, denoting the origin of these handlers, with "S W S M I" at the top half and "H W S M I" at the bottom half. To the right of this bracket are four horizontally stacked, shaded rectangular boxes, representing distinct categories of S M I handlers.
+
+The uppermost box, shaded light green, represents Category one S M I handlers, described as "S W S M I that don't require S M M privileges." Examples provided include "address translation" and "N Vidia D S M s." From this Category one box, two diagonal arrows originate and point towards two distinct oval shapes on the right. The upper arrow leads to an oval labeled "Native O S Support," indicating that certain S W S M I handlers can be managed directly by the operating system. The lower arrow from Category one points to an oval labeled "A S L plus P R M," suggesting an alternative or complementary handling mechanism involving A S L, which is the A C P I Source Language, and P R M, a System Management Mode Protocol. Another arrow labeled "B I O S update" emanates from the "A S L plus P R M" oval, pointing towards a gray oval labeled "Capsule Update." This illustrates a path where B I O S updates, often critical firmware tasks, might leverage this A S L P R M mechanism.
+
+Below Category one, the next rectangular box, shaded gray, is labeled "CATEGORY two" and has no specific description or outward arrows, implying it may be a placeholder or out of scope for detailed immediate discussion, as confirmed by the accompanying text.
+
+Further down, the third rectangular box, shaded light orange, is labeled "CATEGORY three: H W S M I and R A S Handlers that don't require privileges." This indicates a shift from software-initiated to hardware-initiated S M I. A diagonal arrow from this Category three box, labeled "U E F I Variable Services, B I O S update," points to another gray oval on the right, labeled "Capsule Update plus O S Driver plus O O B." This suggests that hardware-initiated S M I events for B I O S or U E F I services can lead to complex update processes involving the operating system driver and Out Of Band, or O O B, mechanisms. From this Category three box, a horizontal arrow also points to an oval labeled "O O B slash P R M," indicating that Out Of Band management or P R M can handle these events.
+
+The lowest rectangular box, also light orange, is labeled "CATEGORY four: H W S M I and R A S Handlers that require privileges." This signifies a distinct class of hardware-initiated S M I events that demand elevated permissions. A horizontal arrow from this Category four box points to an oval labeled "O O B," suggesting that these highly privileged hardware S M I events are handled via Out Of Band management.
+
+The System Management Interrupt, S M I, is a crucial mechanism in I B M P C compatible systems, primarily handled by the System Management Mode, or S M M, within the C P U. S M M operates at a higher privilege level than even the operating system, effectively establishing a "ring minus two" or "ring zero minus one" execution environment. This allows firmware, typically the B I O S or U E F I, to perform critical system management tasks without interference from or awareness by the operating system. Historically, S M M has been used for power management, hardware error handling, security features like boot guard, and updating firmware. The opaque nature of S M M to the O S, while powerful, also presents a significant security risk, as malicious code executed in S M M could compromise the entire system without detection.
+
+The textual descriptions below the diagram provide further context and future directions. The statement "Category one S M M handler will be migrated to use P R M" indicates a strategic shift away from S M M for certain operations. P R M, or Platform Runtime Mechanism, represents a modern approach to firmware interaction, aiming to provide a more controlled, transparent, and secure interface for platform services that historically relied on S M M. By migrating to P R M, the system can reduce its reliance on the highly privileged and opaque S M M, thereby improving system security, predictability, and potentially simplifying O S level management of these operations. This migration is particularly relevant for S W S M I events that do not inherently require the extreme isolation of S M M.
+
+"Category two S M M Handlers are mainly related to U E F I authenticated variable services." U E F I, the Unified Extensible Firmware Interface, replaced the legacy B I O S and provides a more robust and modular interface for system initialization and firmware services. Authenticated variable services are critical for maintaining system integrity and security, for instance, in secure boot processes where firmware variables are cryptographically signed to prevent tampering. The specification's decision to keep these out of scope suggests that their management mechanisms are distinct or already well defined within the U E F I framework, or that their security criticality necessitates a more specialized handling approach.
+
+"Certain Category three S M M Handlers can be handled by P R M." This reiterates the broad applicability of P R M. Category three involves H W S M I and R A S handlers that do not require S M M privileges. R A S refers to Reliability, Availability, and Serviceability features, which are paramount in server and mission critical systems. These features deal with error detection, correction, and recovery mechanisms, often initiated by hardware events. The ability to manage these through P R M signifies a step towards unifying and standardizing firmware interaction for R A S features, potentially allowing for more dynamic and O S-aware error handling without the overhead or security implications of a full S M M invocation.
+
+"Category four S M M Handlers are mainly related to Uncorrectable Hardware Errors and advanced R A S features." Uncorrectable Hardware Errors represent critical system faults that cannot be rectified by the hardware itself, such as a double bit error in D Ram that ECC, or Error Correcting Code, cannot fix. These events often necessitate immediate system intervention, potentially including logging, diagnostics, or even system shutdown to prevent data corruption. The fact that these H W S M I handlers *require* S M M privileges underscores their severity and the need for the absolute highest level of system control to manage them, often involving direct hardware manipulation that only S M M can provide with its privileged access to all system resources. Their being out of scope for this specific document suggests they are handled by other, potentially more fundamental or vendor-specific R A S specifications.
+
+The section titled "two point two Category one Usages" elaborates on the nature of S W S M I triggers. These triggers originate from an abstraction interface, notably A C P I, the Advanced Configuration and Power Interface, using D S M methods. A C P I is a key industry standard for unified O S based power management and hardware configuration. D S M, or Device Specific Method, refers to a method within A C P I's A S L that allows the O S to invoke device-specific functionality, often implemented in firmware. Historically, many of these D S M invocations would translate into S M I calls, thus entering S M M. The text highlights that "complex algorithms and tasks can be handled in a native code execution context" within S M M. While powerful, this native code execution within the S M M context is problematic from a security and manageability standpoint, as the O S loses control and visibility.
+
+The critical insight here is that "Providing an alternate means of executing native code using P R M alleviates the need to invoke S M I for this category of handlers." This is a fundamental architectural shift. Instead of the O S requesting a service via A C P I D S M that then triggers an S M I, P R M offers a more direct, yet secure, channel. P R M operates within a more constrained environment than full S M M, offering a specific A P I for O S to firmware communication. This reduces the time spent in S M M, which can introduce latency and is difficult to debug or secure. Examples of such tasks include "D S M s for R A S, such as address translation, and D S M s for supporting Non Volatile D I M M s." Address translation, particularly in R A S contexts, involves mapping physical memory addresses to potentially remapped or spare memory blocks to mitigate faulty regions. Non Volatile D I M M s represent persistent memory technology, like N V D I M M s, that retain data even when power is off. Managing these advanced memory types, including their initialization, error handling, and data persistence operations, is becoming increasingly complex. By shifting these from S M M to P R M, the system gains a more robust and auditable framework for managing critical hardware features and emerging memory technologies, while enhancing overall system security and reliability.

@@ -1,0 +1,96 @@
+Any platform firmware / BIOS environment that satisfies the above requirement can make
+use of PRM. The UEFI environment is able to support PRM with minimal overhead.
+
+3.2 PRM and UEFI
+
+PRM is not confined to UEFI boot, however, the above requirements are largely supported with
+functionality in place for UEFI Runtime Services.
+
+1. UEFI Runtime Services are an industry standard way of publishing code from firmware
+that is executable in OS runtime. The Runtime Services definition provides an
+Application Binary Interface (ABI) for PRM handlers and pre-existing requirements for
+executing conditions such as available stack size for PRM handler invocation.
+
+2. The UEFI Secure Boot chain-of-trust already provides a mechanism to authenticate
+PRM modules that are included as components in the firmware boot image.
+
+3. Runtime virtual address fixups are commonly performed in runtime driver code so they
+can access resources at OS runtime. Firmware support is already available to map a
+given physical address to its virtual address.
+
+PRM Requirement UEFI Based Boot Non-UEFI Boot
+
+PRM handlers execute at OS | UEFI Runtime Services are Need to build support to
+runtime and are published by | an industry standard way for | publish runtime code by the
+firmware in pre-OS boot firmware to publish OS BIOS, that is OS visible
+runtime code
+
+Chain of Trust UEFI Secure Boot No standard mechanism
+Pointer Fix-ups Built in support No standard mechanism
+OS-Independent Yes Implementation specific
+
+3.3 PRM Loading and Invocation
+
+1. During boot, the firmware discovers PRM modules included in the platform firmware
+flash image.
+
+2. During boot, the firmware publishes the PRM ACPI table (PRMT) to describe the PRM
+modules, handlers, and related structures such as context buffers for the given boot.
+
+3. During boot, firmware allocates any required buffers and, in some cases, populates the
+buffer contents as is the case with the static data buffer.
+
+4. During OS runtime, OS code invokes PRM handlers via the direct call mechanism or
+with a DSM.
+
+3.4 PRMT Table Overview
+
+The PRMT table is an ACPI table published by the BIOS during boot, which advertises the
+pointers to the PRM handlers. This information is then used by the ACPI Interpreter to invoke
+the PRM handler(s). The PRMT table exposes a hierarchical structure.
+
+17
+Any platform firmware, B I O S environment that satisfies the above requirement can make use of P R M. The U E F I environment is able to support P R M with minimal overhead.
+
+P R M and U E F I
+
+P R M is not confined to U E F I boot, however, the above requirements are largely supported with functionality in place for U E F I Runtime Services.
+
+First, U E F I Runtime Services are an industry standard way of publishing code from firmware that is executable in O S runtime. The Runtime Services definition provides an Application Binary Interface, A B I, for P R M handlers and pre-existing requirements for executing conditions such as available stack size for P R M handler invocation.
+
+Second, the U E F I Secure Boot chain of trust already provides a mechanism to authenticate P R M modules that are included as components in the firmware boot image.
+
+Third, runtime virtual address fixups are commonly performed in runtime driver code so they can access resources at O S runtime. Firmware support is already available to map a given physical address to its virtual address.
+
+The table presents a comparison of P R M requirements across U E F I based boot and non-U E F I boot environments.
+
+For P R M handlers executing at O S runtime and published by firmware in pre-O S boot, a U E F I based boot utilizes U E F I Runtime Services as an industry standard way for firmware to publish O S runtime code. In contrast, a non-U E F I boot requires building support to publish runtime code by the B I O S, which is O S visible.
+
+Regarding the chain of trust, a U E F I based boot uses U E F I Secure Boot. For a non-U E F I boot, there is no standard mechanism.
+
+For pointer fixups, U E F I based boot has built in support, while a non-U E F I boot again has no standard mechanism.
+
+Finally, for O S independent operation, a U E F I based boot is yes, O S independent, whereas a non-U E F I boot is implementation specific.
+
+P R M Loading and Invocation
+
+First, during boot, the firmware discovers P R M modules included in the platform firmware flash image.
+
+Second, during boot, the firmware publishes the P R M A C P I table, P R M T, to describe the P R M modules, handlers, and related structures such as context buffers for the given boot.
+
+Third, during boot, firmware allocates any required buffers and, in some cases, populates the buffer contents, as is the case with the static data buffer.
+
+Fourth, during O S runtime, O S code invokes P R M handlers via the direct call mechanism or with an underscore D S M.
+
+P R M T Table Overview
+
+The P R M T table is an A C P I table published by the B I O S during boot, which advertises the pointers to the P R M handlers. This information is then used by the A C P I Interpreter to invoke the P R M handler, or handlers. The P R M T table exposes a hierarchical structure.
+Platform Runtime Modules, or P R M, constitute a critical class of firmware components designed to extend system functionality directly into the operating system runtime environment. For any platform firmware or B I O S environment to effectively utilize P R M, it must satisfy specific requirements with minimal computational overhead. The Unified Extensible Firmware Interface, U E F I, is notably well suited to provide such an environment, streamlining the integration and operation of these modules.
+
+The relationship between P R M and U E F I is particularly symbiotic, although P R M is not exclusively confined to U E F I boot architectures. U E F I provides a robust framework that intrinsically supports many of P R M's operational requirements. For instance, U E F I Runtime Services represent an industry standard mechanism for publishing firmware code that becomes executable within the O S runtime. This standardization is crucial, as it defines an Application Binary Interface, A B I, for P R M handlers, delineating essential execution parameters such as the required stack size for handler invocation. Furthermore, U E F I Secure Boot provides an inherent chain-of-trust mechanism. This cryptographic validation process ensures that P R M modules integrated into the firmware boot image are authenticated, thereby maintaining system integrity from the earliest stages of boot. Lastly, the U E F I environment naturally supports runtime virtual address fix-ups, which are commonly performed within O S runtime driver code. This capability allows firmware to facilitate the mapping of physical addresses to their corresponding virtual addresses, a fundamental requirement for efficient and secure memory access within a virtualized operating system environment.
+
+A comparative analysis of P R M requirements across U E F I based boot and non-U E F I boot environments illuminates the significant architectural advantages offered by U E F I. In a U E F I based boot scenario, P R M handlers execute directly at O S runtime, having been published by the firmware during the pre O S boot phase via the standardized U E F I Runtime Services. This contrasts sharply with non-U E F I environments, where specific, custom support must be developed to expose runtime code to the O S, indicating a lack of inherent standardization. Regarding the chain-of-trust, U E F I Secure Boot provides robust, built-in support, whereas non-U E F I systems typically lack a standard mechanism, necessitating bespoke or absent security measures in this critical area. Similarly, pointer fix-ups, essential for dynamic memory addressing within the O S's virtual memory space, benefit from built-in support in U E F I based systems, a feature absent as a standard mechanism in non-U E F I contexts. Finally, U E F I based P R M implementations exhibit O S independence, meaning they are designed to function universally across various operating systems. In contrast, non-U E F I approaches are generally implementation specific, leading to tighter coupling between firmware and a particular O S, which can impede system portability and maintenance.
+
+The loading and invocation of P R M follow a well-defined sequence during the boot process. Initially, the platform firmware discovers the P R M modules embedded within its flash R O M image. Subsequently, the firmware publishes the P R M A C P I table, known as the P R M T. This table serves as a comprehensive descriptor, outlining the P R M modules, their associated handlers, and any related structures such as context buffers pertinent to the current boot session. As part of this preparatory phase, the firmware also undertakes the critical task of allocating any necessary buffers and, in specific cases like static data buffers, populates their contents. This pre-allocation ensures that the P R M handlers have the required memory resources and initial data states ready for operation. Finally, during O S runtime, the operating system code invokes these P R M handlers either through a direct call mechanism or via a Device Specific Method, D S M, depending on the specific functionality being accessed.
+
+The P R M T table itself, published by the B I O S during boot, serves as the primary advertisement mechanism for the P R M handlers to the operating system. This critical information is then utilized by the A C P I Interpreter, which is an integral part of the O S's kernel, to correctly locate and invoke the appropriate P R M handler or handlers. The P R M T is designed to expose a hierarchical structure, allowing for the logical organization and representation of complex firmware functionalities and their interdependencies, thereby providing the O S with a comprehensive and structured understanding of the available platform runtime services.

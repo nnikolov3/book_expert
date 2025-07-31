@@ -1,0 +1,81 @@
+handler and outside the scope of this document. If the ParameterBuffer is not provided, NULL
+will be passed as this argument.
+
+While the contents are arbitrary, the buffer header is standardized below.
+
+A pointer to this AcpiParameterBuffer is passed to the PRM Handler during invocation.
+
+Table 4-5 PRM ACPI Data Buffer Structure (AcpiParameterBuffer)
+
+Field Byte length = Byte offset Description
+Header
+Signature 4 0 ‘PRMP’. Signature of a PRM ACPI
+Parameter Data Buffer Header
+structure.
+Length 4 4 The total length in bytes of this PRM
+
+data buffer including the size of the
+PRM_DATA BUFFER_HEADER.
+
+Data Varies 8 The variable length data specific to a
+PRM module the constitutes the data
+in the buffer.
+
+4.2.3 Module Runtime MMIO Ranges
+
+A PRM module is responsible for creating an array of MMIO range descriptors using the
+structures below to describe ranges that may be accessed by a PRM handler in the module.
+The OS is responsible for populating the VirtualBaseAddress and ensuring that memory is
+marked as a memory space type that allows firmware to retrieve the virtual memory mapping for
+the address range.
+
+A pointer to this RuntimeMmioPages is passed to the PRM Handler during invocation.
+
+4.2.3.1 PRM MODULE RUNTIME _MMIO RANGE
+
+This structure describes a single runtime MMIO range that a PRM module declares may be
+used by a PRM handler in the module.
+
+Table 4-6 PRM_MODULE_RUNTIME_MMIO_RANGE Structure
+
+Field Byte Byte Description
+
+length | offset
+PhysicalBaseAddress 8 0 Physical base address of the MMIO range.
+VirtualBaseAddress 8 8 Virtual address of the MMIO range.
+
+Length 4 16 Length of the MMIO range in bytes.
+The handler is outside the scope of this document. If the Parameter Buffer is not provided, N U L L will be passed as this argument. While the contents are arbitrary, the buffer header is standardized below. A pointer to this Acpi Parameter Buffer is passed to the P R M Handler during invocation.
+
+The table, titled "Table four dash five P R M A C P I Data Buffer Structure, or Acpi Parameter Buffer", describes the fields of the data buffer header. It has four columns: Field, Byte length, Byte offset, and Description.
+
+For the Signature field, the byte length is four, the byte offset is zero, and the description is "P R M P, signature of a P R M A C P I Parameter Data Buffer Header structure".
+
+For the Length field, the byte length is four, the byte offset is four, and the description is "The total length in bytes of this P R M data buffer including the size of the P R M D A T A B U F F E R H E A D E R".
+
+For the Data field, the byte length varies, the byte offset is eight, and the description is "The variable length data specific to a P R M module that constitutes the data in the buffer".
+
+Section four point two point three, titled "Module Runtime M M I O Ranges". A P R M module is responsible for creating an array of M M I O range descriptors using the structures below to describe ranges that may be accessed by a P R M handler in the module. The O S is responsible for populating the Virtual Base Address and ensuring that memory is marked as a memory space type that allows firmware to retrieve the virtual memory mapping for the address range. A pointer to this Runtime M M I O Pages is passed to the P R M Handler during invocation.
+
+Section four point two point three point one, titled "P R M M O D U L E R U N T I M E M M I O R A N G E". This structure describes a single runtime M M I O range that a P R M module declares may be used by a P R M handler in the module.
+
+The table, titled "Table four dash six P R M M O D U L E R U N T I M E M M I O R A N G E Structure", describes the fields of the runtime M M I O range structure. It has four columns: Field, Byte length, Byte offset, and Description.
+
+For the Physical Base Address field, the byte length is eight, the byte offset is zero, and the description is "Physical base address of the M M I O range".
+
+For the Virtual Base Address field, the byte length is eight, the byte offset is eight, and the description is "Virtual address of the M M I O range".
+
+For the Length field, the byte length is four, the byte offset is sixteen, and the description is "Length of the M M I O range in bytes".
+The underlying technical concepts detailed here illustrate fundamental principles of low level system architecture, particularly concerning inter component communication and memory management within a platform's runtime environment.
+
+The first concept revolves around a standardized data buffer structure, the `AcpiParameterBuffer`, which serves as a critical mechanism for passing arguments to a Platform Runtime Module, or P R M, Handler. This handler is a component of the system firmware responsible for managing specific platform functionalities. When invoking such a handler, an `AcpiParameterBuffer` is provided as an input parameter. If no specific buffer is necessary, a N U L L pointer is used, indicating an absence of parameters or a default operational mode. The structure of this buffer is critical for ensuring proper interpretation by the P R M Handler.
+
+Table four dash five, titled "P R M A C P I Data Buffer Structure (AcpiParameterBuffer)", precisely defines the byte layout of this communication buffer. This table is a specification for a serialized data structure, where each field has a defined size and position relative to the beginning of the buffer. The first field is the `Signature`, occupying four bytes at byte offset zero. This field contains the literal value 'P R M P', functioning as a magic number or unique identifier. Its purpose is to allow the P R M Handler to verify the integrity and type of the incoming data, ensuring it is indeed an `AcpiParameterBuffer` and not malformed or unintended data. Immediately following the signature, at byte offset four, is the `Length` field, also four bytes in size. This field specifies the total size of the entire P R M data buffer in bytes, crucially including the size of its own header. This self describing aspect is vital for dynamic memory allocation and for the handler to correctly parse the full extent of the incoming data, mitigating risks such as buffer overruns. The final element is the `Data` field, which begins at byte offset eight and has a variable length. This field constitutes the actual payload, containing module specific parameters or information. Its variable length necessitates the preceding `Length` field for the handler to determine the precise extent of the data to process. This design allows for flexibility in the types and quantities of information passed to different P R M modules, while maintaining a consistent header structure.
+
+Moving to the second core concept, we delve into how P R M modules manage Memory Mapped I O, or M M I O, ranges during runtime. M M I O is a fundamental technique in computer architecture where hardware device registers and controller memory are mapped directly into the system's memory address space. This allows software, including firmware and operating system components, to interact with hardware by performing standard memory read and write operations on these addresses, eliminating the need for specialized I O instructions.
+
+A P R M module is responsible for declaring its required M M I O regions through an array of descriptors. A pointer to this array, named `RuntimeMmioPages`, is passed to the P R M Handler during invocation, enabling the handler to discover and utilize these hardware resources. A crucial aspect of this process involves the operating system, or O S. While the P R M module defines the physical M M I O addresses, the O S is responsible for establishing the corresponding virtual memory mappings. This involves populating the `VirtualBaseAddress` field within each descriptor and ensuring that the physical memory regions are marked with the appropriate memory space attributes, allowing the firmware to retrieve and utilize these virtual addresses for hardware access. This cooperative model between firmware and the O S is paramount for system stability and security, as the O S maintains overall control of the virtual memory subsystem, providing memory protection and isolation between different software components.
+
+Table four dash six, titled "P R M underscore M O D U L E underscore R U N T I M E underscore M M I O underscore R A N G E Structure", defines the layout of a single descriptor for an M M I O range. This structure consists of three fields. The `PhysicalBaseAddress` field occupies eight bytes, starting at byte offset zero. This sixty four bit field specifies the actual physical address in the system's memory map where the M M I O region begins. This address is typically hardwired or configured by the platform's hardware design. Immediately following this, at byte offset eight, is the `VirtualBaseAddress` field, also eight bytes in length. This sixty four bit field holds the virtual address that the P R M module will use to access the M M I O range. As previously mentioned, this virtual address is established by the O S and serves as the software visible entry point to the physical M M I O region. The explicit separation of physical and virtual addresses underscores the memory management paradigm prevalent in modern computing, enabling memory protection, dynamic mapping, and more efficient resource utilization. Finally, at byte offset sixteen, is the `Length` field, which is four bytes long. This field specifies the size of the M M I O range in bytes, completing the definition of the contiguous memory region required for hardware interaction.
+
+In essence, these two mechanisms, the `AcpiParameterBuffer` and the M M I O range descriptors, exemplify foundational principles of system level programming. They demonstrate how structured data is used for inter component communication, how hardware resources are abstracted through memory mapping, and how the operating system and platform firmware collaborate to manage system resources and provide a secure, efficient execution environment for software. The meticulous byte level definition of these structures is characteristic of low level interfaces, where precise control over data representation is essential for interoperability and correct system operation.

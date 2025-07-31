@@ -1,0 +1,21 @@
+The PRM handler function must use PRM_EXPORT _API to be placed into the
+Image’s export table.
+
+The maximum name length of a PRM handler function is 128 bytes.
+
+All PRM handlers must have an entry in the PRM Export Descriptor Table to be
+recognized as a valid PRM handler.
+
+Functions in the PRM module binary image that are not exposed as PRM
+handlers are considered private to the PRM module. Private functions should
+not have entries in the PRM module’s export table.
+
+31
+The P R M handler function must use P R M export A P I to be placed into the image's export table. The maximum name length of a P R M handler function is one hundred twenty eight bytes. All P R M handlers must have an entry in the P R M Export Descriptor Table to be recognized as a valid P R M handler. Functions in the P R M module binary image that are not exposed as P R M handlers are considered private to the P R M module. Private functions should not have entries in the P R M module's export table.
+In complex software architectures, especially those dealing with runtime environments or system-level services, modularity is paramount. The concept of a "P R M handler function" points to a specific callback or entry point designed to be invoked by a "P R M module" or the broader P R M system, likely standing for Platform Runtime Module or a similar construct governing critical system behaviors. For such a handler function to be discoverable and callable from outside its compilation unit, it must be explicitly designated for export. This is achieved by utilizing an attribute or macro, such as `PRM_EXPORT_API`, which signals to the compiler and linker that the function's address and name should be placed into the "image's export table." This export table is a fundamental component of a binary executable or shared library, serving as a directory that other modules can consult to resolve external function calls dynamically at runtime, enabling inter-module communication without requiring compile time linking of all components.
+
+The restriction on the maximum name length of a P R M handler function to one hundred twenty eight bytes is a practical engineering constraint. This limit reflects design decisions related to memory allocation, table indexing, and performance within the system's symbol management infrastructure. Ensuring a bounded name length simplifies buffer management, prevents potential overflow vulnerabilities, and optimizes the lookup process within the export tables, contributing to the overall stability and efficiency of the module loading and A P I invocation mechanisms.
+
+Furthermore, the requirement that "all P R M handlers must have an entry in the P R M Export Descriptor Table" indicates a more sophisticated A P I management system. Unlike a simple export table that merely lists function addresses, a "P R M Export Descriptor Table" suggests a richer metadata structure. This table likely contains additional information beyond just the entry point, such as versioning, security attributes, required parameters, or service identifiers, which allows the P R M system to validate the handler's legitimacy and enforce A P I contracts. A function is only recognized as a valid P R M handler if it adheres to these prescribed conventions and is properly cataloged within this descriptor table, ensuring type safety, security, and correct system behavior.
+
+Finally, the principle of information hiding is strictly enforced, stating that "functions in the P R M module binary image that are not exposed as P R M handlers are considered private to the P R M module." This is a cornerstone of robust software engineering. Private functions are internal implementation details, designed solely to support the functionality of the module itself. Consequently, these private functions should not, under any circumstances, have entries in the P R M module's export table. Exposing internal functions would violate encapsulation, increase coupling between modules, and create an unstable A P I that could change arbitrarily, leading to system fragility and maintenance nightmares. By segregating public A P I handlers from private helper routines, the system maintains clear boundaries, promotes modular independence, and facilitates future development and evolution.

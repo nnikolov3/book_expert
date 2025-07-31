@@ -1,0 +1,83 @@
+7. Servicable PRM
+
+Over time, a PRM handler might need to be updated for a variety of reasons such as bug fixes,
+workarounds or to enhance the runtime capability or the feature set. PRM updates occur at the
+module level. It is not possible to update a handler without updating the whole PRM module. For
+this reason, PRM versioning is applied at the module level. Conventionally, such a PRM module
+update would require a system reboot that updates the firmware code allowing the new code to
+be loaded in a future boot.
+
+In a cloud services environment, rebooting the system is not a viable solution and is reserved as
+a last resort. Hence we need an alternate means to update PRM modules at OS runtime and
+activate them without a system reboot.
+
+This document describes a generic framework for such an update, by enlightening the ACPI
+Bridge driver for a mechanism to switch to a new PRM Module image.
+
+7.1 High-Level Flows
+
+If a new PRM Module update is desired, the system BIOS build process generates a new PRM
+Module image as described in Section 6, or in an OS Specific format from a repository. The
+generation and delivery of this image is implementation specific and beyond the scope of this
+specification.
+
+Generically, during OS Runtime, an OS updater consumes a newly delivered PRM Module
+1. Parses the PE/COFF Export Descriptor structure
+a. to identify it as a PRM Module
+
+b. Ensure that the right platform is targeted by matching the PlatformGuid to the
+PrmPlatformGuid in the PRMT Table (NOTE: Some implementations might
+choose the ESRT mechanism for platform targeting, or any other proprietary
+mechanism)
+
+2. The updater loads the PRM module into memory and performs the fix-ups
+3. Sends request to ACPI to update its PRM handler pointers.
+
+The ACPI Subsystem, on receipt of the request does the following:
+1. Checks if the updates are locked or allowed (See section 7.1.1)
+2. If locked, then stages the new PRM image until updates are unlocked
+3. If unlocked, then switches the pointers to the new PRM Module.
+
+7.1.1 Update Lock/Unlock
+
+Most PRM Handler invocations are considered stateless and hence a PRM Module update can
+be applied in-between PRM invocations. But this specification allows for a mechanism to lock an
+update of a PRM Module under certain circumstances, as described below.
+
+If an operation requires a sequence of PRM invocations (via _DSM or via Direct call), then an
+runtime update of the PRM handler should be blocked until this sequence is complete.
+
+An example of such operation is Address Range Scrub (ARS) for persistent memory
+(https://pmem.io/documents/NVDIMM DSM Interface Example.pdf) which requires a sequence
+Servicable P R M.
+
+Over time, a P R M handler might need to be updated for a variety of reasons such as bug fixes, workarounds, or to enhance the runtime capability or the feature set. P R M updates occur at the module level. It is not possible to update a handler without updating the whole P R M Module. For this reason, P R M versioning is applied at the module level. Conventionally, such a P R M Module update would require a system reboot that updates the firmware code allowing the new code to be loaded in a future boot.
+
+In a cloud services environment, rebooting the system is not a viable solution and is reserved as a last resort. Hence we need an alternate means to update P R M modules at O S runtime and activate them without a system reboot.
+
+This document describes a generic framework for such an update, by enlightening the A C P I Bridge driver for a mechanism to switch to a new P R M Module image.
+
+High Level Flows.
+
+If a new P R M Module update is desired, the system B I O S build process generates a new P R M Module image as described in Section six, or in an O S Specific format from a repository. The generation and delivery of this image is implementation specific and beyond the scope of this specification.
+
+Generically, during O S Runtime, an O S updater consumes a newly delivered P R M Module. First, it parses the P E slash C O F F Export Descriptor structure. This is done to identify it as a P R M Module. Also, it ensures that the right platform is targeted by matching the P R M Platform Guid in the P R M T Table. A note on this is that some implementations might choose the E S R T mechanism for platform targeting, or any other proprietary mechanism. Second, the updater loads the P R M module into memory and performs the fix ups. Third, it sends a request to A C P I to update its P R M handler pointers.
+
+The A C P I Subsystem, on receipt of the request, does the following: First, it checks if the updates are locked or allowed, as described in section seven point one point one. Second, if locked, then it stages the new P R M image until updates are unlocked. Third, if unlocked, then it switches the pointers to the new P R M Module.
+
+Update Lock slash Unlock.
+
+Most P R M Handler invocations are considered stateless and hence a P R M Module update can be applied in between P R M invocations. But this specification allows for a mechanism to lock an update of a P R M Module under certain circumstances, as described below.
+
+If an operation requires a sequence of P R M invocations, via underscore D S M or via Direct call, then a runtime update of the P R M handler should be blocked until this sequence is complete.
+
+An example of such operation is Address Range Scrub, or A R S, for persistent memory. The corresponding reference is https colon slash slash pmem dot I O slash documents slash N Vidia M M underscore D S M underscore Interface underscore Example dot pdf, which requires a sequence.
+The fundamental challenge addressed here pertains to the runtime serviceability of platform firmware components, specifically what are termed P R M handlers. Over time, these handlers, which are modularized segments of code responsible for platform specific runtime functions, frequently require updates. These updates might encompass critical bug fixes, the implementation of specific workarounds for hardware or software quirks, or the expansion of the system's runtime capabilities and feature set. A significant constraint arises from the design principle that P R M updates are applied at the module level. This implies that even a minor modification to a single handler necessitates updating the entire P R M module, rather than allowing for granular, isolated patches. Conventionally, such firmware module updates demand a full system reboot, a process that loads the new firmware code from non volatile storage into the operating memory during the boot sequence.
+
+However, in contemporary computing environments, particularly within large scale cloud services infrastructure, system reboots represent a significant operational burden and are generally reserved as a last resort. Reboots disrupt service availability, introduce latency, and complicate workload orchestration. Consequently, there is a pressing need for alternative mechanisms to update P R M modules dynamically, at O S runtime, without requiring a system interruption. The document outlines a generic framework to achieve this, leveraging the A C P I Bridge driver to facilitate the seamless transition to a new P R M Module image.
+
+The high level operational flow for such an update begins with the system B I O S build process generating a new P R M Module image. The precise format of this image is implementation specific, potentially adhering to internal specifications or established standards. During O S runtime, an O S updater component initiates the consumption of this newly delivered P R M Module. The initial step for the updater involves parsing the P E slash C O F F Export Descriptor structure embedded within the module. This parsing serves two critical purposes: first, it identifies the loaded binary as a legitimate P R M Module, validating its type and intended function. Second, and equally crucial, it ensures that the P R M Module is precisely targeted for the correct platform. This platform targeting is achieved by matching a P R M Platform G u i d embedded within the module to entries in the P R M T Table. Some implementations might alternatively utilize the E S R T mechanism or other proprietary methods for this platform validation. Once parsed and validated, the updater proceeds to load the P R M module into volatile memory, such as D Ram. Following loading, it performs necessary fix ups. These fix ups are a common aspect of dynamic loading, involving operations like relocating memory addresses, resolving symbolic references, and patching pointers to ensure the module's code and data structures are correctly integrated into the current runtime memory space. Finally, the updater dispatches a request to the A C P I Subsystem, signaling its intent to update the P R M handler pointers to reflect the newly loaded module.
+
+Upon receiving this request, the A C P I Subsystem assumes a pivotal role in managing the transition. Its first action is to verify the update's permissibility by checking if the update process is currently locked or allowed. This is a critical concurrency control mechanism designed to maintain system stability. If the A C P I Subsystem determines that updates are currently locked, it stages the new P R M image. Staging implies that the new module is held in a ready state, but its activation is deferred until the lock is released and updates are explicitly allowed. This mechanism prevents race conditions or inconsistent states during ongoing system operations. Conversely, if the A C P I Subsystem finds that updates are unlocked and permissible, it proceeds to atomically switch the active pointers to the new P R M Module. This pointer switch is the crucial step that redirects all subsequent invocations of P R M handlers to the newly loaded and fixed up code, effectively performing a live patch without disrupting the system's operational state.
+
+The concept of an Update Lock slash Unlock mechanism is central to ensuring system integrity during runtime updates. While most P R M handler invocations are designed to be stateless, meaning they do not maintain persistent internal context across calls, the specification allows for a locking mechanism. This mechanism is crucial when certain system operations involve a sequence of P R M invocations that must complete without interruption or alteration of the underlying handler code. For instance, if an operation, perhaps initiated via a D S M call or a Direct call, requires multiple P R M handler interactions to execute atomically, any runtime update of the P R M handlers must be blocked until that sequence completes. This ensures the integrity of the multi step operation and prevents partial updates that could lead to system inconsistencies or crashes. A pertinent example of such an operation is Address Range Scrub, or A R S, particularly relevant for persistent memory technologies like N V D I M M s. A R S involves a thorough traversal and verification of memory ranges, an operation that must not be interrupted by a handler update. The lock ensures that the A R S operation can complete its full sequence of memory accesses and verifications before the P R M handlers responsible for managing that memory can be swapped out, thus upholding data integrity and system reliability in dynamic environments.

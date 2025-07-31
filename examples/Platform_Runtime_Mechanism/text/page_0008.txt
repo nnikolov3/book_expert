@@ -1,0 +1,50 @@
+3. Platform Runtime Mechanism Overview
+
+Platform Runtime Mechanism (PRM) introduces the capability of transitioning certain usages
+that were hitherto executed out of SMM, to a code that executes with the OS/VMM context.
+Such usages are those that don’t require SMM privileges (Category 1) and a sub-set of HW
+SMI Handlers that don’t require SMM privileges (Category 3) . This eliminates many of the
+cons present when executing the same code within the SMM environment. The code can also
+be updated within the ring 0 software environment through targeted online servicing of specific
+sets of functionalities
+
+As shown in the figure below (Figure 3-1), Platform Runtime Mechanism provides an ACPI
+Interpreter based infrastructure to invoke runtime platform firmware handlers. These runtime
+handlers are called PRM Handlers and are placed by the BIOS during boot (and updatable in
+OS runtime) in a runtime area reserved for firmware usage (such as UEFI Runtime area).
+
+NOTE: The ACPI Interpreter based PRM infrastructure is the PRM OpRegion Handler in
+ACPICA/ACPI subsystem and can also logically be implemented as an independent driver
+(Bridge Driver) in certain implementations. This Specification interchangeably uses the terms
+‘Bridge Driver’, ‘PRM OpReqgion Handler’, ‘ACPI Driver’, ACPI Interpreter or ‘ACPICA’ to mean
+the same thing.
+
+PRM handlers can be invoked by two means (detailed in Section 5)
+
+1. Directly from an OS driver - if the OS driver and the OS ACPI subsystem is PRM aware.
+2. From ASL context — if the OS driver is not PRM aware and uses DSM instead, or
+platform events that trigger SCI.
+
+15
+Three. Platform Runtime Mechanism Overview.
+
+Platform Runtime Mechanism, P R M, introduces the capability of transitioning certain usages that were hitherto executed out of S M M, to a code that executes with the O S slash V M M context. Such usages are those that don’t require S M M privileges, Category one, and a sub set of H W S M I Handlers that don’t require S M M privileges, Category three. This eliminates many of the cons present when executing the same code within the S M M environment. The code can also be updated within the ring zero software environment through targeted online servicing of specific sets of functionalities.
+
+As shown in Figure three one, Platform Runtime Mechanism provides an A C P I Interpreter based infrastructure to invoke runtime platform firmware handlers. These runtime handlers are called P R M Handlers and are placed by the B I O S during boot, and are updatable in O S runtime, in a runtime area reserved for firmware usage, such as U E F I Runtime area.
+
+Note: The A C P I Interpreter based P R M infrastructure is the P R M Op Region Handler in A C P I C A slash A C P I subsystem and can also logically be implemented as an independent driver, a Bridge Driver, in certain implementations. This Specification interchangeably uses the terms Bridge Driver, P R M Op Region Handler, A C P I Driver, A C P I Interpreter, or A C P I C A to mean the same thing.
+
+P R M handlers can be invoked by two means, detailed in Section five. The first way is directly from an O S driver, if the O S driver and the O S A C P I subsystem are P R M aware. The second way is from A S L context, if the O S driver is not P R M aware and uses underscore D S M instead, or through platform events that trigger S C I.
+The Platform Runtime Mechanism, or P R M, represents a fundamental architectural shift in modern computing platforms, primarily addressing limitations associated with System Management Mode, or S M M. Historically, certain system management operations, especially those involving power management, thermal control, or hardware specific configurations, were exclusively executed within S M M. S M M is a highly privileged C P U operating mode, often considered more privileged than the operating system's kernel, effectively residing outside the traditional ring zero O S environment. Code executing within S M M has unfettered access to system resources and can interrupt even the most critical O S operations.
+
+The inherent problem with placing all system management code within S M M is twofold: firstly, S M M's global, non preemptable nature means any code execution within it can introduce latency and complexity, impacting real time system responsiveness. Secondly, S M M code is typically part of the immutable B I O S or U E F I firmware, making it challenging to update or service dynamically. P R M introduces the capability to transition specific usages and functions that previously resided within S M M out of this highly privileged context and into the O S or Virtual Machine Monitor, often abbreviated V M M, environment. These are typically usages categorized as Category one, which do not inherently demand S M M's extreme privileges, or a subset of hardware S M I handlers, classified as Category three, that also do not strictly require S M M access.
+
+By relocating such code, P R M mitigates many of the complexities and constraints associated with S M M execution. It facilitates the online servicing and updating of these functionalities within the less restrictive and more manageable ring zero software environment. This design pattern enhances system robustness, improves debuggability, and allows for greater agility in deploying bug fixes or feature enhancements without requiring deep firmware modifications or system reboots.
+
+The technical infrastructure underpinning P R M is largely based on the Advanced Configuration and Power Interface, or A C P I, interpreter. The P R M Handlers, which are the executable components embodying this mechanism, are provisioned by the B I O S during system boot. They reside within a dedicated runtime area, often within the U E F I Runtime Services space, ensuring their persistence and accessibility throughout the O S lifecycle. A critical advantage is their inherent updatability even while the O S is running, a stark contrast to static S M M firmware.
+
+It is important to clarify the nomenclature: the A C P I Interpreter based P R M infrastructure is functionally equivalent to what is termed the P R M Op Region Handler within the A C P I C A / A C P I subsystem. This infrastructure can be logically realized as an independent driver, sometimes referred to as a Bridge Driver, facilitating the abstraction of hardware specifics. The specification interchangeably uses several terms, including Bridge Driver, P R M Op Region Handler, A C P I Driver, A C P I Interpreter, or A C P I C A, all referring to this foundational P R M mechanism.
+
+P R M handlers can be invoked through two primary methods, each demonstrating a different aspect of system interaction. The first method involves a direct invocation from an O S driver. For this direct interaction to occur, both the O S driver itself and the O S A C P I subsystem must be P R M aware. This signifies a modern, cooperative design where the O S components are designed with explicit knowledge and interfaces to interact with the P R M framework, allowing for efficient, direct function calls.
+
+The second method of invocation originates from the A C P I Source Language, or A S L, context. This pathway is typically employed when an O S driver is not P R M aware or for event driven scenarios. In such cases, the O S driver might invoke a generic A C P I Device Specific Method, or underscore D S M. This invocation, or other analogous platform events, can then trigger a System Control Interrupt, or S C I. An S C I serves as a communication channel from the platform's firmware to the O S, indicating a system event requiring O S intervention or management. Upon receiving an S C I, the O S A C P I driver processes the interrupt and dispatches it to the appropriate handler, which may then interact with the P R M framework. This indirect mechanism ensures compatibility with existing or legacy O S components while still allowing the benefits of P R M to be leveraged through a standardized A C P I event notification system.

@@ -1,0 +1,38 @@
+4.2.3.2 PRM_MODULE_RUNTIME_MMIO_RANGES
+
+This structure describes an array of PRM_MODULE_RUNTIME_MMIO_RANGE structures
+declared by a PRM module that may be used by a PRM handler in the module.
+
+Table 4-7 PRM_MODULE_RUNTIME_MMIO_RANGES Structure
+
+[Count]
+
+Field Byte Byte Description
+length | offset
+Count 8 0 The number of
+PRM_MODULE_RUNTIME_MMIO_RANGE elements
+that follow.
+RuntimeMmioRange 8 8 Array of PRM ModuleRuntime MMIO Range Structures.
+
+Each structure represents a MMIO range used by the
+PRM Module represented by this structure.
+
+23
+Four point two point three point two P R M Module Run Time M M I O Ranges.
+
+This structure describes an array of P R M Module Run Time M M I O Range structures declared by a P R M module that may be used by a P R M handler in the module.
+
+The table, titled Table four dash seven P R M Module Run Time M M I O Ranges Structure, details the fields of this structure, including their byte length, byte offset, and a description.
+
+The first field is `Count`, which has a byte length of eight and a byte offset of zero. This field indicates the number of P R M Module Run Time M M I O Range elements that follow.
+
+The second field is `Runtime M M I O Range array index Count`. It has a byte length of eight and a byte offset of eight. This field is an array of P R M Module Runtime M M I O Range Structures. Each individual structure within this array represents an M M I O range used by the P R M Module that this structure describes.
+The document delineates a critical data structure named P R M underscore MODULE underscore RUNTIME underscore M M I O underscore RANGES, which is fundamental to system resource management, particularly concerning memory mapped I O. Memory mapped I O is a cornerstone architectural principle where hardware registers and device buffers are exposed to the C P U as if they were ordinary memory locations. This permits the C P U to interact with peripherals using standard memory access instructions, thereby simplifying the instruction set architecture and enabling the application of sophisticated memory management techniques, such as virtual memory and protection mechanisms, to device access.
+
+The overall structure defines an array of individual P R M underscore MODULE underscore RUNTIME underscore M M I O underscore RANGE structures. This collection is declared by a P R M module, which typically represents a self contained hardware or firmware component responsible for power, reset, and other system management functions. A P R M handler, which is a counterpart component often part of a system firmware or operating system kernel, would then interpret this structure to configure the system's hardware resources appropriately.
+
+The table explicitly details the memory layout of this structure, defining two primary fields: 'Count' and 'Runtime M M I O Range'. The 'Count' field is located at byte offset zero and occupies eight bytes of memory. Its purpose is to specify the number of subsequent P R M underscore MODULE underscore RUNTIME underscore M M I O underscore RANGE elements that follow within this very structure. This design pattern is a common and efficient method for implementing variable length data structures, allowing the system to dynamically size the resource declaration based on the actual needs of the P R M module, rather than pre allocating a fixed, potentially wasteful, amount of memory. The use of eight bytes for this count suggests the capability to declare an extensive number of M M I O ranges, indicative of a system with complex hardware configurations or fine grained resource partitioning.
+
+Immediately succeeding the 'Count' field, starting at byte offset eight, is the 'Runtime M M I O Range' field. This field represents an array, where the number of elements is dynamically determined by the value stored in the preceding 'Count' field. Each element in this array is defined as a P R M ModuleRuntime M M I O Range Structure, and each such structure occupies eight bytes of memory. Consequently, the total size of this array segment within the P R M underscore MODULE underscore RUNTIME underscore M M I O underscore RANGES structure is the value of 'Count' multiplied by eight bytes. Each instance of the P R M ModuleRuntime M M I O Range Structure is expected to encapsulate the specific parameters of a single memory mapped I O region, such as its starting address, its size or length, and potentially its access attributes like read write permissions or cacheability.
+
+This meticulously defined structure serves as a formal interface between hardware components and system software. It embodies the principles of declarative resource management, where modules explicitly state their requirements. This declaration is critical for the system's integrity and functionality. Without such a mechanism, it would be impossible for the operating system or firmware to properly initialize hardware, resolve potential address space conflicts between different devices, or establish the necessary memory management unit mappings that enable the C P U to securely and efficiently interact with peripheral devices. The adherence to fixed byte lengths and offsets for each field underscores the importance of precise memory layout and data alignment, which are crucial for ensuring correct data interpretation by processors and for optimizing memory access performance, especially in sixty four bit computing environments.

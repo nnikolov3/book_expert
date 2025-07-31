@@ -1,0 +1,56 @@
+9. Appendix B: OSC and OpRegion
+
+9.1 Platform-Wide OSPM Capabilities
+
+A new OSC capabilities bit (BIT 21) will be used to indicate OS support of Platform Runtime
+
+Mechanism.
+
+Based on this indication, BIOS can choose switch from legacy handling (such as SMI) to using
+
+PRM
+
+The ACPI ECR for this bit is shown here for completeness.
+
+Add a new bit at the end of the table as follows:
+Platform-Wide OSC Capabilities DWORD 2
+
+Capabilities | Interpretation
+
+DWORD
+
+21 Reserved for future use - The OS sets this bit to indicate support for Platform
+Runtime Mechanism (PRM).
+
+31:22 Reserved (must be 0)
+
+9.2 PRM Operation Region
+
+A new Operation Region Address space identifier is defined for PlatformRtMechanism
+and the ACPI ECR is shown here for completeness.
+
+Operation Region Address Space Identifiers Value
+
+Value Name (RegionSpace Keyword)
+0x0B PlatformRtMechanism (Reserved for future use by a mechanism developed in
+the code-first approach)
+Nine. Appendix B: underscore O S C and OpRegion.
+
+Nine point one. Platform-Wide O S P M Capabilities.
+
+A new underscore O S C capabilities bit, bit twenty one, will be used to indicate O S support of Platform Runtime Mechanism. Based on this indication, B I O S can choose to switch from legacy handling, such as S M I, to using P R M. The A C P I E C R for this bit is shown here for completeness.
+
+Add a new bit at the end of the table as follows: The table, titled 'Platform-Wide underscore O S C Capabilities D W O R D two', presents two rows of data. The first column is 'Capabilities D W O R D', and the second is 'Interpretation'. For Capabilities D W O R D value twenty one, the interpretation is 'Reserved for future use: The O S sets this bit to indicate support for Platform Runtime Mechanism, or P R M'. For Capabilities D W O R D values thirty one through twenty two, the interpretation is 'Reserved, and must be zero'.
+
+Nine point two. P R M Operation Region.
+
+A new Operation Region Address space identifier is defined for Platform R T Mechanism, and the A C P I E C R is shown here for completeness. The table, titled 'Operation Region Address Space Identifiers Value', defines a single entry. The 'Value' column specifies hexadecimal zero B. The corresponding 'Name', or 'Region Space Keyword', is 'Platform R T Mechanism', which is reserved for future use by a mechanism developed in the code first approach.
+The provided document delineates critical aspects of platform-wide capabilities and system resource allocation within a unified extensibility framework, likely part of an A C P I specification. This involves a fundamental mechanism for an operating system to declare its capabilities to the platform firmware and for the firmware to define specific regions for runtime interactions.
+
+The first section, titled "Platform Wide underscore O S P M Capabilities," focuses on the underscore O S C capabilities D Word. The underscore O S C method, or Operating System Capabilities method, is a cornerstone of modern system management, enabling the O S to negotiate with the platform for control over various hardware features that might otherwise be managed by legacy firmware interfaces. This negotiation process ensures that the O S can fully utilize platform functionalities while maintaining system stability. Specifically, the table illustrates how a particular bit within a D Word, which is a thirty two bit data unit, is utilized for this capability declaration.
+
+The table, structured with two columns—"Capabilities D Word" on the left and "Interpretation" on the right—specifies the meaning of different bit ranges. The entry for bit twenty one is designated as "Reserved for future use," with the critical clarification that the O S sets this bit to indicate support for the Platform Runtime Mechanism, or P R M. This reservation signifies a forward-looking design, establishing a dedicated flag for a new, presumably more advanced, runtime interaction paradigm between the O S and the underlying hardware. The act of the O S setting this bit indicates a clear intent to take ownership or control of P R M related functions, allowing the B I O S to transition from older methods, such as System Management Interrupts, to a more direct P R M based management. The subsequent range, bits thirty one through twenty two, are uniformly "Reserved" and explicitly "must be zero." This constraint is vital for maintainability and future expandability of the specification, ensuring that these bits are not inadvertently used by older, non-compliant systems and providing clear space for future definitions without conflicts. This methodical reservation of bit fields is a standard practice in low-level protocol design, guaranteeing both compatibility and extensibility.
+
+The subsequent section, "P R M Operation Region," defines a specific address space identifier for this Platform Runtime Mechanism. In A C P I, operation regions are fundamental constructs that allow the O S to access and manipulate portions of the platform's hardware or firmware state by mapping specific address ranges. These regions provide a structured and standardized way for the O S and firmware to communicate, enabling the O S to read from or write to memory mapped registers, for instance, that control platform behavior.
+
+The table in this section, with columns "Value" and "Name (Region Space Keyword)," assigns a symbolic name to a numerical identifier. The value hexadecimal zero B is mapped to the `Platform R T Mechanism` identifier. This explicit assignment ensures a unique, well-defined identifier for the P R M's operational region. The accompanying note, "Reserved for future use by a mechanism developed in the code first approach," is particularly insightful from a software engineering perspective. It suggests that the precise details or functionality of this P R M, while conceptually defined, are still evolving, and their final form will be influenced heavily by the practical implementation and iterative refinement during the development process. A "code first" approach typically means that the actual software implementation drives the specification details, rather than the specification being fully prescriptive upfront. This iterative design allows for greater flexibility and practical optimization, especially in complex system interfaces where all contingencies cannot be foreseen in advance. The definition of a reserved operation region, even with a pending "code first" mechanism, provides a stable, symbolic placeholder for integration and ensures architectural consistency as development proceeds.

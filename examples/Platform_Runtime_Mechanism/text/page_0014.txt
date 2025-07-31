@@ -1,0 +1,88 @@
+AcpiParameterBuffer 8 36 A physical address of a parameter buffer for this
+(PRM_DATA BUFFER ¥) PRM handler that is only used in case of ASL
+(physical address) invocation of the handler.
+
+The buffer is allocated in the firmware boot
+environment and typically updated at runtime by
+ASL.
+
+The pointer may be if a parameter buffer is not
+required in case of ASL invocation, or if ASL
+invocation is not used.
+
+4.2 Explanation of Buffers Used
+This section explains the usages of various buffers and data structures mentioned in PRMT
+4.2.1 Static Data Buffer
+
+The static data buffer is a data buffer allocated in the BIOS boot phase whose contents (and
+size) are implementation specific. The Boot BIOS is also responsible for populating this static
+data buffer, from various implementation-specific data sources. For example, BIOS setup menu
+options, board straps, SOC fuse values, etc.
+
+While this is a per PRM specific data buffer as defined, some implementations might choose to
+optimize by placing one instance of the structure in memory and have all the PRM entries in the
+module point to this same structure.
+
+While the contents are arbitrary, the buffer header is standardized below.
+
+A pointer to this StaticDataBuffer is passed to the PRM Handler during invocation.
+Table 4-4 PRM Static Data Buffer Structure (StaticDataBuffer)
+
+Field Byte length Byte offset Description
+Header
+Signature 4 0 ‘PRMS’. Signature of a PRM Static
+Data Buffer Header structure.
+Length 4 4 The total length in bytes of this PRM
+
+data buffer including the size of the
+PRM_DATA BUFFER_HEADER.
+
+Data Varies 8 The variable length data specific to a
+PRM module the constitutes the data
+in the buffer.
+
+4.2.2 ACPI Parameter Buffer
+
+The AcpiParameterBuffer is a data buffer allocated in the BIOS boot phase that is only used in
+the ASL invocation path.
+
+The buffer is used for passing parameters between the ASL based caller and the PRM handler.
+The internal data format of the ParameterBuffer is a contract between the caller and the PRM
+
+21
+A physical address of an Acpi Parameter Buffer, which is referred to as P R M Data Buffer, has a byte length of eight and an offset of thirty six. This parameter buffer is only used by the P R M handler when invoked via A S L. The buffer is allocated within the firmware boot environment and is typically updated at runtime by A S L. The pointer to this buffer may not be required if an A S L invocation does not necessitate a parameter buffer, or if A S L invocation itself is not used.
+
+**Section 4.2: Explanation of Buffers Used**
+
+This section explains the usages of various buffers and data structures mentioned in P R M T.
+
+**Subsection 4.2.1: Static Data Buffer**
+
+The static data buffer is a data buffer allocated during the B I O S boot phase. Its contents and size are implementation specific. The Boot B I O S is also responsible for populating this static data buffer from various implementation specific data sources. For example, these sources include B I O S setup menu options, board straps, and S o C fuse values.
+
+While this is defined as a per P R M specific data buffer, some implementations might choose to optimize by placing one instance of the structure in memory and having all the P R M entries in the module point to this same structure.
+
+While the contents are arbitrary, the buffer header is standardized below. A pointer to this Static Data Buffer is passed to the P R M Handler during invocation.
+
+**Table 4-4: P R M Static Data Buffer Structure (Static Data Buffer)**
+
+The table details the structure of the P R M Static Data Buffer, describing its fields, their byte lengths, byte offsets, and descriptions.
+
+The first field is `Signature`. It has a byte length of four and a byte offset of zero. Its description is the signature 'P R M S' for a P R M Static Data Buffer Header structure.
+
+The second field is `Length`. It also has a byte length of four and a byte offset of four. This represents the total length in bytes of the P R M data buffer, which includes the size of the P R M Data Buffer Header.
+
+The third field is `Data`. Its byte length varies, and its byte offset is eight. This field contains the variable length data specific to a P R M module that constitutes the data in the buffer.
+
+**Subsection 4.2.2: Acpi Parameter Buffer**
+
+The Acpi Parameter Buffer is a data buffer allocated in the B I O S boot phase that is only used in the A S L invocation path. The buffer is used for passing parameters between the A S L based caller and the P R M handler. The internal data format of the Parameter Buffer is a contract between the caller and the P R M handler.
+System firmware, particularly within the B I O S or U E F I environment, employs carefully orchestrated data structures and memory allocation strategies to manage platform runtime operations. One such critical component is the `A C P I Parameter Buffer`, often referred to as `P R M data buffer`. This buffer holds a physical address, meaning it directly references a specific memory location in the system's physical address space, bypassing any M M U based virtual memory translations. Its primary utility is confined to scenarios involving A S L invocation, where A S L, or A C P I Source Language, methods within the firmware require a standardized mechanism for passing data to a P R M handler.
+
+The `A C P I Parameter Buffer` is allocated during the initial firmware boot environment, a crucial phase where the system hardware is initialized and configured before the operating system takes control. This allocation and subsequent population with run time specific data are typically managed by the firmware's boot loader. It is important to note that the pointer to this parameter buffer is conditional; it is only required for A S L invocations and may be absent or unused if the A S L invocation path is not taken. This design choice reflects an optimization to conserve resources or simplify execution paths when certain functionalities are not engaged.
+
+Central to these firmware operations is the concept of a static data buffer. This buffer, distinct from dynamically allocated memory, is instantiated and populated during the B I O S boot phase. Its contents and size are inherently implementation specific, varying across different hardware platforms and firmware revisions. The B I O S boot process bears the responsibility for populating this static data buffer from diverse, implementation specific sources, which can range from B I O S setup menu options, physical board strap configurations, to immutable S o C fuse values that define core hardware characteristics. A notable optimization strategy involves allowing multiple P R M entries, each representing a distinct platform runtime mechanism, to point to a singular instance of this buffer structure in memory. This reduces memory footprint and ensures consistency across different P R M invocations that might rely on the same underlying static data.
+
+While the specific contents of this static data buffer can be arbitrary, dictated by implementation requirements, its header structure adheres to a standardized format. This structure, which can be visualized as a contiguous block of memory, begins with a `Signature` field. Located at a byte offset of zero and spanning four bytes, this `Signature` field contains the ASCII string 'P R M S'. This serves as a vital magic number or identifier, enabling any P R M handler to immediately recognize and validate the data structure, preventing misinterpretation of arbitrary memory regions. Following the `Signature` is a `Length` field, also occupying four bytes and residing at a byte offset of four from the beginning of the buffer. This field specifies the total length in bytes of the entire P R M data buffer, including the size of its own header. The inclusion of a length field is a fundamental design principle for robust data structures, particularly those intended for future extensibility or variable content. It allows parsers to correctly determine the buffer's bounds and to potentially skip over it or allocate sufficient memory without prior knowledge of its exact payload size. Finally, beginning at a byte offset of eight, the remainder of the buffer is occupied by the `Data` field. This `Data` field's length varies depending on the specific P R M module and constitutes the actual module specific information or configuration parameters. This layered design, with a fixed header followed by a variable payload, is a classic pattern in computer architecture and protocol design, providing both structural consistency and content flexibility.
+
+Beyond the static data buffer, another crucial data communication construct is the `A C P I Parameter Buffer`. This buffer is allocated specifically during the B I O S boot phase and is exclusively employed within the A S L invocation path. Its primary function is to facilitate the secure and structured passing of parameters between an A S L based caller and a P R M handler. The internal data format of this `A C P I Parameter Buffer` represents a critical contract, or an agreed-upon interface, between the calling entity and the P R M handler. This contract dictates the precise layout, meaning, and interpretation of the data fields within the buffer, ensuring seamless and correct communication during critical low level system operations. Without such a well defined contract, inter component communication in complex firmware environments would be prone to errors, leading to system instability and unpredictable behavior.

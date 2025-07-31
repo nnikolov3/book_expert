@@ -1,0 +1,79 @@
+system, the latency can vary between ~300us to 1ms depending on core/thread count, the
+nature of the event being handled, and other factors.
+
+1.2.2 SMI and Firmware complexity
+
+SMM was never designed to handle so many asynchronous events in many-core environment.
+In reality, SMM handler has to deal with potential scenarios such as the following:
+
+1. Some threads in a blocked state (WFS, VMX shutdown, LTS)
+
+2. Some threads in the middle of executing a long flow instruction (wbinvd, ucode patch
+load) or in C6 state and will respond much later
+
+3. Generation of more than one SMI in close proximity whereby some threads will observe
+a merged SMI (single SMI) while other observe multiple SMIs, leading to out-of-sync
+SMI scenarios.
+
+Distribution of SMM sources that do not correspond to a single hierarchy
+
+5. A narrow complexity threshold — solutions to address problems are difficult to adopt due
+to complexity analysis.
+
+1.2.3 ACPI and SMM
+
+Advanced Configuration and Power Interface (ACPI) is an open standard that defines a
+mechanism for operating systems to discover and configure hardware components, and actively
+perform device and platform power management. ACPI code is written in the ACPI Source
+Language (ASL) and typically shipped as a binary component in the form of a bytecode called
+ACPI Machine Language (AML) in the platform firmware.
+
+Today’s ACPI firmware serves as a conduit to SMM by sometimes triggering a SMI to invoke
+some platform-specific functionality.
+
+1.3 Summary
+
+In conclusion, SMI is a very powerful mechanism for invoking runtime platform firmware, that has
+complete access to system memory and system hardware resources. SMI enables a large
+number of technologies to be employed in scenarios when system software is unavailable. For
+example, during an OS has crashed (for error harvesting) or on AC power-failure (to ensure data
+persistence for Non-Volatile DIMMs).
+
+Although, this power comes with some notable downsides:
+
+= Unpredictable performance jitters, as all the threads in the system are stalled for simple
+error collection, for example.
+
+= Corner cases and race conditions, such as SMI Merge / out-of-sync SMI and OS kernel
+panics
+
+There is a massive industry wide push to move away or reduce SMM footprint. The goal of this
+document is to provide a mechanism to reduce and eventually eliminate SMM usages that result
+in unpredictable performance jitters in the platform in OS runtime. There could still be usage
+models based on Planned SMI events, or SMI events during End-of-life of the boot, but those
+don’t give rise to unpredictable performance impact and is out of scope of this specification.
+
+9
+For a system, the latency can vary between approximately three hundred microseconds to one millisecond depending on core or thread count, the nature of the event being handled, and other factors.
+
+Section one point two point two: S M I and Firmware complexity.
+S M M was never designed to handle so many asynchronous events in a many core environment. In reality, the S M M handler has to deal with potential scenarios such as the following: Some threads may be in a blocked state, such as during a W F S, V M X shutdown, or L T S. Other threads might be in the middle of executing a long flow instruction, like a W B I N V D or U code patch load, or in C six state, which will cause them to respond much later. Furthermore, the generation of more than one S M I in close proximity can lead to situations where some threads observe a merged S M I, meaning a single S M I, while others observe multiple S M I s, resulting in out of sync S M I scenarios. The distribution of S M M sources often does not correspond to a single hierarchy. Finally, a narrow complexity threshold means that solutions to address these problems are difficult to adopt due to the intricate nature of complexity analysis.
+
+Section one point two point three: A C P I and S M M.
+Advanced Configuration and Power Interface, or A C P I, is an open standard that defines a mechanism for O S to discover and configure hardware components, and actively perform device and platform power management. A C P I code is written in the A C P I Source Language, or A S L, and typically shipped as a binary component in the form of a bytecode called A C P I Machine Language, or A M L, in the platform firmware. Today's A C P I firmware serves as a conduit to S M M by sometimes triggering an S M I to invoke some platform specific functionality.
+
+Section one point three: Summary.
+In conclusion, S M I is a very powerful mechanism for invoking runtime platform firmware, that has complete access to system memory and system hardware resources. S M I enables a large number of technologies to be employed in scenarios when system software is unavailable. For example, this could occur during an O S crash for error harvesting, or on an A C power failure to ensure data persistence for Non Volatile D I M Ms.
+
+Although this power comes with some notable downsides. These include unpredictable performance jitters, as all the threads in the system are stalled for simple error collection. Another downside involves corner cases and race conditions, such as S M I Merge, out of sync S M I, and O S kernel panics.
+
+There is a massive industry wide push to move away or reduce the S M M footprint. The goal of this document is to provide a mechanism to reduce and eventually eliminate S M M usages that result in unpredictable performance jitters in the platform in O S runtime. There could still be usage models based on Planned S M I events, or S M I events during End of life of the boot, but those do not give rise to unpredictable performance impact and are out of scope of this specification.
+The core subject under consideration is the System Management Interrupt, or S M I, and its associated System Management Mode, or S M M. This is a deeply privileged operational mode of the C P U that provides the firmware, specifically the Basic I O System or Unified Extensible Firmware Interface, with exclusive control over the system's hardware resources. It is invoked by an S M I, a non-maskable interrupt that takes precedence over all other C P U activities, including those of the O S kernel. This mechanism is primarily designed to facilitate critical system management tasks, such as power management, security enforcement, and error recovery, often in scenarios where the O S is either not fully initialized, unresponsive, or untrustworthy. When an S M I occurs, the C P U transitions into S M M, saving its current context, and then executes dedicated S M M handler code, typically residing in a protected memory region known as S M Ram. The latency associated with an S M I can vary significantly, ranging from approximately three hundred microseconds to one millisecond, depending on factors such as the number of active C P U cores or threads and the specific nature of the event triggering the interrupt.
+
+Despite its foundational role and the powerful control it affords, S M M presents substantial challenges, particularly in modern, complex multi-core environments. The initial design of S M M did not anticipate the highly asynchronous and concurrent nature of contemporary computing systems. One significant issue arises when C P U threads are in a blocked state due to operations like Wait For S I P I, V M X shutdown, or other Long Term Stable states, causing delays in S M I handling. Furthermore, an S M I can be asserted while a C P U is in the midst of executing a complex, long-latency microcode instruction, such as `wbinvd` for cache invalidation, or during a microcode patch load, or when the C P U is in a deep low power state like C six. In such cases, the C P U's response to the S M I can be considerably delayed, leading to unpredictable system behavior.
+
+Another layer of complexity stems from the generation of multiple S M Is in close temporal proximity. This can lead to a phenomenon where some C P U threads observe a single, merged S M I event, while others perceive distinct, multiple S M Is. This discrepancy can result in an "out of sync" system state across different cores, manifesting as insidious race conditions and inconsistencies that are exceptionally difficult to diagnose and resolve. The problem is compounded by the fact that S M M event sources often lack a clear, single hierarchical structure, making it challenging to manage and correlate these events across the system. This inherent complexity makes it difficult to adopt robust solutions for S M M related issues, pushing the boundaries of what is tractable within system design and verification.
+
+The Advanced Configuration and Power Interface, or A C P I, is an open industry standard that defines how O S s discover and configure hardware components and perform system wide power management. A C P I code is authored in the A C P I Source Language, A S L, and is then compiled into a binary bytecode known as A C P I Machine Language, or A M L, which is embedded within the platform firmware. A C P I firmware often serves as a conduit, leveraging S M M by programmatically triggering S M Is to invoke specific platform dependent functionalities. This interaction illustrates a layered architectural approach where a higher level, O S agnostic interface like A C P I relies on a lower level, deeply privileged mechanism like S M M for critical hardware interactions that transcend the O S's direct control.
+
+While S M I is undeniably a powerful mechanism for runtime firmware invocation, offering complete access to system memory and hardware resources even when the O S is unavailable, such as during an O S crash for error harvesting or during an A C power failure for ensuring data persistence on Non Volatile D I M M s, it comes with notable downsides. The most significant is the introduction of unpredictable performance jitters. Because all C P U threads on the system are momentarily halted while an S M M handler executes, S M Is can cause noticeable pauses in application execution, leading to performance instability and a lack of real time determinism. This is a fundamental challenge for any system requiring predictable latency. Furthermore, the aforementioned S M I merging and out of sync S M I scenarios, coupled with interactions with O S kernel panics, generate complex corner cases and race conditions that are exceptionally difficult to debug and guarantee correctness for. Consequently, there is a pervasive industry push to minimize or eliminate the reliance on S M M, particularly for usages that result in these unpredictable performance jitters during O S runtime. While certain S M M usages, such as those occurring during the system boot process or at the very end of its operational life, might remain necessary, the broader objective is to mitigate its footprint where it impacts the system's runtime responsiveness and stability.

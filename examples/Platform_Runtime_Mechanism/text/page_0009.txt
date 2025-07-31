@@ -1,0 +1,84 @@
+Figure 3-1 PRM Overview
+
+OS Driver OS Driver New usages for
+PRM aware OS and
+
+(e.g RAS) (e.g RAS) ~ Drivers
+
+Direct/Invocation
+
+ASL Methods ACPI/Bridge
+(e.e DSM) Driver
+
+PRM
+
+PRMT
+
+Handlers
+
+Addresses Legac
+Usage Models PRM Infrastructure PRM Handlers in
+based on DSM Lieu of SMI
+Invocation Handlers
+
+3.1 PRM Requirements
+PRM handlers must be code capable of executing within the context of a runtime OS.
+PRM handlers loaded at boot time should be part of the firmware boot chain of trust.
+
+PRM handler’s internal pointers should be fixed-up, if needed, during boot based on the
+OS virtual address.
+
+4. PRM handlers should be OS agnostic and not dependent on any OS provided support
+APIs.
+
+5. PRM handler should be securely replaceable/over rideable in runtime without resetting
+the system.
+
+PRM handlers should be executable by the OS, interruptible and single threaded.
+
+PRM handlers shall only access MMIO regsters that are listed in the handler’s
+parent module’s RuntimeMmioPages field in the PRMT.
+
+8. PRM handlers must not contain any privileged instructions.
+Figure three one presents a P R M Overview. The diagram illustrates two primary invocation paths for P R M handlers.
+
+On the left side, an O S Driver, exemplified by R A S, initiates an invocation through A C P I. This path leads to A S L Methods, such as underscore underscore D S M. This flow indicates that S M I is not used here, as marked by a red X. This entire left branch addresses Legacy Usage Models based on underscore underscore D S M invocation. A connection from A S L Methods, labeled P R M OpRegion, points to the A C P I slash Bridge Driver.
+
+On the right side, another O S Driver, also an R A S example, uses a direct invocation to the A C P I slash Bridge Driver. This direct invocation path also connects to a box labeled New usages for P R M aware O S and Drivers.
+
+The A C P I slash Bridge Driver is a central component that encapsulates P R M T. This driver has two outgoing connections. One leads to P R M Infrastructure. The other, indicated by a green arrow, connects to P R M Handlers, which is depicted as a stack of three green blocks. From P R M Handlers, there is a connection to P R M Handlers in Lieu of S M I Handlers, signifying an alternative or replacement mechanism for S M I handlers.
+
+Section three point one details P R M Requirements.
+One. P R M handlers must be code capable of executing within the context of a runtime O S.
+Two. P R M handlers loaded at boot time should be part of the firmware boot chain of trust.
+Three. P R M handler's internal pointers should be fixed up, if needed, during boot based on the O S virtual address.
+Four. P R M handlers should be O S agnostic and not dependent on any O S provided support A P Is.
+Five. P R M handler should be securely replaceable slash over rideable in runtime without resetting the system.
+Six. P R M handlers should be executable by the O S, interruptible and single threaded.
+Seven. P R M handlers shall only access M M I O registers that are listed in the handler's parent module's Runtime M M I O Pages field in the P R M T.
+Eight. P R M handlers must not contain any privileged instructions.
+The P R M overview depicts a fundamental shift in platform runtime management, moving away from legacy System Management Interrupts, or S M I, towards a more robust, secure, and O S friendly framework known as the Platform Runtime Mechanism, or P R M. This architectural transition is crucial for modern computing systems to enhance reliability, security, and manageability.
+
+The visual representation illustrates two primary invocation pathways for platform runtime services. On the left, we observe an O S Driver, exemplified by a Reliability, Availability, and Serviceability, or R A S, driver, invoking A S L Methods, such as the underscore D S M method, through the A C P I specification. This pathway represents existing, legacy usage models. Critically, there is an explicit indication that this flow moves away from reliance on S M I, signifying a design intent to deprecate or bypass S M I for these operations. The goal here is to leverage A C P I's descriptive capabilities to define platform specific methods, but to execute them under the P R M paradigm, thus addressing the limitations inherent in S M I based handling.
+
+Parallel to this, on the right side of the diagram, a second pathway depicts an O S Driver, also an R A S type, directly invoking an A C P I/Bridge Driver. This is labeled as "Direct Invocation," representing a cleaner, more direct interface for new P R M aware operating systems and drivers. This A C P I/Bridge Driver acts as a central control point within the P R M framework, encapsulating the complexity of interacting with the underlying platform hardware. Within this driver's conceptual boundary resides the P R M T, or P R M Table, which is a critical data structure defining the characteristics and permissions for P R M handlers. Both the legacy A S L Methods pathway, through an A C P I OpRegion interface, and the direct invocation pathway converge into this A C P I/Bridge Driver.
+
+From the A C P I/Bridge Driver, control flows downward to the P R M Infrastructure, which serves as the core management layer for P R M. This infrastructure is responsible for orchestrating the execution of P R M Handlers. The P R M Handlers themselves are depicted as a stack of green blocks, emphasizing their modular and potentially layered nature. The overall objective is to have these P R M Handlers function "in Lieu of S M I Handlers," which is a profound architectural statement. S M I's operate at the highest privilege level, System Management Mode, or S M M, effectively halting the C P U and operating system, making them opaque, non-interruptible, and a significant attack surface. P R M aims to mitigate these issues by providing a controlled, transparent, and more secure execution environment.
+
+Turning to the specific requirements for P R M handlers, these articulate the design principles underpinning this modern approach to platform management:
+
+First, P R M handlers must be capable of executing within the context of a runtime O S. This means they are not confined to a separate, high privilege execution environment like S M M, but instead operate within the O S's memory space and privilege levels, making them visible and manageable by the operating system scheduler and memory management unit, or M M U.
+
+Second, P R M handlers loaded at boot time should be an integral part of the firmware boot chain of trust. This establishes a foundational security principle, ensuring that the integrity of these critical runtime components is verified from the earliest stages of system startup, preventing malicious code injection or tampering.
+
+Third, a P R M handler's internal pointers must be fixed up, if necessary, during boot based on the O S virtual address space. This requirement underscores the integration with the O S's virtual memory subsystem. P R M handlers are designed to be relocatable code, meaning their memory addresses can be adjusted during loading to fit into the O S's dynamic virtual address layout, enabling efficient memory utilization and preventing conflicts.
+
+Fourth, P R M handlers should be O S agnostic and not dependent on any O S provided support A P I's. This mandates a high degree of portability and self containment. By minimizing dependencies on specific operating system interfaces, P R M handlers can be deployed across various operating systems without requiring extensive modifications, promoting broad compatibility.
+
+Fifth, a P R M handler should be securely replaceable or over rideable in runtime without resetting the system. This is a significant functional enhancement over S M I. It allows for dynamic updates, bug fixes, or feature enhancements to critical platform runtime code without necessitating a system reboot, which is crucial for systems requiring high availability and continuous operation. The "securely" aspect implies cryptographic verification and controlled update mechanisms.
+
+Sixth, P R M handlers should be executable by the O S, interruptible, and single threaded. Being executable by the O S reiterates their integration into the O S's execution flow. Being interruptible means they do not monopolize the C P U; the O S can preempt their execution, ensuring system responsiveness and preventing deadlocks or latency issues. The single threaded constraint simplifies handler design, eliminating the complexities of multi threading, such as race conditions and synchronization primitives, within the handler's own logic.
+
+Seventh, P R M handlers shall only access Memory Mapped I O, or M M I O, registers that are explicitly listed in the handler's parent module's `RuntimeM M I O Pages` field within the P R M T. This is a crucial security and isolation mechanism. It implements a strict access control policy, preventing P R M handlers from arbitrarily accessing system hardware registers. The P R M T serves as a whitelist, ensuring that handlers can only interact with the hardware resources specifically designated for their function, thereby minimizing the potential for side channel attacks or unauthorized system modifications.
+
+Finally, P R M handlers must not contain any privileged instructions. This is perhaps the most fundamental departure from S M I and the cornerstone of P R M's enhanced security. By restricting handlers from executing privileged instructions, they are prevented from directly manipulating critical system states, escalating their own privileges, or circumventing O S security policies. This forces handlers to rely on controlled, mediated access to hardware through defined interfaces, fundamentally reducing the attack surface and increasing system stability. This paradigm shift ensures that even if a P R M handler is compromised, its ability to inflict damage on the system is severely limited, as it cannot directly access or modify sensitive platform controls.

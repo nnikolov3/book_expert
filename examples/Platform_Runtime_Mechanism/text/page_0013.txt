@@ -1,0 +1,158 @@
+MajorRevision 2
+MinorRevision 2
+HandlerCount 2
+HandlerinfoOffset 4
+RuntimeMmioPages 8
+(PRM_RUNTIME_MMIO
+
+_ RANGES *)
+
+(physical address)
+
+HandlerInfoStructure (Prm
+
+[HandlerCount] Handler
+Count) *
+sizeof (Prm
+Handler
+Info
+Structure)
+
+20
+
+22
+
+24
+
+26
+
+30
+
+38
+
+The major revision of the PRM module
+represented by this PRM Module Information
+Structure.
+
+The minor revision of the PRM module
+represented by this PRM Module Information
+Structure.
+
+Indicates the number of PRM Handler
+Information Structure entries that are present in
+the PrmHandlerinformationStructure(] field of
+this structure.
+
+Offset, in bytes, from the beginning of this
+structure to the first PRM Handler Information
+Structure.
+
+A pointer to a
+PRM_RUNTIME_MMIO_RANGES structure.
+
+The structure is used to describe MMIO ranges
+that need to be mapped to virtual memory
+addresses for access at OS runtime.
+
+This pointer may be NULL if runtime memory
+ranges are not needed.
+An array of PRM Handler Info Structures.
+
+Each structure represents a PRM Handler
+present in the PRM Module represented by this
+structure.
+
+4.1.2 PRM Handler Information Structure
+
+Table 4-3 PRM Handler Information Structure (HandlerinfoStructure)
+
+Field Byte
+length
+StructureRevision 2
+StructureLength 2
+Identifier 16
+PhysicalAddress 8
+StaticDataBuffer 8
+
+(PRM_DATA BUFFER *)
+(physical address)
+
+Byte
+offset
+0
+
+2
+4
+
+20
+
+28
+
+Description
+
+Revision of this PRM Handler Information
+Structure.
+Length, in bytes, of this structure.
+
+The GUID for the PRM Handler represented by
+this PRM Handler Information Structure.
+
+The address of the PRM Handler represented by
+this PRM Handler Information Structure.
+
+A physical address pointer to the static data
+buffer allocated for this PRM handler.
+
+The static buffer is intended to be populated in
+the firmware boot environment.
+
+This pointer may be NULL if a static data buffer
+is not needed.
+The first table describes a structure, detailing various fields, their byte lengths, byte offsets, and purposes.
+
+The first field is Major Revision, with a byte length of two and a byte offset of twenty. This represents the major revision of the P R M module as shown by this P R M Module Information Structure.
+
+Next is Minor Revision, also with a byte length of two, and a byte offset of twenty two. This signifies the minor revision of the P R M module, as represented by the P R M Module Information Structure.
+
+The Handler Count field has a byte length of two and a byte offset of twenty four. It indicates the number of P R M Handler Information Structure entries that are present in the P R M Handler Information Structure array field of this structure.
+
+Handler Info Offset, with a byte length of four and a byte offset of twenty six, provides the offset, in bytes, from the beginning of this structure to the first P R M Handler Information Structure.
+
+Runtime Mmio Pages, which is a P R M underscore R U N T I M E underscore M M I O underscore R A N G E S pointer and represents a physical address, has a byte length of eight and a byte offset of thirty. This field is a pointer to a P R M underscore R U N T I M E underscore M M I O underscore R A N G E S structure. This structure is utilized to describe M M I O ranges that need to be mapped to virtual memory addresses for access at O S runtime. This pointer may be N U L L if runtime memory ranges are not needed.
+
+Finally, the Handler Info Structure array Handler Count field has a byte length equal to the P R M Handler Count multiplied by the size of the P R M Handler Info Structure, and a byte offset of thirty eight. This field is an array of P R M Handler Info Structures. Each individual structure within this array represents a P R M Handler present in the P R M Module represented by this overarching structure.
+
+Section 4.1.2 focuses on the P R M Handler Information Structure.
+
+Table 4-3 further elaborates on the P R M Handler Information Structure, specifically detailing the Handler Info Structure.
+
+The first field in this structure is Structure Revision, with a byte length of two and a byte offset of zero. This specifies the revision of this P R M Handler Information Structure.
+
+The Structure Length field, also two bytes in length, has a byte offset of two. It indicates the total length, in bytes, of this structure.
+
+The Identifier field is sixteen bytes long with a byte offset of four. This field holds the G U I D for the P R M Handler that is represented by this P R M Handler Information Structure.
+
+Physical Address, having a byte length of eight and a byte offset of twenty, contains the address of the P R M Handler that this P R M Handler Information Structure represents.
+
+Lastly, the Static Data Buffer field, designated as a P R M underscore D A T A underscore B U F F E R pointer and representing a physical address, has a byte length of eight and a byte offset of twenty eight. This is a physical address pointer to the static data buffer allocated for this specific P R M handler. The static buffer is intended to be populated in the firmware boot environment. This pointer may be N U L L if a static data buffer is not required.
+We are examining two intricately related data structures, fundamental to the operation of low level system software, likely within a firmware or hypervisor environment that bridges hardware and the operating system. The first, implicitly defined by the initial table, describes a P R M Module Information Structure, which serves as a manifest for a collection of P R M handlers and associated runtime resources.
+
+This P R M Module Information Structure begins with versioning fields: `MajorRevision`, a two-byte field located at byte offset twenty, denotes the primary revision of the P R M module, signifying significant changes in its interface or functionality. Immediately following this, at byte offset twenty two, is `MinorRevision`, also two bytes in length, which indicates less impactful, incremental updates. This dual revision system is a common software engineering practice for managing compatibility and evolution.
+
+Next, we encounter `HandlerCount`, a two-byte field at byte offset twenty four. This field specifies the number of individual P R M Handler Information Structure entries that are embedded or referenced by this module. This is a crucial mechanism for defining variable sized arrays within fixed layout structures, enabling dynamic configuration of the number of handlers without altering the overarching structure definition. Following `HandlerCount` is `HandlerInfoOffset`, a four-byte field at byte offset twenty six. This value represents an offset, in bytes, from the beginning of this very structure to the starting address of the first P R M Handler Information Structure. This indirection allows the handler information array to reside at an arbitrary location relative to the module information, potentially for alignment reasons or to consolidate related data blocks.
+
+At byte offset thirty, we find `RuntimeMmioPages`, an eight-byte field storing a physical address. This address points to a dedicated P R M underscore R U N T I M E underscore M M I O underscore R A N G E S structure. This structure is designed to delineate specific Memory Mapped I O ranges that need to be remapped into the virtual memory address space of the operating system during its runtime. This is a critical interface for hardware abstraction, allowing the firmware to inform the O S about device memory regions that require appropriate mapping and protection for secure and efficient interaction. The description notes that this pointer may be N U L L if such runtime memory ranges are not necessary, indicating an optimized design for various system configurations.
+
+Finally, the P R M Module Information Structure includes a variable length array called `HandlerInfoStructure`, which conceptually starts at byte offset thirty eight. Its total size is determined by the `HandlerCount` value multiplied by the size of each P R M Handler Info Structure. Each element within this array is itself a P R M Handler Info Structure, representing a distinct P R M Handler embodied by this module. This array serves as a directory, providing descriptors for all the handlers managed by this particular P R M module.
+
+Now, let us delve into the structure of an individual P R M Handler Information Structure, detailed in the second table. This structure is a blueprint for describing a specific handler. Its first field, `StructureRevision`, at byte offset zero and two bytes in length, indicates the revision of this particular handler information descriptor. This maintains a versioning scheme consistent with the module level, ensuring fine grained control over compatibility.
+
+Adjacent to the revision, at byte offset two, is `StructureLength`, a two-byte field specifying the total length in bytes of this P R M Handler Information Structure. This self-describing property is vital for parsing streams of these structures, allowing a system to correctly advance to the next entry or allocate appropriate memory without relying on compile time knowledge of the exact size.
+
+A significant field is the `Identifier`, located at byte offset four and spanning sixteen bytes. This field holds a G U I D, a Globally Unique Identifier, for the P R M Handler that this structure describes. G U I D s provide an extremely robust mechanism for uniquely identifying software components, hardware interfaces, or data types across different systems or modules. In this context, it allows the O S or other components to unequivocally recognize and classify the type of handler, facilitating dynamic loading or dispatch of appropriate code.
+
+The `PhysicalAddress` field, an eight-byte value at byte offset twenty, provides the physical memory address of the P R M Handler itself. This is a direct pointer to the executable code or data associated with the handler's functionality. The use of physical addresses is characteristic of low level firmware, which operates directly on hardware memory before virtual memory systems are fully initialized by the O S.
+
+Concluding this structure is `StaticDataBuffer`, an eight-byte physical address pointer located at byte offset twenty eight. This pointer refers to a dedicated static data buffer, which is designed to be pre-populated within the firmware boot environment. This allows the P R M handler to access a predefined and initialized data region during its execution. Similar to the M M I O ranges, this pointer may be N U L L if a static data buffer is not required for a specific handler, again emphasizing resource optimization in a memory constrained firmware environment.
+
+In essence, these two interconnected data structures provide a robust, self-describing, and versioned mechanism for low level system firmware to communicate its capabilities and resource requirements to a higher level operating system. They exemplify fundamental computer science principles such as data encapsulation, pointer based indirection, memory layout management, and robust identification through G U I D s, all critical for managing the complex interplay between hardware and software.

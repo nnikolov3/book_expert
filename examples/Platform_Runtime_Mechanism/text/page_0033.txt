@@ -1,0 +1,59 @@
+Return (PSTA)
+
+8.2.1 Example ASL Code for Locking Updates
+
+The following is an example that will lock the PRM transaction using the OperationRegion and Field
+defined in the previous example:
+
+/*
+* Control method to lock a PRM transaction
+* Argd contains a buffer representing a DSM GUID
+*/
+Method (LOCK, 1)
+{
+/* Local® is the PRM data buffer */
+Local® = buffer (26){}
+
+/* Create byte fields over the buffer */
+CreateByteField (Local@, 0x0, STAT)
+CreateByteField (Local@, 0x9, CMD)
+CreateField (Local@, 0x50, 0x80, GUID)
+CMD = 1 // Lock command
+
+GUID = Argo
+
+Local® = (PRMF = Local®)
+
+/* Note STAT contains the return status */
+
+Return (STAT)
+
+8.2.2 Example ASL Code for Unlocking Updates
+
+The following is an example that will unlock the PRM transaction using the same OperationRegion and
+Field definitions:
+
+/*
+* Control method to unlock a PRM transaction
+* Arg@ contains a buffer representing a DSM GUID
+*/
+
+Method (ULCK, 1)
+
+{
+Return P S T A. Closing brace.
+
+Section eight point two point one, Example A S L Code for Locking Updates. The following is an example that will lock the P R M transaction using the Operation Region and Field defined in the previous example: This is a control method designed to lock a P R M transaction. Argument zero contains a buffer representing a D S M G U I D. The method is named L O C K and takes one argument. It begins with an opening brace. Local zero is used as the P R M data buffer. Local zero is assigned the value from a buffer at offset twenty six. Next, byte fields are created over this buffer. A byte field is created at hexadecimal zero, named S T A T, within Local zero. Another byte field is created at hexadecimal nine, named C M D, within Local zero. A field is created at hexadecimal five zero with a length of hexadecimal eight zero, named G U I D, within Local zero. The C M D field is set to one, indicating a lock command. The G U I D field is assigned the value of Argument zero. Local zero is then assigned the result of P R M F being assigned the value of Local zero. Note that the S T A T field will contain the return status. The method returns the value of S T A T. It ends with a closing brace.
+
+Section eight point two point two, Example A S L Code for Unlocking Updates. The following is an example that will unlock the P R M transaction using the same Operation Region and Field definitions: This is a control method designed to unlock a P R M transaction. Argument zero contains a buffer representing a D S M G U I D. The method is named U L C K and takes one argument. It begins with an opening brace and ends with a closing brace, indicating an empty method body in this example.
+The provided A S L code segments exemplify fundamental principles of system-level programming and concurrency control within a platform runtime environment. Specifically, these examples illustrate mechanisms for acquiring and releasing locks on what is termed a "P R M transaction," implying an operation sequence that must maintain atomicity and consistency, likely involving shared system resources or critical hardware states.
+
+The first code block, Section eight point two point one, titled "Example A S L Code for Locking Updates," defines a method named 'L O C K' that accepts a single argument, designated `Arg0`. This argument is described as a buffer encapsulating a `_D S M` G U I D, or Globally Unique Identifier. The `_D S M` framework is a critical component within the A C P I specification, enabling operating systems to invoke device-specific methods implemented in firmware, thereby facilitating interaction with platform-specific hardware capabilities. The G U I D, in this context, serves to uniquely identify the particular transaction or resource targeted for locking.
+
+Within the `L O C K` method, the first significant operation is the allocation and initialization of a local buffer, `Local0`, with a size of twenty six bytes. This buffer acts as a structured communication payload, a common pattern in low-level system interfaces where data is exchanged in predefined memory layouts. Subsequent `CreateByteField` and `CreateField` invocations declaratively partition this `Local0` buffer into logically named segments. For instance, `CreateByteField (Local0, hexadecimal zero zero, S T A T)` establishes a one-byte field named `S T A T` at the buffer's initial offset, intended to convey the operation's status. Similarly, a `C M D` field is defined at offset hexadecimal zero nine, also as a single byte, for carrying the command code. A larger field, `G U I D`, spanning one hundred twenty eight bytes from offset hexadecimal zero five zero, is also defined, providing space to embed the transaction's unique identifier.
+
+Following the buffer structure definition, the code populates these fields. The `C M D` field is explicitly set to one, designated as the 'Lock command,' signifying the intended action to the P R M. The `G U I D` field within the `Local0` buffer is then assigned the value of `Arg0`, transferring the specific transaction identifier provided by the caller into the prepared command structure. The crucial step is the assignment `Local0 is (P R M F is Local0)`. This construct represents an invocation of a P R M F, or Platform Runtime Mechanism Function. In this pattern, the `Local0` buffer, now fully configured with the command and target G U I D, is passed as an input parameter to the `P R M F`. The `P R M F` then performs the actual lock acquisition logic, potentially interacting directly with hardware or firmware registers, and writes any output, including the resulting status, back into the same `Local0` buffer. The final act of the `L O C K` method is to `Return (S T A T)`, propagating the status of the lock operation, derived from the `S T A T` field of the now updated `Local0` buffer, back to the caller. This status indicates whether the lock was successfully acquired or if an error occurred.
+
+The second code block, Section eight point two point two, titled "Example A S L Code for Unlocking Updates," presents the counterpart method, 'U L C K', also accepting a single `Arg0` representing the `_D S M` G U I D. While the internal implementation details are not fully presented, the functional symmetry with the `L O C K` method implies a similar structured interaction with the P R M. One would logically infer that the `U L C K` method would also prepare a buffer, define equivalent `S T A T`, `C M D`, and `G U I D` fields, set the `C M D` field to a value corresponding to an 'unlock' command, populate the `G U I D` field from `Arg0`, invoke the `P R M F` with this buffer, and ultimately return the operation's status.
+
+From a broader computer science perspective, these examples illustrate foundational concepts in concurrent programming and operating system design. The need for explicit `L O C K` and `U L C K` operations points directly to the principle of mutual exclusion. P R M transactions, by their very nature, likely manipulate shared system states or resources. Without proper synchronization, concurrent attempts to modify these states could lead to race conditions, resulting in inconsistent data or system instability. The locking mechanism ensures that only one thread of execution or system agent can perform updates within the critical section defined by the P R M transaction at any given time, thereby guaranteeing serializability of operations and maintaining data integrity. The transactional semantics implied by "P R M transaction" further suggest a commitment to the A C I D properties – Atomicity, Consistency, Isolation, and Durability – for these low-level system operations, where locking directly addresses the Isolation component. This interaction with platform runtime mechanisms highlights the intricate interplay between hardware, firmware, and operating system software in ensuring the correct and robust functioning of modern computing systems.
