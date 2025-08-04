@@ -1,0 +1,52 @@
+Values defined from 1 to 255
+
+tRRD Timebase RED Result (ns) Use
+
+(MTB units) (ns)
+
+48 0.125 6.0 Example: DDR3-1333, 1KB page size
+60 0.125 7.5 Example: DDR3-1333, 2KB page size
+80 0.125 10 Example: DDR3-800, 1KB page size
+
+Note: tRRD is at least 4 nCK independent of operating frequency.
+
+Table 56 Electrical Characteristics and AC Operating Conditions
+(Continued) Notes 1-8 apply to the entire table
+
+DDR3-800 DDR3-1066 DDR3-1333 DDR3-1600
+
+Parameter Symbol Linits
+Min Max Min Max Min Max Min Max
+05, DOS # differential READ 'BPST i | Mol = 0.3 Moi 0.3 Moi i= 0.3 Mort i= CK
+postamie 27 27 27 27
+
+Command and Address Timings
+
+[FLL locking tame "DLLK all 213 - 212 - 212 - CK
+Values defined from one to two hundred fifty five.
+
+The table shows tRRD in MTB units, Timebase in nanoseconds, tRRD Result in nanoseconds, and Use.
+When tRRD is forty eight, the Timebase is zero point one two five nanoseconds, the tRRD Result is six point zero nanoseconds, and the Use is Example DDR three dash one three three three, one kilobyte page size.
+When tRRD is sixty, the Timebase is zero point one two five nanoseconds, the tRRD Result is seven point five nanoseconds, and the Use is Example DDR three dash one three three three, two kilobyte page size.
+When tRRD is eighty, the Timebase is zero point one two five nanoseconds, the tRRD Result is ten nanoseconds, and the Use is Example DDR three dash eight zero zero, one kilobyte page size.
+
+Note: tRRD is at least four nCK independent of operating frequency.
+
+Table fifty six Electrical Characteristics and AC Operating Conditions Continued. Notes one through eight apply to the entire table.
+
+The table presents Command and Address Timings. The Parameter column shows DQS, DQS hash differential READ postamble. The Symbol is R P S T.
+For DDR three dash eight zero zero, the minimum is zero point three, the maximum is Note twenty seven.
+For DDR three dash one zero six six, the minimum is zero point three, the maximum is Note twenty seven.
+For DDR three dash one three three three, the minimum is zero point three, the maximum is Note twenty seven.
+For DDR three dash one six zero zero, the minimum is zero point three, the maximum is Note twenty seven. The Units are C K.
+
+The Parameter column also shows DLL locking time. The Symbol is DLL K.
+For DDR three dash eight zero zero, the value is five hundred twelve. There is a dash, then five hundred twelve. There is a dash, then five hundred twelve. The Unit is C K.
+For DDR three dash one zero six six, the value is five hundred twelve. There is a dash, then five hundred twelve. There is a dash, then five hundred twelve. The Unit is C K.
+For DDR three dash one three three three, the value is five hundred twelve. There is a dash, then five hundred twelve. There is a dash, then five hundred twelve. The Unit is C K.
+For DDR three dash one six zero zero, the value is five hundred twelve. There is a dash, then five hundred twelve. There is a dash, then five hundred twelve. The Unit is C K.
+The document presents timing specifications for DDR3 memory, a prevalent synchronous dynamic random access memory technology. The initial section outlines the relationship between "tRR D" in Minimum Time Base (MTB) units and its equivalent result in nanoseconds, along with a corresponding "Use" case. Specifically, it shows that for a tRR D value of forty eight MTB units, the timebase is zero point one two five nanoseconds, yielding a tRR D result of six point zero nanoseconds, often associated with DDR three hyphen one three three three with a one K B page size. Similarly, sixty MTB units translate to seven point five nanoseconds for DDR three hyphen one three three three with a two K B page size, and eighty MTB units result in ten nanoseconds for DDR three hyphen eight hundred with a one K B page size. A critical note clarifies that tRR D is independent of operating frequency, indicating that the minimum number of clock cycles required for this timing parameter remains constant regardless of the clock speed.
+
+Table fifty six details "Electrical Characteristics and AC Operating Conditions (Continued)," with notes one through eight applying to the entire table. This table focuses on command and address timings. A key parameter presented is "D Q S, D Q S # differential R E A D postamble." This refers to the setup and hold times for the data strobe signal and its inverted counterpart relative to the data transfer during a read operation. The symbol for this timing parameter is 'R P S T'. For DDR three hyphen eight hundred memory, the minimum R P S T is zero point three nanoseconds, with a maximum not specified, indicated by "Note twenty seven." For DDR three hyphen one zero six six memory, the minimum R P S T is also zero point three nanoseconds, again with "Note twenty seven" for the maximum. DDR three hyphen one three three three exhibits the same zero point three nanosecond minimum, with "Note twenty seven" for the maximum. Finally, DDR three hyphen one six hundred shows a zero point three nanosecond minimum and "Note twenty seven" for the maximum. The unit for this parameter is clock cycles, denoted as C K.
+
+Another significant timing parameter detailed is "D L L locking time." The Delay Locked Loop, or D L L, is a circuit used in synchronous memory interfaces to ensure precise timing alignment between the memory controller and the memory devices. The table specifies the D L L locking time in nanoseconds. For DDR three hyphen eight hundred, the D L L locking time is five hundred twelve nanoseconds. Similarly, for DDR three hyphen one zero six six, it is five hundred twelve nanoseconds. DDR three hyphen one three three three also requires five hundred twelve nanoseconds, and DDR three hyphen one six hundred likewise specifies five hundred twelve nanoseconds. The unit for this parameter is nanoseconds. The hyphens and "C K" in the table indicate that these values are often specified relative to the memory clock cycles, but in this context, they are given in absolute time units. The consistent values across different DDR three speeds for D L L locking time suggest that it is primarily dependent on the internal architecture of the memory module's phase-locked loop rather than the external memory clock frequency itself.

@@ -1,0 +1,34 @@
+—Input/Output Advanced Programmable Interrupt Controller (IOxAPIC)
+
+—Messaged Signaled Interrupt (MSI)
+
+Programmable Interrupt Controller (PIC)
+
+When the PIC is the only interrupt device enabled, it is referred to as PIC
+Mode. This is the simplest mode where the PIC handles all the interrupts. All
+APIC components are bypassed, and the system operates in single-thread
+mode using LINTO.
+
+The BIOS must set the IRQs per board configuration for all onboard,
+integrated, and add-in PCI devices.
+
+The PIC contains two cascaded 8259s with fifteen available IRQs. IRQ2
+is not available since it is used to connect the 8259s. On mainstream
+components, there are eight PIRQ pins supported in PCH, named PIRQ[A#
+:H#], that route PCI interrupts to IRQs of the 8259 PIC. PIRQ[A#:D#]
+routing is controlled by PIRQ Routing Registers 60h—63h (D31:F0:Reg 60-
+63h). The PIRQ[E# : H#] routing is controlled by PIRQ Routing Registers
+68h—6Bh (D31:F0:Reg 68 — 6Bh). See Figure 9.4.
+
+The PCH also connects the 8 PIRQ[A# : H#] to eight individual
+IOxXAPIC input pins, as shown in Table 9.2.
+Input Output Advanced Programmable Interrupt Controller I O x A P I C, Messaged Signaled Interrupt M S I.
+
+Programmable Interrupt Controller P I C. When the P I C is the only interrupt device enabled, it is referred to as P I C Mode. This is the simplest mode where the P I C handles all the interrupts. All A P I C components are bypassed, and the system operates in single thread mode using L I N T zero.
+
+The B I O S must set the I R Qs per board configuration for all onboard, integrated, and add in P C I devices. The P I C contains two cascaded eight two five nine s with fifteen available I R Qs. I R Q two is not available since it is used to connect the eight two five nine s. On mainstream components, there are eight P I R Q pins supported in P C H, named P I R Q open A hash colon H hash, that route P C I interrupts to I R Qs of the eight two five nine P I C. P I R Q open A hash colon D hash routing is controlled by P I R Q Routing Registers sixty h to sixty three h. The P I R Q open E hash colon H hash routing is controlled by P I R Q Routing Registers sixty eight to sixty B h, corresponding to D thirty one F zero Reg sixty eight to sixty B h. See Figure nine point four.
+
+The P C H also connects the eight P I R Q open A hash colon H hash to eight individual I O x A P I C input pins, as shown in Table nine point two.
+The text discusses interrupt handling mechanisms in computer systems, specifically contrasting the Programmable Interrupt Controller, or P I C, with the Input/Output Advanced Programmable Interrupt Controller, or I O x A P I C. When the system operates in the simpler P I C mode, all A P I C components are bypassed, and the P I C directly manages all interrupts, often utilizing a single thread of execution, as indicated by the reference to L I N T zero. The Basic Input/Output System, or B I O S, plays a crucial role in configuring the interrupt request lines, or I R Qs, for various devices, including those integrated onto the motherboard, expansion cards, and add-in P C I devices.
+
+The system described employs two cascaded 8259 s, which collectively provide fifteen available I R Qs. Notably, I R Q two is designated for connecting to the second 8259, enabling a higher number of interrupt sources. Modern system architectures often feature a P C H, or Platform Controller Hub, which enumerates eight P I R Q, or PCI Interrupt Request, signals, denoted as P I R Q [A sharp : H sharp ]. These signals facilitate interrupt routing from P C I devices to the interrupt request lines of the cascaded 8259 s. The specific routing of these P I R Q signals is governed by dedicated P I R Q Routing Registers, which reside within the memory-mapped I O space, specifically in the range from sixty hex to sixty three hex. These registers, such as those addressed from hexadecimal 32 to hexadecimal F zero, registers sixty through sixty three, dictate how external interrupts are mapped internally. The P C H also connects these eight P I R Q signals to eight individual I O x A P I C input pins, as detailed in Table nine point two, illustrating a more sophisticated interrupt delivery mechanism. Furthermore, the text mentions Mesaged Signaled Interrupts, or M S I, as an alternative interrupt mechanism, suggesting a transition towards more advanced interrupt handling strategies that leverage messages rather than dedicated hardware lines for interrupt notification.

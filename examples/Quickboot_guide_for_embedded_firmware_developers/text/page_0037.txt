@@ -1,0 +1,51 @@
+a chip, a combination of north bridge, south bridge, and processor, has been
+in vogue. While the names of a device’s internal interconnects have changed
+and we talk about fabrics and other nonsensical abstractions for silicon, the
+same principles spelled out for CPU, memory, and IO still apply, as do the
+
+standards contained therein.
+
+Data Movement Is Fundamental
+
+So...now what have we learned? Nothing but the basics. But we now start to
+understand which components are on the platform and which buses and
+perhaps bridges and buffers lie between the processor and the NVRAM part
+where the BIOS hides. We can use this to begin to take that high-level block
+diagram abstract and make some sense out of why the transactions take so
+long to get from point A to point B and back, which is the execute-in-place
+
+latency times we need to avoid.
+
+As shown in Figure 2.2, with Execute in place (XIP),
+
+1. The CPU wants to read memory from the BIOS (probably an OP code
+instruction at boot time, let’s say). It starts the MEMORY READ cycle
+on the CPU bus.
+
+2. The north bridge sees the cycles and claims it. It says, “Mine!” and then
+tells the CPU to wait for me to get the data (it inserts wait states). CPU
+is stuck waiting for the north bridge to return the data (a small lie—
+pipelining can affect this).
+
+3. North bridge “ADDRESS DECODES” this memory cycle. It has to
+figure out where to send it. Memory? Hublink? AGP Bus? Since the
+
+address is not memory or AGP, it forwards it to Hublink bus. You can
+A chip, a combination of north bridge, south bridge, and processor, has been in vogue. While the names of a device's internal interconnects have changed and we talk about fabrics and other nonsensical abstractions for silicon, the same principles spelled out for C P U, memory, and I O still apply, as do the standards contained therein.
+
+Data Movement Is Fundamental.
+
+So, now what have we learned? Nothing but the basics. But we now start to understand which components are on the platform and which buses and perhaps bridges and buffers lie between the processor and the N V Ram part where the B I O S hides. We can use this to begin to take that high-level block diagram abstract and make some sense out of why the transactions take so long to get from point A to point B and back, which is the execute in place latency times we need to avoid.
+
+As shown in Figure two point two, with Execute in place (X I P), the C P U wants to read memory from the B I O S, probably an O P code instruction at boot time, let's say. It starts the memory read cycle on the C P U bus. The north bridge sees the cycles and claims it. It says, "Mine!" and then tells the C P U to wait for me to get the data, which means it inserts wait states. The C P U is stuck waiting for the north bridge to return the data, a small lie since pipelining can affect this. The north bridge performs address decodes on this memory cycle. It has to figure out where to send it: is it memory, Hublink, or the A G P Bus? Since the address is not memory or A G P, it forwards it to the Hublink bus.
+The architecture of computing systems has undergone significant evolution, transitioning from discrete component designs, typified by the separate Northbridge and Southbridge chips along with the C P U, towards highly integrated System on a Chip, or S o C, designs. Despite these shifts in physical implementation and the advent of sophisticated interconnect fabrics replacing earlier bus structures, the fundamental principles governing the interaction between the C P U, memory subsystems, and I O devices remain constant. The core challenge continues to be the efficient and timely movement of data.
+
+Understanding data movement is indeed fundamental to comprehending system performance and behavior. Every operation, from executing an instruction to accessing persistent storage, involves data traversing various components and interconnects. This process introduces latency, a critical metric that impacts overall system responsiveness. To mitigate latency and ensure efficient data flow, system designs incorporate various architectural elements, including buses for communication pathways and buffers to temporarily store data, smoothing out transfers between components operating at different speeds. The B I O S, or Basic I O System, which resides in N V Ram, or non volatile Ram, represents a foundational layer of firmware that orchestrates the initial stages of system operation, abstracting the underlying hardware complexities from higher level software.
+
+A critical aspect of system initialization involves the execution in place, or X I P, of code, typically the B I O S itself. This mechanism allows the C P U to fetch instructions directly from non volatile memory without the overhead of copying them to D Ram first, thereby accelerating the boot process. Let us trace this process through a typical sequence of operations.
+
+Firstly, during system startup, the C P U initiates a memory read cycle to fetch its initial instruction. This instruction is an O P code, or operation code, which is the machine language instruction the C P U needs to begin its execution sequence, often the first instruction of the B I O S. This memory read request is placed onto the C P U bus.
+
+Secondly, a component like the Northbridge, which historically served as the primary interface between the C P U, high speed memory, and graphic subsystems, detects and claims this memory read cycle. Upon claiming the cycle, the Northbridge must then obtain the requested data. Given that the C P U typically operates at a significantly higher clock frequency than the B I O S N V Ram, the Northbridge will often insert wait states into the C P U's pipeline. These wait states are explicit delays, causing the C P U to stall its execution until the requested data becomes available. This phenomenon highlights a fundamental challenge in computer architecture known as the memory wall, where the increasing disparity in speed between C P Us and memory subsystems creates performance bottlenecks. While modern C P Us employ sophisticated pipelining and out of order execution to minimize such stalls, external memory access latencies can still necessitate these pauses, impacting overall throughput.
+
+Thirdly, the Northbridge proceeds to decode the address associated with the memory read cycle. Address decoding is the process by which the system determines which physical device or memory location corresponds to a given logical address. If the requested address maps to system memory or an A G P, or Accelerated Graphics Port, device, which were historically managed directly by the Northbridge, it would then handle the transaction. However, if the address does not correspond to these primary memory or graphics regions, the Northbridge is then responsible for forwarding the request to the appropriate subsystem. This typically involves routing the request across a secondary, often slower, interconnect such as a Hublink bus, which bridges the Northbridge to other components like the Southbridge or specific I O controllers. This architectural routing demonstrates the hierarchical nature of system buses and the role of bridge components in directing data traffic to its correct destination within the complex ecosystem of a computer system.

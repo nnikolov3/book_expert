@@ -1,0 +1,51 @@
+Hardware-Based Memory Clearing
+
+On some SKUs of memory controllers offered by Intel, the hardware can be
+set to zero memory for security or ECC requirements. This is not part of the
+two-second BIOS boot time budgeting. Traditionally, a complete software-
+based memory overwrite is a very time-consuming process, adding seconds
+
+to every boot.
+
+Efficient Memory Operations Instruction Usage
+
+Starting on the Sandy Bridge generation CPU, new CPU instructions have
+been added to the speed up string operation. For memory operations, such as
+clearing large buffers, using optimized instructions helps. For more
+information, please see EDK II Performance Optimization Guide — Section
+8.5.
+
+SMBus Optimizations (Which Applies to Memory Init)
+
+The PCH SMBus controller has one data/address lane and clock at 100 KHz.
+
+There are three ways to read data:
+
+—SMBus Byte Read: A single SMBUS byte read makeup is 39 bits long,
+and thus at minimum one SMBUS byte read would take 0.39 ms.
+
+—SMBus Word Read: A SMBus word read is 48 bits, hence 0.48/2 bytes
+or 0.24 ms/byte. Word reads are 40 percent more efficient than byte
+reads, but the bytes we need to read are not always sequential in
+
+nature on full boots.
+Hardware Based Memory Clearing.
+
+On some S K Us of memory controllers offered by Intel, the hardware can be set to zero memory for security or E C C requirements. This is not part of the two second B I O S boot time budgeting. Traditionally, a complete software based memory overwrite is a very time consuming process, adding seconds to every boot.
+
+Efficient Memory Operations Instruction Usage.
+
+Starting on the Sandy Bridge generation C P U, new C P U instructions have been added to the speed up string operation. For memory operations, such as clearing large buffers, using optimized instructions helps. For more information, please see E D K II Performance Optimization Guide Section eight point five.
+
+S M Bus Optimizations Which Applies to Memory Init.
+
+The P C H S M Bus controller has one data address lane and clock at one hundred K H z. There are three ways to read data: S M Bus Byte Read: A single S M Bus byte read makeup is thirty nine bits long, and thus at minimum one S M Bus byte read would take zero point three nine milliseconds. S M Bus Word Read: A S M Bus word read is forty eight bits, hence zero point four eight slash two bytes or zero point two four milliseconds per byte. Word reads are forty percent more efficient than byte reads, but the bytes we need to read are not always sequential in nature on full boots.
+Hardware-based memory clearing offers a performance advantage by utilizing specialized hardware capabilities, often integrated into the memory controllers themselves, to zero out memory. This is contrasted with software-based memory overwrites, which are inherently more time-consuming, typically adding seconds to the system's boot time. This hardware acceleration is a key factor in optimizing initialization sequences, particularly for scenarios requiring memory sanitization for security or error-correcting code, or ECC, purposes.
+
+The text then discusses efficient memory operations, highlighting advancements in C P U instruction sets, specifically mentioning new instructions introduced with the Sandy Bridge generation of processors. These new instructions are designed to accelerate string operations, which can be leveraged for tasks like clearing large memory buffers. The efficiency gained through these optimized instructions is crucial for reducing execution time in memory-intensive operations. Further details on these enhancements can be found in section eight point five of the E D K II Performance Optimization Guide.
+
+The document further elaborates on S M Bus optimizations, specifically noting their applicability to memory initialization, or memory init. The P C H S M Bus controller, responsible for system management bus communication, utilizes a single data and address lane and operates at a clock frequency of one hundred kilohertz. The efficiency of reading data via this bus is examined through two methods: S M Bus Byte Read and S M Bus Word Read.
+
+In the case of an S M Bus Byte Read, the operation is described as thirty-nine bits long, leading to an estimated time of zero point thirty-nine milliseconds per byte. This translates to a throughput of approximately twenty-five bytes per second, assuming a direct correlation between bit length and time.
+
+The S M Bus Word Read, which involves reading forty-eight bits, is presented as more efficient. It is stated to take zero point forty-eight milliseconds for two bytes, equating to zero point twenty-four milliseconds per byte. This represents a forty percent improvement in efficiency compared to byte reads, as it reduces the overhead associated with initiating individual byte transfers. However, the text also notes a caveat: this efficiency gain is realized when the bytes being read are sequentially aligned on the bus. If the bytes are not sequential, the efficiency advantage of the word read diminishes, as the bus might still incur penalties for non-contiguous data access. This highlights the importance of data layout and access patterns in maximizing bus performance.

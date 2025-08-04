@@ -1,0 +1,57 @@
+Byte 30: SDRAM Optional Features
+This byte defines support for certain SDRAM {features and the optional drive
+
+strengths supported by the SDRAMs on this module. This value comes from
+the DDR3 SDRAM datasheet.
+
+Bit 7 Bits 6-2 Bit 1 Bit 0
+
+DLL-Off Mode Support Reserved RIQ [7 RIO [6
+
+0 = Not Supported 0 = Not Supported 0 = Not Supported 1
+1 = Supported 1 = Supported = Supported
+
+SPD Field #30: “SDRAM Optional Features” Definition from JEDEC DDR3
+SPD Specification
+
+SPD Field 0x1F: SDRAM Thermal and Refresh Options
+
+These bits need to be set if the SDRAM component supports the specific
+thermal property. As shown above, the MT41J256M8 supports the extended
+temperature and extended temperature refresh rates, along with the ability to
+do Auto Self Refresh (SPD field #33=0x07).
+
+Byte Byte Field Name Typ. Definition
+
+(Dec) (Hex) Value
+
+31 0=1F SDRAM Thermal and Refresh op- TELE Extended Temp. Ranges
+tions and Auto Self Refresh
+
+(ASR)
+Byte thirty: S D Ram Optional Features. This byte defines support for certain S D Ram features and the optional drive strengths supported by the S D Rams on this module. This value comes from the D D R three S D Ram datasheet.
+
+The table shows the features for Byte thirty. Bit seven, for D L L Off Mode Support, indicates that zero means not supported and one means supported. Bits six through two are reserved. Bit one is for R Z Q slash seven, where zero means not supported and one means supported. Bit zero is for R Z Q slash six, where zero means not supported and one means supported.
+
+S P D Field number thirty: "S D Ram Optional Features" Definition from J E D E C D D R three S P D Specification.
+
+S P D Field zero times one F: S D Ram Thermal and Refresh Options. These bits need to be set if the S D Ram component supports the specific thermal property. As shown above, the M T forty one J two fifty six M eight supports the extended temperature and extended temperature refresh rates, along with the ability to do Auto Self Refresh S P D field thirty three equals zero times zero seven.
+
+The table presents data for S P D Field zero times one F. The Byte in decimal is thirty one, and the Byte in hexadecimal is zero times one F. The Field Name is S D Ram Thermal and Refresh Options. The Typical Value is zero times zero seven. The Definition is Extended Temperature Ranges and Auto Self Refresh A S R.
+This document delves into the specifics of SDRAM (Synchronous Dynamic Random Access Memory) configuration, primarily focusing on optional features and thermal behavior as defined within the Serial Presence Detect (SPD) standard, particularly for DDR3 SDRAM.
+
+The first section details "Byte 30: SDRAM Optional Features." This byte is critical for conveying specific functionalities and drive strength characteristics of the SDRAM modules. The structure is presented as a bitfield, where individual bits, or groups of bits, encode distinct features.
+
+Specifically, Bit 7 is designated for "D L L Off Mode Support." The presence of a 'zero' in this bit indicates that the Delay Lock Loop (D L L) is not supported or is not in an off mode, while a 'one' signifies that the D L L off mode is supported. The D L L is a circuit commonly used in synchronous memory interfaces to align internal clock signals with the external system clock, ensuring precise timing for data transfer operations. Enabling a D L L off mode can be a power-saving feature or might be used in specific operational scenarios.
+
+Bits 6 through 2 are marked as "Reserved," implying that these bits are not assigned a specific function in this context and should ideally be programmed to a known state, often zero, by the memory module manufacturer.
+
+Bit 1 is labeled "R Z Q / 7." The R Z Q pin is typically used for setting the on-die termination resistance in DRAM devices. This bit, along with the next, likely defines the specific impedance or termination strategy employed by the SDRAM. A value of 'zero' here means "Not Supported," while a 'one' indicates "Supported," suggesting that the R Z Q pin and its associated termination functionality can be enabled or configured.
+
+Similarly, Bit 0 is also labeled "R Z Q / 6," indicating a related configuration for the R Z Q pin. The interpretation is consistent: 'zero' for "Not Supported" and 'one' for "Supported." The presence of two bits related to R Z Q suggests a multi-bit encoding for the termination resistance value or for different aspects of its support.
+
+This byte's definition is sourced from the JEDEC DDR3 SDRAM Specification, a crucial standard that governs the interoperability and performance characteristics of DDR3 memory modules. Understanding these bits allows a system's memory controller to query and adapt its operation to the specific capabilities of the installed SDRAM.
+
+The subsequent section focuses on "SPD Field 0x1F: SDRAM Thermal and Refresh Options." This field provides information about the thermal characteristics and refresh mechanisms of the SDRAM component. The document highlights that these bits are essential for configuring the component's behavior based on its thermal properties. It specifically mentions the MT41J256M8, a particular SDRAM part, which supports extended temperature ranges and enhanced refresh rates, including an "Auto Self Refresh" (A S R) capability. The parenthetical note "(S P D field #33=0x07)" suggests that another SPD field, identified by its decimal index 33, contains specific details related to this Auto Self Refresh functionality.
+
+A table further elaborates on SPD Field 0x1F, presenting its attributes. The "Byte (Dec)" column shows the decimal index of the SPD byte, which is 31. The "Byte (Hex)" column provides the hexadecimal representation of this index, 0x1F. The "Field Name" is "SDRAM Thermal and Refresh Options," and the "Typ. Value" is 0x07. The "Definition" column clarifies that the value 0x07 signifies "Extended Temp. Ranges and Auto Self Refresh (ASR)." This implies that when byte 31 of the SPD EEPROM contains the value hexadecimal 0 seven, the SDRAM supports operation across a wider temperature spectrum and can utilize its Auto Self Refresh mode. Auto Self Refresh is a power management feature where the DRAM automatically initiates refresh cycles without explicit commands from the memory controller, typically used in low-power states to maintain data integrity. The ability to support extended temperature ranges is crucial for devices operating in environments with significant thermal fluctuations, ensuring reliable memory operation.

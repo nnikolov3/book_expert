@@ -1,0 +1,43 @@
+Value of BIOS
+
+The bill of material (BOM) impact of a system BIOS from segment to
+segment can differ greatly depending on a variety of factors. The business
+model can be based on a combination of non-recurrent engineering (NRE)
+
+and/or royalty per motherboard. Depending on:
+—QOriginal innovation
+—Porting cost
+—Source level access
+—Support need
+—Expected volume
+—Customization requirements
+—Vendor/supplier history
+
+This is not unlike many other free market dynamics. If volume pricing can
+apply, royalties per board could be a relatively low percentage of the bill of
+materials (BOM) cost. When volumes do not apply, then royalties per board
+can rise to affect the BOM. Embedded systems customers often must pay a
+much higher cost per board because of the diverse nature of the business
+segments, limited volume, and high-touch model for adapting the mainstream
+
+products for custom applications.
+
+Proprietary Solutions
+Value of B I O S
+
+The bill of material, or B O M, impact of a system B I O S from segment to segment can differ greatly depending on a variety of factors. The business model can be based on a combination of non-recurrent engineering, or N R E, and or royalty per motherboard. The specific factors influencing this include original innovation, porting cost, source level access, support need, expected volume, customization requirements, and vendor or supplier history.
+
+This dynamic is similar to many other free market scenarios. If volume pricing can be applied, royalties per board might represent a relatively low percentage of the bill of materials, or B O M, cost. However, when high volumes are not applicable, then royalties per board can increase, directly impacting the B O M. Customers using embedded systems often face a much higher cost per board. This is due to the diverse nature of their business segments, the limited production volume of their products, and the high touch model required for adapting mainstream products to their specific custom applications.
+
+Proprietary Solutions
+The fundamental value proposition of a system B I O S, or Basic Input/Output System, extends beyond a mere component in the Bill of Material, known as B O M. Its financial impact is highly variable across different product segments, reflecting a complex interplay of technical development and commercial considerations. The business model for B I O S integration typically combines non-recurrent engineering, or N R E, charges with per unit royalties.
+
+Non-recurrent engineering refers to the one time costs associated with the design, development, and testing of the B I O S for a specific hardware platform. This includes the initial intellectual investment to create a robust firmware foundation. Royalties, on the other hand, represent a recurring licensing fee paid per motherboard or per system unit shipped, granting the manufacturer the right to utilize the B I O S intellectual property.
+
+Several critical factors dictate the specific N R E and royalty structure. Firstly, original innovation significantly influences cost. If the B I O S supplier has developed novel features, optimized specific boot sequences, or implemented unique security protocols that provide a competitive advantage, the cost reflects this initial R and D investment. Secondly, porting cost is a major consideration. Adapting an existing B I O S to a new or distinct hardware platform, which might involve a different C P U architecture, chip set, or specific I O configurations, requires substantial engineering effort to ensure compatibility and optimal performance. This is not a trivial task and involves deep knowledge of hardware registers, memory maps, and device initialization sequences.
+
+Thirdly, the degree of source level access profoundly impacts the B I O S valuation. Providing the licensee with the complete B I O S source code enables extensive customization, debugging, and independent maintenance, but this often comes at a significantly higher premium due to the implicit transfer of valuable intellectual property. Conversely, relying solely on binary images restricts flexibility and necessitates ongoing vendor engagement for modifications or complex issue resolution. The fourth factor is the support need. The level of technical support, including bug fixes, updates, and direct engineering assistance from the B I O S vendor, directly influences the total cost of ownership. Comprehensive, proactive support often translates to higher fees.
+
+Fifth, expected volume plays a pivotal role in pricing dynamics. In scenarios where high production volumes are anticipated, the non-recurrent engineering costs can be amortized over a larger number of units, significantly reducing the per unit B I O S cost. This is a classic economy of scale principle. Conversely, for projects with lower expected volumes, the N R E portion forms a larger percentage of the per unit cost, making the B I O S appear more expensive on a per board basis. Sixth, customization requirements directly correlate with N R E. Extensive modifications to the B I O S for unique features, specialized peripheral support, or tailored boot behaviors necessitate additional engineering time and expertise, thereby increasing the non-recurrent engineering charges. Finally, the vendor or supplier history, including their reputation for reliability, quality, and long term support, can influence the pricing. Established vendors with a strong track record may command a premium, which is often justified by reduced project risk and assured future support.
+
+This economic model is pervasive across many technology sectors. In high volume scenarios, such as consumer P C motherboards, the royalties per board can constitute a relatively low percentage of the overall Bill of Material cost due to the large scale amortization of N R E. However, when volumes are inherently limited, as is often the case with specialized embedded systems, the N R E and per unit royalty costs can disproportionately increase the B O M. Embedded systems frequently demand a much higher cost per board for their B I O S solution. This is attributable to the diverse and often highly specific nature of these applications, the typically limited production volumes, and the necessity for a high touch, collaborative model to adapt mainstream B I O S architectures to unique hardware configurations and custom operational requirements. The phrase "Proprietary Solutions" therefore refers to the B I O S software that is owned, developed, and often highly customized by a specific vendor, licensed under these terms, offering a tailored fit for specialized applications at a corresponding investment.

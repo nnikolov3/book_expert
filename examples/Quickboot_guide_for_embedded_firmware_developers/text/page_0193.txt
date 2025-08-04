@@ -1,0 +1,51 @@
+containing 256 interrupt vectors. The IVT is used in real mode. Each vector
+address is 32 bits and consists of the CS:IP for the interrupt vector. Refer to
+the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume
+3A section titled “Exception and Interrupt Reference” for a list of real-mode
+
+interrupts and exceptions.
+
+Interrupt Descriptor Table (IDT)
+
+The IDT is the Interrupt Descriptor Table and contains the exceptions and
+interrupts in protected mode. There are also 256 interrupt vectors, and the
+exceptions and interrupts are defined in the same locations as the IVT. Refer
+to the Intel® 64 and IA-32 Architectures Software Developer’s Manual,
+Volume 3A for a detailed description of the IDT.
+
+Exceptions
+
+Exceptions are routines that run to handle error conditions. Examples include
+page fault and general protection fault. At a minimum, placeholders (dummy
+functions) should be used for each exception handler. Otherwise the system
+
+could exhibit unwanted behavior if it encounters an exception that isn’t
+handled.
+
+Real-Mode Interrupt Service Routines (ISRs)
+
+Real-mode ISRs are used to communicate information between the boot
+loader and the OS. For example, INT10h is used for video services, such as
+changing video modes and resolution. There are some legacy programs and
+drivers that assume these real-mode ISRs are available and directly call the
+INT routine.
+Containing two hundred fifty six interrupt vectors. The I V T is used in real mode. Each vector address is thirty two bits and consists of the C S colon I P for the interrupt vector. Refer to the Intel sixty four and I A thirty two Architectures Software Developer's Manual, Volume three A section titled Exception and Interrupt Reference for a list of real mode interrupts and exceptions.
+
+Interrupt Descriptor Table (I D T)
+
+The I D T is the Interrupt Descriptor Table and contains the exceptions and interrupts in protected mode. There are also two hundred fifty six interrupt vectors, and the exceptions and interrupts are defined in the same locations as the I V T. Refer to the Intel sixty four and I A thirty two Architectures Software Developer's Manual, Volume three A for a detailed description of the I D T.
+
+Exceptions
+
+Exceptions are routines that run to handle error conditions. Examples include page fault and general protection fault. At a minimum, placeholders dummy functions should be used for each exception handler. Otherwise the system could exhibit unwanted behavior if it encounters an exception that isn't handled.
+
+Real Mode Interrupt Service Routines (I S Rs)
+
+Real mode I S Rs are used to communicate information between the boot loader and the O S. For example, I N T ten h is used for video services, such as changing video modes and resolution. There are some legacy programs and drivers that assume these real mode I S Rs are available and directly call the I N T routine.
+The provided text delves into the fundamental mechanisms of interrupt handling within computer systems, specifically referencing concepts prevalent in Intel architecture. It begins by describing the Interrupt Vector Table, or I V T, which in real mode, is a structure containing two hundred fifty six interrupt vectors. Each vector is a thirty two bit address, specifically the C S and I P pair, that directs program execution to the appropriate interrupt handler. For a comprehensive understanding of these real mode interrupts and exceptions, reference to the Intel sixty four and I A thirty two Architectures Software Developer's Manual, Volume three A, specifically the section titled "Exception and Interrupt Reference," is recommended.
+
+The Interrupt Descriptor Table, or I D T, is then introduced, which serves a similar purpose but in protected mode. Similar to the I V T, the I D T also accommodates two hundred fifty six entries for interrupts and exceptions. These descriptors are located in memory in a manner analogous to the I V T, and detailed information can again be found in the aforementioned Intel developer manual.
+
+The concept of "Exceptions" is elaborated upon. Exceptions are defined as routines that are invoked to manage error conditions within the processor. Illustrative examples include page faults, which occur when a program attempts to access memory that has not been allocated to it, and general protection faults, which arise from attempts to access memory or resources without proper authorization. The text notes that, at a minimum, a handler for each exception is required. It further warns that if a system encounters an exception without a corresponding handler, it could lead to unpredictable and undesirable behavior.
+
+Finally, "Real Mode Interrupt Service Routines," or I S R s, are discussed. These routines are utilized to facilitate communication between the boot loader and the O S. A concrete example provided is I N T ten h, which is often employed for video services, including adjustments to video modes and screen resolution. The text mentions the existence of legacy programs and drivers that rely on these real mode I S R s, and often invoke them directly. This highlights the importance of understanding these low level interrupt mechanisms for both historical compatibility and the foundational operation of many systems.

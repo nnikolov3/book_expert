@@ -1,0 +1,47 @@
+Table (SLIT) and the System Resource Affinity Table (SRAT).
+
+There are some newer tables defined in the ACPI 5.0 specification that
+do not deal with Intel architecture (such as GTDT) and can be excluded from
+the firmware image.
+
+Most of the ACPI tables do not change for the life of the platform and
+can be considered static. There may be some tables that are ported from board
+to board (like PCI IRQ routing _ PRT). Some tables (such as SSDT) can be
+dynamically created, loaded, or enabled, depending on the hardware
+discovered during the system boot and depending on the operating system
+and/or the usage model requirements. For dynamic SSDTs, “Load” and
+“Load Table” can be used to update tables during OS load or even runtime
+before being interpreted by the OS. This allows for hot plugging of docking
+stations, socketed processors, proprietary daughter cards, and so on, where
+modular add-in tables make a single firmware image scalable. This SSDT
+table technique also can be used for dynamically adding instrumentation for
+
+debug and performance measurements.
+
+ACPI Namespace
+
+ACPI Namespace is an outline of a system. It is divided into high-level
+scopes, where nothing exists outside of a scope. A scope is equivalent to a
+directory, hence the dir tree model in the specification. The base of the tree is
+the Root Scope. The system bus (SB) scope is for everything physically on
+the system board. PR is for Processor tree.
+
+ACPI Name space includes both objects (either dynamic or static) and
+methods (dynamically called by the OS drivers as needed).
+
+Device Objects are defined through ASL-specific language. They are
+either ACPI enumerated (has an HID for a device) or an _ADR, which is
+Table, S L I T, and the System Resource Affinity Table, S R A T.
+
+There are some newer tables defined in the A C P I five point zero specification that do not deal with Intel architecture, such as G T D T, and can be excluded from the firmware image. Most of the A C P I tables do not change for the life of the platform and can be considered static. There may be some tables that are ported from board to board, like P C I I R Q routing P R T. Some tables, such as S S D T, can be dynamically created, loaded, or enabled, depending on the hardware discovered during the system boot and depending on the operating system and or the usage model requirements. For dynamic S S D T s, "Load" and "Load Table" can be used to update tables during O S load or even runtime before being interpreted by the O S. This allows for hot plugging of docking stations, socketed processors, proprietary daughter cards, and so on, where modular add in tables make a single firmware image scalable. This S S D T table technique also can be used for dynamically adding instrumentation for debug and performance measurements.
+
+A C P I Namespace
+
+A C P I Namespace is an outline of a system. It is divided into high level scopes, where nothing exists outside of a scope. A scope is equivalent to a directory, hence the directory tree model in the specification. The base of the tree is the Root Scope. The system bus, S B, scope is for everything physically on the system board. P R is for Processor tree.
+
+A C P I Namespace includes both objects, either dynamic or static, and methods, dynamically called by the O S drivers as needed. Device Objects are defined through A S L specific language. They are either A C P I enumerated, has an H I D for a device, or an A D R, which is
+The Advanced Configuration and Power Interface, or A C P I, specification defines a comprehensive set of tables and a hierarchical namespace that an O S utilizes to discover and configure platform hardware. These elements are critical for proper system initialization, power management, and device enumeration. Among these, the System Locality Information Table, or S L I T, and the System Resource Affinity Table, or S R A T, are pivotal for Non Uniform Memory Access, or N U M A, architectures. The S L I T describes the relative latency between different memory nodes, allowing the O S to optimize memory allocations for performance by prioritizing local memory access. The S R A T, conversely, details the proximity of processors and I O devices to specific memory regions, enabling the O S to establish resource affinity that minimizes data transfer overhead and maximizes cache utilization.
+
+While many A C P I tables remain static throughout the platform's operational lifecycle, often directly ported from the board firmware image and considered immutable, a significant subset exhibits dynamic behavior. For instance, some newer tables introduced in the A C P I five point zero specification, such as the General Timer Description Table, or G T D T, are specifically designed for hardware architectures not based on Intel designs and may be optionally excluded to streamline the firmware image. More importantly, tables like the System Service Description Table, or S S D T, are inherently dynamic. Their content can be created, loaded, or enabled based on various runtime factors, including the hardware discovered during system boot or the specific usage model mandated by the O S. This dynamic capability is fundamental for adapting to evolving hardware configurations and for supporting advanced features like hot plugging of peripheral devices, the integration of modular add in cards, or the seamless insertion of socketed processors. Such adaptability is crucial for constructing scalable firmware images, where the system can dynamically adjust its resource mapping and device interaction without requiring a full system reboot or a static, predefined configuration. This S S D T table mechanism also serves as an invaluable technique for dynamically introducing instrumentation into the system, which is essential for detailed debugging and precise performance measurements during development and deployment.
+
+The A C P I Namespace serves as a structured, hierarchical representation of the entire system, akin to a directory tree in a file system. Within this namespace, every component and resource exists within a defined scope, ensuring that nothing operates outside this structured environment. The logical root of this hierarchy is the Root Scope, denoted by a backslash character, which encompasses all system components. Beneath this, the System Bus, or S B, scope is designated for all entities that are physically present on the system board, including integrated peripherals and chipset components. Another crucial hierarchical branch is the Processor, or P R, tree, which models the C P U architecture and its associated resources. The A C P I Namespace can contain both static objects, whose definitions are fixed in the firmware, and dynamic objects, which are generated or instantiated at runtime. Similarly, it defines methods, which are essentially functions that can be dynamically invoked by O S drivers as needed to control or query hardware. Device Objects, which represent individual hardware components, are formally described using the A C P I Source Language, or A S L, a byte code language interpreted by the A C P I C P U. These device objects are enumerated either by possessing a Hardware I D, or H I D, a standard identifier that the O S uses to match a device with its corresponding driver, or by an A D R, which provides an address or location within the system bus topology. This unified, programmable framework allows the O S to manage complex hardware configurations with a high degree of abstraction and flexibility.

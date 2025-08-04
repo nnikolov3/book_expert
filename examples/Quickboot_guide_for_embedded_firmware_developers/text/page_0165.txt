@@ -1,0 +1,37 @@
+When external power is first applied to a platform, the hardware
+platform must carry out a number of tasks before the processor can be
+brought out of reset. The first task is to allow the power supply to settle down
+to its nominal state; once the primary power supply settles, there are usually a
+number of derived voltage levels needed on the platform. For example, on the
+Intel architecture reference platform, the input supply consists of a 12-volt
+source, but the platform and processor require a number of different voltage
+rails, such as 1.5 V, 3.3 V, 5V, and 12 V. The platform and processor also
+require that the voltages are provided in a particular sequence. This process,
+known as power sequencing, takes place by controlling analog switches
+(typically field effect transistors). The sequence is often driven by a complex
+program logic device (CPLD). The platform clocks are also derived from a
+small number of input clock and oscillator sources. The devices use phase-
+locked loop circuitry to generate the derived clocks used for the platform.
+These clocks also take time to converge. When all these steps have occurred,
+the power sequencing CPLD de-asserts the reset line to the processor. Figure
+9.1 shows an overview of the platform blocks described. Depending on
+integration of silicon features, some of this logic may be on chip and
+controlled by microcontroller firmware, which starts prior to the main
+
+Processor.
+
+Nonhost-Based Subsystem Startup
+
+As part of the Intel architecture, a variety of subsystems may begin prior to
+
+the main host system starting.
+When external power is first applied to a platform, the hardware platform must carry out a number of tasks before the processor can be brought out of reset. The first task is to allow the power supply to settle down to its nominal state; once the primary power supply settles, there are usually a number of derived voltage levels needed on the platform. For example, on the Intel architecture reference platform, the input supply consists of a twelve volt source, but the platform and processor require a number of different voltage rails, such as one point five volt, three point three volt, five volt, and twelve volt. The platform and processor also require that the voltages are provided in a particular sequence. This process, known as power sequencing, takes place by controlling analog switches (typically field effect transistors). The sequence is often driven by a complex program logic device (C P L D). The platform clocks are also derived from a small number of input clock and oscillator sources. The devices use phase locked loop circuitry to generate the derived clocks used for the platform. These clocks also take time to converge. When all these steps have occurred, the power sequencing C P L D de asserts the reset line to the processor. Figure nine point one shows an overview of the platform blocks described. Depending on integration of silicon features, some of this logic may be on chip and controlled by microcontroller firmware, which starts prior to the main processor.
+
+Nonhost Based Subsystem Startup
+
+As part of the Intel architecture, a variety of subsystems may begin prior to the main host system starting.
+The startup sequence of a computing platform begins with the application of external power. The hardware, including the processor, cannot perform any operations until it is brought out of a reset state. The initial critical task is to allow the power supply circuitry to stabilize and reach its nominal voltage levels. This process involves the primary power supply, which then often feeds into secondary regulators to generate the specific voltage rails required by various components. For example, on an Intel architecture platform, the input power supply might be a twelve volt source, but the processor and other components necessitate a range of derived voltage rails, such as one point five volt, three point three volt, five volt, and twelve volt.
+
+This generation of multiple voltage rails is a carefully controlled process known as power sequencing. Power sequencing ensures that voltages are applied in a specific order, preventing damage to sensitive components and allowing the system to initialize correctly. This sequencing is frequently orchestrated by a complex logic device, such as a complex programmable logic device, or C P L D, which often incorporates field effect transistors. The C P L D's operation is typically driven by derived clocks, which are themselves generated from a small number of input clock and oscillator sources. The C P L D utilizes phase locked loop circuitry to produce these necessary derived clocks. These derived clocks also require time to stabilize or converge to their target frequencies. Once all these prerequisite steps, including the stabilization of voltage rails and clock convergence, are complete, the C P L D typically de asserts a reset line, signaling to the processor and other components that they can begin their initialization procedures. Figure nine point one, though not visible here, would likely illustrate an overview of these platform blocks and their interactions. Depending on the specific silicon integration and features, some of this low level initialization logic might reside within microcontroller firmware, which initiates its execution even before the main processor is fully operational.
+
+This discussion transitions to the topic of nonhost based subsystem startup. In the context of an Intel architecture, a variety of subsystems within the system may commence their operational sequence prior to the main host system initiating its primary boot process. This implies a distributed initialization strategy where certain functional units achieve operational readiness independently of the central processor's main boot flow.

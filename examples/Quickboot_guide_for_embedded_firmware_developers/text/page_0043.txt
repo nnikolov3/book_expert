@@ -1,0 +1,29 @@
+software from years ago still works with modern machines. The PCle
+specification supports I/O Space for compatibility with legacy devices which
+require their use because it requires the ability to support existing I/O device
+drivers with no modifications.
+
+Besides the simple fixed legacy I/O ranges (see Figure 2.4), there are
+Base Address Registers per device that are enumerated by the BIOS and/or
+the operating system to suit their idea of perfection. PCI-to-PCI (P2P) bridges
+also requires a 4-KB minimum between them.
+
+Alternatively, the term Memory Mapped I/O has nothing to do with
+actual I/O space. It is memory space used by hardware (usually, register
+space) that is accessed from a configurable base address register. While this
+mechanism is similar to that of I/O access from a high level, the transactions
+are routed very differently and are fundamentally different beasts to the
+
+platform with different rules.
+software from years ago still works with modern machines. The P C I E specification supports I O Space for compatibility with legacy devices which require their use because it requires the ability to support existing I O device drivers with no modifications.
+
+Besides the simple fixed legacy I O ranges, see Figure two point four, there are Base Address Registers per device that are enumerated by the B I O S and or the operating system to suit their idea of perfection. P C I to P C I, P two P, bridges also requires a four K B minimum between them.
+
+Alternatively, the term Memory Mapped I O has nothing to do with actual I O space. It is memory space used by hardware, usually, register space, that is accessed from a configurable base address register. While this mechanism is similar to that of I O access from a high level, the transactions are routed very differently and are fundamentally different beasts to the platform with different rules.
+The P C I E specification, a cornerstone of modern system architecture, demonstrates a fundamental commitment to backward compatibility by retaining support for legacy I O Space. This design decision is crucial because it allows the continued operation of older peripheral devices and, more importantly, permits existing I O device drivers to function without requiring any modifications or recompilation. This preserves significant investments in legacy hardware and software ecosystems, ensuring a smooth transition across generations of computing platforms despite profound changes in the underlying bus fabric and transaction protocols.
+
+At the heart of this compatibility are the mechanisms for device resource enumeration and allocation. Beyond the traditional, often fixed, legacy I O ranges that were prevalent in earlier architectures, the P C I E standard relies heavily on Base Address Registers, or B A R s, located within each device's configuration space. These B A R s define the memory or I O address ranges required by the device. During system initialization, the B I O S, and subsequently the operating system, discovers and enumerates these devices, then reads their B A R values to dynamically assign non-overlapping address blocks for their registers and memory. This dynamic allocation is critical for the plug and play functionality that modern systems demand. P C I to P C I bridges, often referred to as P two P bridges, facilitate this hierarchical enumeration and address decoding across segments of the P C I E topology, ensuring that each device's address space is correctly mapped and accessible by the C P U. A notable requirement for these mappings is a minimum alignment or size of four K B, which often aligns with memory page granularities, optimizing for both memory management unit operations and cache efficiency where applicable.
+
+It is imperative to distinguish between I O Space, often termed Port Mapped I O, and Memory Mapped I O, as the text correctly highlights their fundamental differences. I O Space refers to a distinct, separate address realm from the system's main memory, where devices communicate with the C P U using specific I O instructions, such as 'in' and 'out' instructions on certain architectures. These instructions generate unique bus cycles, asserting dedicated control signals that differentiate them from standard memory accesses. The transactions routed through I O Space are thus processed by the hardware in a fundamentally different manner, often bypassing cache coherence mechanisms and potentially having different latency and throughput characteristics.
+
+Conversely, Memory Mapped I O integrates device registers and internal device memory directly into the C P U's physical memory address space. This means that C P U access to these device resources occurs using standard memory load and store instructions, indistinguishable from accesses to R A M. The hardware, specifically the memory controller and the P C I E interface, is responsible for decoding these memory addresses. If an address falls within a range allocated to a P C I E device, the transaction is routed over the P C I E bus to that specific device, rather than to the main system R A M. This approach offers several advantages, including a unified addressing scheme that simplifies programming models by allowing the use of generic memory access instructions and potentially leveraging the full address width of the C P U. While, from a high level, software might perceive these accesses similarly, the underlying hardware mechanisms and bus protocols for Memory Mapped I O are profoundly different from those governing I O Space transactions, representing two distinct paradigms for C P U to peripheral communication, each with its own historical context, advantages, and limitations within a complex computing platform.

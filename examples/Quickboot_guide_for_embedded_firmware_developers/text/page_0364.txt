@@ -1,0 +1,62 @@
+Bit 7 Bits 6-4 Bit 3 Bit 2 Bit 1 Bit 0
+
+Partial Reserved On-Die Thermal Readout Auto Extended Tem- Extended Tem-
+Array Self- Re- Sensor (0DTS) Self Refresh perature Re- perature Range
+fresh (PASR) (ASR) fresh Rate
+1 = Supported 1 =0n-die ther- 1=A5Rissup- 1 =Extended 1 = Normal and
+0 = Not mal sensor ported and the operating tem- extended operat-
+: BUp readout is sup. SDRAM will de- perature range ing temperature
+pang parted termine the from 85=95°C range 0=95°C
+b= On-gis ther TIPO refresh supported with supported
+rate for any sup- standard 1X re-
+mal sensor 0 = Normal oper:
+: ported tempera- fresh rate
+readout is not fiir ating tempera-
+supported 0=Use in ex- ture range 0-85"
+(pending ballot 0O=ASRisnot tended operat- C supported
+of ODTS) supported ing temperature
+
+range from 85-
+95% C requires
+2X refresh rate
+
+SPD Field #31: “SDRAM Thermal and Refresh Options” Definition from
+JEDEC DDR3 SPD Specification
+
+SPD Field 0x20: Module Thermal Sensor
+
+If the memory-down-on-board design has a dedicated thermal sensor for the
+SDRAM components, then this field should be set to 0x80, otherwise to
+0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+32 0x20 Module Thermal Sensor 0x00 None
+The table shows bit fields from Bit 7 down to Bit 0.
+Bit 7 is for Partial Array Self Refresh, or P A S R. A value of one indicates supported, and a value of zero indicates not supported.
+Bits 6 to 4 are reserved.
+Bit 3 describes the On Die Thermal Sensor O D T S. A value of one means the on die thermal sensor readout is supported. A value of zero means the on die thermal sensor readout is not supported, which is a pending ballot of O D T S.
+Bit 2 is for Readout Auto Self Refresh, or A S R. A value of one indicates A S R is supported and the S D Ram will determine the proper refresh rate for any supported temperature. A value of zero indicates A S R is not supported.
+Bit 1 is for Extended Temperature Refresh Rate. A value of one indicates extended temperature refresh rate supported with one X refresh rate.
+Bit 0 is for Extended Temperature Range. A value of one indicates normal and extended operating temperature range zero to ninety five degrees Celsius supported. A value of zero indicates use in extended operating temperature range from eighty five to ninety five degrees Celsius, which requires a refresh rate of two X.
+
+S P D Field thirty one: S D Ram Thermal and Refresh Options definition from J E D E C D D R three S P D Specification.
+
+S P D Field zero times twenty: Module Thermal Sensor.
+If the memory down on board design has a dedicated thermal sensor for the S D Ram components, then this field should be set to zero times eighty, otherwise to zero times zero zero.
+
+The table shows byte information with Byte in decimal, Byte in hexadecimal, Field Name, Typical Value, and Definition.
+The entry shows thirty two in decimal, zero times twenty in hexadecimal, for the Field Name Module Thermal Sensor, with a Typical Value of zero times zero zero, and a Definition of None.
+The document details aspects of the Serial Presence Detect, or S P D, standard for J E D E C D D R three memory modules, specifically focusing on thermal and refresh options, and a module thermal sensor field.
+
+The first table outlines the bit assignments for S P D Field thirty one, "SDRAM Thermal and Refresh Options." This field is an eight bit register, where each bit conveys specific functionality or operational characteristics of the SDRAM. Bit seven defines the "Partial Array Self Refresh" or P A S R capability. A value of one indicates that P A S R is supported, meaning the memory controller can initiate self refresh operations on only a portion of the memory array. A value of zero signifies that this feature is not supported. Bits six through four are designated as reserved, implying they are not currently defined for use by the standard and should typically be ignored or set to zero.
+
+Bit three addresses the "On Die Thermal Sensor" or O D T S. A value of one signifies that the SDRAM chip incorporates an on die thermal sensor, and the readout of this sensor is supported. A value of zero indicates that the on die thermal sensor readout is not supported, or it is supported but pending a future ballot for full definition, referred to as "pending ballot of O D T S."
+
+Bit two pertains to "Readout Auto Self Refresh" or A S R. A value of one means A S R is supported, and the SDRAM will determine the proper refresh rate based on any supported temperature. A value of zero indicates that A S R is not supported.
+
+Bit one specifies "Extended Temperature Refresh Rate." A value of one signifies support for an extended temperature range of operation, specifically from eighty five degrees Celsius up to ninety five degrees Celsius, operating at a one X refresh rate. A value of zero indicates that the SDRAM operates within the normal temperature range, typically zero to eighty five degrees Celsius, and supports a two X refresh rate.
+
+Bit zero describes the "Extended Temperature Range." A value of one signifies that normal and extended operating temperature ranges are supported, from zero to ninety five degrees Celsius. A value of zero means the SDRAM operates in the normal temperature range, zero to eighty five degrees Celsius, and this capability is supported.
+
+The second section introduces S P D Field zero times twenty, "Module Thermal Sensor." This field's purpose is to indicate the presence of a dedicated thermal sensor for the SDRAM components on the module. If a memory down on board design utilizes such a sensor, this field should be set to a hexadecimal value of eighty, or zero times eighty. Otherwise, it should be set to zero times zero, indicating the absence of a module thermal sensor. The table associated with this field lists Byte index thirty two, which corresponds to hexadecimal zero times twenty, as the "Module Thermal Sensor" field, with a "Typ. Value" of zero times zero and a definition of "None." This implies that a value of zero times zero in this context signifies the absence of the sensor.

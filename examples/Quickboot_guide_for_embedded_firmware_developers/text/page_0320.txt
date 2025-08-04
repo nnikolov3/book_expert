@@ -1,0 +1,52 @@
+SPD Field #14 and #15: “CAS Latencies Supported” Example from Micron
+MT41J256M8 Datasheet
+
+SPD Field 0x10: CAS Latency Time (tAAmin or tCL)
+
+This field must also be extracted from the datasheet and divided by the
+Medium Timebase Divisor. Although the SPD specification calls out this
+abbreviation as tAA, I’ve found that it is usually abbreviated tCL or just
+“CL” in the various SDRAM datasheets (as shown above).
+
+In our example:
+
+1.
+The tCL value found in the Micron MT41J256M8 datasheet for our
+specific SDRAM chip gives 13.1 ns.
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+3.
+13.1 ns/0.125 ns = 104.8 (round up) = 0x69.
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+16 0x10 CAS Latency Time (Taamin or to) OnE 13.125n5
+
+Byte 16: Minimum CAS Latency Time (tAAmin)
+S P D Field number fourteen and number fifteen: "C A S Latencies Supported" Example from Micron M T four one J two five six M eight Datasheet.
+
+S P D Field zero times ten: C A S Latency Time (t A Amin or t C L).
+
+This field must also be extracted from the datasheet and divided by the Medium Timebase Divisor. Although the S P D specification calls out this abbreviation as t A A, I've found that it is usually abbreviated t C L or just "C L" in the various S D R A M datasheets (as shown above).
+
+In our example:
+
+One.
+
+The t C L value found in the Micron M T four one J two five six M eight datasheet for our specific S D R A M chip gives thirteen point one nanoseconds.
+
+Two.
+
+This number must be divided by the Medium Timebase Divisor, the value in zero times B. In our example this is zero point one two five nanoseconds.
+
+Three.
+
+Thirteen point one nanoseconds divided by zero point one two five nanoseconds is equal to one hundred point eight, rounded up, which is zero times sixty nine.
+
+The table shows data with columns for Byte (D E C), Byte (H E X), Field Name, Typ. Value, and Definition. The first row shows Byte sixteen, Hexadecimal one zero, with the Field Name C A S Latency Time (t A Amin or t C L), Typ. Value Hexadecimal sixty nine, and Definition thirteen point one two five nanoseconds.
+
+Byte sixteen: Minimum C A S Latency Time (t A Amin).
+This document details the interpretation of Serial Presence Detect, or S P D, fields, specifically focusing on S P D Field fourteen and fifteen, which pertain to CAS Latencies Supported, referencing an example from a Micron M T four one J two five six M eight D Ram datasheet. It elaborates on S P D Field zero times ten, which represents CAS Latency Time, often abbreviated as t A A min or t C L. The underlying principle is that this field's value from the datasheet is not a direct time measurement but rather a raw numerical representation that requires conversion using a Medium Timebase Divisor.
+
+The process of determining the actual CAS Latency Time involves retrieving a value from the S P D specification, which in this particular example, uses a Micron M T four one J two five six M eight S D Ram chip. The datasheet indicates a t C L value of thirteen point one nanoseconds. However, the S P D specification itself mandates that this value, which is represented in the S P D as a raw byte value, must be divided by the Medium Timebase Divisor. This divisor is specified elsewhere, for instance, as hexadecimal zero B. Therefore, the thirteen point one nanoseconds is an interpretation of the raw data; the S P D field itself stores a number that, when interpreted in conjunction with the Medium Timebase Divisor, yields this latency.
+
+The example demonstrates a calculation: thirteen point one nanoseconds is divided by zero point one two five nanoseconds, which yields one hundred point four eight. This value is then rounded up to one hundred and four, and represented in hexadecimal as zero six nine. The table clarifies this mapping: Byte index sixteen, which corresponds to hexadecimal ten, is labeled as "CAS Latency Time (t A A min or t C L)". The typical value associated with this field is shown as hexadecimal zero six nine, and its definition translates to thirteen point one two five nanoseconds. This demonstrates how a seemingly simple parameter like CAS latency is encoded within the S P D structure, requiring specific knowledge of the S P D standard and the underlying hardware's timing parameters to correctly interpret. The fundamental concept here is data encoding and parameterization within memory modules to facilitate system configuration and performance optimization.

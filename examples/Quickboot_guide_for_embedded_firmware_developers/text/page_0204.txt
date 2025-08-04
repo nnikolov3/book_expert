@@ -1,0 +1,48 @@
+BIOS.
+
+memory changes based on “reserved” items listed below and any
+
+other design-based reserved regions.
+—TSEG — Reserved.
+—Graphics Stolen Memory — Reserved.
+—FEC00000-FEC01000* — IOAPIC.
+—FEEO00000-FEE01000* — LAPIC.
+
+See the applicable component specification for details on chipset-specific
+memory map requirements. See the appropriate ACPI specification for details
+on ACPI-related memory map requirements.
+
+For a UEFI system, the UEFI system tables provide the equivalent data.
+
+Loading the OS
+
+Following the memory map configuration, a boot device is selected from a
+prioritized list of potential bootable partitions. The UEFI “Load Image”
+command or Int 19h is used to call the OS loader, which in turn loads the OS.
+
+The details are covered in the previous chapter.
+
+Summary
+
+The boot sequence outlined in this chapter provides general guidance that
+B I O S.
+Dash zero zero one zero zero zero zero dash question mark question mark question mark question mark question mark question mark question mark question mark indicates the top of memory changes based on reserved items listed below and any other design based reserved regions.
+Dash T S E G dash Reserved.
+Dash Graphics Stolen Memory dash Reserved.
+Dash F E C zero zero zero zero zero dash F E C zero one zero zero zero star dash I O A P I C.
+Dash F E E zero zero zero zero zero dash F E E zero one zero zero zero star dash L A P I C.
+See the applicable component specification for details on chipset specific memory map requirements. See the appropriate A C P I specification for details on A C P I related memory map requirements.
+For a U E F I system, the U E F I system tables provide the equivalent data.
+Loading the O S
+Following the memory map configuration, a boot device is selected from a prioritized list of potential bootable partitions. The U E F I Load Image command or Int one nine h is used to call the O S loader, which in turn loads the O S. The details are covered in the previous chapter.
+Summary
+The boot sequence outlined in this chapter provides general guidance that
+The text details aspects of the Basic Input Output System, or B I O S, particularly concerning memory mapping and the boot process. It describes memory regions used for system-related functions, indicated by ranges such as the one starting at hexadecimal zero zero one zero zero zero zero zero and extending to an unspecified upper bound, denoted by question marks. This memory area is designated for storing information about changes in memory configuration and other design-specific reserved regions.
+
+Specific regions are identified for system functions. For instance, T S E G is marked as reserved. Additionally, "Graphics Stolen Memory" is explicitly reserved, signifying memory allocated for graphics processing that is unavailable to the central processing unit for general use. Further detailed memory mappings are provided, including a range from hexadecimal F E C zero zero zero zero zero to F E C zero one zero zero zero, which is associated with the I O A P I C, or Input Output Advanced Programmable Interrupt Controller. Another range, from hexadecimal F E E zero zero zero zero zero to F E E zero one zero zero zero, is designated for L A P I C, the Local Advanced Programmable Interrupt Controller.
+
+The text emphasizes the importance of consulting chipset specific documentation for precise memory map requirements. It advises referring to the A C P I specification for details on A C P I related memory map requirements. For systems utilizing the U E F I firmware interface, the U E F I system tables are stated to provide the equivalent data.
+
+The section titled "Loading the O S" elaborates on the operating system boot procedure. Following the configuration of the memory map, a boot device is chosen from a prioritized list of potential bootable partitions. The process involves the U E F I environment initiating a "Load Image" command, or interrupt nineteen hex, to invoke the O S loader. This loader, in turn, is responsible for loading the operating system into memory and initiating its execution. The details of this process are said to be covered in a preceding chapter.
+
+Finally, the "Summary" section concisely states that the boot sequence discussed in the chapter offers general guidance.

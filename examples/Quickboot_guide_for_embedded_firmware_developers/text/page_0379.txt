@@ -1,0 +1,38 @@
+Last Nonzero Byte Odd Parity for Number of Continuation Codes
+Module Manufacturer Byte 117 bits 6—0 Module Manufacturer
+
+See JEP-106 See JEP-106
+Examples:
+Company JEP-1086 # Continuation Codes SPD
+Bank Lode Byte 117 Byte 118
+Fujitsu 1 04 0 Ox 80 WER
+US Modular > AS , Che (hd OxAB
+
+SPD Field #117 and #118: “Module Manufacture ID Code” Definition from
+JEDEC DDR3 SPD Specification
+
+SPD Field 0x77: Module Manufacturer Location
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+119 0x77 Module Manufacturer Location De 00
+
+Byte 119: Module Manufacturing Location
+The module manufacturer includes an identifier that uniquely defines the
+manufacturing location of the memory module. While the SPD specification
+will not attempt to present a decode table for manufacturing sites, the
+individual manufacturer may keep track of manufacturing location and its
+
+appropriate decode represented in this byte.
+
+SPD Field 0x78 and 0x79: Module Manufacturing Date
+Last Nonzero Byte, Odd Parity for Number of Continuation Codes, Module Manufacturer Byte one hundred seventeen bits six through zero, Module Manufacturer. See J E P dash one zero six. See J E P dash one zero six. Examples. The table shows company, J E P dash one zero six bank, J E P dash one zero six code, number of continuation codes, S P D Byte one hundred seventeen, and S P D Byte one hundred eighteen. For Fujitsu, the bank is one, the code is zero four, the continuation code is zero, Byte one hundred seventeen is zero x eight zero, and Byte one hundred eighteen is zero x zero four. For U S Modular, the bank is five, the code is A eight, the continuation code is four, Byte one hundred seventeen is zero x zero four, and Byte one hundred eighteen is zero x A eight. S P D Field one hundred seventeen and S P D Field one hundred eighteen: "Module Manufacture ID Code" Definition from J E D E C D D R three S P D Specification. S P D Field zero x seventy seven: Module Manufacturer Location. The table shows Byte D E C, Byte H E X, Field Name, Typ Value, and Definition. Byte one hundred nineteen is zero x seventy seven, the Field Name is Module Manufacturer Location, the Typ Value is zero x zero zero, and the Definition is a dash. Byte one hundred nineteen: Module Manufacturer Location. The module manufacturer includes an identifier that uniquely defines the manufacturing location of the memory module. While the S P D specification will not attempt to present a decode table for manufacturing sites, the individual manufacturer may keep track of manufacturing location and its appropriate decode represented in this byte. S P D Field zero x seventy eight and zero x seventy nine: Module Manufacturing Date.
+The document delves into aspects of memory module identification and configuration, primarily focusing on the Serial Presence Detect, or S P D, standard used in computer memory.  At a foundational level, the S P D is a small storage device, typically an EEPROM, present on memory modules like DRAM DIMMs. This storage contains critical parameters about the module, allowing the system's firmware, often the BIOS or U E F I, to correctly configure and operate the memory. The information stored within the S P D is organized into fields, each corresponding to a specific byte offset on the S P D chip.
+
+The presented data illustrates how manufacturers are identified and how this identification might be structured. Specifically, the table titled "Examples" shows a breakdown of companies, their associated "Bank" and "Code," and their "Continuation Codes" along with values for "Byte 117" and "Byte 118" from the S P D. This data relates to the "Module Manufacturer ID Code" definition, which is documented in J E P ten six, a standard that defines the electrical and mechanical specifications for memory modules. The "Module Manufacturer ID Code" serves as a unique identifier for the entity that manufactured the memory module.
+
+The document then specifically references "S P D Field one hundred seventeen and one hundred eighteen: 'Module Manufacture ID Code' Definition from J E D E C D D R three S P D Specification." This highlights the role of J E D E C, or Joint Electron Device Engineering Council, as a standards organization that develops specifications for electronic components and systems. D D R three refers to a specific generation of Double Data Rate synchronous dynamic random access memory. The S P D specification for D D R three defines the contents and organization of the S P D chip to provide detailed information about the memory module, including its capabilities, timings, and manufacturer. The ID code itself is likely a standardized numerical or alphanumeric representation assigned to each manufacturer.
+
+Further detail is provided on "S P D Field zero x seventy seven: Module Manufacturer Location." This field, located at byte offset seventy seven in the S P D data structure, is described as containing an identifier that uniquely defines the manufacturing location of the memory module. While the S P D specification may not explicitly detail a decode table for every possible manufacturing site, individual manufacturers are responsible for tracking and managing their own manufacturing locations and providing the appropriate decode representation within this byte. This allows for granular tracking and potentially for systems to identify not just the manufacturer, but also the specific facility where the memory was produced, which can be important for quality control, warranty, or supply chain management.
+
+Finally, the text mentions "S P D Field zero x seventy eight and zero x seventy nine: Module Manufacturing Date." These fields, at byte offsets seventy eight and seventy nine, are presumably used to encode information about when the memory module was manufactured. This could include the year, week, or even a specific date, providing a temporal context for the module's origin. Understanding manufacturing dates can be crucial for tracking product lifecycles, identifying potential batch issues, or correlating performance characteristics with production periods. The presence of these fields underscores the comprehensive nature of S P D data in characterizing memory modules.

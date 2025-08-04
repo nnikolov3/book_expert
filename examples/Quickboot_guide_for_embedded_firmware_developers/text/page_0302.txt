@@ -1,0 +1,89 @@
+Mini-CDIMM: Clocked 72-bit Mini Dual In-Line Memory Module
+
+72b-SO-UDIMM: Unbuffered 72-bit Small Outline Dual In-Line Memory
+Module
+
+72b-SO-RDIMM: Registered 72-bit Small Outline Dual In-Line Memory
+Module
+
+72b-SO-CDIMM: Clocked 72-bit Small Outline Dual In-Line Memory
+Module
+
+16b-SO-DIMM: Unbuffered 16-bit Small Outline Dual In-Line Memory
+Module
+
+32b-SO-DIMM: Unbuffered 32-bit Small Outline Dual In-Line Memory
+Module
+
+SPD Field 0x04: SDRAM Density and Banks
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+& 0x04 SDRAM Density 0=03 8 Banks
+and Banks 2 Gb
+
+Byte 4: SDRAM Density and Banks
+
+This byte defines the total density of the DDR3 SDRAM, in bits, and the
+number of internal banks into which the memory array is divided. These
+values come from the DDR3 SDRAM datasheet.
+
+Bit 7 Bits 6:4 Bits 3:0
+Reserved Bank Address Bits Total SDRAM Capacity in Megabits (Mb)
+000 = 3 (8 banks) 0000 = 256 Mb
+001 = 4 (16 banks) 0001 = 512 Mb
+010 = 5 (32 banks) 0010 = 1 Gb
+011 = 6 (64 banks) 0011 =2 Gb
+All others reserved 0100 = 4 Gb
+0101 =8 Gb
+Mini C D I M M Clocked seventy two bit Mini Dual In Line Memory Module.
+Seventy two b S O UDIMM Unbuffered seventy two bit Small Outline Dual In Line Memory Module.
+Seventy two b S O RDIMM Registered seventy two bit Small Outline Dual In Line Memory Module.
+Seventy two b S O CDIMM Clocked seventy two bit Small Outline Dual In Line Memory Module.
+Sixteen b S O DIMM Unbuffered sixteen bit Small Outline Dual In Line Memory Module.
+Thirty two b S O DIMM Unbuffered thirty two bit Small Outline Dual In Line Memory Module.
+
+S P D Field zero x zero four S D R A M Density and Banks.
+
+The table shows the S P D Field zero x zero four for S D R A M Density and Banks. The first row has a Byte in Decimal value of four, a Byte in Hexadecimal value of zero x zero four, a Field Name of S D R A M Density and Banks, a Typ Value of zero x zero three, and a Definition of eight Banks, two G B.
+
+Byte four S D R A M Density and Banks. This byte defines the total density of the D D R three S D R A M in bits and the number of internal banks into which the memory array is divided. These values come from the D D R three S D R A M datasheet.
+
+Bit seven, Bits six through four, Bits three through zero.
+Reserved Bank Address Bits Total S D R A M Capacity in Megabits M b.
+zero zero zero is equal to three, eight banks, zero zero zero zero is equal to two hundred fifty six M b.
+zero zero one is equal to four, sixteen banks, zero zero zero one is equal to five hundred twelve M b.
+zero one zero is equal to five, thirty two banks, zero zero one zero is equal to one G b.
+zero one one is equal to six, sixty four banks, zero zero one one is equal to two G b.
+All others reserved, zero one zero zero is equal to four G b, zero one zero one is equal to eight G b.
+The document begins by listing various types of memory modules, specifying their bus width and form factor, such as Mini C D I M M, 72-bit S O U D I M M, 72-bit S O R D I M M, 72-bit S O C D I M M, 16-bit S O D I M M, and 32-bit S O D I M M. These designations refer to different configurations of dynamic random access memory modules, commonly used in computer systems for temporary data storage. The "72-bit" indicates the width of the data bus, meaning seventy-two bits of data can be transferred simultaneously. "S O" typically signifies Small Outline, a form factor designed for reduced height in computing devices. "U D I M M" stands for Unbuffered Dual In-Line Memory Module, "R D I M M" for Registered Dual In-Line Memory Module, and "C D I M M" for Clocked Dual In-Line Memory Module. Each type has specific architectural differences affecting signal integrity and performance.
+
+The primary focus then shifts to "S P D Field zero x zero four: S D R A M Density and Banks." S P D, Serial Presence Detect, is a mechanism within memory modules that allows the system's hardware to automatically configure memory parameters. Field zero x zero four is a specific byte within the S P D data structure that encodes information about the S D R A M's density and its internal bank organization.
+
+A table details this field:
+
+*   **Byte (Dec):** Four, indicating the index of the byte in the S P D data.
+*   **Byte (Hex):** Zero x zero four, the hexadecimal representation of the byte index.
+*   **Field Name:** S D R A M Density and Banks.
+*   **Typ. Value:** Zero x zero three. This hexadecimal value is the typical encoded representation for this field.
+*   **Definition:** Eight Banks, and two Giga bits (Gb). This definition indicates that the typical configuration described by zero x zero three corresponds to memory modules with eight internal banks and a total capacity of two Giga bits.
+
+Following the table, "Byte four: S D R A M Density and Banks" elaborates on the significance of this byte. It specifies that this byte defines the total density of the D D R three S D R A M, expressed in bits, and how the memory array is partitioned into internal banks. The values referenced are derived from the D D R three S D R A M datasheet, which provides the standard for these memory specifications.
+
+The explanation then breaks down the bits within Byte four:
+
+*   **Bit seven:** This single bit is designated as "Reserved." Its value is not used to define density or banks in this context.
+*   **Bits six through four:** These three bits collectively encode the number of internal banks. The table provided shows the mapping:
+    *   Binary zero zero zero corresponds to three banks, with a total S D R A M capacity of two hundred fifty-six Megabits (Mb).
+    *   Binary zero zero one corresponds to four banks, with a total capacity of five hundred twelve Megabits (Mb).
+    *   Binary zero one zero corresponds to five banks, with a total capacity of one Gigabits (Gb).
+    *   Binary zero one one corresponds to six banks, with a total capacity of two Gigabits (Gb).
+    *   The pattern suggests a direct relationship between the binary value and the number of banks, and consequently, the total capacity.
+*   **Bits three through zero:** These four bits encode the total S D R A M capacity in Megabits. The mappings provided are:
+    *   Binary zero zero zero zero (hexadecimal zero) represents two hundred fifty-six Megabits.
+    *   Binary zero zero zero one (hexadecimal one) represents five hundred twelve Megabits.
+    *   Binary zero zero one zero (hexadecimal two) represents one Gigabit.
+    *   Binary zero zero one one (hexadecimal three) represents two Gigabits.
+    *   Binary zero one zero zero (hexadecimal four) represents four Gigabits.
+    *   Binary zero one zero one (hexadecimal five) represents eight Gigabits.
+
+The document highlights that "All others reserved," indicating that values beyond those explicitly listed for bits three through zero are not defined for capacity in this standard. This structured encoding within the S P D byte is crucial for system firmware and the operating system to correctly identify and initialize the installed memory, optimizing its operation and ensuring compatibility. The granularity of bank addressing and total density directly impacts memory controller performance, influencing factors like latency and throughput by allowing for more efficient data access patterns.

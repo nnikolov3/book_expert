@@ -1,0 +1,50 @@
+Use the fastest SPI flash part available.
+
+Use the fastest TPM within the budget.
+
+Where possible, execute longer latency TPM commands in parallel wi
+other BIOS code. TPM_Startup and TPM_ContSelfTest commands
+are usually the slowest commands. This will allow for continued
+BIOS execution and access to the TPM while the diagnostics are
+
+completed. Specifically:
+
+—Finish measurement of last FV in SEC/PEI before executing
+TPM_ContSelfTest in PEI.
+
+—Delay checking for TPM_ContSelfTest until the next TPM command
+in DXE, and delay the next TPM command if possible. Interrupting
+
+SelfTest in some cases causes additional delay.
+
+Measure only what is needed. Do not measure free space or boot block
+
+if it cannot be modified.
+
+If TPM supports legacy, turn off I/O port 0x4E/0x4F.
+Use the fastest S P I flash part available.
+
+Two. Use the fastest T P M within the budget.
+
+Three. Where possible, execute longer latency T P M commands in parallel with other B I O S code. T P M underscore Startup and T P M underscore ContSelfTest commands are usually the slowest commands. This will allow for continued B I O S execution and access to the T P M while the diagnostics are completed. Specifically:
+
+Finish measurement of last F V in S E C slash P E I before executing T P M underscore ContSelfTest in P E I.
+
+Delay checking for T P M underscore ContSelfTest until the next T P M command in D X E, and delay the next T P M command if possible. Interrupting SelfTest in some cases causes additional delay.
+
+Four. Measure only what is needed. Do not measure free space or boot block if it cannot be modified.
+
+Five. If T P M supports legacy, turn off I O port hex E zero slash hex F.
+
+Six.
+The document outlines best practices for performance optimization, particularly concerning the interaction with a Trusted Platform Module, or T P M. The first point emphasizes utilizing the fastest available S P I flash memory part. S P I, or Serial Peripheral Interface, is a synchronous serial communication interface specification used for short-distance communication, primarily in embedded systems. The speed of the flash memory directly impacts the latency of read and write operations, which are critical for system boot-up and firmware execution.
+
+The second recommendation is to select the fastest T P M available, within budgetary constraints. This implies a consideration of the computational capabilities and communication speeds of the T P M hardware itself.
+
+The third point delves into optimizing T P M command execution. It suggests executing longer latency T P M commands in parallel with other BIOS code. This is a strategy to maximize system throughput by overlapping operations that might otherwise serialize execution. Specifically, it mentions T P M Startup and T P M Self Test commands, which are often characterized by their latency. The rationale provided is that this parallel execution will allow for continued BIOS execution and access to the T P M while these potentially time-consuming diagnostics are underway. This approach hinges on the principle of concurrency, where multiple tasks are managed in a way that they appear to run simultaneously. The document further refines this by suggesting specific timing for these operations: finishing the measurement of the last F V, or Firmware Variable, in the S E C / P E I phase before executing T P M Self Test, and delaying the checking for T P M continuous Self Test until the next T P M command in the D X E phase. It also notes that delaying the next T P M command in some cases might introduce additional delay, highlighting the careful trade-offs involved in scheduling concurrent operations.
+
+The fourth point advocates for measuring only what is necessary, specifically advising against measuring free space or boot blocks if they cannot be modified. This speaks to the principle of efficiency and avoiding redundant operations, which is a fundamental aspect of algorithmic optimization and system performance tuning.
+
+The fifth point addresses T P M configuration related to legacy support. It recommends turning off the I O port hexadecimal four E or hexadecimal four F if the T P M supports legacy modes. This likely pertains to managing hardware resources and potential conflicts or inefficiencies introduced by older compatibility features.
+
+Finally, the sixth point suggests that if the T P M supports legacy, the I O ports hexadecimal four E and hexadecimal four F should be turned off. This reiterates the importance of disabling legacy functionalities when they are not in use to prevent performance overhead or potential issues.

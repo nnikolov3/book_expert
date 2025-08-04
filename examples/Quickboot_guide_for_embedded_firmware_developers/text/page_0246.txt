@@ -1,0 +1,60 @@
+BOOT_WITH_DEFAULT_BOOT_WITH_FULL_ BOOT_WITH_MINIM/
+SETTINGS CONFIGURATION CONFIGURATION
+
+The following list shows a high-level breakdown of the two-second budget. It
+does not assume the scripted boot method, which may be faster in certain
+
+scenarios:
+
+SEC/PEI phase budget — 500 ms, where:
+—Memory is configured, initialized, and scrubbed (if needed).
+
+—BIOS has been shadowed to memory and is currently executing from
+
+memory.
+
+—ME-BIOS DID handshake is done and no exception or fall back
+
+request was raised.
+
+—Long latency hardware (such as HDD, eDP panel) has been powered
+up.
+
+—CPU is completely patch-updated, including the second CPU patch
+
+microcode update.
+
+DXE phase budget — 500 ms:
+
+—Greater than 5 ms each for about 100 existing modules (most are in 1-
+
+ms range).
+
+—Each DXE module has a time budget of 10 ms, unless explicitly
+B O O T underscore with underscore default underscore B O O T underscore with underscore full underscore B O O T underscore with underscore minimum underscore settings, configuration, configuration.
+
+The following list shows a high level breakdown of the two second budget. It does not assume the scripted boot method, which may be faster in certain scenarios.
+
+One. S E C slash P E I phase budget, five hundred milliseconds, where:
+Memory is configured, initialized, and scrubbed if needed.
+B I O S has been shadowed to memory and is currently executing from memory.
+M E dash B I O S D I D handshake is done and no exception or fall back request was raised.
+Long latency hardware such as H D D, E D P panel has been powered up.
+C P U is completely patch updated, including the second C P U patch microcode update.
+
+Two. D X E phase budget, five hundred milliseconds:
+Greater than five milliseconds for each for about one hundred existing modules, most are in the one to milliseconds range.
+Each D X E module has a time budget of ten milliseconds, unless explicitly.
+This document outlines boot configuration settings, specifically focusing on time budgets for different system initialization phases. The presented analysis is segmented into two primary phases: the S E C P E I phase budget and the D X E phase budget, with a total two second boot time constraint.
+
+The S E C P E I phase budget allocates five hundred milliseconds. Within this phase, several critical operations occur. First, memory is configured, initialized, and scrubbed if necessary. This memory initialization is fundamental for any computing system, as it ensures that the Random Access Memory is functional and free from corrupted data before it can be used by the C P U. The scrubbing process, often a form of error detection and correction, mitigates soft errors that can arise in D Ram.
+
+Following memory initialization, the B I O S, or Basic Input Output System, is shadowed to memory. Shadowing involves copying the B I O S code from Read Only Memory, which is typically slower, into the faster Random Access Memory. This significantly improves the execution speed of the B I O S firmware during the initial stages of boot-up. The document explicitly states that the B I O S is currently executing from memory, implying this shadowing process has been completed.
+
+A critical handshake process between the Management Engine, or M E, and the B I O S is also part of this phase. The document specifies that the M E B I O S D I D handshake is completed without any exceptions or a fallback request. This handshake protocol is essential for establishing communication and synchronization between distinct hardware components or firmware subsystems, ensuring they can operate together correctly.
+
+Furthermore, long latency hardware components, such as H D D s, or Hard Disk Drives, and E D P panels, which likely refer to embedded DisplayPort interfaces, are powered up. The powering up of peripheral devices contributes to the overall boot time, especially those with significant initialization or power ramp up sequences.
+
+Finally, the C P U itself undergoes a complete patch update. This process involves applying microcode updates to the C P U. Microcode is a layer of low-level instructions that can be used to implement the machine code instructions of a processor. Updating microcode can rectify errata, improve performance, or introduce new features to the C P U without requiring a hardware revision. The mention of "second C P U patch" suggests a multi stage update process or the possibility of a secondary update mechanism.
+
+The second major phase discussed is the D X E phase budget, which is also allocated five hundred milliseconds. This phase appears to involve dynamic execution or extended device initialization. The constraints here are detailed as follows: greater than five milliseconds for about one hundred existing modules, with most modules falling within a one to five millisecond range. This implies a summation of individual module initialization times, with an upper bound on the average time per module. Each D X E module has a time budget of ten milliseconds, unless explicitly defined otherwise, indicating a granular time allocation for various system components or functionalities during this boot stage. This structured time allocation is a form of performance engineering, ensuring that the system initializes within its overall time budget by managing the execution duration of individual tasks.

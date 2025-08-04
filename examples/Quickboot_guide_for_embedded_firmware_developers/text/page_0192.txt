@@ -1,0 +1,49 @@
+PIRQE# D31:FO:Reg 68h INTINZ20
+
+PIRQF# D31:F0:Reg 69h INTIN21
+PIRQG# D31:FO:Reg 6Ah INTIN22
+PIRQH# D31:F0:Reg 6Bh INTIN23
+
+Local Advanced Programmable Interrupt Controller (LAPIC)
+The local APIC is contained inside the processor and controls the interrupt
+delivery to the processor. Each local APIC contains its own set of associated
+registers, as well as a Local Vector Table (LVT). The LVT specifies the
+manner in which the interrupts are delivered to each processor core.
+
+Refer to the Intel® 64 and IA-32 Architectures Software Developer’s
+
+Manual for more information on initializing the local APIC.
+
+I/0 Advanced Programmable Interrupt Controller (IOxAPIC)
+The IOXAPIC is contained in the ICH/IOH and expands the number of IRQs
+available to 24. Each IRQ has an associated redirection table entry that can be
+enabled or disabled and selects the IDT vector for the associated IRQ. This
+mode is only available when running in protected mode.
+
+Refer to the Chipset BIOS Writer’s Guide for more information on
+initializing the IOxPIC.
+
+Message Signaled Interrupt (MSI)
+The boot loader does not typically use MSI for interrupt handling.
+
+Interrupt Vector Table (IVT)
+
+The IVT is the Interrupt Vector Table, located at memory location Op and
+P I R Q E number is D31 F0 Reg 68h and INTIN20. P I R Q F number is D31 F0 Reg 69h and INTIN21. P I R Q G number is D31 F0 Reg 6Ah and INTIN22. P I R Q H number is D31 F0 Reg 6Bh and INTIN23.
+
+Local Advanced Programmable Interrupt Controller LAPIC. The local APIC is contained inside the processor and controls the interrupt delivery to the processor. Each local APIC contains its own set of associated registers, as well as a Local Vector Table LVT. The LVT specifies the manner in which the interrupts are delivered to each processor core. Refer to the Intel G4 and IA-32 Architectures Software Developer's Manual for more information on initializing the local APIC.
+
+I O Advanced Programmable Interrupt Controller IOxAPIC. The IOxAPIC is contained in the ICH IOH and expands the number of IRQs available to twenty four. Each IRQ has an associated redirection table entry that can be enabled or disabled and selects the IDT vector for the associated IRQ. This mode is only available when running in protected mode. Refer to the Chipset BIOS Writer's Guide for more information on initializing the IOxAPIC.
+
+Message Signaled Interrupt MSI. The boot loader does not typically use MSI for interrupt handling.
+
+Interrupt Vector Table IVT. The IVT is the Interrupt Vector Table, located at memory location 0p and
+The provided text delves into the architecture of interrupt handling within computer systems, specifically focusing on Programmable Interrupt Controllers.  At the highest level, it introduces Peripheral Interrupt Request (PIRQ) signals, which are categorized with symbolic names such as PIRQE, PIRQF, PIRQG, and PIRQH. These PIRQs are mapped to specific register addresses, denoted here as D31:F0:Reg 68h through D31:F0:Reg 6Bh.  Accompanying these register addresses are interrupt vector numbers, ranging from INTIN20 to INTIN23. This mapping establishes a direct correlation between external hardware events signaled via PIRQs and the software-defined interrupt service routines that will handle them.
+
+The text then elaborates on the Local Advanced Programmable Interrupt Controller, or L APIC. The L APIC is a fundamental component integrated directly within the processor. Its primary function is to manage the delivery of interrupts to the processor cores. Each L APIC maintains its own set of registers and a Local Vector Table, or LVT. The LVT is crucial as it defines the specific manner in which interrupts are routed to a particular processor core. For a deeper understanding of the L APIC's configuration and initialization, the document directs the reader to the Intel G4 and IA-32 Architectures Software Developer's Manual.
+
+Following this, the discussion shifts to the I O Advanced Programmable Interrupt Controller, or IOxAPIC. This component is located within the Chipset I C H or I O H and is responsible for expanding the number of available interrupt requests, or IRQs, up to twenty four. Each IRQ handled by the IOxAPIC has an associated redirection table entry. This entry determines whether an IRQ is enabled or disabled and specifies the Interrupt Descriptor Table, or I D T, vector to which the interrupt will be directed. Importantly, this mode of operation is exclusively available when the system is running in protected mode, a privileged operating state that enforces memory protection and access control. Further details regarding the initialization of the IOxAPIC are available in the Chipset BIOS Writer's Guide.
+
+The concept of Message Signaled Interrupts, or MSI, is also introduced. It is noted that the boot loader typically does not utilize MSI for interrupt handling. MSI represents a more modern interrupt mechanism where interrupt status and vector information are conveyed through memory-mapped I O write transactions, rather than through dedicated interrupt pins as with traditional, edge-triggered or level-triggered interrupt lines.
+
+Finally, the text touches upon the Interrupt Vector Table, or I V T. The I V T is essentially the Interrupt Vector Table, which is a critical data structure residing at memory location zero. This table serves as a lookup mechanism, mapping interrupt numbers to the starting addresses of the corresponding interrupt service routines.

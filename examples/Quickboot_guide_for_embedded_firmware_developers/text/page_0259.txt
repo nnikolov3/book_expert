@@ -1,0 +1,57 @@
+Efficient APs Initialization
+
+In addition to patch-updating, the BIOS needs to replicate memory range and
+other CPU settings for all APs (application processors) in a multicore,
+multithreaded CPU. The best optimized algorithm may be CPU specific but,
+
+in general, the following guidelines apply:
+
+1. Parallelize microcode updating, MTRR, and other operations in logical
+core.
+
+2. Minimize synchronization overhead using the best method for the
+particular CPU microarchitecture.
+
+3. Execution from memory and not XIP from SPI.
+
+Caching Code and Data
+
+All BIOS code must be executed in cache-enabled state. The data (stack)
+must be in cache. These apply to all phases of the BIOS, regardless of
+memory availability. Unless an intentional cache flush operation is done (for
+security or other reasons), second access to the same SPI address should be
+hitting the CPU cache (see also “EDK II Performance Optimization Guide —
+
+Section 8.2,” but included here for completeness).
+
+Main Memory Subsystem
+
+The following section describes the main memory subsystem.
+
+Memory Configuration Complexity
+Efficient APs Initialization.
+
+In addition to patch updating, the B I O S needs to replicate memory range and other C P U settings for all A P s (application processors) in a multicore, multithreaded C P U. The best optimized algorithm may be C P U specific but, in general, the following guidelines apply:
+
+One. Parallelize microcode updating, M T R R, and other operations in logical core.
+
+Two. Minimize synchronization overhead using the best method for the particular C P U microarchitecture.
+
+Three. Execution from memory and not X I P from S P I.
+
+Caching Code and Data.
+
+All B I O S code must be executed in cache enabled state. The data (stack) must be in cache. These apply to all phases of the B I O S, regardless of memory availability. Unless an intentional cache flush operation is done (for security or other reasons), second access to the same S P I address should be hitting the C P U cache (see also "E D K II Performance Optimization Guide – Section 8.2," but included here for completeness).
+
+Main Memory Subsystem.
+
+The following section describes the main memory subsystem.
+
+Memory Configuration Complexity.
+The initialization of Application Processors, or A P s, in a multico re, multithreaded C P U architecture involves replicating memory ranges and other C P U configurations across all A P s.  The optimal approach for this process is C P U specific, but general guidelines exist.  Firstly, microcode updating, Memory Type Range Registers, or M T R R, and other operations should be parallelized to operate concurrently on each logical core.  Secondly, synchronization overhead must be minimized by employing the most efficient method tailored to the specific C P U microarchitecture.  Finally, execution should originate from memory and not from the Serial Peripheral Interface, or S P I, if possible, to leverage faster memory access.
+
+The section on Caching Code and Data emphasizes that all Basic Input Output System, or B I O S, code must reside in cache for execution in a cache enabled state. This applies across all phases of the B I O S operation. The implication is that unless an explicit cache flush operation is invoked, typically for security reasons or to ensure data integrity, subsequent accesses to the same S P I address should result in a cache hit. This highlights the critical role of the C P U cache in B I O S performance, as detailed in the reference to "E D K two I I Performance Optimization Guide – Section eight point two."
+
+The document then introduces the concept of the Main Memory Subsystem, indicating that the subsequent discussion will focus on its intricacies. This subsystem is fundamental to system operation, managing the hierarchical organization of memory, including volatile Ram and potentially non volatile R O M, along with secondary storage like S S D s and H D D s.
+
+Finally, the topic of Memory Configuration Complexity is raised, suggesting an exploration into the challenges and considerations involved in setting up and managing memory resources within the system architecture. This could encompass aspects such as memory mapping, address translation mechanisms, memory protection, and the efficient allocation and deallocation of memory.

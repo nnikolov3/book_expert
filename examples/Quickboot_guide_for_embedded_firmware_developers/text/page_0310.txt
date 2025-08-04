@@ -1,0 +1,45 @@
+Intel® 5100
+MCH Chipset DIMM1 DIMMo
+
+DOLKP(0) 185 DCLKP
+
+DCLKN[O] 180 Sic
+
+DCLKP[1] a
+
+DCLKNI[1] JG LoL
+ODT[1] eon
+ODT[3) 7700T1
+CS[o}# | 193,
+CS[1}# IE
+Csi2}# 193 _ SO
+CS[3)# Be
+CKE[0] LL
+CKE[1] | 171 JUKET
+CKE[2] LF
+
+Notes: 1. DIMM pin numbers and name definitions come from the JEDEC specified
+DDR2 240-pin Registered DIMM Pinouts.
+Figure 38 Configuration 2.1 - Clock and Control Signal DIMM Pin Mapping
+(Two DIMMs Per Channel - 32 GB Mode)
+Figure 38 from Intel® 5100 Platform Design Guide—Single QuAD-Rank
+Intel 5100 MCH Chipset DIMM1 DIMM0 DCLKP[0] DCLKN[0] DCLKP[1] DCLKN[1] ODT[0] ODT[1] ODT[2] ODT[3] CS[0]# CS[1]# CS[2]# CS[3]# CKE[0] CKE[1] CKE[2] CKE[3] 185 DCLKP 186 DCLKN 195 ODT0 77 ODT1 193 S0 76 S1 52 CKE0 171 CKE1 Notes: 1. DIMM pin numbers and name definitions come from the JEDEC specified DDR2 240-pin Registered DIMM Pinouts. Figure 38 Configuration 2.1 - Clock and Control Signal DIMM Pin Mapping (Two DIMMs Per Channel - 32 GB Mode) Figure 38 from Intel 5100 Platform Design Guide - Single QuAD-Rank
+This diagram illustrates the clock and control signal pin mapping for a dual in line memory module, or D I M M, configuration connected to an Intel 5100 M C H chipset. The mapping is presented in a tabular format, with the M C H chipset signals on the left, and the corresponding pins on two D I M M modules, labeled D I M M one and D I M M zero, on the right. The horizontal lines represent signal connections, and the dots indicate the specific pin assignments.
+
+On the left, signals originating from the Intel 5100 M C H chipset are listed. These include D C L K P, which denotes the differential clock positive signal, and D C L K N, the differential clock negative signal, both of which are crucial for the serialization and deserialization of data. There are multiple instances of these signals, D C L K P zero through three, and D C L K N zero through three, indicating support for multiple memory channels or independent clocking schemes within a channel.
+
+Following the clock signals are the On Die Termination, or O D T, signals. O D T zero through three are shown. O D T is a technique used in high-speed digital signaling to match the impedance of the transmission line to the source or load impedance, thereby reducing signal reflections and improving signal integrity.
+
+The Chip Select, or C S, signals are also depicted, C S zero through three. These signals are used by the memory controller to select a specific memory chip or bank within a memory module. The "#" symbol indicates that these are active low signals, meaning they assert their function when at a logic low voltage.
+
+Finally, the Clock Enable, or C K E, signals are shown, C K E zero through three. These signals control the clock input to the memory modules, allowing the memory controller to enable or disable the clock to specific sections of memory, thus managing power consumption and active states.
+
+The diagram then shows how these M C H chipset signals are routed to specific pins on the D I M M modules. For D I M M one, the D C L K P signal is connected to pin one eighty five and D C L K N to pin one eighty six. Similarly, for D I M M zero, pin one eighty five carries the D C L K P signal and pin one eighty six carries the D C L K N signal. This implies a common clocking mechanism across both D I M Ms in this configuration.
+
+The O D T signals also show specific pin assignments. O D T zero from the M C H chipset is routed to pin one ninety five on D I M M zero and pin one ninety five on D I M M one. O D T one is routed to pin seventy seven on both D I M M zero and D I M M one. This consistent mapping suggests a symmetrical termination strategy for both memory modules.
+
+The C S signals are mapped to pins one hundred ninety three and seventy six on both D I M Ms. Specifically, C S zero is mapped to pin one hundred ninety three, and C S one is mapped to pin seventy six. The absence of C S two and C S three mappings for these specific D I M M examples suggests that in this particular configuration, only two chip select lines are utilized per channel, or these signals are dedicated to other functions not shown.
+
+The C K E signals are connected to pins fifty two and one hundred seventy one on both D I M M modules. C K E zero is mapped to pin fifty two, and C K E one is mapped to pin one hundred seventy one. This again indicates a shared or synchronized clock enable mechanism across the D I M Ms.
+
+The note at the bottom clarifies that the D I M M pin numbers and name definitions are derived from the J E D E C specified D D R two two hundred forty pin registered D I M M pinouts. This adherence to J E D E C standards ensures interoperability and defines the electrical and mechanical specifications of the memory modules. The figure is further described as depicting Configuration two point one, specifically focusing on Clock and Control Signal D I M M Pin Mapping for a system with two D I M Ms per channel, totaling thirty two gigabyte memory capacity. This configuration is referenced from the Intel 5100 Platform Design Guide, detailing a single Q u A D rank implementation. The underlying principle is to map the high-speed control and clock signals from the memory controller to the appropriate pins on the memory modules to ensure proper data transfer and timing, which are critical for the performance and stability of the memory subsystem. The use of differential clocking, on die termination, and chip select signals are fundamental techniques for achieving reliable high-frequency signal transmission in modern memory systems.

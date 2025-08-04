@@ -1,0 +1,45 @@
+perform source level debug of the C language BIOS code. However, in
+
+production this can be eliminated.
+
+Decrease Flash Size
+
+This step represents modifying the BIOS build process to use a 1 MB flash
+part instead of the original 2 MB flash part. This includes decreasing the
+number of flash blocks used in the board process. The framework BIOS uses
+a flash file system to store PEI and DXE modules as well as other entities.
+Decreasing the number of blocks in this file system improves the access time
+
+each time a module is accessed.
+
+Caching of PEI Phase
+
+Many of the PEI modules in framework BIOS must be executed prior to
+platform memory being initialized. Once memory is initialized, the remaining
+portions of the BIOS are copied to system memory and executed out of
+memory. Because the framework BIOS uses cache-as-RAM (CAR) for pre-
+memory storage and stack, it runs all the PEI modules in place directly from
+the flash part without caching. It is possible, however, on the Intel® Atom™
+processor to simultaneously enable CAR plus one 64 KB region of normally
+cached address space. The BIOS must be arranged in such a way to take full
+advantage of this one prememory cacheable region. This means having a
+separate flash file system used exclusively by the PEI modules that are run
+prior to memory initialization and placing that file system in the region that
+will be cached. By employing this technique to cache the portion of the flash
+part that includes the PEI modules executing prior to initialization of
+
+memory, performance is increased. For this effort, the 64 KB region was
+perform source level debug of the C language B I O S code. However, in production this can be eliminated.
+
+Decrease Flash Size
+
+This step represents modifying the B I O S build process to use a one megabyte flash part instead of the original two megabyte flash part. This includes decreasing the number of flash blocks used in the board process. The framework B I O S uses a flash file system to store P E I and D X E modules as well as other entities. Decreasing the number of blocks in this file system improves the access time each time a module is accessed.
+
+Caching of P E I Phase
+
+Many of the P E I modules in framework B I O S must be executed prior to platform memory being initialized. Once memory is initialized, the remaining portions of the B I O S are copied to system memory and executed out of memory. Because the framework B I O S uses cache as Ram (C A R) for pre memory storage and stack, it runs all the P E I modules in place directly from the flash part without caching. It is possible, however, on the I N T E L Atom processor to simultaneously enable C A R plus one sixty four K B region of normally cached address space. The B I O S must be arranged in such a way to take full advantage of this one pre memory cacheable region. This means having a separate flash file system used exclusively by the P E I modules that are run prior to memory initialization and placing that file system in the region that will be cached. By employing this technique to cache the portion of the flash part that includes the P E I modules executing prior to initialization of memory, performance is increased. For this effort, the sixty four K B region was
+The provided text discusses optimizations within a firmware build process, specifically focusing on the Unified Extensible Firmware Interface, or U E F I. It details strategies for reducing the flash memory footprint and enhancing the performance of the PreEFI Initialization, or P E I, phase.
+
+The first section, "Decrease Flash Size," explains a modification to the U E F I build process. Instead of utilizing a two megabyte flash part, the process is adjusted to use a one megabyte flash part. This reduction is achieved by decreasing the number of flash blocks employed within the board's flash file system. The framework U E F I utilizes this flash file system to store P E I and Driver Execution Environment, or D X E, modules, alongside other system entities. By reducing the quantity of blocks managed by this file system, the overall access time for data stored within it is improved. This optimization is particularly impactful because the P E I phase, which is responsible for critical early hardware initialization, frequently accesses these modules. A smaller, more efficient file system translates to faster retrieval of these essential components.
+
+The subsequent section, "Caching of P E I Phase," delves into performance enhancements for the P E I execution itself. It highlights that numerous P E I modules within the framework U E F I must be executed before platform memory is fully initialized. Following memory initialization, the remaining portions of the U E F I are copied to system memory and subsequently executed from there. However, the framework U E F I employs a cache as Ram, or C A R, strategy for pre memory storage and the execution stack. This means all P E I modules are run directly from the flash part initially, without the benefit of caching. The text then introduces a method to simultaneously enable C A R for a sixty four kilobyte region of normally addressed memory. The U E F I must be configured to arrange this region in a manner that allows it to take full advantage of this pre memory cacheable region. This approach necessitates a distinct flash file system, exclusively used by the P E I modules. This specialized file system is loaded into the cacheable region prior to overall memory initialization. By implementing this technique, which effectively caches the portion of the flash containing the P E I modules prior to their execution during the initialization of system memory, overall performance is significantly increased. The text specifically mentions that the sixty four kilobyte region is utilized for this caching purpose. This strategy leverages the speed of cached memory for critical early code execution, thereby accelerating the system's boot process.

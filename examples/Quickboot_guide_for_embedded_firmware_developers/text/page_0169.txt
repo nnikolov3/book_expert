@@ -1,0 +1,39 @@
+environment. If this happens, then the additional work of the SMI
+handler would either need to be incorporated into the RTOS for that
+platform or else the potential exists of missing something important in
+the way of error response or workarounds. If the SMI handler can work
+with the RTOS development, there are some additional advantages to
+
+the feature.
+
+—Virtual-8086 mode is a quasi-operating mode supported by the
+processor in protected mode. This mode allows the processor to
+
+execute 8086 software in a protected, multitasking environment.
+
+Intel® 64 architecture supports all operating modes of IA-32
+
+architecture and IA-32e modes.
+
+—IA-32e mode—in this mode, the processor supports two submodes:
+compatibility mode and 64-bit mode. 64-bit mode provides 64-bit
+linear addressing and support for physical address space larger than
+64 GB. Lastly, Compatibility mode allows most legacy protected-
+
+mode applications to run unchanged.
+
+Figure 9.2 shows how the processor moves between operating modes.
+environment. If this happens, then the additional work of the S M I handler would either need to be incorporated into the R T O S for that platform or else the potential exists of missing something important in the way of error response or workarounds. If the S M I handler can work with the R T O S development, there are some additional advantages to the feature.
+
+Virtual-8086 mode is a quasi-operating mode supported by the processor in protected mode. This mode allows the processor to execute 8086 software in a protected, multitasking environment.
+
+Intel sixty four architecture supports all operating modes of I A thirty two architecture and I A-32e modes.
+
+I A-32e mode—in this mode, the processor supports two submodes: compatibility mode and sixty four-bit mode. sixty four-bit mode provides sixty four-bit linear addressing and support for physical address space larger than sixty four gigabyte. Lastly, compatibility mode allows most legacy protected-mode applications to run unchanged.
+
+Figure nine point two shows how the processor moves between operating modes.
+The text discusses operating modes within a processor architecture, specifically highlighting the context of an S M I handler within a real time operating system, or R T O S, environment. The integration of an S M I handler into the R T O S framework is presented as a potential area for development, with an emphasis on the importance of error response and workarounds to ensure proper functionality.
+
+The discussion then delves into processor operating modes, introducing "virtual eight zero eight six" mode as a quasi operating mode. This mode is characterized by its support for processors operating in protected mode, enabling the execution of eight zero eight six software within a protected, multitasking environment. This capability is crucial for backward compatibility, allowing older software to function on modern hardware.
+
+Furthermore, the text explains that the Intel sixty four architecture supports various operating modes, including I A thirty two and I A thirty two e modes. The I A thirty two e mode is further subdivided into two submodes: compatibility mode and sixty four bit mode. In sixty four bit mode, the processor offers sixty four bit linear addressing and supports a physical address space of up to sixty four gigabytes. Compatibility mode, in contrast, is designed to allow legacy protected mode applications to run without modification, ensuring seamless operation for older software that relies on specific protected mode features. The figure referenced, Figure nine point two, is indicated to illustrate the transitions between these different operating modes. This highlights the importance of architectural design in providing flexibility and maintaining compatibility across generations of software and hardware.

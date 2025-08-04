@@ -1,0 +1,79 @@
+OSD: Weak margin (6.58) for 608 blob text block, but using orientation anyway: 0
+_DDR3-800 DDR3-1066 DDR3-1333 DDR3-1600
+
+Parameter Symbal * Units
+Min Max Min Max Min Max Min Max
+DOS, DOS # differential "RPST 0.3 Mote 0x Note 0.x Mote 0.3 Nite CK
+READ postamble 17 27 27 27
+BN Command and Address Timings
+DLL locking time 'DLLE 512 » 512 - 512 - 512 - CK
+CTRL, CMD, Base 45 200 ~ 125 B 65 B 45 B ps
+ADDR setup [opedfication] ACI7S 37% 100 240 220
+to CK, CK# Ver@1 V/s i i i om
+CTRL, CMD, Base ye 150 2 - “ “ ps
+ADDR setup [Specification] ACISO 500 iis $4 $50
+to CK, CK Ver @1 V/ns P
+LYRL, CMD. ia gq 275 = 00 - 140 =~ 120 =~ ps
+ADDR setup [opecication] DC100 375 300 2&0 220 5
+to CK, CK# Ver@1 ¥/ ns ?
+WTA CTRL SUD, PW S00 780 620 560
+ADDR pulse width ps
+ACTIVATE to internal READ or ;
+"BCD See Speed Bin Tables (page 72) for "RCD fs
+WRITE delay
+PRECHARGE command period "RP See Speed Bin Tables (page 72) for 'BP ns
+ACTIVATE-to-PRECHARGE
+: RAS See Speed Bin Tables (page 72) for "RAS ns
+command period
+ACTIVATE -to-ACTIVATE ‘RC
+2 See Speed Bin Tables (page 72) for "RC ns
+command
+ACTIVATE- to- "RRD MIN= MiN= MIN= MiN= CK
+ACTIVATE 1KE page greater of greater of greater of greater of
+minium Size ACK or 10ns ACK or 7.508 4CK Or Gn HTK or 60% i
+command 2KB page MiN= MiN= CK
+period size greater of greater of
+CK ar 10nS &CK ar 7.50%
+Four 1KE page
+'FAW ail i 37.5 . 30 . 30 “
+ACTIVATE size ie
+windows 2KB page
+P 8 50 m 50 a. 45 - ai . ns
+size
+Write recovery time "WE MIN = 15ns: MAX = n/a ns
+The table presents various parameters and their corresponding timings across different D R three speed bins: D R three 800, D R three 1066, D R three 1333, and D R three 1600, with units specified in clock cycles (CK) or picoseconds (ps).
+
+The D Q S, D Q S sharp differential R E A D postamble parameter has a minimum value of zero point three C K for D R three 800, D R three 1066, and D R three 1333, with a note that this value is twenty seven for the maximum. For D R three 1600, it also has a minimum of zero point three C K and a maximum of twenty seven C K.
+
+Under Command and Address Timings, the D L L locking time has a minimum of five hundred twelve C K and no specified maximum across all speed bins.
+
+The C T R L, C M D, A D D R setup to C K, C K sharp parameter has a minimum of two hundred for D R three 800, one hundred twenty five for D R three 1066, and forty five for D R three 1600, with no specified maximums in most cases. The corresponding value V R E F at one V per N S is noted. For A C one hundred seventy five, the minimums are three hundred seventy five for D R three 800, three hundred for D R three 1066, and two hundred forty for D R three 1600.
+
+The C T R L, C M D, A D D R setup to C K, C K sharp parameter with a base of I S has a minimum of three hundred fifty for D R three 800 and no specified minimums or maximums for other bins. Similarly, for A C one hundred fifty, the minimums are five hundred for D R three 800, four hundred twenty five for D R three 1066, and three hundred forty for D R three 1600.
+
+The C T R L, C M D, A D D R setup to C K, C K sharp parameter with a base of I H has a minimum of two hundred seventy five for D R three 800, two hundred for D R three 1066, and one hundred forty for D R three 1600. For D C one hundred, the minimums are three hundred seventy five for D R three 800, three hundred for D R three 1066, and two hundred twenty for D R three 1600. These timings are in picoseconds.
+
+The minimum C T R L, C M D, A D D R pulse width, denoted by I P W, has minimums of nine hundred for D R three 800, seven hundred eighty for D R three 1066, and six hundred twenty for D R three 1333, all in picoseconds.
+
+The A C T I V A T E to internal R E A D or W R I T E delay, denoted by R C D, is specified as "See Speed Bin Tables (page 72) for R C D" with units of nanoseconds. Similarly, the P R E C H A R G E command period, denoted by R P, is "See Speed Bin Tables (page 72) for R P" in nanoseconds. The A C T I V A T E to P R E C H A R G E command period, denoted by R A S, is also "See Speed Bin Tables (page 72) for R A S" in nanoseconds.
+
+The A C T I V A T E to A C T I V A T E command, with a one K B page size, has a minimum value for D R three 800 of MIN equal to greater than four C K or ten nanoseconds, and for D R three 1066, greater than four C K or seven point five nanoseconds. For D R three 1333 and D R three 1600, it's greater than four C K or six nanoseconds. The unit is C K.
+
+The A C T I V A T E to A C T I V A T E command, with a two K B page size, has a minimum value for D R three 800 of MIN equal to greater than four C K or ten nanoseconds. For D R three 1066, D R three 1333, and D R three 1600, the minimum is also specified as greater than four C K or ten nanoseconds, with the unit being C K.
+
+For Four A C T I V A T E windows, with a one K B page size, the minimum value for D R three 800 is forty, for D R three 1066 is thirty seven point five, and for D R three 1333 is thirty, all in nanoseconds. For D R three 1600, the minimum is not explicitly stated for this sub-parameter.
+
+For Four A C T I V A T E windows, with a two K B page size, the minimum values are fifty for D R three 800, fifty for D R three 1066, and forty five for D R three 1333, all in nanoseconds. For D R three 1600, the minimum is not explicitly stated.
+
+The W R I T E recovery time, denoted by W R, has a minimum of fifteen nanoseconds and a maximum of N/A across all speed bins.
+This table details various timing parameters for Double Data Rate Synchronous Dynamic Random Access Memory, or D Ram, interfaces across different speed grades: D Ram three hundred eighty, D Ram one thousand sixty six, D Ram one thousand three hundred thirty three, and D Ram one thousand six hundred. Each parameter, identified by a symbol and a descriptive name, is quantified by its minimum and maximum allowable values, often expressed in units of clock cycles, or C K, or picoseconds, P S.
+
+The table is segmented into Command and Address Timings, and then further categorized by specific command periods and window sizes. For instance, the D Q S, D Q S sharp differential Read postamble, symbolized as R P S T, has a minimum value of zero point three C K across all listed D Ram speeds, with a maximum value noted as "Note twenty seven" for D Ram three hundred eighty and D Ram one thousand six hundred, and simply "Note" for the intermediate speeds. This suggests that the maximum postamble duration might be context-dependent or subject to specific device configurations.
+
+The D L L locking time, denoted by D L L K, shows a consistent minimum of five hundred twelve C K across all speeds, indicating a fixed requirement for the Delay Locked Loop to stabilize. Conversely, command and address setup times, such as the setup time for Control, Command, And Address signals to the clock, C K sharp, exhibit variations. For example, the setup time for C T R L, C M D, A D D R is represented by I S, with a minimum of two hundred picoseconds for D Ram three hundred eighty, reducing to sixty five picoseconds for D Ram one thousand three hundred thirty three and D Ram one thousand six hundred. This reduction in setup time is directly correlated with the increased clock frequencies of the higher speed grades, allowing for less setup margin as the clock cycles become shorter. The "Base" column for these setup times likely refers to a standard or reference value, while "(Specification)" indicates that the actual timing may be defined by detailed specifications not fully elaborated here.
+
+The table also specifies command periods and intervals, such as the Precharge command period, denoted by R P, and the Activate to Precharge command period, symbolized by R A S. These timings are described as "See Speed Bin Tables (page seventy two) for R C D" and "See Speed Bin Tables (page seventy two) for R P" and "See Speed Bin Tables (page seventy two) for R A S", implying that these values are further detailed in supplementary tables, likely related to specific performance bins or configurations within each D Ram speed grade.
+
+The Activate to Activate command period, further broken down by page size, demonstrates how memory organization impacts timing. For a one K B page size, the minimum Activate to Activate command period is governed by the greater of four C K or ten nanoseconds, or ten n S, for D Ram three hundred eighty and D Ram one thousand sixty six. For D Ram one thousand three hundred thirty three and D Ram one thousand six hundred, this minimum is the greater of four C K or six nanoseconds, six n S, for the one K B page size, and remains the greater of four C K or ten nanoseconds for the two K B page size. This highlights a design trade-off where smaller pages might allow for faster sequential access, provided the timing constraints are met. The concept of "windows" in memory operations refers to the time intervals during which certain commands can be issued relative to others, influencing data throughput and system responsiveness. The table shows "Four Activate windows" with specified timings for one K B and two K B page sizes, further illustrating the complex interplay between command sequencing, page management, and overall memory performance.
+
+Finally, the Write recovery time, symbolized by W R, defines the minimum time required after a write operation before another write operation can commence. This parameter is critical for ensuring data integrity and proper operation of the memory controller. The table indicates a minimum write recovery time of fifteen nanoseconds, fifteen n S, for all speed grades, with the maximum being not applicable, N A. This consistent minimum value suggests a fundamental requirement for data stabilization within the memory cells, independent of the clock speed within this range.

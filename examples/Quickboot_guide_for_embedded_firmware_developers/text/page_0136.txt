@@ -1,0 +1,38 @@
+query for the presence of the Driverl profile and thereby know that the
+DrvDiag command is required to be present. The second change directly
+affecting script files is the concept of Standard Format Output or -sfo. This is
+a feature, and a parameter, present on some shell commands (like the ls
+command), which have a lot of columnar output. By specifying -sfo, the
+output will be output in a specific format defined in the specification so
+output between different implementations will have no effect. This output is
+comma delimited and can be redirected to a file and then easily parsed with
+the parse shell command which did not exist in the EFI Shell. These two
+changes mean that a script file that works in the UEFI Shell but not in the EFI
+Shell can have a lot more logic in it and can have multiple methods for
+getting information such that if one shell command is not present, it could use
+another, while the same script file, if done in a cross-version method, would
+
+have to do a lot more work.
+
+UEFI Shell Application
+
+The UEFI and EFI Shells are themselves UEFI applications. What does this
+actually mean? Let’s start with the word application. In the UEFI
+environment, applications are binary files that are loaded into memory, have
+their entry-point function called, and are then unloaded from memory. This is
+different from a driver, which is not unloaded after running the entry-point
+function. The second part of it means that the application depends on some of
+the elements of UEFI. There is no defined method to know exactly which
+part of the interface is defined, but a well-designed application will have
+some documentation or a clear message about what it requires. The elements
+of UEFI that can be required are all accessed via the System Table, either
+
+through Boot Services or Runtime Services. Note that outside of Operating
+query for the presence of the Driver one profile and thereby know that the DrvDiag command is required to be present. The second change directly affecting script files is the concept of Standard Format Output or -sfo. This is a feature, and a parameter, present on some shell commands, like the ls command, which have a lot of columnar output. By specifying -sfo, the output will be output in a specific format defined in the specification so output between different implementations will have no effect. This output is comma delimited and can be redirected to a file and then easily parsed with the parse shell command which did not exist in the E F I Shell. These two changes mean that a script file that works in the U E F I Shell but not in the E F I Shell can have a lot more logic in it and can have multiple methods for getting information such that if one shell command is not present, it could use another, while the same script file, if done in a cross version method, would have to do a lot more work.
+
+U E F I Shell Application
+
+The U E F I and E F I Shells are themselves U E F I applications. What does this actually mean? Let's start with the word application. In the U E F I environment, applications are binary files that are loaded into memory, have their entry point function called, and are then unloaded from memory. This is different from a driver, which is not unloaded after running the entry point function. The second part of it means that the application depends on some of the elements of U E F I. There is no defined method to know exactly which part of the interface is defined, but a well designed application will have some documentation or a clear message about what it requires. The elements of U E F I that can be required are all accessed via the System Table, either through Boot Services or Runtime Services. Note that outside of Operating
+The discussion delves into the behavior of shell commands within the Unified Extensible Firmware Interface, or U E F I, environment, specifically focusing on how script files interact with commands that have parameterized output formats. When a command, such as a hypothetical DrvDiag, is queried for its Driver1 profile, the system determines whether to present output in a standard, predefined format, often referred to as "Standard Format Output" or "-sfo". This "-sfo" flag indicates a specific output presentation, typically columnar, which is designed for ease of parsing. The text highlights a critical distinction: while some commands may produce output that is comma delimited and easily parsed when redirected to a file, other implementations, particularly within the U E F I Shell, might not adhere to this convention. This divergence means a script designed to parse comma delimited output from one command implementation might fail if executed with a different implementation that does not provide output in the expected format. The challenge arises when a script file relies on specific output structures, such as columnar data, and the command's behavior changes, leading to unexpected results or outright failures. This is particularly problematic when dealing with cross version compatibility, where a script written for one version of the U E F I Shell might not function correctly with another due to subtle differences in command output formatting. The implication is that robust scripting in such environments requires a deep understanding of the underlying command implementations and their output specifications, as even minor variations can disrupt execution flow.
+
+Furthermore, the text elaborates on the nature of U E F I Shell applications. It clarifies that "U E F I Shell applications" are, in essence, executable programs designed to run within the U E F I environment. When considering what constitutes an application in this context, the text explains that these are typically binary files loaded into memory. Crucially, they are invoked via an "entry point" function and are subsequently unloaded from memory after their execution completes. This contrasts with a driver, which might remain resident in memory after its initial execution. The second aspect of an application's behavior is tied to its execution context, specifically its dependence on elements provided by U E F I. The text notes the absence of a universally defined method to ascertain an application's precise requirements. However, it suggests that well designed applications will offer clear documentation or user messages to indicate their dependencies. These dependencies can include access to resources managed by U E F I, such as those found in the System Table, or potentially external resources outside of the operating system's purview. This implies a tiered system of service provision, where applications can leverage either the Boot Services or Runtime Services provided by U E F I, underscoring the architectural separation of concerns within the U E F I framework.

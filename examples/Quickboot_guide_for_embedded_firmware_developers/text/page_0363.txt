@@ -1,0 +1,68 @@
+Bac BAT BAD ATE ATIATT ATR AID AR AB AT AS AS Ad AN AT AY AD
+
+EEE EEN ERIE EE
+
+| | _1
+J TL VATA Ti FAL TAL 10] cate regis 1 pum)
+ols blo Telobed. = aul) “eeomioEy
+| I in 1 ITH
+ME MS Fr — . tim mbl
+DO | Mode mgeter set © [BHF] CEES 3 rr
+Of | Meda mopar set TUR) : 0 [isabied| ———
+iO | Made regrater set F (RCH) | Enatie | “Wt | Copan Fe—
+| | rT TA LA A. . ii 1
+| {Ce ff ee ies Lic
+pr 0 | Disable frown | | [C21 | FET (R0 INOMD
+Ply py, abled | | 1 Ean ae
+© 0 1 | FLAC [B00 [NOM | R20 (B00 NOMD
+& 1 0 InPos (eon RCV {12003 [Noe t
+8 1 8 | Foes (00 NOME | R20 (S00 NOM] ABE | Acie Latency (AL)
+1 0 0 JAzoves gon peo] ow 0 0 Dissbiedidl =
+1 0 1 | ACH [300 NOME fr. 0 1] ALeCL-1
+11 0] Resse —— 1 © AL=CL-3
+11 1] Fase FE i 1 Hl
+
+Figure 53 Mode Register 1(MR1) Definition
+
+SPD Field #30: “SDRAM Optional Features” Example from Micron
+MT41J256M8 Datasheet
+
+Byte 31: SDRAM Thermal and Refresh Options
+
+This byte describes the module’s supported operating temperature ranges and
+refresh options. These values come from the DDR3 SDRAM datasheet. Use
+of self-refresh in the Extended Temperature Range, ASR, or ODTS require
+appropriate SDRAM Mode Register programming (MR2 bits A6, A7, and
+MR3 bit A3). Please refer to the DDR3 SDRAM datasheet (JESD79-3 or
+
+supplier datasheet) for a complete description of these options.
+The diagram illustrates the definition of Mode Register 1, MR1, within the context of an SDRAM interface. The address bus is shown with various signals, including BA2, BA1, BA0, A14 through A0, and command/address signals like CAS, RAS, WE, and CS. Below this, a selection of these signals is shown as part of a command sequence: 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0, with corresponding bits set to various values like 0, 1, D, C, T, O, S, R, W, L, A.
+
+The diagram breaks down the functionality of different mode register bits. A table labeled M10 M15 shows Mode Register selections: Mode register set 0 MR0 is selected when M10 is 0 and M15 is 0. Mode register set 1 MR1 is selected when M10 is 0 and M15 is 1. Mode register set 2 MR2 is selected when M10 is 1 and M15 is 0. Mode register set 3 MR3 is selected when M10 is 1 and M15 is 1.
+
+The diagram then focuses on MR1, detailing the function of specific bits. The M12 Q08 bits control the DLL Enable status, where 0 means Enabled normal and 1 means Disabled. The M11 TOQS bits control TOQS, where 0 is Disabled and 1 is Enabled. The M5 M1 bits control Output Drive Strength. Combinations of these bits map to different R Z Q values, such as RZQ4 400 NOM, RZQ2 1200 NOM, RZQ6 400 NOM, and RZQ12 200 NOM. Some entries are marked as Reserved or N A.
+
+The M4 M3 bits control Additive Latency AL. When M4 and M3 are both 0, Additive Latency is Disabled. When M4 is 0 and M3 is 1, AL is CL minus 1. When M4 is 1 and M3 is 0, AL is CL minus 2. When both are 1, it is Reserved.
+
+The M7 bit controls Write Localization, where 0 means Disable normal and 1 means Enable.
+
+Figure 53 shows the Mode Register 1 MR1 Definition. This is part of SPD Field 30, “SDRAM Optional Features” Example from Micron MT41J256M8 Datasheet.
+
+Byte 31 is titled SDRAM Thermal and Refresh Options. This byte describes the module's supported operating temperature ranges and refresh options. These values come from the DDR3 SDRAM datasheet. Use of self-refresh in the Extended Temperature Range, ASR, or ODTS require appropriate SDRAM Mode Register programming MR2 bits A6, A7, and MR3 bit A3. Please refer to the DDR3 SDRAM datasheet JED79-3 or supplier datasheet for a complete description of these options.
+The image illustrates the definition and configuration of DDR3 Synchronous Dynamic Random Access Memory (S D Ram) Mode Register 1 (M R 1). This register is crucial for controlling various operational aspects of the memory device, as depicted by the selection of bits on the address bus and their mapping to specific functions within the memory controller. The diagram shows an address bus with signals A zero through A sixteen, along with bank address bits B A two, B A one, and B A zero. These address signals are used to select specific modes and configurations within the S D Ram.
+
+Specifically, the diagram highlights how different combinations of mode register address bits M one six and M one five determine which mode register is selected. For instance, if M one six is zero and M one five is zero, Mode Register Zero (M R 0) is selected. If M one six is zero and M one five is one, Mode Register 1 (M R 1) is selected, which is the focus of this illustration. Similarly, M one six being one and M one five being zero selects Mode Register 2 (M R 2), and both being one selects Mode Register 3 (M R 3).
+
+The detailed breakdown of Mode Register 1 (M R 1) is presented through a series of sub tables, each corresponding to a specific functional block controlled by bits within this register. These include:
+
+*   **DLL Enable**: Controlled by bit M zero, this function determines whether the Delay Locked Loop (D L L) is enabled for normal operation or disabled. The D L L is essential for synchronizing the internal memory clock with the external system clock, improving signal integrity and timing.
+
+*   **Output Drive Strength**: Configured by bits M five and M four, this parameter dictates the strength of the output drivers, affecting signal rise and fall times. The options presented are R Z Q / four (four hundred Ohms, nominal), R Z Q / two (one hundred twenty Ohms, nominal), R Z Q / eight (three hundred Ohms, nominal), and R Z Q / twelve (two hundred Ohms, nominal), along with reserved settings. These settings are critical for signal termination and impedance matching on the memory bus, influencing signal quality and power consumption. The term "R Z Q" refers to a termination resistor network used for impedance matching.
+
+*   **Write Localization**: Controlled by bits M seven and M six, this feature impacts the timing of write operations. The options are 'Disable (normal)' and 'Enable', which would correspond to specific internal timing adjustments to optimize write performance or signal integrity under certain conditions.
+
+*   **Additive Latency (A L)**: Managed by bits M four and M three, this setting controls an additional latency added to read operations. The values 'Disabled (A L equals zero)', 'A L equals one', 'A L equals two', and 'Reserved' are shown. Additive latency can be used to meet specific timing requirements or improve data bus utilization in certain system configurations.
+
+The section titled "SPD Field #30: 'S D Ram Optional Features' Example from Micron M T 41 J 256 M 8 Datasheet" indicates that this information is drawn from a specific S P D (Serial Presence Detect) field within a memory module's datasheet, providing concrete examples of how these mode registers are configured for a particular S D Ram device.
+
+Furthermore, "Byte 31: S D Ram Thermal and Refresh Options" describes another byte relevant to the memory module's operation. This byte specifically addresses supported operating temperature ranges and refresh options, including self refresh for extended temperature ranges. It emphasizes that values related to S D Ram Mode Register programming, such as those for M R 2 bits A six, A seven, and M R 3 bit A three, require consulting the relevant D D R 3 S D Ram datasheet, such as J E S D 79 dash 3, for a complete understanding of these advanced features. This highlights the importance of vendor-specific datasheets for detailed configuration and operational parameters.

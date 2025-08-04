@@ -1,0 +1,54 @@
+BootServices->LocateHandleBuffer (sBuffer, &Count, SSimple-
+
+FileSystemGuid) ;
+for (loop = 0 ; loop < Count ; loop++){ Buffer|loop]->0pen-
+Root (&RootHandle) ;
+
+if (RootHandle->CpenFile (L"File.txt”) == SUCCESS)
+
+1
+
+J fSave the handle... break;
+CloseHandle (RootHandle) ;
+
+FreebPool (Buffer);
+
+If (SavedHandle 1s valid)...
+
+The point here is that the shell does not do anything that any other application
+(or driver for that matter) cannot do. It just makes the repeating of these tasks
+very easy to do. Don’t think that you can’t do what the shell does. Think how
+much you don’t need to do that the shell already is doing for you.
+
+EFI/UEFI Script File
+
+UEFI applications and UEFI Shell applications are pretty well defined up to
+this point in terms of their capabilities and their restrictions. They are the
+more powerful of the two types of files that interact with the shell. The other
+
+type of file is the shell script file.
+
+Different Features between Script and App
+
+A Script file is always a text file, either UNICODE or ASCII, and because of
+this can be changed quite easily with no special programs. A small sample
+
+shell script is:
+The code snippet illustrates a loop that iterates through a buffer. It begins by calling BootServices to locate a handle buffer, passing a buffer and a count along with a simple file system guid. Inside the loop, it initializes a loop counter to zero and checks if the loop variable is less than the count. It then obtains the root handle. The code proceeds to open a file named "File.txt" and checks if the operation was successful. If successful, it includes a comment indicating that the handle should be saved. Following this, it closes the root handle. After the loop finishes, it frees the buffer. Finally, it checks if a saved handle is valid.
+
+The point here is that the shell does not do anything that any other application, or driver for that matter, cannot do. It just makes the repeating of these tasks very easy to do. Don't think that you can't do what the shell does. Think how much you don't need to do that the shell already is doing for you.
+
+E F I / U E F I Script File
+
+U E F I applications and U E F I Shell applications are pretty well defined up to this point in terms of their capabilities and their restrictions. They are the more powerful of the two types of files that interact with the shell. The other type of file is the shell script file.
+
+Different Features between Script and App
+
+A script file is always a text file, either U N I C O D E or A S C I I, and because of this can be changed quite easily with no special programs. A small sample shell script is:
+The provided code snippet demonstrates a loop iterating through a buffer, likely to locate or process file system entries. The loop initializes a variable `loop` to zero and continues as long as `loop` is less than `Count`, incrementing `loop` by one in each iteration. Inside the loop, `Root (&RootHandle)` is called, which likely retrieves a handle to a root directory or file system. The core logic resides within an `if` statement that checks if `RootHandle->OpenFile(L"File.txt")` returns a value indicating success, represented here by `SUCCESS`. This operation attempts to open a file named "File.txt". If the file is successfully opened, a comment suggests saving the handle, followed by a `break` statement to exit the loop prematurely. After the loop, `CloseHandle(RootHandle)` is called, which presumably releases the acquired handle. Finally, `FreePool(Buffer)` is executed, indicating the deallocation of memory previously assigned to the `Buffer`. The subsequent `If (SavedHandle is valid)...` suggests a conditional operation based on whether a handle was successfully saved earlier. This sequence of operations is characteristic of file system interaction within a boot environment, likely managed by the Unified Extensible Firmware Interface, or U E F I.
+
+The text explains that the U E F I shell’s functionality is not inherently unique; rather, it streamlines common tasks. This implies that the capabilities offered by the shell are achievable through other applications or drivers, but the shell consolidates them for ease of use. The emphasis is on the shell’s role in simplifying repetitive operations, making tasks more efficient without requiring specialized programming for each action.
+
+The document then introduces the concept of "E F I/U E F I Script File," describing them as entities with well-defined capabilities and restrictions when interacting with the U E F I shell. It differentiates between U E F I applications and U E F I Shell applications, stating that script files represent one of the two primary types of files that interface with the shell.
+
+Further elaborating on the characteristics of these script files, the text highlights their nature as plain text files. They can be encoded using either U N I C O D E or A S C I I character sets, and crucially, they can be modified easily without the need for any specialized programming tools or complex procedures. The mention of "no special programs" suggests that standard text editors are sufficient for their manipulation. This simplicity in editing is a key feature, implying a low barrier to entry for creating and customizing shell scripts.

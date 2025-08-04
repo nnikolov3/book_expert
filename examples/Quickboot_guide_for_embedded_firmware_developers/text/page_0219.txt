@@ -1,0 +1,52 @@
+caused by the reboot, reading the update/recovery file from a particular
+location. Where that update/recovery file is stored and when it is processed is
+
+really what affects performance.
+
+When Processing Things Early
+
+Frequently during recovery, one cannot presume that the target OS is
+working. For a reasonable platform design, someone would need to design a
+means by which to update or recover the BIOS without the assistance of the
+OS. This would lead to user scenarios 2 or 3 listed above.
+
+The question engineers should ask themselves is, how do you notify the
+BIOS that the platform is in recovery mode? Depending on what the platform
+policy prescribes, this method can vary greatly. One option is to always probe
+a given set of possible data repositories (such as USB media, a CD, or maybe
+even the network) for recovery content. The act of always probing is typically
+a time-consuming effort and not conducive to quick boot times.
+
+There is definitely the option of having a platform-specific action that is
+easy and quick to probe that “turns on” the recovery mode. How to turn on
+the recovery mode (if such a concept exists for the platform) is very specific
+to the platform. Examples of this are holding down a particular key (maybe
+associated with a GPIO), flipping a switch (equivalent of moving a jumper)
+that can be probed, and so on. These methods are highly preferable since they
+allow a platform to run without much burden (no extensive probing for
+
+update/recovery.)
+
+Is There a Need for Pre-OS User Interaction?
+
+Normally the overall goal is to boot the target OS as quickly as possible and
+Caused by the reboot, reading the update/recovery file from a particular location. Where that update/recovery file is stored and when it is processed is really what affects performance.
+
+When Processing Things Early
+
+Frequently during recovery, one cannot presume that the target O S is working. For a reasonable platform design, someone would need to design a means by which to update or recover the B I O S without the assistance of the O S. This would lead to user scenarios two or three listed above.
+
+The question engineers should ask themselves is, how do you notify the B I O S that the platform is in recovery mode? Depending on what the platform policy prescribes, this method can vary greatly. One option is to always probe a given set of possible data repositories (such as U S B media, a C D, or maybe even the network) for recovery content. The act of always probing is typically a time consuming effort and not conducive to quick boot times.
+
+There is definitely the option of having a platform specific action that is easy and quick to probe that turns on the recovery mode. How to turn on the recovery mode (if such a concept exists for the platform) is very specific to the platform. Examples of this are holding down a particular key (maybe associated with a G P I O), flipping a switch (equivalent of moving a jumper) that can be probed, and so on. These methods are highly preferable since they allow a platform to run without much burden (no extensive probing for update/recovery).
+
+Is There a Need for Pre O S User Interaction?
+
+Normally the overall goal is to boot the target O S as quickly as possible and
+The initial text describes how a system reboot may involve reading an update or recovery file from a specific location, and the processing of this file directly impacts performance.
+
+The section titled "When Processing Things Early" delves into the intricacies of operating system recovery. It posits that during a recovery process, one cannot universally assume the target operating system is functional. For robust platform design, a mechanism is required to update or recover the basic input output system, also known as the B I O S, without direct user assistance. This scenario could lead to situations involving user scenarios two or three, as previously described. The central question engineers face is how to inform the B I O S that the platform is operating in a recovery mode. The method for achieving this can differ significantly across platforms. One common approach is to continuously poll for available data repositories. These repositories might include universal serial bus media, a compact disk, or even network locations. However, such probing can be an effort intensive process and is generally not conducive to rapid boot times.
+
+A more refined approach involves the implementation of platform specific actions to initiate the recovery mode. The concept of "turning on" the recovery mode is highly dependent on the specific platform architecture. Examples of these actions include physically interacting with hardware elements. This could manifest as holding down a particular key during startup, or flipping a hardware switch, akin to reconfiguring a jumper setting. These methods are generally preferable because they are less resource intensive and do not require extensive probing for update or recovery data.
+
+The subsequent question posed is "Is There a Need for Pre O S User Interaction?" The fundamental objective in system boot processes is typically to load the target operating system as swiftly as possible.

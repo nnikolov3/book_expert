@@ -1,0 +1,35 @@
+Chapter 7
+Shells and Native Applications
+
+I was like a boy playing on the sea-shore, and diverting myself now and
+then finding a smoother pebble or a prettier shell than ordinary, whilst
+
+the great ocean of truth lay all undiscovered before me.
+—Sir Isaac Newton
+
+A shell is a very convenient place to run applications, and it allows both
+developers and users great access to all the hardware in a platform, and all the
+shells/applications they are sitting upon. Many shells have significantly lower
+overhead to them than a modern operating system. These two features
+combine to make them an excellent place to develop and test new hardware
+and low-level drivers for that hardware, as well as a place to run diagnostics.
+
+The common features that most shells share are the ability to run
+external executable images, the ability to be automated, file system access,
+environment access, and system configuration.
+
+In Figure 7.1 you can see how a shell command is translated from a
+
+human readable string down to a hardware command in the EFI environment.
+Chapter seven. Shells and native applications.
+
+I was like a boy playing on the sea shore, and diverting myself now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me. Sir Isaac Newton.
+
+A shell is a very convenient place to run applications, and it allows both developers and users great access to all the hardware in a platform, and all the shells applications they are sitting upon. Many shells have significantly lower overhead to them than a modern operating system. These two features combine to make them an excellent place to develop and test new hardware and low level drivers for that hardware, as well as a place to run diagnostics. The common features that most shells share are the ability to run external executable images, the ability to be automated, file system access, environment access, and system configuration.
+
+In Figure seven point one you can see how a shell command is translated from a human readable string down to a hardware command in the E F I environment.
+This chapter, "Shells and Native Applications," delves into the fundamental role of shells in modern computing environments, particularly within the context of system development and hardware interaction. The text begins by quoting Sir Isaac Newton, a metaphor for discovery and understanding, setting a tone for exploring foundational computing concepts.
+
+The core of the discussion revolves around the definition and functionality of a shell. A shell is presented as a highly convenient interface for executing applications. It acts as a crucial layer that provides both developers and users with broad access to the underlying hardware platform. The text highlights that many shells offer a significantly lower overhead compared to a modern operating system, making them efficient for development and testing. This efficiency stems from two key features: the ability to develop and test new hardware, and the capacity to perform diagnostics.
+
+The common functionalities shared by most shells include the processing of external executable images, enabling automation, providing file system access, managing the environment, and facilitating system configuration. The narrative then transitions to a specific context, mentioning how a shell command, represented as a human-readable string, is translated into a hardware command within the E F I environment. This illustrates the translation and interpretation layer that shells provide, bridging the gap between user input and the low-level operations of hardware. The reference to "Figure 7.1" suggests a visual or programmatic breakdown of this translation process, likely detailing the steps involved in command parsing, execution, and hardware interaction, which are critical for understanding system software architecture and command execution pipelines.

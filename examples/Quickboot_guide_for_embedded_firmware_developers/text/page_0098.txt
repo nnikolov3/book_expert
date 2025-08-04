@@ -1,0 +1,49 @@
+the system should be operating in before handing over the control to the OS.
+If system BIOS is enabling AHCI Mode or RAID Mode, then it must
+disable the second SATA controller on the part (Device 31, Function 5) by
+setting the SAD2 bit, RCBA 1 3418h[25]. System BIOS must ensure that
+memory space, I/O space, and interrupts for this device are also disabled
+
+prior to disabling the device in PCI configuration space.
+
+IDE (Compatible) Mode
+
+IDE mode is selected by programming the SMS field, D31:F2:90h[7:6] to
+00b. In this mode, the SATA controller is set up to use the ATA/IDE
+programming interface. In this mode, the SATA ports are controlled by two
+SATA functions. One function routes up to four SATA ports, D31:F2, and
+the other routes up to two SATA ports, D31:F5 (this is for desktop SKUs
+only). In IDE mode, the Sub Class Code, D31:F2:0Ah and D31:F5:0Ah will
+be set to 01h. This mode may also be referred to as compatibility mode as it
+
+does not have any special OS driver requirements.
+
+AHCI Mode
+
+AHCI mode is selected by programming the SMS field, D31:F2:90h[7:6], to
+O01b. In this mode, the SATA controller is set up to use the AHCI
+programming interface. The six SATA ports are controlled by a single SATA
+function, D31:F2. In AHCI mode, the Sub Class Code, D31:F2:0Ah, will be
+
+set to 06h. This mode does require specific OS driver support.
+
+RAID Mode
+RAID mode is enabled only on certain SKUs of the Intel components and
+
+requires an additional option ROM, available from Intel.
+The system should be operating in before handing over the control to the O S. If system B I O S is enabling A H C I Mode or R A I D Mode, then it must disable the second S A T A controller on the part, Device thirty one Function five, by setting the S A D two bit, R C B A one hexadecimal three four one eight index twenty five index. System B I O S must ensure that memory space, I O space, and interrupts for this device are also disabled prior to disabling the device in P C I configuration space.
+
+I D E Compatible Mode. I D E mode is selected by programming the S M S field, D thirty one colon F two colon hexadecimal nine zero index seven colon six index, to binary zero zero. In this mode, the S A T A controller is set up to use the A T A slash I D E programming interface. In this mode, the S A T A ports are controlled by two S A T A functions. One function routes up to four S A T A ports, D thirty one colon F two, and the other routes up to two S A T A ports, D thirty one colon F five; this is for desktop S K U S only. In I D E mode, the Sub Class Code, D thirty one colon F two colon hexadecimal zero A and D thirty one colon F five colon hexadecimal zero A will be set to hexadecimal zero one. This mode may also be referred to as compatibility mode as it does not have any special O S driver requirements.
+
+A H C I Mode. A H C I mode is selected by programming the S M S field, D thirty one colon F two colon hexadecimal nine zero index seven colon six index, to binary zero one. In this mode, the S A T A controller is set up to use the A H C I programming interface. The six S A T A ports are controlled by a single S A T A function, D thirty one colon F two. In A H C I mode, the Sub Class Code, D thirty one colon F two colon hexadecimal zero A, will be set to hexadecimal zero six. This mode does require specific O S driver support.
+
+R A I D Mode. R A I D mode is enabled only on certain S K U S of the Intel components and requires an additional option R O M, available from Intel.
+Before the control of a computing system is transferred to the operating system, the system B I O S, or Basic Input Output System, must meticulously configure the hardware. This preparatory phase is critical for establishing a stable and functional environment. If the B I O S is configured to enable Advanced Host Controller Interface mode or Redundant Array of Independent Disks mode, it becomes imperative to disable the second Serial A T A controller instance on the component. This specific component is identified as Device thirty one, Function five, and its disabling is achieved by manipulating the S A D two bit at the Root Complex Base Address, offset hexadecimal three four one eight. Beyond merely disabling the device, the B I O S must also ensure that associated system resources, including memory space, I O space, and interrupt lines, are also deactivated for this device. This resource deallocation must occur prior to the device's comprehensive disabling within the P C I E, or Peripheral Component Interconnect Express, configuration space, preventing potential resource conflicts or undefined behavior upon O S boot.
+
+Delving into the operational modalities of Serial A T A controllers, we encounter three primary configurations.
+
+First, the I D E Compatible Mode, or Integrated Drive Electronics Compatible Mode, is selected by programming specific bits within the controller's P C I E configuration space. Specifically, bits seven and six of the S M S field, located at Device thirty one, Function two, offset hexadecimal ninety, are set to binary zero zero. In this compatibility mode, the Serial A T A controller emulates the behavior of a traditional P A T A, or Parallel A T A, or I D E programming interface. This emulation strategy prioritizes backward compatibility, allowing older operating systems or system setups that lack native Serial A T A driver support to interact with Serial A T A drives. Within this mode, the various Serial A T A ports are typically managed by two distinct Serial A T A functions. One function, identified as D three one colon F two, routes up to four Serial A T A ports, while the other function, D three one colon F five, routes up to two additional Serial A T A ports. It is notable that the D three one colon F five function is often reserved for desktop S K Us, or Stock Keeping Units, indicating a product segmentation based on market application. Furthermore, in I D E mode, the Sub Class Code, a P C I E configuration register at Device thirty one, Function two, offset hexadecimal zero A, is set to hexadecimal zero one. This code serves as an identification mechanism for the O S to recognize the controller's functional classification. A significant advantage of this mode is its inherent compatibility, as it typically does not necessitate any specialized O S driver requirements, relying instead on generic I D E drivers built into the operating system.
+
+Secondly, the Advanced Host Controller Interface Mode, commonly known as A H C I Mode, represents the modern, standard interface for Serial A T A controllers. This mode enables advanced features not available in I D E compatibility mode, such as Native Command Queuing, which optimizes the order of commands to improve data access efficiency, and hot plugging, allowing devices to be added or removed without system shutdown. Selection of A H C I mode is also achieved by programming the S M S field, specifically bits seven and six of the register at Device thirty one, Function two, offset hexadecimal ninety, but setting them to binary zero one. A key distinction in A H C I mode is that all six Serial A T A ports are typically managed by a single Serial A T A function, namely D three one colon F two, simplifying the controller's internal management structure. The Sub Class Code for A H C I mode is set to hexadecimal zero six. Unlike I D E mode, A H C I mode explicitly requires specific operating system driver support to fully leverage its advanced capabilities and deliver optimal performance. Without an A H C I aware driver, the system may not recognize the attached Serial A T A devices or operate them efficiently.
+
+Finally, the R A I D Mode, or Redundant Array of Independent Disks Mode, extends the functionality of the Serial A T A controller to provide data redundancy, performance enhancement, or both, by treating multiple physical disk drives as a single logical unit. The availability and enablement of R A I D mode are often contingent upon specific S K Us of Intel components, indicating that this feature is integrated at the chipset level or provided by specific hardware configurations. Furthermore, R A I D mode typically necessitates an additional option R O M, or Read Only Memory. This R O M contains specialized firmware that pre initializes the R A I D array before the O S boots, presenting the configured R A I D volume as a single logical device to the operating system. This implies that the R A I D logic and management utilities are often embedded within the system's firmware, operating below the O S layer to provide its foundational data management services.

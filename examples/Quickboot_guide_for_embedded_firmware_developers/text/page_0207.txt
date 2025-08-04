@@ -1,0 +1,53 @@
+that the iPad isn’t actually booting most of the time, it is just coming out of a
+lower power state; the end user doesn’t care. Consumers will be expecting
+that level of responsiveness going forward. One could easily argue that
+mobile phones really boot once, then have a short turn on/off time similar to
+that of a PC’s standby sleep mode. But until the likes of Windows and
+Linux decide to bootstrap themselves natively from a true OFF without the
+need for a BIOS or bootloader, we as system developers will have to adapt
+tried and true BIST and POST to a new world order, in innovative ways, or
+have our products stay on the shelf at the store and then get moved directly to
+a museum, still in the original packaging. We need to understand how to
+optimize the boot times for performance; this is especially true for the
+embedded-market space, where the system needs to effectively turn on, not
+boot.
+
+But first, we need to put things in perspective.
+
+Optimization Using BIOS and Bootloaders
+
+Some of the typical optimizations that can be applied include:
+—Platform policy rethink
+—Turn off debugging
+—Decrease flash size
+—Reordering flash image
+—Cache as RAM pre-memory during PEI phase
+
+—Intel SpeedStep® technology enabled early
+That the I P a d isn't actually booting most of the time, it is just coming out of a lower power state; the end user doesn't care. Consumers will be expecting that level of responsiveness going forward. One could easily argue that mobile phones really boot once, then have a short turn on off time similar to that of a P C's standby sleep mode. But until the likes of Windows and Linux decide to bootstrap themselves natively from a true O F F without the need for a B I O S or bootloader, we as system developers will have to adapt tried and true B I S T and P O S T to a new world order, in innovative ways, or have our products stay on the shelf at the store and then get moved directly to a museum, still in the original packaging. We need to understand how to optimize the boot times for performance; this is especially true for the embedded market space, where the system needs to effectively turn on, not boot. But first, we need to put things in perspective.
+
+Optimization Using B I O S and Bootloaders. Some of the typical optimizations that can be applied include:
+
+*   Platform policy rethink
+*   Turn off debugging
+*   Decrease flash size
+*   Reordering flash image
+*   Cache as Ram pre memory during P E I phase
+*   I ntel Speed S T E P technology enabled early.
+The discussion centers on the crucial aspect of optimizing system startup times, particularly for embedded systems where immediate responsiveness is a key user expectation. Unlike traditional personal computers, which might tolerate a more pronounced boot sequence, modern consumer devices, such as tablets, are expected to transition from a powered-off or low power state to full operational readiness with minimal delay. This demand for rapid "turn-on" or "wake" times influences how system firmware and bootloaders are designed. The current paradigm suggests a shift from traditional, lengthy boot processes involving extensive checks like Basic Input Output System, or B I O S, and Power On Self Test, or P O S T, to more streamlined and innovative approaches.
+
+The challenges in achieving faster boot times involve understanding and optimizing various stages of the system initialization. This includes the fundamental architecture of how the system transitions from a quiescent state to an active one, often involving firmware that prepares the hardware for the operating system. The goal is to reduce the overhead associated with these initialization phases, ensuring that the system is not only functional but also highly responsive to user input from the moment it is powered on.
+
+The section titled "Optimization Using B I O S and Bootloaders" highlights several technical strategies to achieve this:
+
+*   **Platform policy rethink**: This implies a re-evaluation of the default configurations and priorities within the system's firmware. It suggests that existing policies might be too conservative or include unnecessary checks that prolong the boot process. A revised policy could prioritize essential initialization steps and defer or eliminate less critical operations during the initial startup sequence.
+
+*   **Turn off debugging**: Debugging features, while invaluable during development, often introduce significant overhead during runtime, including boot time. Disabling these features in production environments is a straightforward method to reduce the amount of code executed and data processed, thereby accelerating the boot process.
+
+*   **Decrease flash size**: Flash memory, where firmware and operating system components are stored, has a direct impact on boot times. Reducing the size of the flash storage or, more precisely, optimizing the firmware image to occupy less space, can lead to faster read operations and a quicker transfer of necessary code into memory. This involves techniques like code compression, removing unused modules, and employing more efficient storage formats.
+
+*   **Reordering flash image**: The sequence in which data is read from flash memory can also affect boot performance. By carefully ordering the placement of critical boot code and data within the flash memory, the system can access essential components more quickly, potentially reducing the number of I O operations or improving the locality of reference for the processor.
+
+*   **Cache as Ram pre memory during P E I phase**: The Pre-EFI Initialization, or P E I, phase is a critical early stage of the boot process. Utilizing the system's Ram as a cache during this phase implies that frequently accessed data or code segments from slower storage can be loaded into the faster Ram for quicker retrieval. This technique leverages the speed differential between Ram and other storage media like flash memory.
+
+*   **Intel Speed Step technology enabled early**: Intel Speed Step is a technology that dynamically adjusts the processor's frequency and voltage based on the workload. Enabling this technology early in the boot process allows the system to manage power consumption and performance more efficiently from the outset, potentially contributing to a smoother and faster overall startup, especially if it allows the processor to reach optimal operating frequencies sooner.

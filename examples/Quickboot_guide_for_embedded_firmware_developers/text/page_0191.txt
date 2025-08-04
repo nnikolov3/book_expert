@@ -1,0 +1,44 @@
+PIRQ Routing mm mm me
+Registers Target IRQE \
+PIRQAS =7, setby BIOS |
+PIRQB#
+PIRQCE
+| Interrupt to CPU
+PIRGDE | | ean IRS ea PIC pt Ye
+PROCES | | san | 14
+jl
+PiRaFs | | aoh IOAPIC
+1 PIROAS A INTINIG
+PIRQGH ] SAR PIRGBY |
+PIRGH# | PIRQCE 1 iNTiNga
+| &Bh
+| __PIRCDE | wring
+PIRQE# | inrinao
+FIRGFE 1 inTings
+PIRQGH | rion
+PIROHY |i mingas
+
+Figure 9.4: Platform Controller Hub (PCH) PIRQ to IRQ Router
+
+Table 9.2: Platform Controller Hub (PCH) PIRQ Routing Table
+
+PIRQ# Interrupt Router Register for Connected to IOXAPIC
+Pin PIC Pin
+
+PIRQA# D31:F0:Reg 60h INTIN16
+
+PIRQB# D31:FO:Reg 61h INTIN17
+
+PIRQC# D31:FO:Reg 62h INTIN18
+
+PIRQD# D31:FO:Reg 63h INTIN19
+Figure 9.4 illustrates the Platform Controller Hub, P C H, P I R Q to I R Q router. The diagram shows P I R Q pins on the left, which connect to P I R Q routing registers. These registers hold values, such as hexadecimal sixty h for P I R Q A sharp, and hexadecimal sixty one h for P I R Q B sharp, hexadecimal sixty two h for P I R Q C sharp, and hexadecimal sixty three h for P I R Q D sharp. Additionally, there are P I R Q E sharp, P I R Q F sharp, P I R Q G sharp, and P I R Q H sharp with corresponding register values hexadecimal sixty six h, hexadecimal sixty nine h, hexadecimal six A h, and hexadecimal six B h. These registers then route to an eight two five nine P I C, which receives interrupt requests, or I R Qs. The eight two five nine P I C then generates an interrupt to the C P U. The diagram also shows a box labeled I O A P I C. The P I R Q pins also connect to the I O A P I C through different interrupt request lines. Specifically, P I R Q A sharp connects to I N T I N sixteen, P I R Q B sharp connects to I N T I N seventeen, P I R Q C sharp connects to I N T I N eighteen, P I R Q D sharp connects to I N T I N nineteen, P I R Q E sharp connects to I N T I N twenty, P I R Q F sharp connects to I N T I N twenty one, P I R Q G sharp connects to I N T I N twenty two, and P I R Q H sharp connects to I N T I N twenty three.
+
+Table 9.2 details the Platform Controller Hub, P C H, P I R Q routing table. The table has three columns: P I R Q sharp Pin, Interrupt Router Register for P I C, and Connected to I O X A P I C Pin. For the P I R Q sharp Pin column, it lists P I R Q A sharp, P I R Q B sharp, P I R Q C sharp, and P I R Q D sharp. The Interrupt Router Register for P I C column shows D thirty one colon F zero colon Reg sixty h for P I R Q A sharp, D thirty one colon F zero colon Reg sixty one h for P I R Q B sharp, D thirty one colon F zero colon Reg sixty two h for P I R Q C sharp, and D thirty one colon F zero colon Reg sixty three h for P I R Q D sharp. The Connected to I O X A P I C Pin column shows I N T I N sixteen for P I R Q A sharp, I N T I N seventeen for P I R Q B sharp, I N T I N eighteen for P I R Q C sharp, and I N T I N nineteen for P I R Q D sharp.
+This diagram illustrates the Platform Controller Hub, or P C H, and its role in routing interrupts, specifically Programmable Interrupt Requests, or P I R Qs, to the interrupt controller. At the core of this system is a block labeled "P I R Q Routing Registers." To the left, we see a series of input lines, each associated with a P I R Q signal, such as P I R Q A sharp, P I R Q B sharp, and so forth, down to P I R Q H sharp. Each of these P I R Q lines connects to a register represented by a shaded box. These registers hold hexadecimal values, for instance, P I R Q A sharp is associated with sixty h, P I R Q B sharp with sixty one h, P I R Q C sharp with sixty two h, and P I R Q D sharp with sixty three h. Higher up, we see P I R Q E sharp mapped to sixty six h, P I R Q F sharp to sixty nine h, P I R Q G sharp to sixty A h, and P I R Q H sharp to sixty B h.
+
+Crucially, the values within these registers represent the "Target I R Q sharp" which is set by the B I O S. These target I R Q sharp values are then routed as input signals to a block labeled "eight two five nine P I C," which signifies an eight two five nine Programmable Interrupt Controller. The eight two five nine P I C is a legacy interrupt controller that serializes interrupt requests and provides them to the C P U. A line originating from the eight two five nine P I C is labeled "Interrupt to C P U," indicating the path through which interrupts are delivered to the central processing unit for handling.
+
+In parallel, the diagram shows a pathway from the P I R Q registers to another component labeled "IOAPIC," the Input Output Advanced Programmable Interrupt Controller. This demonstrates a more modern interrupt handling mechanism. Here, the P I R Q signals are mapped to specific interrupt input pins on the IOAPIC, denoted as I N T I N sixteen, I N T I N seventeen, I N T I N eighteen, and so on, up to I N T I N twenty three. For example, P I R Q A sharp is connected to I N T I N sixteen, P I R Q B sharp to I N T I N seventeen, P I R Q C sharp to I N T I N eighteen, and P I R Q D sharp to I N T I N nineteen. This routing configuration allows the P C H to direct hardware events to the appropriate interrupt handling channels within the system's interrupt architecture.
+
+Table nine point two further clarifies this routing scheme by providing a mapping between the P I R Q sharp pins, the interrupt router registers in the P C H, and their corresponding connections to the I O APIC. It explicitly lists that P I R Q A sharp is associated with the register D thirty one colon F zero colon R E G sixty h and connects to I N T I N sixteen on the I O APIC. Similarly, P I R Q B sharp maps to D thirty one colon F zero colon R E G sixty one h and connects to I N T I N seventeen, P I R Q C sharp to D thirty one colon F zero colon R E G sixty two h and connects to I N T I N eighteen, and P I R Q D sharp to D thirty one colon F zero colon R E G sixty three h and connects to I N T I N nineteen. This table underscores the critical function of the P C H as an intermediary, translating peripheral requests into standardized interrupt signals that can be managed by either the legacy eight two five nine P I C or the more advanced I O APIC, ultimately facilitating efficient interrupt processing by the C P U. The concept being illustrated is interrupt controller architecture and the dynamic routing of hardware interrupts within a computer system, a fundamental aspect of operating system kernel design and hardware interaction. The use of specific memory addresses, like D thirty one colon F zero, signifies the memory mapped I O registers that control these routing functions.

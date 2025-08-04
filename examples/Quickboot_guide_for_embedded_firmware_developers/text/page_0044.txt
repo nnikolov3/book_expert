@@ -1,0 +1,98 @@
+Address Internal Unit Address Internal Unit Address Internal Unit
+
+00h-08h DMA Controller 70h RESERVED Coh-D1h DMA Controller
+
+02h-0Eh DMA Controller 71h RTC Controller D2h-DDh RESERVED
+
+OFh DMA Controller 72h RTC Controller DER-DFh DMA Controller
+
+10h-18h DMA Controller 73h RTC Controller FOh FERRAIGNNE#
+
+19h-1Eh RESERVED Tih RTC Controller 170h-177h IDE Controller?
+(DMA Controller)
+
+1Fh DMA Controller I5h RTC Controller 1FOR-1F7h IDE Controller
+
+20h-21h Interrupt Controller 76h RTC Controller 376h IDE IDE Controller2
+
+24h-25h Interrupt Controller 77h RTC Controller 3F&h IDE IDE Controller]
+
+28h-29h Interrupt Controller 80h DMA Cantroller G00h-4D1R Interrupt
+
+Controller
+
+2Ch-2D0h Interrupt Controller 81h-83h DMA Controller CFs PCI Address
+
+2E-2Fh LPC 510 B&h-86h DMA Controller CFah Resel Generator
+
+30h-31h Interrupt Controller 87h DMA Controller CFC PCI Data
+
+34h-35h Interrupt Controller 88h DMA Controller
+
+38h-3%h Interrupt Controller 89h-8Bh DMA Controller
+
+3Ch-3Dh Interrupt Controller 8Ch-BEh DMA Controller
+
+40h-42h  Timer/Counter O8Fh DMA Controller
+
+43h RESERVED 90h-91h DMA Controller
+
+GE-&Fh LPC 510 92h Reset Generator
+
+S0h-52h  Timer/Counter 93h-9Fh DMA Controller
+
+53h RESERVED AOh-A1h Interrupt Controller
+
+60h Micro controller Adh-ASh Interrupt Controller
+
+61h NMI Controller ABh-A%h Interrupt Controller
+
+62h Micro controller Ach-ADh Interrupt Controller
+
+63h NMI Controller Boh-B1h Interrupt Controller
+
+64h Micro controller B2h-B3h Power Management
+
+65h NMI Controller Bah-B5h Interrupt Controller
+
+66h Micro controller B&h-B9h Interrupt Controller
+
+67h NMI Controller BCh-BDh Interrupt Controller
+
+Figure 2.4: I/O Ranges
+The table, labeled Figure two point four: I O Ranges, details the mapping of various I O address ranges to their corresponding internal hardware units.
+
+In the first set of address mappings, from hexadecimal zero zero through hexadecimal zero eight is allocated to the D M A Controller. Hexadecimal zero nine through hexadecimal zero E also maps to the D M A Controller. Hexadecimal zero F is assigned to the D M A Controller. The range from hexadecimal one zero through hexadecimal one eight is for the D M A Controller. Hexadecimal one nine through hexadecimal one E is marked as RESERVED, but specifically for the D M A Controller. Hexadecimal one F is also for the D M A Controller. The address range hexadecimal two zero through hexadecimal two one is designated for the Interrupt Controller. Hexadecimal two four through hexadecimal two five serves the Interrupt Controller. Hexadecimal two eight through hexadecimal two nine is for the Interrupt Controller.
+
+Continuing in the first set of mappings, hexadecimal two C through hexadecimal two D is for the Interrupt Controller. Hexadecimal two E through hexadecimal two F is assigned to the L P C S I O. The range from hexadecimal three zero through hexadecimal three one is for the Interrupt Controller. Hexadecimal three four through hexadecimal three five is for the Interrupt Controller. Hexadecimal three eight through hexadecimal three nine is allocated to the Interrupt Controller. Hexadecimal three C through hexadecimal three D is also for the Interrupt Controller. The range from hexadecimal four zero through hexadecimal four two is for the Timer slash Counter. Hexadecimal four three is RESERVED. Hexadecimal four E through hexadecimal four F is for the L P C S I O. The range hexadecimal five zero through hexadecimal five two is for the Timer slash Counter. Hexadecimal five three is RESERVED. Hexadecimal six zero is for the Micro controller. Hexadecimal six one is for the N M I Controller. Hexadecimal six two is for the Micro controller. Hexadecimal six three is for the N M I Controller. Hexadecimal six four is for the Micro controller. Hexadecimal six five is for the N M I Controller. Hexadecimal six six is for the Micro controller. And hexadecimal six seven is for the N M I Controller.
+
+Moving to the second set of address mappings, hexadecimal seven zero is RESERVED. The addresses from hexadecimal seven one through hexadecimal seven seven are all allocated to the R T C Controller. Specifically, hexadecimal seven one, hexadecimal seven two, hexadecimal seven three, hexadecimal seven four, hexadecimal seven five, hexadecimal seven six, and hexadecimal seven seven each map to the R T C Controller. Hexadecimal eight zero is for the D M A Controller. The range hexadecimal eight one through hexadecimal eight three is for the D M A Controller. Hexadecimal eight four through hexadecimal eight six is also for the D M A Controller. Hexadecimal eight seven is for the D M A Controller. Hexadecimal eight eight is for the D M A Controller. Hexadecimal eight nine through hexadecimal eight B is for the D M A Controller. Hexadecimal eight C through hexadecimal eight E is for the D M A Controller. Hexadecimal zero eight F is for the D M A Controller. The range hexadecimal nine zero through hexadecimal nine one is for the D M A Controller. Hexadecimal nine two is for the Reset Generator. Hexadecimal nine three through hexadecimal nine F is for the D M A Controller.
+
+The second set of address mappings continues with hexadecimal A zero through hexadecimal A one for the Interrupt Controller. Hexadecimal A four through hexadecimal A five is for the Interrupt Controller. Hexadecimal A eight through hexadecimal A nine is for the Interrupt Controller. Hexadecimal A C through hexadecimal A D is for the Interrupt Controller. Hexadecimal B zero through hexadecimal B one is for the Interrupt Controller. Hexadecimal B two through hexadecimal B three is for Power Management. Hexadecimal B four through hexadecimal B five is for the Interrupt Controller. Hexadecimal B eight through hexadecimal B nine is for the Interrupt Controller. And hexadecimal B C through hexadecimal B D is for the Interrupt Controller.
+
+Finally, the third set of address mappings starts with hexadecimal C zero through hexadecimal D one for the D M A Controller. Hexadecimal D two through hexadecimal D D is RESERVED. Hexadecimal D E through hexadecimal D F is for the D M A Controller. Hexadecimal F zero is for F E R R IG N N E. The range hexadecimal one seven zero through hexadecimal one seven seven is for the I D E Controller two. Hexadecimal one F zero through hexadecimal one F seven is for the I D E Controller one. Hexadecimal three seven six is for the I D E Controller two. Hexadecimal three F six is for the I D E Controller one. Hexadecimal four zero zero through hexadecimal four D one is for the Interrupt Controller. Hexadecimal C F eight is for P C I Address. Hexadecimal C F nine is for the Reset Generator. And hexadecimal C F C is for P C I Data.
+The table presents a critical component of computer architecture: the I O port address map, detailing specific hexadecimal address ranges and the hardware units or functions associated with them. This mapping defines the distinct communication channels through which the C P U interacts with various peripheral devices and internal controllers, a fundamental aspect of the hardware-software interface in systems primarily utilizing port mapped I O. Each address or range serves as a unique identifier for a specific hardware register or component, enabling the O S and device drivers to send commands to or retrieve status information from the underlying hardware.
+
+Starting from the top left, we observe multiple entries for the D M A Controller, spanning various discontinuous address ranges, such as hexadecimal zero zero through zero eight, zero nine through zero E, zero F, and subsequently hexadecimal one zero through one eight. A Direct Memory Access controller is a specialized hardware component designed to perform data transfers directly between I O devices and system Ram, bypassing the C P U. This mechanism significantly enhances system performance by offloading data movement tasks from the central processor, allowing the C P U to execute other instructions concurrently. Its presence in multiple, separated I O ranges suggests a design that might accommodate multiple D M A channels or different operational modes, perhaps for distinct peripheral types or a cascading D M A architecture.
+
+Adjacent to the D M A entries, at hexadecimal one nine through one E, we see a "R E S E R V E D" entry. Reserved address ranges are designated for future expansion or to prevent conflicts with existing or potential hardware. Any attempt by software to access these addresses typically results in undefined behavior or a system fault, ensuring architectural integrity and forward compatibility.
+
+Further down the first column, we encounter the Interrupt Controller, with ranges like hexadecimal two zero through two one, two four through two five, and so on. An Interrupt Controller is a vital component that manages interrupt requests from various hardware devices. When a peripheral device requires attention from the C P U, it asserts an interrupt signal. The Interrupt Controller prioritizes these requests, handles multiple concurrent interruptions, and signals the C P U, directing it to the appropriate interrupt service routine. This asynchronous communication mechanism is crucial for efficient system operation, allowing the C P U to perform useful work without constantly polling devices for status changes.
+
+The L P C S I O, or Low Pin Count Super I O, appears at hexadecimal two E through two F and again at four E through four F. This controller serves as an interface for slower, legacy peripherals such as serial ports, parallel ports, floppy disk controllers, and keyboard/mouse controllers. The L P C bus itself is a serial bus designed to replace the older I S A bus for these slower peripherals, reducing pin count on the chipset and motherboard. The Super I O chip consolidates these functions into a single integrated circuit, simplifying motherboard design.
+
+Timer/Counter units are present at hexadecimal four zero through four two and five zero through five two. These components generate periodic interrupts, measure time intervals, or count external events. They are fundamental for tasks such as O S scheduling, real time clock functions, and managing refresh rates for dynamic Ram.
+
+Entries for Microcontroller and N M I Controller are found in the hexadecimal sixty to sixty seven range. A Microcontroller in this context typically refers to an embedded controller on the motherboard responsible for low level system management tasks, such as power management, fan control, or handling the keyboard and mouse. The N M I Controller specifically manages Non-Maskable Interrupts. Unlike standard interrupts, N M I s cannot be ignored by the C P U, often signaling critical hardware failures like memory parity errors, and thus typically trigger an immediate system halt or debugging sequence.
+
+Moving to the central column of the table, the Real Time Clock, or R T C Controller, is mapped to addresses like hexadecimal seven one through seven four. The R T C is a battery-backed clock that keeps track of the current time and date even when the system is powered off. It is essential for maintaining accurate system time and for time-stamping files and events.
+
+The table also lists further D M A Controller entries, such as hexadecimal eight zero through eight three, and other Interrupt Controller mappings, like hexadecimal A zero through A one. These multiple instances of common controllers illustrate the architecture's complexity, possibly indicating separate controllers for different types of D M A channels or cascaded interrupt controllers to handle a larger number of interrupt sources.
+
+The Power Management unit, located at hexadecimal B two through B three, is responsible for controlling various power states of the system, including sleep modes, hibernation, and dynamic power scaling. This unit interacts with the O S to manage power consumption, crucial for energy efficiency and extending battery life in portable devices.
+
+On the rightmost column, we observe I D E Controller entries, such as hexadecimal one F zero through one F seven for I D E Controller one and hexadecimal one seven zero through one seven seven for I D E Controller two. I D E, or Integrated Drive Electronics, is a standard interface for connecting storage devices like H D D s and C D-R O M drives. The presence of two controllers suggests support for multiple I D E channels, allowing up to four devices to be connected. The specific F E R R#I G N N E# entry at hexadecimal F zero is a signal name related to the I D E interface or numeric coprocessor error handling, where F E R R# indicates a floating point error and I G N N E# signifies that a non-maskable error should be ignored by the system, often relevant in older P C architectures.
+
+Finally, the P C I Address and P C I Data registers, at hexadecimal C F eight and C F C respectively, are crucial for interaction with the P C I (Peripheral Component Interconnect) bus. The P C I bus provides a high-speed pathway for connecting expansion cards and integrated peripherals. Software accesses configuration space registers of P C I devices by writing the desired device, function, and register address into the P C I Address port, and then reading or writing data through the P C I Data port. This mechanism allows for dynamic configuration and enumeration of P C I devices during system boot and O S runtime. A Reset Generator at hexadecimal C F nine is also present, which provides the system reset signal, bringing the entire system or specific components to a known initial state upon power-on or explicit reset command.
+
+In essence, this I O range map provides a low level, architectural blueprint of how a specific computer system, likely one based on an older P C compatible architecture, exposes its hardware components to software via dedicated I O ports. Understanding this map is fundamental for developing device drivers, debugging hardware issues, and analyzing the system's resource allocation and fundamental operational principles.

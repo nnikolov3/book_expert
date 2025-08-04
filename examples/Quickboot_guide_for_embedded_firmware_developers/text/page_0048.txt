@@ -1,0 +1,45 @@
+Traditionally, there is ROM and RAM. We will define them for the purist,
+but today most people get the concepts.
+
+ROM. Read-only memory (ROM) is locked memory that is not updatable
+without an external ROM burner. It never loses its context once it is
+programmed. Logistically it makes development and bug fixes in the field
+much costlier. It is hard to find true ROMs today, as flash technology has
+provided programmability during runtime. Of course, you can have things
+like EEPROMSs, which have ROM in the name and are programmable, but
+see NVRAM below.
+
+It is possible for silicon to have embedded ROM inside of it to enable
+must-have interfaces, such as a NAND controller interface, if your required
+
+boot firmware solution is sitting behind it.
+
+RAM. Random access memory (RAM) does not retain its contents once
+power is removed. This type of memory is also referred to as volatile. There
+are many types of RAM, such as static RAM (SRAM) and dynamic RAM
+(DRAM). In the context of this book, system memory and sometimes
+
+memory refer to any of the available types of RAM.
+
+NVRAM. Flash technologies have improved since the time of the dinosaur
+PC AT. Instead of ROMs, which store things like system BIOS, or RAM,
+which loses its mind when you power down, most systems today contain a
+piece of programmable and nonvolatile RAM known as NVRAM. If you
+have a flash upgrade utility for a device, it is likely to be nonvolatile RAM,
+not formal ROM.
+Traditionally, there is R O M and Ram. We will define them for the purist, but today most people get the concepts.
+
+R O M. Read only memory (R O M) is locked memory that is not updatable without an external R O M burner. It never loses its context once it is programmed. Logistically it makes development and bug fixes in the field much costlier. It is hard to find true R O Ms today, as flash technology has provided programmability during runtime. Of course, you can have things like E E P R O Ms, which have R O M in the name and are programmable, but see N V Ram below.
+
+It is possible for silicon to have embedded R O M inside of it to enable must have interfaces, such as a N A N D controller interface, if your required boot firmware solution is sitting behind it.
+
+Ram. Random access memory (Ram) does not retain its contents once power is removed. This type of memory is also referred to as volatile. There are many types of Ram, such as static Ram (S Ram) and dynamic Ram (D Ram). In the context of this book, system memory and sometimes memory refer to any of the available types of Ram.
+
+N V Ram. Flash technologies have improved since the time of the dinosaur P C A T. Instead of R O Ms, which store things like system B I O S, or Ram, which loses its mind when you power down, most systems today contain a piece of programmable and nonvolatile Ram known as N V Ram. If you have a flash upgrade utility for a device, it is likely to be nonvolatile Ram, not formal R O M.
+The fundamental distinction between primary memory types, specifically R O M and R A M, lies in their persistence and mutability. R O M, or Read Only Memory, is characterized by its inherent immutability once programmed. In its purest form, data written to R O M during manufacturing or via a dedicated external R O M burner becomes permanently fixed and cannot be altered during normal operation. This characteristic ensures that critical boot code or firmware, essential for system initialization, remains intact even without power. However, this immutability presents significant logistical challenges in the product lifecycle, as any required software updates, bug fixes, or feature enhancements necessitate a physical replacement of the R O M chip itself, a process that is inherently more costly and disruptive than software updates.
+
+Modern computing systems have largely moved away from the strictest definition of R O M due to the practical limitations of its fixed nature. Flash memory technology has revolutionized non-volatile storage by providing devices that retain their data without power but also allow for in system re-programmability. This category includes technologies like E E P R O M s, or Electrically Erasable Programmable Read Only Memory, and is broadly encompassed by the term N V Ram, or Non Volatile R A M. While these devices bear "R O M" in their nomenclature, their programmability during runtime fundamentally differentiates them from traditional R O M. For instance, the boot firmware of many embedded systems is stored in flash memory, often requiring a specialized N A N D controller interface for its management and update. This allows for firmware upgrades in the field, a crucial capability for maintenance and security that was impossible with true, unalterable R O M.
+
+Conversely, R A M, or Random Access Memory, fundamentally represents a class of volatile memory. This means that R A M requires continuous electrical power to maintain its stored information. The moment power is removed, the entire contents of R A M are lost. Consequently, R A M serves as the primary working memory for a C P U, holding data and program instructions that are actively being processed. Its volatility necessitates that any data requiring long term persistence must be saved to non-volatile storage, such as solid state drives or hard disk drives, before power is cut.
+
+Within the R A M family, two predominant architectural paradigms exist: S Ram and D Ram. S Ram, or Static R A M, stores each bit of data using a latching circuit, typically comprising six transistors. This design allows S Ram to hold data as long as power is supplied, without needing periodic refreshing, which contributes to its significantly faster access times compared to D Ram. However, the complexity of its cell structure results in lower density and higher manufacturing cost, making it suitable for high speed applications like C P U cache memory, such as L one, L two, and L three caches. D Ram, or Dynamic R A M, in contrast, stores each bit as an electrical charge in a capacitor, typically requiring only one transistor and one capacitor per bit. This simpler structure allows for much higher density and lower cost per bit, making D Ram the dominant technology for main system memory. The "dynamic" aspect refers to its need for constant refreshing; the charge in the capacitors leaks over time, so refresh cycles are periodically executed to prevent data loss. Thus, while D Ram offers superior capacity and cost efficiency for primary memory, S Ram provides the low latency essential for cache operations. When discussions refer to "system memory" in modern contexts, particularly concerning personal computers since the advent of the P C A T architecture, they are almost invariably referring to D Ram. The broader term R A M is thus used generically to describe any volatile memory, encompassing both S Ram and D Ram types.

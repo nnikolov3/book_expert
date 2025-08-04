@@ -1,0 +1,44 @@
+Provisioning solution (see ami.com/prov).
+
+Remote Control of the UEFI Shell
+
+Both the EFI and UEFI Shells are remote controllable since all EFI
+implementations have support for remote control over the serial port of the
+keyboard and console. This is not a modern over-the-Internet remote desktop
+style of control, but it is certainly sufficient. This means remote control of a
+system running a shell requires a second computer to be the host for the
+testing. A very common technique for remote debugging a platform involves
+connecting both a hardware debugger and a serial port between a host and the
+platform-under-development (PUD). Then the engineer doing the debugging
+remotely (via the modern remote desktop connection of your choice) controls
+the host computer and then controls the PUD via the hardware debugger and
+the serial connection. The biggest challenge in this scenario is changing the
+copy of an application the PUD has access to. I have found that there are
+KVMs that have a built-in USB switching capability and using that in
+conjunction with a standard USB drive allows for the UEFI application under
+debug to be updated without anyone having to physically change anything.
+Obviously, if having the PUD physically right next to you is possible,
+that may be faster and easier, although for some systems the power, sharing,
+
+or noise requirements may make that prohibitive to do.
+
+Debugging Drivers and Applications in the EFI and
+UEFI Shells
+
+Driver and application debugging is an excellent use of shells. Many
+Provisioning solution, see ami dot com slash prov.
+
+Remote Control of the UEFI Shell
+
+Both the E F I and U E F I Shells are remote controllable since all E F I implementations have support for remote control over the serial port of the keyboard and console. This is not a modern over the Internet remote desktop style of control, but it is certainly sufficient. This means remote control of a system running a shell requires a second computer to be the host for the testing. A very common technique for remote debugging a platform involves connecting both a hardware debugger and a serial port between a host and the platform under development P U D. Then the engineer doing the debugging remotely via the modern remote desktop connection of your choice controls the host computer and then controls the P U D via the hardware debugger and the serial connection. The biggest challenge in this scenario is changing the copy of an application the P U D has access to. I have found that there are K V Ms that have a built in U S B switching capability and using that in conjunction with a standard U S B drive allows for the U E F I application under debug to be updated without anyone having to physically change anything.
+
+Obviously, if having the P U D physically right next to you is possible, that may be faster and easier, although for some systems the power, sharing, or noise requirements may make that prohibitive to do.
+
+Debugging Drivers and Applications in the E F I and U E F I Shells
+
+Driver and application debugging is an excellent use of shells. Many
+The text delves into the realm of remote control and debugging within the context of the Unified Extensible Firmware Interface, or U E F I, specifically focusing on its shell environment. It establishes that U E F I implementations inherently possess capabilities for remote control, managing aspects like the keyboard and console interface. This control is not necessarily sophisticated over-the-internet remote desktop solutions, but rather a direct serial port connection, which is deemed sufficient for many tasks.
+
+A common methodology for remote debugging a platform involves establishing a serial connection between a host machine and the target system, often referred to as a platform under development, or P U D. The engineer then leverages a modern remote desktop connection to their choice of system, which then controls the P U D. This control is typically routed through the hardware debugger and the serial port connection. A significant hurdle encountered in this setup is the dynamic nature of applications running on the P U D, which can affect the debugging process. The text highlights the observation that systems equipped with Keyboards, Video, and Mouse, or K V M, switching capabilities, especially those integrated with standard U S B drives, facilitate U E F I application updates without requiring physical manipulation. This is contrasted with scenarios where the P U D is physically proximate, which, while potentially faster for certain operations, may introduce power or noise constraints that make such proximity prohibitive.
+
+The subsequent section pivots to the critical task of debugging drivers and applications within the U E F I environment. It posits that driver and application debugging is a highly effective utilization of shell functionalities, underscoring the foundational role of shells in the development and maintenance of these low-level software components.

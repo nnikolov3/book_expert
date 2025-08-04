@@ -1,0 +1,52 @@
+SPD Field #24 and #25: “Minimum Refresh Recovery Delay Time
+(trpcmin), LSB”
+Micron MT41J256M8 Datasheet
+
+SPD Field 0x1A: Min. Write to Read Command Delay (ty, rrmin)
+
+This is another field that must be extracted from the datasheet and divided by
+
+the Medium Timebase Divisor. In our example:
+
+1.
+The tyr value found in the Micron MT41J256M8 datasheet for our
+specific SDRAM chip gives 7.5 ns.
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+3.
+75 ns /0.125 ns = 60 = 0x3C.
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+26 FEST: Min. Write to Eead Command Delay (tym=min) Dx 30 7.5ns
+
+Byte 26: Minimum Internal Write to Read Command Delay Time (tWTRmin)
+This byte defines the minimum SDRAM Internal Write to Read Delay Time
+in Medium Timebase (MTB) units. This value comes from the DDR3
+S P D Field twenty four and twenty five: Minimum Refresh Recovery Delay Time, t R F Cmin, L S B. Micron M T four one J two fifty six M eight Datasheet.
+
+S P D Field zero x one A: Min. Write to Read Command Delay (t W T R min).
+
+This is another field that must be extracted from the datasheet and divided by the Medium Timebase Divisor. In our example:
+
+one. The t W T R value found in the Micron M T four one J two fifty six M eight datasheet for our specific S D R A M chip gives seven point five nanoseconds.
+
+two. This number must be divided by the Medium Timebase Divisor, the value in hexadecimal zero x zero B. In our example, this is zero point one two five nanoseconds.
+
+three. Seventy five nanoseconds divided by zero point one two five nanoseconds is equal to sixty which is hexadecimal three C.
+
+The table shows the S P D field definitions. The first row has the byte in decimal twenty six, the byte in hexadecimal zero x one A, the Field Name "Min. Write to Read Command Delay (t W T R min)", a Typ. Value of zero x three C, and a Definition. The second row, which serves as the definition for the first row, describes "Byte twenty six: Minimum Internal Write to Read Command Delay (t W T R min). This byte defines the minimum S D R A M Internal Write to Read Delay Time in Medium Timebase M T B units. This value comes from the D D R three".
+The document details the interpretation of specific Serial Presence Detect, or S P D, fields, crucial for configuring memory modules, particularly in the context of Dynamic Random Access Memory, or D Ram.
+
+Firstly, S P D fields twenty four and twenty five are discussed as representing the "Minimum Refresh Recovery Delay Time," denoted as T R F C min, with the least significant bit, or L S B, being relevant here. This information is typically sourced from the memory module's datasheet, in this instance, the Micron M T four one J two five six M eight datasheet.
+
+Subsequently, the document focuses on S P D field zero times one A, which defines the "Min. Write to Read Command Delay," symbolized as T W T R min. This value is derived from the datasheet and then processed by a "Medium Timebase Divisor." The process is illustrated with an example:
+
+One. The raw T W T R value found in the Micron M T four one J two five six M eight datasheet is seven point five nanoseconds.
+
+Two. This value needs to be divided by the Medium Timebase Divisor, which is given as zero times zero B in hexadecimal, or eleven in decimal.
+
+Three. The calculation is presented as seven point five nanoseconds divided by zero point one two five nanoseconds, which equals sixty, represented in hexadecimal as zero times three C.
+
+A table further clarifies this data extraction. It shows a byte with a decimal value of twenty six, which corresponds to the hexadecimal value zero times one A. This byte is identified by the field name "Min. Write to Read Command Delay (tWTRmin)." The typical value is listed as seven point five nanoseconds, and its definition is provided.
+
+The subsequent text elaborates on byte twenty six: "Minimum Internal Write to Read Command Delay (tWTRmin)." It specifies that this byte defines the minimum S D Ram internal Write to Read Delay Time, expressed in "Medium Timebase" units. This parameter is indicated to originate from the D D R three memory standard. This interpretation highlights the critical role of S P D data in accurately configuring and optimizing memory system performance by providing essential timing parameters derived from the memory component's specifications and scaled according to a defined timebase.

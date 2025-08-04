@@ -1,0 +1,56 @@
+SATA port is enabled by the controller. In order to reduce drive detection
+time, and hence the total boot time, system BIOS should enable the SATA
+port early during POST (for example, immediately before memory
+initialization) by setting the Port x Enable (PxE) bits of the Port Control and
+Status registers, D31:F2:92h and D31:F5:92h, to initiate spin-up of such
+drive(s).
+
+In IDE mode, the system BIOS must program D31:F2:92h[3:0] to OFh
+and D31:F5:92h[1:0] to 3 for a SKU with six ports to enable all ports. If no
+drive is present, the system BIOS may then disable the ports.
+
+In AHCI and RAID modes, the system BIOS must program
+D31:F2:92h[5:0] to 3Fh for six ports and OFh for four ports. In AHCI-
+enabled systems, the PCS register must always be set this way. The status of
+the port is controlled through AHCI memory space.
+
+If Staggered Spin Up support is desired on the platform due to system
+power load concerns, the BIOS should enable one port at a time, poll the Port
+Present bit of the PCS register and Drive Ready bit of task file status register
+before enabling the next port.
+
+The ATA/ATAPI-7 specification recommends a 31-second timeout
+before assuming a device is not functioning properly. Intel recommends
+implementing a ten-second timeout and if the device fails to respond within
+the first ten seconds, then the system BIOS should reinitiate the detection
+sequence. If the device fails to respond within an additional ten seconds, the
+system BIOS should reinitiate the detection sequence again. If the device fails
+to respond within ten more seconds, the system BIOS can assume the device
+is not functioning properly.
+
+It is recommended that software or system BIOS clear Serial ATA Error
+Register (PxSERR) after port reset happens by writing 1 to each implemented
+
+bit location.
+The SATA port is enabled by the controller. In order to reduce drive detection time, and hence the total boot time, system B I O S should enable the SATA port early during P O S T, for example, immediately before memory initialization, by setting the Port x Enable, P x E, bits of the Port Control And Status registers, D thirty one colon F two colon ninety two hexadecimal and D thirty one colon F five colon ninety two hexadecimal, to initiate spin up of such drives.
+
+In I D E mode, the system B I O S must program D thirty one colon F two colon ninety two hexadecimal index three colon zero to zero F hexadecimal and D thirty one colon F five colon ninety two hexadecimal index one colon zero to three for an S K U with six ports to enable all ports. If no drive is present, the system B I O S may then disable the ports.
+
+In A H C I And R A I D modes, the system B I O S must program D thirty one colon F two colon ninety two hexadecimal index five colon zero to three F hexadecimal for six ports And zero F hexadecimal for four ports. In A H C I enabled systems, the P C S register must always be set this way. The status of the port is controlled through A H C I memory space.
+
+If Staggered Spin Up support is desired on the platform due to system power load concerns, the B I O S should enable one port at a time, poll the Port Present bit of the P C S register And Drive Ready bit of task file status register before enabling the next port.
+
+The A T A slash A T A P I seven specification recommends a thirty one second timeout before assuming a device is not functioning properly. Intel recommends implementing a ten second timeout And if the device fails to respond within the first ten seconds, then the system B I O S should reinitiate the detection sequence. If the device fails to respond within an additional ten seconds, the system B I O S should reinitiate the detection sequence again. If the device fails to respond within ten more seconds, the system B I O S can assume the device is not functioning properly.
+
+It is recommended that software Or system B I O S clear Serial A T A Error Register, P x S E R R, after port reset happens by writing one to each implemented bit location.
+The foundational process of system initialization mandates the efficient enablement of peripheral I O interfaces to ensure rapid system boot. For S A T A connectivity, the system B I O S plays a pivotal role by strategically enabling S A T A ports early within the P O S T sequence, specifically preceding the critical memory initialization phase. This proactive enablement is achieved by manipulating dedicated P C I configuration space registers. For instance, setting the "Port x Enable," or P x E, bits within the D thirty one colon F two colon ninety two hexadecimal and D thirty one colon F five colon ninety two hexadecimal Port Control and Status registers triggers the necessary power sequencing to initiate the physical spin up of connected S A T A drives. This direct hardware manipulation minimizes detection latency, contributing significantly to a faster overall boot time.
+
+The configuration of S A T A ports is contingent upon the operational mode. In legacy I D E mode, the B I O S configures the relevant P C I register, specifically bits three through zero of D thirty one colon F two colon ninety two hexadecimal, by programming them to a value of hexadecimal zero F. This bitmask corresponds to enabling all six S A T A ports for a particular S K U. Should the system detect the absence of a connected drive on a given port, the B I O S retains the capability to selectively disable that port, a common optimization for power conservation and to prevent unnecessary enumeration attempts by the operating system.
+
+Conversely, in more advanced modes such as A H C I and R A I D, which offer enhanced features like Native Command Queuing and hot plugging, the B I O S employs a different configuration. For a six-port system, bits five through zero of D thirty one colon F two colon ninety two hexadecimal are programmed to hexadecimal three F, while for a four-port system, the value is hexadecimal zero F. Crucially, within A H C I enabled architectures, the P C S register, or Port Control and Status register, assumes a paramount role and must be appropriately configured. The operational status and control of the S A T A port in these modes are typically managed through A H C I's designated memory mapped I O space, facilitating more efficient host controller communication.
+
+For systems featuring multiple S A T A drives, particularly in server environments where power transients are a concern, "Staggered Spin Up" is a vital power management technique. This approach mitigates peak current draw during the drive power-on sequence. The B I O S orchestrates this by enabling one S A T A port at a time. After activating a port, the B I O S actively polls the "Port Present" bit within the P C S register and the "Drive Ready" bit within the respective drive's task file status register. It is only upon confirmation that the current drive has fully spun up and is ready for operation that the B I O S proceeds to enable the next S A T A port in the sequence. This sequential power application prevents a simultaneous surge that could overload the power delivery system.
+
+Robust device detection is critical for system stability. The A T A / A T A P I seven specification dictates a baseline thirty one second timeout for device detection. Intel's recommended implementation refines this with a probabilistic, multi-stage timeout mechanism. Initially, if a device fails to respond within the first ten seconds of a detection sequence, the B I O S is instructed to reinitiate the entire detection process. Should the device again fail to respond within an *additional* ten seconds, the B I O S reattempts the sequence once more. If, after these multiple retries, the device remains unresponsive within a final ten seconds—cumulating to a total of thirty seconds from the initial attempt—the system B I O S is permitted to definitively assume that the S A T A device is not functioning correctly. This iterative timeout strategy provides a balance between boot speed and the need to accommodate devices with varying response latencies or temporary issues.
+
+Regarding error management, it is imperative for software or the system B I O S to clear any pending errors in the Serial A T A Error Register, designated as P x S E R R, following a port reset event. The standard mechanism for clearing these error flags involves writing a logical one to each active bit location within the register. This write-one-to-clear operation ensures that transient errors or conditions that necessitated the port reset are acknowledged and the error state is appropriately reset, preparing the port for subsequent error reporting.

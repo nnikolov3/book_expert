@@ -1,0 +1,57 @@
+Baseline Assumptions for Enabling Intel Fast Boot
+
+The following assumptions are made in the Fast Boot feature:
+1.
+
+A stable platform configuration is reachable. Following the initial
+provisioning boot, small modifications to platforms are allowed,
+but the majority of systems boot continuously with the same
+configuration, from the same drive for the life of the system to the
+same operating system for the life of the system, in a very limited
+number of environments (example: at home, at work, or in a single
+
+industrial application).
+
+—There are no reconfigurations allowed after the first boot. This means
+that after the platform is provisioned out of the box, the
+
+configuration is not changing.
+
+—Boot device list does not change, the BIOS setup menu does not
+change, and the non-PCI devices on external buses/ports do not
+require BIOS discovery and initialization. Finally, device
+
+initialization needs do not change.
+
+—Minimum configuration boot when boot target is a nonstandard or
+user-defined OS. Provide only a static splash screen display only,
+
+as opposed to dynamic video prior to OS.
+
+No UEFI shell or Serial Redirecting debug console as any user
+
+interaction or configuration change will negate Fast Boot times.
+Baseline Assumptions for Enabling Intel Fast Boot.
+
+The following assumptions are made in the Fast Boot feature:
+
+One. A stable platform configuration is reachable. Following the initial provisioning boot, small modifications to platforms are allowed, but the majority of systems boot continuously with the same configuration, from the same drive for the life of the system to the same operating system for the life of the system, in a very limited number of environments, for example at home, at work, or in a single industrial application.
+
+There are no reconfigurations allowed after the first boot. This means that after the platform is provisioned out of the box, the configuration is not changing.
+
+Boot device list does not change, the B I O S setup menu does not change, and the non P C I devices on external buses or ports do not require B I O S discovery and initialization. Finally, device initialization needs do not change.
+
+Minimum configuration boot when boot target is a nonstandard or user defined O S. Provide only a static splash screen display only, as opposed to dynamic video prior to O S.
+
+Two. No U E F I shell or Serial Redirecting debug console as any user interaction or configuration change will negate Fast Boot times.
+This document outlines the baseline assumptions necessary for enabling Intel Fast Boot functionality. These assumptions are crucial for ensuring a predictable and expedited system startup process.
+
+The first primary assumption is that a stable platform configuration is achievable. This implies that following the initial system provisioning and boot, only minor modifications to the platform's hardware or software are permitted. The majority of systems are expected to boot continuously with the same fundamental configuration, often utilizing the same operating system and boot drive. This stability is particularly important in scenarios with a limited number of environments, such as home use, varied workplace settings, or specialized industrial applications. The underlying principle here is to minimize variability that could otherwise introduce overhead or unpredictability during the boot sequence.
+
+Further elaborating on configuration stability, the document states that no reconfigurations are allowed after the very first boot. This means that once the platform has been provisioned and has undergone its initial boot cycle, its configuration state, as defined by the boot process, should remain static. Any changes occurring after this initial boot are considered outside the scope of these baseline assumptions, and thus could potentially disrupt Fast Boot.
+
+A second key assumption is that the boot device list does not change. This implies that the Basic Input Output System, or B I O S, setup menu’s configuration of bootable devices remains constant. Furthermore, non P C I devices situated on external buses or ports should not necessitate dynamic B I O S discovery and initialization. This ensures that the system doesn't expend time enumerating and configuring hardware that is not part of the essential boot path. Consequently, device initialization needs, for these non essential components, should also remain constant.
+
+The third assumption pertains to minimum configuration boot behavior. When the boot target is nonstandard or involves a user defined Operating System, the system should provide only a static splash screen display. This is in contrast to a dynamic video output, which might occur prior to the Operating System fully initializing and taking control of the display. This assumption aims to simplify the early boot stages by deferring complex graphical rendering until a stable system state is achieved.
+
+The final point addresses the interaction with the system firmware and its impact on Fast Boot. It is assumed that no U E F I shell or Serial Redirecting debug console is active during the boot process. Such interfaces, if present and active, could introduce user interaction or configuration changes that would negate the benefits of Fast Boot by requiring additional processing or dynamic adjustments. The core idea is to maintain an unhindered pathway from power on to the operating system’s loaded state.

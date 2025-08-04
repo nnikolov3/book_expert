@@ -1,0 +1,50 @@
+associated with what the user can do with or to the system.
+
+You're pirates. Hang the code, and hang the rules. They’re more like
+
+guidelines anyway.
+—FElizabeth to crew of the Black Pearl in Pirates of the Caribbean
+
+For instance, it might be reasonable to presume that in a platform with no
+add-in slots, a user will not be able to boot from a RAID controller, since
+there is no integrated component for RAID in the chipset or down on the
+board. The user cannot expect it to be initialized.
+
+This is where a designer enters the “platform policy zone.” These
+policies are dynamic; when you truly understand the “what” and the “why,”
+you can institute changes. You can question everything and not stand on
+tradition. Even though a platform may not expose an add-in slot, the platform
+might expose a USB connection. A conscious decision needs to be made for
+how and when these components are used. We need to make informed
+decisions in these cases.
+
+In some cases, it is determining what you don’t need to do in the BIOS
+space versus the operating system space. This can be more important for boot
+time reductions than what you need to do during the boot flow. Example: If
+the OS kernel or drivers are going to repeat the bus/device enumeration of the
+entire PCI subsystem, for SATA, or for USB hubs/devices, then you only
+need to do what you must to get the OS loaded and executing and skip the
+rest. Too often, the standard PC BIOS handles many inane corner cases that
+can be found in one or two devices on the market for the sake of ultimate
+backward compatibility, all the way back to DOS. A standard PC BIOS fills
+out every line of every legacy data table in memory regardless of whether the
+
+OS or application needs the data. It has been considered a real added value
+associated with what the user can do with or to the system.
+
+You're pirates. Hang the code, and hang the rules. They're more like guidelines anyway.
+
+—Elizabeth to crew of the Black Pearl in Pirates of the Caribbean
+
+For instance, it might be reasonable to presume that in a platform with no add in slots, a user will not be able to boot from a R A I D controller, since there is no integrated component for R A I D in the chipset or down on the board. The user cannot expect it to be initialized.
+
+This is where a designer enters the "platform policy zone." These policies are dynamic; when you truly understand the "what" and the "why," you can institute changes. You can question everything and not stand on tradition. Even though a platform may not expose an add in slot, the platform might expose a U S B connection. A conscious decision needs to be made for how and when these components are used. We need to make informed decisions in these cases.
+
+In some cases, it is determining what you don't need to do in the B I O S space versus the operating system space. This can be more important for boot time reductions than what you need to do during the boot flow. Example: If the O S kernel or drivers are going to repeat the bus device enumeration of the entire P C I subsystem, for S A T A, or for U S B hubs devices, then you only need to do what you must to get the O S loaded and executing and skip the rest. Too often, the standard P C B I O S handles many inane corner cases that can be found in one or two devices on the market for the sake of ultimate backward compatibility, all the way back to D O S. A standard P C B I O S fills out every line of every legacy data table in memory regardless of whether the O S or application needs the data. It has been considered a real added value
+The text discusses dynamic platform policies and their implications during the boot process, particularly in the context of hardware initialization and operating system loading.
+
+A key concept illustrated is the interaction between platform firmware, often referred to as the B I O S, and the operating system's kernel and drivers. When a platform's design allows for flexibility, such as the absence of integrated components like a R A I D controller, the system designer faces decisions regarding how and when components are initialized. This is framed as a "platform policy zone," where policies are not static but can be adapted. The text emphasizes that a conscious decision must be made about which components are exposed and utilized.
+
+The explanation delves into the importance of efficiently managing the B I O S space, especially for boot time reductions. A critical aspect highlighted is the bus and device enumeration process that the O S kernel and its drivers perform. This enumeration is essential for identifying and configuring all connected hardware. The text provides an example involving the P C I subsystem, illustrating how a platform might need to enumerate devices connected via S A T A or U S B hubs. The goal is to load the operating system and execute the necessary boot sequence.
+
+The discussion then turns to the prevalence of legacy support in standard P C B I O S implementations. It notes that many B I O S implementations handle numerous "inane corner cases," often for the sake of maintaining backward compatibility, extending even to the D O S era. This often involves filling legacy data tables in memory regardless of their actual utility. This approach, while ensuring broad compatibility, can introduce overhead and complexity. The rationale behind such extensive legacy support is often attributed to the perceived "real added value" of ensuring that older software and hardware continue to function on modern systems, even if those functions are not actively used. This highlights a fundamental trade-off in system design: balancing the benefits of embracing new standards with the necessity of supporting existing ecosystems.

@@ -1,0 +1,37 @@
+used to indicate sequential pre-production SPD revision levels; however, the
+
+first production release will be Revision 1.0.
+
+SPD Field 0x02: Device Type
+
+DDR3 DIMMs are programmed with the value 0x0B.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+2 0x02 Device Type Ox0OB DDR3 SDRAM
+
+Per JEDEC Specification, Byte 2: Key Byte/ DRAM Device Type
+
+This byte is the key byte used by the system BIOS to determine how to
+interpret all other bytes in the SPD EEPROM. The BIOS must check this
+byte first to ensure that the EEPROM data is interpreted correctly. Any
+DRAM or module type that requires significant changes to the SPD format
+(beyond defining previously undefined bytes or bits) also requires a new
+
+entry in the key byte table below.
+used to indicate sequential pre production S P D revision levels; however, the first production release will be Revision one point zero.
+
+S P D Field zero x zero two: Device Type
+
+D D R three D I M M s are programmed with the value zero x zero B.
+
+The table shows the S P D data for Device Type. The first row has the Byte decimal value of two. The corresponding Byte hexadecimal value is zero x zero two. The Field Name is Device Type and the Typical Value is zero x zero B. The Definition is D D R three S D Ram.
+
+Per J E D E C Specification, Byte two: Key Byte / D Ram Device Type
+
+This byte is the key byte used by the system B I O S to determine how to interpret all other bytes in the S P D E E P R O M. The B I O S must check this byte first to ensure that the E E P R O M data is interpreted correctly. Any D Ram or module type that requires significant changes to the S P D format (beyond defining previously undefined bytes or bits) also requires a new entry in the key byte table below.
+The provided text details the function of a specific byte within the Serial Presence Detect, or S P D, data structure used in computer memory modules. Specifically, it addresses S P D Field zero through zero two, designated as the Device Type.
+
+This field is crucial for system initialization, particularly for the system's basic input output system, or B I O S. The B I O S reads this byte to ascertain the type of memory module installed. The table illustrates that for a device type represented by the decimal value two, which corresponds to hexadecimal zero x zero two, the field name is indeed "Device Type" and the typical value is hexadecimal zero x zero B. This specific value, zero x zero B, is defined as representing D D R three S D Ram.
+
+The significance of this byte is further elaborated by its role as a "key byte." As per J E D E C Specification, Byte two is a critical identifier. The system B I O S relies on this key byte to correctly interpret the remaining bytes within the S P D E EPROM. This initial interpretation is paramount to ensure that the subsequent data read from the E EPROM is understood in the intended manner. Any variation in the memory device type, such as a new generation of D Ram or a significantly different module architecture, that necessitates changes to the existing S P D format or introduces undefined bytes or bits, requires a corresponding new entry in this key byte table to maintain proper system functionality and memory identification. The system must validate this byte to ensure it can correctly parse the rest of the S P D data, thereby enabling the correct configuration and operation of the installed memory.

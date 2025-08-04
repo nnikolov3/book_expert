@@ -1,0 +1,55 @@
+used to supply OSPM with the address of a device on its parent bus. An
+_ADR object is used when specifying the address of any device on a bus that
+has a standard enumeration algorithm.
+
+Objects can be a sum of the DSDT and any loaded SSDTs. But what
+does that mean? And how do we generate it?
+
+You can create DSDT or SSDT from an ASL (ACPI Source Language)
+source file and generate AML (ACPI Machine Language) using an ASL
+compiler. Microsoft has a few versions of the compiler and Intel has an ASL
+compiler called IASL.exe. There are 64- and 32-bit versions of the compiler
+tools, but even the 32-bit version of the tool will generate a 64-bit version of
+the ASL code. The ACPICA project (www.acpica.org) also has source to
+generate a new compiler tool for various operating systems.
+
+On a Windows machine, by looking into a device manager and picking
+Devices by connection, one can see the results of the ACPI namespace. To
+actually look at a representation of ASL code on a real machine, the Intel
+ASL compiler also includes a disassembler and an extractor to pull it from a
+
+local machine.
+For more information on ACPI:
+
+—For a starting point for ACPI, start with the ACPI specification; it has
+
+ample example code at www.apci.info.
+
+—Discover more data at the ACPI Component Architecture website
+
+(www.acpica.org). It has the ACPI Component Architecture User
+
+Guide and Programmer Reference Manual and the ACPI Source
+
+Language Optimizing Compiler and Disassembler User Guide.
+
+—A currently obsolete-but-still-applicable ACPI Implementer’s Guide
+also can be found (still) on the Web. It was produced in the early
+This text describes aspects of the ACPI system, specifically how it is used to supply the O S P M with the address of a device on its parent bus. An A D R object is utilized when specifying the address of any device on a bus that has a standard enumeration algorithm.
+
+Objects can be a sum of the D S D T and any loaded S S D T s. This raises questions about what that means and how to generate it.
+
+One method to create D S D T or S S D T is from an A S L, which stands for A C P I Source Language, source file. This then generates A M L, or A C P I Machine Language, using an A S L compiler. Microsoft has released several versions of this compiler, and Intel provides an A S L compiler named I A S L dot E X E. Compiler tools are available in sixty four bit and thirty two bit versions. Even the thirty two bit version of the tool is capable of generating a sixty four bit version of the A S L code. The A C P I C A project, accessible at W W W dot A C P I C A dot O R G, also offers source code to generate a new compiler tool compatible with various operating systems.
+
+On a Windows machine, by examining the device manager and selecting Devices by connection, one can view the contents of the A C P I namespace. To truly inspect a representation of A S L code on a physical machine, the Intel A S L compiler includes both a disassembler and an extractor, enabling the code to be pulled directly from the local machine.
+
+For additional information on A C P I, a good starting point is the A C P I specification, which provides ample example code available at W W W dot A P C I dot I N F O. Further data can be discovered at the A C P I Component Architecture website, W W W dot A C P I C A dot O R G. This site hosts the A C P I Component Architecture User Guide, the Programmer Reference Manual, and the A C P I Source Language Optimizing Compiler and Disassembler User Guide. Additionally, a currently obsolete but still applicable A C P I Implementer’s Guide can also be found on the Web. It was originally produced in the early period.
+The Advanced Configuration and Power Interface, known as A C P I, establishes a critical standard for operating systems to discover, configure, and manage hardware components, particularly concerning power states. Within this framework, the `_A D R` object, or Address object, serves as a fundamental descriptor. Its primary function is to provide the Operating System Power Management, or O S P M, with the physical address of a device relative to its immediate parent bus. This is indispensable for systems utilizing a standard enumeration algorithm, a systematic process by which the O S identifies all connected devices on a bus and allocates their necessary resources. This abstraction layer allows the O S to manage devices uniformly, regardless of the underlying hardware specifics, fostering hardware abstraction and portability.
+
+The entirety of the A C P I hardware description is represented by a hierarchical collection of objects, which are conceptually formed by combining the Differentiated System Description Table, or D S D T, and any dynamically loaded Secondary System Description Tables, or S S D T s. The D S D T acts as the core blueprint, detailing static system components, their resources, and power management methods. S S D T s, in contrast, provide extensions or modifications to this base description, often used for hot plug devices, processor specific power management, or vendor specific customizations. This modular structure allows for flexible and extensible system configuration, adapting to diverse hardware platforms and dynamic device additions.
+
+These descriptive tables are not created directly in binary form but are derived from a high level declarative language known as A C P I Source Language, or A S L. The A S L source code is then compiled into A C P I Machine Language, or A M L, which is a bytecode interpreter language embedded within the system's firmware, typically the Basic I O System or Unified Extensible Firmware Interface. The compilation process from A S L to A M L is performed by specialized A S L compilers. Notable examples include compilers developed by Microsoft and Intel, with Intel's I A S L dot E X E being a widely used implementation. It is important to distinguish between the compiler's own architecture, whether it is a sixty four bit or thirty two bit application, and the architecture of the target system for which it generates A M L. A thirty two bit compiler, for instance, is perfectly capable of producing A M L that is fully compatible with a sixty four bit system environment, as A M L is an interpreted language, not native machine code. The A C P I C A project, accessible via `www dot a C P I C A dot org`, further democratizes this development process by providing open source access to compiler tools, supporting a broad array of operating systems and hardware designs.
+
+On a running system, such as a Windows machine, the A C P I namespace can be observed indirectly through system utilities like the Device Manager. By selecting the "Devices by connection" view, one can visualize the hierarchical structure of devices, which largely mirrors the A C P I defined parent child relationships and bus topology. For deeper analysis and reverse engineering of the A C P I implementation on a specific machine, the Intel A S L compiler suite often includes an extractor and a disassembler. The extractor tool can read the compiled A M L bytecode directly from the system's firmware and save it as a file. Subsequently, the disassembler can translate this A M L bytecode back into human readable A S L source code. This capability is invaluable for developers and engineers seeking to understand, debug, or optimize the firmware's hardware configuration and power management logic as defined by the A C P I tables.
+
+For those engaging with the A C P I standard at a foundational level, the A C P I specification itself serves as the definitive reference, providing comprehensive details and often including illustrative example code, as found on resources like `www dot a P C I dot info`. Further in depth technical documentation is available from the A C P I Component Architecture website at `www dot a C P I C A dot org`. This resource hosts essential guides such as the A C P I Component Architecture User Guide, which aids in understanding the overall design principles, and the Programmer Reference Manual, which delves into the intricacies of the A M L instruction set and object definitions critical for A C P I development. Additionally, the A C P I Source Language Optimizing Compiler and Disassembler User Guide provides practical guidance on using the associated tools. It is also worth noting that older, yet still pertinent, documentation like the A C P I Implementer's Guide, which predates some of the latest revisions, may still be accessible and provide valuable insights into the fundamental implementation strategies of the A C P I standard from its earlier iterations.

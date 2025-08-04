@@ -1,0 +1,34 @@
+For operating systems that support a CSM-iree boot, the GOP driver will be
+loaded by BIOS instead of CSM legacy video option ROM. This eliminates
+the time spent on creating legacy VGA mode display services (INT 10).
+
+Benefits can be seen in Figure 12.1 in microseconds based on different
+
+ports/monitor selection.
+
+BD Legacy VBIOS
+SRCRCROCK) = m GOP
+
+HOOK] +
+
+Figure 12.1: Benefits of Graphics Output Protocol Support
+
+Panel Specification
+
+If you are using an Embedded DisplayPortf (eDP) panel, using the panel
+startup time per the industry specification, then 250 ms is required during the
+boot to just reset power on the panel. This is a ridiculously long time to wait
+for hardware, as an entire PC motherboard takes about that time to come up
+through power sequencing. If the timing is adjusted to what the hardware
+
+actually requires to cycle power, then eDP may prove adequate.
+For operating systems that support a C S M free boot, the G O P driver will be loaded by B I O S instead of C S M legacy video option R O M. This eliminates the time spent on creating legacy V G A mode display services I N T ten. Benefits can be seen in Figure twelve point one in microseconds based on different ports monitor selection.
+
+The figure is a bar chart titled Benefits of Graphics Output Protocol Support. The Y axis is labeled with values from zero to one million, representing time in microseconds. The X axis displays different display interfaces: C R T, D P, e D P, H D M I, and L V D S. Each interface has two bars, one light gray representing Legacy V B I O S and one dark gray representing G O P. For C R T, Legacy V B I O S is approximately four hundred thousand microseconds, and G O P is approximately two hundred thousand microseconds. For D P, Legacy V B I O S is approximately four hundred fifty thousand microseconds, and G O P is approximately three hundred thousand microseconds. For e D P, Legacy V B I O S is approximately eight hundred fifty thousand microseconds, and G O P is approximately five hundred thousand microseconds. For H D M I, Legacy V B I O S is approximately six hundred thousand microseconds, and G O P is approximately three hundred thousand microseconds. For L V D S, Legacy V B I O S is approximately five hundred thousand microseconds, and G O P is approximately one hundred thousand microseconds.
+
+Panel Specification.
+
+If you are using an Embedded DisplayPort E D P panel, using the panel startup time per the industry specification, then two hundred fifty milliseconds is required during the boot to just reset power on the panel. This is a ridiculously long time to wait for hardware, as an entire P C motherboard takes about that time to come up through power sequencing. If the timing is adjusted to what the hardware actually requires to cycle power, then E D P may prove adequate.
+The provided text discusses the role of the Graphics Output Protocol, or GOP, in the boot process of operating systems, particularly in systems that support a CSM free boot. This GOP driver is loaded by the basic input output system, or B I O S, as an alternative to the CSM legacy video option R O M. The significance of this approach lies in its ability to reduce the time spent initializing legacy V G A mode display services, which are often accessed through interrupts like I N T ten. The efficiency gains, visualized in Figure twelve point one, are measured in microseconds and demonstrate benefits across various display output standards such as C R T, DisplayPort, Embedded DisplayPort, H D M I, and L V D S. The bar graph clearly illustrates that the GOP driver significantly reduces the initialization time compared to the legacy VBIOS for all these display interfaces, with some interfaces showing particularly pronounced improvements.
+
+The text then transitions to the specific context of an Embedded DisplayPort, or e D P, panel. It highlights an industry specification that mandates a two hundred fifty millisecond, or two hundred fifty ms, startup time. This duration is described as a substantial delay, implying that the entire PC motherboard requires this amount of time to power on and become fully operational, including the display initialization sequence. The implication is that if the timing parameters for power sequencing are optimized, an e D P connection might offer a more responsive and efficient startup experience. This relates to the broader concepts of system initialization, firmware interfaces, and display protocol efficiency, where minimizing latency during the boot phase is crucial for user experience and overall system responsiveness. The differences in initialization times between legacy V G A and modern display protocols like e D P are driven by the underlying hardware capabilities and the firmware's ability to efficiently manage these interfaces.

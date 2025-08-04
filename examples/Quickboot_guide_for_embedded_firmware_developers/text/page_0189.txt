@@ -1,0 +1,42 @@
+General Purpose 1/0 (GPIO) Configuration
+
+GPIOs are key to the extensibility of the platform. As the name implies,
+GPIOs can be configured for either input or output, but also can be
+configured for a native functionality. Depending on weak or strong pull-up or
+pull-down resistors, some GPIOs also can act like strapping pins, which are
+sampled at RESET by the chipset and can have a second meaning during boot
+and runtime. GPIOs also may act like sideband signals to allow for system
+wakes. GPIO 27 is used for this on most mainstream platforms.
+System-on-chip devices are designed to be used in a large number of
+configurations, the devices often having more capabilities than the device can
+expose on the I/O pins concurrently. That is because several functions are
+multiplexed to a particular I/O pin. The configuration of the pins must be set
+before use. The pins are configured to either provide a specific function or
+serve as a general-purpose 1/0 pin. I/O pins on the device are used to control
+logic or behavior on the device. General purpose I/O pins can be configured
+as input or output pins. GPIO control registers provide status and control.
+System firmware developers must work through between 64 and 256
+GPIOs and their individual options with the board designer (per platform) to
+
+ensure that this feature is properly enabled.
+
+Interrupt Controllers
+
+Intel architecture has several different methods of interrupt handling. The
+
+following or a combination of the following can be used to handle interrupts:
+—Programmable Interrupt Controller (PIC) or 8259
+
+—Local Advanced Programmable Interrupt Controller (APIC)
+General Purpose I O G P I O Configuration.
+
+G P I Os are key to the extensibility of the platform. As the name implies, G P I Os can be configured for either input or output, but also can be configured for a native functionality. Depending on weak or strong pull up or pull down resistors, some G P I Os also can act like strapping pins, which are sampled at R E S E T by the chipset and can have a second meaning during boot and runtime. G P I Os also may act like sideband signals to allow for system wakes. G P I O twenty seven is used for this on most mainstream platforms. System on chip devices are designed to be used in a large number of configurations, the devices often having more capabilities than the device can expose on the I O pins concurrently. That is because several functions are multiplexed to a particular I O pin. The configuration of the pins must be set before use. The pins are configured to either provide a specific function or serve as a general purpose I O pin. I O pins on the device are used to control logic or behavior on the device. General purpose I O pins can be configured as input or output pins. G P I O control registers provide status and control. System firmware developers must work through between sixty four and two hundred fifty six G P I Os and their individual options with the board designer per platform to ensure that this feature is properly enabled.
+
+Interrupt Controllers.
+
+Intel architecture has several different methods of interrupt handling. The following or a combination of the following can be used to handle interrupts: Programmable Interrupt Controller P I C or eight two five nine. Local Advanced Programmable Interrupt Controller A P I C.
+General Purpose I O, or GPIOs, are foundational elements for platform extensibility, functioning as versatile digital input or output pins.  Their configuration allows for flexible adaptation to specific hardware requirements.  This flexibility is further enhanced by the presence of internal pull up or pull down resistors, which can be activated to define a default state for a pin.  Certain GPIOs are designated for specific functions, such as acting as strapping pins.  These pins are sampled during the reset sequence by the chipset and can provide a secondary meaning for the system's initial configuration or runtime behavior.  For instance, GPIO twenty seven is noted as being utilized for such purposes on many mainstream platforms.
+
+System on chip designs often incorporate a significant number of GPIOs, providing a rich set of capabilities. This large quantity of pins is necessary because multiple functions can be multiplexed onto a single physical I O pin. Before a pin can be used, its configuration must be set, typically through system firmware. This configuration determines whether the pin will serve as a general purpose I O pin or be dedicated to a specific function. In the context of general purpose I O, these pins can be directed to control logic or behavior within the device, acting as either input or output ports. GPIO control registers are the mechanism through which this status and control are managed. System firmware developers must interact with a range of sixty four to two hundred fifty six GPIOs, often in conjunction with the board designer who determines the specific options and configurations available on a per platform basis to ensure proper feature enablement.
+
+Interrupt Controllers are critical components in managing asynchronous events within a system. Intel architecture employs various methods for interrupt handling. These methods can be used individually or in combination. Two primary approaches are described: the Programmable Interrupt Controller, or P I C, often identified by its common iteration, the eight two fifty nine, and the Local Advanced Programmable Interrupt Controller, or A P I C. These controllers facilitate the efficient and orderly processing of interrupts generated by peripheral devices or internal system events.

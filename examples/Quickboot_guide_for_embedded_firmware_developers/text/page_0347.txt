@@ -1,0 +1,49 @@
+SPD Field #23: “Minimum Active to Active/Refresh Delay Time (tgc-min)”
+Example from Micron MT41J256M8 Datasheet
+
+SPD Field 0x18 and 0x19: Min. Refresh Recovery Delay (tppcmin)
+
+This is another field that must be extracted from the datasheet and divided by
+
+the Medium Timebase Divisor. In our example:
+
+1.
+The tgp value found in the Micron MT41J256M8-187E datasheet for
+our specific SDRAM chip gives 160 ns. Note that the
+MT41J256M8-187E. is a 2 Gb part.
+
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+
+3.
+50.625 ns/0.125 ns = 1280 = 0x0500.
+
+4.
+The LSB, 0x00, goes into SPD field #24 (0x18).
+
+5.
+
+The MSB, 05, goes into SPD field #25 (0x19).
+S P D Field twenty-three: "Minimum Active to Active/Refresh Delay Time (t R C min)" Example from Micron M T fourty-one J two fifty-six M eight Datasheet.
+
+S P D Field zero x eighteen And zero x nineteen: Min. Refresh Recovery Delay (t R F C min).
+
+This is another field that must be extracted from the datasheet and divided by the Medium Timebase Divisor. In our example:
+
+One. The t R F C value found in the Micron M T fourty-one J two fifty-six M eight - one eight seven E datasheet for our specific S D R A M chip gives one hundred sixty nanoseconds. Note that the M T fourty-one J two fifty-six M eight - one eight seven E is a two Gigabyte part.
+
+Two. This number must be divided by the Medium Timebase Divisor, the value in zero x O B. In our example this is zero point one two five nanoseconds.
+
+Three. Fifty point six two five nanoseconds divided by zero point one two five nanoseconds is equal to one thousand two hundred eighty which is equal to zero x zero five zero zero.
+
+Four. The L S B, zero x zero zero, goes into S P D field twenty-four (zero x eighteen).
+
+Five. The M S B, zero five, goes into S P D field twenty-five (zero x nineteen).
+This document details the extraction and interpretation of timing parameters from a Synchronous Dynamic Random Access Memory, or S D Ram, chip, specifically referencing the Micron MT41J256M8 datasheet. The primary focus is on two key timing specifications: SPD Field twenty-three, representing the "Minimum Active to Active/Refresh Delay Time," denoted as t R C min, and SPD Field zero times eighteen and zero times nineteen, which corresponds to the "Minimum Refresh Recovery Delay," or t R F C min. These fields are crucial for understanding the operational constraints and performance characteristics of the S D Ram module.
+
+The process begins with SPD Field twenty-three, which is a direct parameter for t R C min. The example cites a Micron MT41J256M8 datasheet, indicating that this specific S D Ram chip is a two gigabyte component.
+
+The extraction of t R F C min involves a more complex calculation. It is derived from a value found in the datasheet and subsequently divided by a "Medium Timebase Divisor." The document provides an example for a Micron MT41J256M8-187E part. Step one states that the t R F C value found in the Micron MT41J256M8-187E datasheet is one hundred sixty nanoseconds. Step two explains that this value must be divided by the Medium Timebase Divisor, which in the provided example is given as zero point one two five nanoseconds, represented in hexadecimal as zero x O B. Step three demonstrates the calculation: fifty point six two five nanoseconds divided by zero point one two five nanoseconds, resulting in a value of twelve hundred eighty, which is expressed in hexadecimal as zero x zero five zero zero. This result represents the Medium Timebase Divisor itself, not the t R F C min value directly.
+
+The subsequent steps describe how this calculated divisor is then used to determine other timing parameters. Step four indicates that the least significant bits, or L S B, represented as zero x zero zero, are placed into SPD Field twenty-four, which is also denoted as zero times eighteen. Step five specifies that the most significant bits, or M S B, represented as zero five, are placed into SPD Field twenty-five, denoted as zero times nineteen. This implies that the twelve hundred eighty value is being split into two bytes, with the lower byte going into one S P D field and the upper byte into another, likely to store the Medium Timebase Divisor value within the S P D structure. The actual t R F C min value would then be calculated by multiplying the value stored in SPD Fields twenty-four and twenty-five by the base timing unit associated with these fields, which is not explicitly detailed but is implied to be derived from the initial t R F C measurement and the medium timebase. The text highlights the importance of understanding these specific timing parameters for proper S D Ram initialization and operation, as they dictate the minimum time intervals between different memory access operations, ensuring data integrity and system stability.

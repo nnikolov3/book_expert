@@ -1,0 +1,60 @@
+Down-on-board memory designs should set this field to 0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+61 0x30 (Unbuffered): Module Max. Thickness Dx 0 Thickness<lmm
+
+Byte 61 (Unbuffered): Module Maximum Thickness
+
+This byte defines the maximum thickness (E dimension) in millimeters of the
+fully assembled module, including heat spreaders or other added components
+above the module circuit board surface. Thickness of the front of the module
+is calculated as the E1 dimension minus the PCB thickness. Thickness of the
+back of the module is calculated as the E dimension minus the E1 dimension.
+Refer to the relevant JEDEC JC-11 module outline (MO) documents for
+
+dimension definitions.
+
+Bits 74 Bits 3-0
+
+Module Maximum Thickness max, Module Maximum Thickness max,
+Back, in mm (baseline thickness = 1 Front, in mm (baseline thickness =
+
+mim) 1 mm)
+0000 = thickness<1 mm 0000 = thickness<1 mm
+Bits 7—4 Bits 3-0
+
+Module Maximum Thickness max, Module Maximum Thickness max,
+Back, in mm (baseline thickness = 1 Front, in mm (baseline thickness =
+
+mim) 1 mm)
+
+0001 = 1 < thickness<2 mm 0001 = 1 < thickness<2 mm
+0010 = 2 < thickness<3 mm 0010 = 2 < thickness<3 mm
+0011 = 3 < thickness<4 mm 0011 = 3 < thickness<4 mm
+1110 = 14 < thickness<15 mm 1110 = 14 < thickness<5 mm
+1111 = 15 < thickness 1111 = 15 < thickness
+
+Note: Thickness = E - E1 Note: Thickness = E1 - PCB
+Down-on board memory designs should set this field to zero times zero zero.
+
+The table shows details for Byte sixty one, Unbuffered Module Maximum Thickness. The Byte column shows sixty one in decimal and hexadecimial three D. The Field Name is Module Maximum Thickness. The Typ. Value is zero times zero zero. The Definition is Thickness less than one millimeter.
+
+Byte sixty one Unbuffered Module Maximum Thickness. This byte defines the maximum thickness E dimension in millimeters of the fully assembled module including heat spreaders or other added components above the module circuit board surface. Thickness of the front of the module is calculated as the E one dimension minus the P C B thickness. Thickness of the back of the module is calculated as the E dimension minus the E one dimension. Refer to the relevant J E D E C J C eleven module outline M O documents for dimension definitions.
+
+Bits seven to four: Module Maximum Thickness max, Back, in millimeters, with baseline thickness equal to one millimeter. Zero zero zero zero equals thickness less than or equal to one millimeter.
+
+Bits three to zero: Module Maximum Thickness max, Front, in millimeters, with baseline thickness equal to one millimeter. Zero zero zero zero equals thickness less than or equal to one millimeter.
+
+Bits seven to four: Module Maximum Thickness max, Back, in millimeters, with baseline thickness equal to one millimeter. Zero zero zero one equals one less than thickness less than or equal to two millimeters. Zero zero one zero equals two less than thickness less than or equal to three millimeters. Zero zero one one equals three less than thickness less than or equal to four millimeters. ... One one one zero equals fourteen less than thickness less than or equal to fifteen millimeters. One one one one equals fifteen less than thickness. Note: Thickness equals E minus E one.
+
+Bits three to zero: Module Maximum Thickness max, Front, in millimeters, with baseline thickness equal to one millimeter. Zero zero zero one equals one less than thickness less than or equal to two millimeters. Zero zero one zero equals two less than thickness less than or equal to three millimeters. Zero zero one one equals three less than thickness less than or equal to four millimeters. ... One one one zero equals fourteen less than thickness less than or equal to fifteen millimeters. One one one one equals fifteen less than thickness. Note: Thickness equals E one minus P C B.
+The presented information details a specific byte within a system's configuration, designated as Byte sixty one, which corresponds to hexadecimal thirty D. This byte is identified as representing the "Unbuffered: Module Maximum Thickness." The type value for this field is specified as hexadecimal zero zero, indicating a thickness less than one millimeter.
+
+This byte serves to define the maximum thickness of an assembled module, measured in millimeters. This thickness measurement encompasses components such as heat spreaders. The technical definition of this thickness is derived by subtracting the Printed Circuit Board thickness from the E one dimension. The documentation references the JEDEC JC-11 module outline standards for comprehensive dimension definitions.
+
+The byte is further subdivided into two nibbles: Bits seven to four and Bits three to zero, each defining ranges of module thickness.
+
+For Bits seven to four, when referring to the "Back, in millimeter (baseline thickness is one millimeter)," a value of binary zero zero zero zero signifies a thickness less than or equal to one millimeter. This field is further broken down, where binary zero zero zero one corresponds to a thickness greater than one millimeter and less than or equal to two millimeters. Binary zero zero one zero represents a thickness greater than two millimeters and less than or equal to three millimeters, and binary zero zero one one indicates a thickness greater than three millimeters and less than or equal to four millimeters. This pattern continues, with binary one one one zero representing a thickness greater than fourteen millimeters and less than or equal to fifteen millimeters, and binary one one one one denoting a thickness greater than fifteen millimeters. A note clarifies that the thickness here is calculated as the E one dimension minus the Printed Circuit Board thickness.
+
+Similarly, for Bits three to zero, when addressing the "Front, in millimeter (baseline thickness is one millimeter)," a value of binary zero zero zero zero signifies a thickness less than or equal to one millimeter. Binary zero zero zero one corresponds to a thickness greater than one millimeter and less than or equal to two millimeters. Binary zero zero one zero represents a thickness greater than two millimeters and less than or equal to three millimeters, and binary zero zero one one indicates a thickness greater than three millimeters and less than or equal to four millimeters. This sequence extends to binary one one one zero, signifying a thickness greater than fourteen millimeters and less than or equal to fifteen millimeters, and binary one one one one representing a thickness greater than fifteen millimeters. The note here states that the thickness is the E one dimension minus the Printed Circuit Board. This suggests a standardized method for characterizing the physical dimensions of modules, crucial for manufacturing and integration processes.

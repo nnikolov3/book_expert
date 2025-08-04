@@ -1,0 +1,61 @@
+Delay fromm start of internal "WTH MIM = greater of CK or 7.50%; MAX =n/a CK
+
+WRITE transaction to
+internal BEAD command
+
+READ-to-PRECHARGE time ‘KTP MIN = greater of 4CK or 7.5ns; MAX =n/a CK
+CASH to CASH command delay "CCD MIN = CK; MAX = n/a CK
+Auto precharge write ‘DAL MIN = WR+'RP/'CK (AVG); MAX =n/a CK
+ef ove ry + precharge time
+
+MODE REGISTER SET "MED MIN = CK; MAX = n/a A
+command cycle lime
+
+MODE REGISTER SET gi tale MIN = greater of 12CK or 150s; MAX =n/a CK
+
+command update delay
+
+Table 2 Addressing
+
+Parameter 512 Meg x § 256 Meg x B 128 Meg x 16
+Configuration G4 Meg = 4 = Bbanks 32 Megx=E8=xE8banks 16 Meg= 16 = 8 banks
+Refresh count BK BK BK
+
+Row addressing 32K (Al14:0]) 32K (A[14:0]) 16K (A[13:0])
+
+Bank addressing 8 (BA 2:00) 8 (BA[2:0]) 8 (BA[2:0])
+
+Column addressing 2K(A[11,9:0D 1K(A[9:0]) 1K[A[9:0])
+
+SPD Field #29: “Minimum Four Activate Window Delay Time
+(tFAWmin) LSB” Example from Micron MT41J256M8 Datasheet
+
+SPD Field 0x1E: SDRAM Optional Features
+
+These three bits need to be set if the SDRAM device supports the respective
+feature. Included above is an example from the MT41J256M8 datasheet that
+
+shows it supports all three features.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+30 0x1E SDRAM Optional Features 0x83 RIQ 7, RIQ/6, and DLL-OF Mode
+Support
+Delay from start of internal Write transaction to internal Read command, Read to Precharge time, C A S hash to C A S hash command delay, Auto precharge write recovery plus precharge time, Mode Register Set command cycle time, command update delay. 'W T R' has a minimum greater than four C K or seven point five, and a maximum of not applicable, C K. 'R T P' has a minimum greater than four C K or seven point five, and a maximum of not applicable, C K. 'C C D' has a minimum of four C K, and a maximum of not applicable, C K. 'D A L' has a minimum of Write Recovery plus Read Precharge C K average, and a maximum of not applicable, C K. 'M R D' has a minimum of four C K, and a maximum of not applicable, C K. 'M O D' has a minimum greater than twelve C K or fifteen, and a maximum of not applicable, C K.
+
+Table two Addressing presents parameters for different configurations. For the 512 Meg by four configuration, the parameter Configuration is sixty four Meg by four by eight banks. For the 256 Meg by eight configuration, it is thirty two Meg by eight by eight banks. For the 128 Meg by sixteen configuration, it is sixteen Meg by sixteen by eight banks. The Refresh count for all configurations is eight K. For Row addressing, the 512 Meg by four configuration is thirty two K A fourteen down to zero. The 256 Meg by eight configuration is thirty two K A fourteen down to zero. The 128 Meg by sixteen configuration is sixteen K A thirteen down to zero. For Bank addressing, the 512 Meg by four configuration is eight B A two down to zero. The 256 Meg by eight configuration is eight B A two down to zero. The 128 Meg by sixteen configuration is eight B A two down to zero. For Column addressing, the 512 Meg by four configuration is two K A eleven down to zero. The 256 Meg by eight configuration is one K A nine down to zero. The 128 Meg by sixteen configuration is one K A nine down to zero.
+
+S P D Field twenty nine, Minimum Four Activate Window Delay Time, t F A W min L S B, is an example from Micron M T four one two five six M eight Datasheet.
+
+S P D Field zero X one E, S D R A M Optional Features, indicates that these three bits need to be set if the S D R A M device supports the respective feature. Included above is an example from the M T four one two five six M eight datasheet that shows it supports all three features.
+
+The table shows Byte (Decimal) as thirty, Byte (Hex) as zero X one E, Field Name as S D R A M Optional Features, Typical Value as zero X eighty three, and Definition as R Z Q slash seven, R Z Q slash six, and D L L Off Mode Support.
+The document presents timing parameters and addressing configurations for synchronous dynamic random access memory, commonly known as S D Ram. These parameters are crucial for ensuring the correct and efficient operation of memory interfaces within a computing system.
+
+The first section details various timing parameters, each defined by a specific mnemonic and expressed as a minimum number of clock cycles, denoted as C K. For instance, the delay from the start of an internal write transaction to an internal read command, denoted as 'W T R', requires a minimum of four clock cycles or seven point five nanoseconds, whichever is greater. Similarly, the read to precharge time, 'R T P', also mandates a minimum of four C K or seven point five nanoseconds. The CAS hash to CAS hash command delay, 'C C D', specifies a minimum of four C K and a maximum of four C K. The auto precharge write recovery plus precharge time, 'D A L', is defined as the write command plus the read precharge time ('W R' plus 'R P') in clock cycles, averaged over the operations. The mode register set command cycle time, 'M R D', requires a minimum of four C K and a maximum of four C K. Finally, the command update delay, 'M O D', needs a minimum of twelve C K or fifteen nanoseconds. These parameters represent critical timing constraints that must be adhered to by the memory controller to prevent data corruption or operational failures.
+
+Table two, titled "Addressing," illustrates how memory addressing schemes vary across different S D Ram configurations. It compares three configurations: five hundred twelve megabytes multiplied by four data lines, two hundred fifty six megabytes multiplied by eight data lines, and one hundred twenty eight megabytes multiplied by sixteen data lines. For each configuration, it specifies the overall memory organization in terms of capacity and data bus width, along with the number of banks. It then details the size of the row addressing and bank addressing fields. For example, in the five hundred twelve megabytes multiplied by four configuration, the row addressing is sixty four megabytes multiplied by four banks, requiring thirty two address bits, and the bank addressing uses eight bits, specifically Bank Address bits two through zero. The column addressing is two thousand four hundred forty eight bits multiplied by eleven through nine. As the data bus width increases, the row and column addressing schemes adjust to accommodate larger capacities and different internal memory structures. For instance, the one hundred twenty eight megabytes multiplied by sixteen configuration has sixteen megabytes multiplied by sixteen banks, with sixteen thousand row address bits and sixteen thousand column address bits, indicating a different internal bank organization and addressing logic.
+
+The document then delves into specific Serial Presence Detect, or S P D, fields relevant to S D Ram capabilities. S P D Field twenty nine, labeled as "Minimum Four Activate Window Delay Time (tFAWmin) LSB," is cited from a Micron M T four one J two fifty six M eight datasheet. This field, likely representing the least significant byte of the tFAWmin timing parameter, is an example of how vendor-specific timing details are communicated through S P D.
+
+Following this, S P D Field zero times one E is identified as representing S D Ram Optional Features. The accompanying text explains that three bits within this field are designated to indicate the support for various features. The example provided shows that these three bits, when set to zero times eighty three in hexadecimal, indicate support for R Z Q seven, R Z Q six, and D L L Off Mode. This signifies that these optional features are enabled or supported by the particular S D Ram module based on the encoded values in the S P D data. This mechanism allows system memory controllers to dynamically configure themselves based on the capabilities of the installed memory modules.

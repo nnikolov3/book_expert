@@ -1,0 +1,65 @@
+UEFI application that can be launched from the shell. To do this
+automatically, you would configure the startup.nsh script file for the UEFI
+Shell and have that script file do a series of tests and, if they all pass, then
+launch the operating system loader application. There are features that
+directly support this type of behavior with the ability to get and set
+environment variables and use conditional expressions right inside the script
+
+files.
+
+Here is an example script file:
+
+if exist f£s0:\myscript.nsh then
+myscript TEST INFQl1l TEST INFO1
+
+endif
+
+if %lasterror% == EfiError(8)
+echo “write protect error”
+endalt
+
+if %lasterror® == (0
+fs0:\05\0sLoader.EFI
+
+endlf
+
+# note that we never expect the Loader to return,
+ake
+I
+
+but we must have the endif for syntax.
+
+Pre-OS Shells
+
+Both the EFI Shell and the UEFI Shell are UEFI applications. This means
+that they will run on any current UEFI platform (the EFI Shell will run on
+older implementations of the UEFI and EFI specifications). These
+applications have very low requirements from the system. They both need
+
+memory, SimpleTextlnput, SimpleTextOutput, Device-PathToText, and
+A U E F I application that can be launched from the shell. To do this automatically, you would configure the startup dot nsh script file for the U E F I Shell and have that script file do a series of tests and, if they all pass, then launch the operating system loader application. There are features that directly support this type of behavior with the ability to get and set environment variables and use conditional expressions right inside the script files.
+
+Here is an example script file:
+
+If exist f s zero colon backslash my script dot nsh then
+my script T E S T underscore I N F O one T E S T underscore I N F O one
+endif
+If last error percentage is equal to E F I error eight
+echo "write protect error"
+endif
+If last error percentage is equal to zero
+f s zero colon backslash O S backslash O S loader dot E F I
+endif
+Note that we never expect the loader to return,
+But we must have the endif for syntax.
+
+Pre O S Shells
+
+Both the E F I Shell and the U E F I Shell are U E F I applications. This means that they will run on any current U E F I platform the E F I Shell will run on older implementations of the U E F I and E F I specifications. These applications have very low requirements from the system. They both need memory, Simple Text Input, Simple Text Output, Device Path To Text, and
+The provided text discusses UEFI applications and the UEFI Shell, focusing on their execution and functionality. A UEFI application, such as the one described, can be initiated from the shell environment. To achieve automatic execution, a startup script, typically named `startup.nsh`, can be configured. This script can then perform a series of tests. If all tests pass, the script proceeds to launch the operating system loader application. The scripting language supports conditional logic and can interact with environment variables, allowing for dynamic behavior.
+
+An example script is presented, illustrating these concepts. The script first checks for the existence of a file named `myscript.nsh` on the `fs0:` drive. If this file is found, it then executes a command, potentially launching another script or program with specific arguments like `TEST_INFO1` and `TEST_INFO2`. Following this, the script examines the `%lasterror%` variable, which likely holds the return code of the preceding operation. If `%lasterror%` is equal to `EfiError(8)`, which signifies an error condition, the script outputs a message indicating a "write protect error".
+
+The script further checks the `%lasterror%` variable again, this time for a value of zero, indicating success. If successful, it proceeds to load an EFI executable located at `fs0:\OS\OsLoader.EFI`. The script includes comments noting that the loader return is not expected and that an `endif` is required for syntax correctness.
+
+The text then introduces the concept of "Pre O S Shells," explaining that both the UEFI Shell and other UEFI applications are considered UEFI applications. This implies they can run on any platform that adheres to the UEFI specification, including older implementations. These applications generally have minimal system requirements. Specifically, they require basic services such as `SimpleTextInput`, `SimpleTextOutput`, and `Device Path To Text` for console input/output and device identification, respectively, underscoring their lightweight nature and broad compatibility within the UEFI ecosystem.

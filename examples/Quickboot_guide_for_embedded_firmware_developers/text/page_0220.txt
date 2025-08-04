@@ -1,0 +1,46 @@
+the only expected user interaction is with the OS. That being said, the main
+reason people today interact with the BIOS is to launch the BIOS setup.
+Admittedly, some settings within this environment are unique and cannot be
+properly configured outside of the BIOS. However, at least one major OEM
+(if not more) has chosen to ship millions of UEFI-based units without
+exposing what is considered a BIOS setup. It might be reasonable to presume
+for some platforms that the established factory default settings are sufficient
+and require no user adjustments. Most OEMs do not go this route. However,
+it is certainly possible for an OEM to expose applets within the OS to provide
+some of the configurability that would have otherwise been exposed in the
+pre-OS phase.
+
+With the advent of UEFI 2.1 (and more specifically the Human Interface
+Infrastructure [HII] content in that specification), it became possible for
+configuration data in the BIOS to be exposed to the OS. In this way, many of
+the BIOS settings can have methods exposed and configured in what are not
+traditional (pre-OS) ways.
+
+If it is deemed unnecessary to interact with the BIOS, there is very little
+reason (except as noted in prior sections) for the BIOS to probe for a hot key.
+This only takes time from a platform boot without being a useful feature of
+
+the platform.
+
+A Note of Caution
+
+When trying to optimize the settings for hardware and OS interaction
+features, such as power management flows, which are enabled and controlled
+via a combination of hardware and software, it is important not to
+oversimplify the firmware setting. Often, the tradeoffs and ramifications are
+
+going to be beyond the simple boot flow to get to the OS. For these settings,
+The only expected user interaction is with the O S. That being said, the main reason people today interact with the B I O S is to launch the B I O S setup. Admittedly, some settings within this environment are unique and cannot be properly configured outside of the B I O S. However, at least one major O E M (if not more) has chosen to ship millions of U E F I based units without exposing what is considered a B I O S setup. It might be reasonable to presume for some platforms that the established factory default settings are sufficient and require no user adjustments. Most O E Ms do not go this route. However, it is certainly possible for an O E M to expose applets within the O S to provide some of the configurability that would have otherwise been exposed in the pre O S phase.
+
+With the advent of U E F I two point one (and more specifically the Human Interface Infrastructure [H I I]) content in that specification), it became possible for configuration data in the B I O S to be exposed to the O S. In this way, many of the B I O S settings can have methods exposed and configured in what are not traditional (pre O S) ways.
+
+If it is deemed unnecessary to interact with the B I O S, there is very little reason (except as noted in prior sections) for the B I O S to probe for a hot key. This only takes time from a platform boot without being a useful feature of the platform.
+
+A Note of Caution
+
+When trying to optimize the settings for hardware and O S interaction features, such as power management flows, which are enabled and controlled via a combination of hardware and software, it is important not to oversimplify the firmware setting. Often, the tradeoffs and ramifications are going to be beyond the simple boot flow to get to the O S. For these settings,
+The primary user interaction with a computing system, post initial setup, is typically with the Operating System. However, the fundamental reason users today engage with the Basic Input Output System, or B I O S, is to initiate the B I O S setup process itself. While many B I O S settings are intrinsically tied to the hardware and cannot be altered outside of the B I O S environment, a significant trend among Original Equipment Manufacturers, or O E M s, particularly those shipping millions of U E F I based units, is to offer configuration options that bypass the need for direct B I O S interaction. It's a reasonable assumption that for many platforms, the factory default settings are sufficient, obviating the necessity for user adjustments. Nonetheless, it remains feasible for an O E M to expose specific applets or configuration interfaces within the Operating System, allowing modifications that would ordinarily be confined to the pre Operating System phase.
+
+The evolution of the Universal Extensible Firmware Interface, specifically version two point one and its Human Interface Infrastructure, or H I I, specification, has facilitated the exposure of B I O S configuration data directly to the Operating System. This architectural shift enables many B I O S settings to be accessed and modified through methods exposed and configured within the Operating System, diverging from traditional pre Operating System interfaces. Consequently, if direct interaction with the B I O S is deemed nonessential, there is minimal justification for the Operating System to dedicate resources to probing for specific key sequences, often referred to as hot keys, to enter the B I O S setup. This process, which consumes time during the platform boot sequence, is rendered largely superfluous when a usable interface is available through the Operating System.
+
+A key consideration arises when optimizing system settings, encompassing both hardware and Operating System features, such as power management protocols. These optimizations are typically managed through a complex interplay of hardware and software. It is crucial to avoid oversimplifying the firmware configuration. The implications of such optimizations can extend far beyond the straightforward boot process, impacting the overall system behavior and performance as managed by the Operating System. Therefore, a nuanced understanding of the intricate relationships between hardware, firmware, and operating system-level configurations is paramount.

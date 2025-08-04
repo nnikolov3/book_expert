@@ -1,0 +1,47 @@
+Depending on the BIOS settings and configuration algorithm
+optimization, there could be several access attempts to Oxfed40000
+to detect whether TPM existed on the platform, and each access
+could cost about 7 ms. Adding an HOB, a UEFI hand off block, to
+save the data after the very first access to the Oxfed40000 could be
+used to indicate whether TPM is present on the board or not. The
+rest of the components should then reference to this HOB instead of
+checking for the presence of the TPM on system. Read the same
+
+information across IO just one time...
+
+Copying data into memory before hashing will save time over hashing
+
+in-place.
+
+Operating System Interactions
+
+The following section describes operating system interactions.
+
+Compatibility Segment Module and Legacy Option ROMs
+
+In a UEFI BIOS, a Class 3 UEFI solution will normally be more than 100 ms
+faster than a legacy OS-supported solution; that is, the CSM time to execute
+(without additional delay due to legacy option ROMs). Again, this is a
+tradeoff between OS compatibility support with older operating systems and
+
+boot speeds. Setup menu options can disable the CSM if it is not required.
+Depending on the B I O S settings and configuration algorithm optimization, there could be several access attempts to hexadecimal F fed four zero zero zero zero to detect whether T P M existed on the platform, and each access could cost about seven milliseconds. Adding an H O B, a U E F I hand off block, to save the data after the very first access to the hexadecimal F fed four zero zero zero zero could be used to indicate whether T P M is present on the board or not. The rest of the components should then reference to this H O B instead of checking for the presence of the T P M on system. Read the same information across I O just one time.
+
+Seven. Copying data into memory before hashing will save time over hashing in place.
+
+Operating System Interactions
+
+The following section describes operating system interactions.
+
+Compatibility Segment Module and Legacy Option R O M s
+
+In a U E F I B I O S, a Class three U E F I solution will normally be more than one hundred milliseconds faster than a legacy O S supported solution; that is, the C S M time to execute without additional delay due to legacy option R O M s. Again, this is a trade off between O S compatibility support with older operating systems and boot speeds. Setup menu options can disable the C S M if it is not required.
+The provided text delves into aspects of system initialization and operating system interactions, specifically concerning the Trusted Platform Module, or T P M, and legacy hardware support within the Unified Extensible Firmware Interface, or U E F I.
+
+The initial paragraph discusses optimization strategies within the Basic Input Output System, or B I O S, settings and configuration algorithms. It highlights potential performance impacts, mentioning access attempts to a specific memory address, hexadecimal F E D four thousand, and the associated time cost, approximately seven milliseconds. The concept of a Hand Off Block, or H O B, is introduced as a mechanism for transferring control or information. The text suggests that after the initial access to hexadecimal F E D four thousand, subsequent components should reference this H O B to determine the presence of the T P M on the system. This implies an efficient approach to resource discovery, aiming to read the relevant information only once for the entire system, thereby minimizing input output, or I O, operations and optimizing overall boot time.
+
+The subsequent point, numbered seven, introduces the concept of copying data into memory before hashing. This suggests a data processing pipeline where hashing operations, a fundamental cryptographic or data integrity technique, are applied to data that has already been staged in volatile memory, potentially for improved performance compared to hashing directly from a slower storage medium.
+
+The text then transitions to "Operating System Interactions," indicating a shift in focus to how the operating system engages with system hardware and firmware. It states that the following section will elaborate on these interactions.
+
+The final section addresses "Compatibility Segment Module and Legacy Option ROMs." This points to a critical area in system architecture: the interplay between modern firmware standards, like U E F I, and older technologies, specifically legacy Option Read Only Memory, or R O M s. It states that a U E F I BIOS, specifically a Class three U E F I solution, is generally faster, exceeding one hundred milliseconds, compared to a legacy O S supported solution. The delay in legacy solutions is attributed to the time required to execute legacy Option R O M s. This represents a trade off: while U E F I offers efficiency, it might require compatibility support for older operating systems and boot processes. The Compatibility Segment Module, or C S M, is identified as a key component that facilitates this backward compatibility. The text concludes by noting that setup menu options can be used to disable the C S M if it is not necessary, further optimizing boot times by avoiding the overhead associated with legacy hardware emulation or support. This highlights a design choice in modern systems: providing a path for legacy compatibility while allowing users to bypass it for maximum performance.

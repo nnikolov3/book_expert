@@ -1,0 +1,52 @@
+of BIOS drivers. It would be reasonably expected that these FVs are
+organized into several logical collections that may or may not be associated
+with their phase of operations or functions. There are two major actions the
+core initiates that are associated with drivers. The first is when a driver is
+dispatched (loaded into memory from flash), and the second one is when a
+driver is connected to a device. Platform policy could dictate that the DXE
+core avoids finding unnecessary drivers. For instance, if the USB device boot
+is not needed, the USB-related drivers could be segregated to a specific FV,
+
+and material associated with that FV would not be dispatched.
+
+Minimize the Files Needed
+
+Since one of the slowest I/O resources in a platform is normally the flash part
+on which the BIOS is stored, it is prudent to minimize the amount of space a
+BIOS occupies. The less space it occupies, the shorter the time for routines
+within the BIOS to read content into faster areas of the platform (such as
+memory). This can be done by minimizing the drivers required by the
+platform, and pruning can typically be accomplished by a proper study of the
+
+marketing requirements.
+
+Example 2 Details
+
+Table 10.4 depicts the results of the boot time investigation, followed by in-
+
+depth discussion of each change.
+Table 10.4: Boot Time Results
+
+Boot time (in Incremental boot time
+
+Change :
+8 seconds) improvement (in seconds)
+of B I O S drivers. It would be reasonably expected that these F V s are organized into several logical collections that may or may not be associated with their phase of operations or functions. There are two major actions the core initiates that are associated with drivers. The first is when a driver is dispatched (loaded into memory from flash), and the second one is when a driver is connected to a device. Platform policy could dictate that the D X E core avoids finding unnecessary drivers. For instance, if the U S B device boot is not needed, the U S B related drivers could be segregated to a specific F V, and material associated with that F V would not be dispatched.
+
+Minimize the Files Needed
+
+Since one of the slowest I O resources in a platform is normally the flash part on which the B I O S is stored, it is prudent to minimize the amount of space a B I O S occupies. The less space it occupies, the shorter the time for routines within the B I O S to read content into faster areas of the platform (such as memory). This can be done by minimizing the drivers required by the platform, and pruning can typically be accomplished by a proper study of the marketing requirements.
+
+Example two Details
+
+Table ten point four depicts the results of the boot time investigation, followed by in depth discussion of each change.
+
+Table ten point four: Boot Time Results
+
+Change: Boot time (in seconds)
+Incremental boot time improvement (in seconds)
+The foundational concept discussed here revolves around the organization and dispatch of firmware volumes, or FVs, within the context of a Basic Input Output System, or B I O S. FVs are logically grouped collections, and their association with specific drivers is dependent on their phase of operation or function. The dispatching of a driver, which involves loading it from memory typically from flash storage, can be influenced by the presence of a connected device. Platform policy dictates how the device execution, or D X E, core interacts with these drivers. For instance, if a Universal Serial Bus, or U S B, device boot is not required, then the U S B related drivers, along with their associated firmware volumes, would not be dispatched. This illustrates a form of conditional loading and execution based on system state and configuration, a common practice in embedded systems and operating system kernels for optimizing resource utilization and startup time.
+
+A key principle highlighted is the minimization of resources, specifically focusing on I O, or Input Output, operations. The flash memory where the B I O S is stored is identified as a particularly slow I O resource. Therefore, reducing the amount of data stored in the B I O S flash translates to a direct benefit: the less space occupied, the faster routines within the B I O S can access and read content. This optimization can involve loading critical data into faster memory tiers, such as Ram. The strategy for achieving this space reduction is through driver pruning, which is the selective removal or optimization of drivers that are not essential for the platform's operation, often guided by marketing requirements or specific platform functionalities. This approach is rooted in performance engineering principles, where identifying and mitigating performance bottlenecks, especially those related to slow storage access, is paramount for overall system responsiveness.
+
+The presented data, labeled as "Example 2 Details" and detailed in "Table 10.4: Boot Time Results," quantifies the impact of these optimizations. The table presents a comparison between different changes made to the system and their effect on boot time, measured in seconds, and the resulting incremental boot time improvement, also in seconds. This data allows for an empirical evaluation of the effectiveness of the driver pruning and resource minimization strategies. By observing the "Incremental boot time improvement" for various "Changes," one can infer which specific optimizations yield the most significant reductions in boot duration. This data-driven approach is crucial for validating theoretical optimizations and making informed decisions about system configuration. The underlying principle here is empirical validation, where theoretical designs are tested against real-world performance metrics to confirm their efficacy.

@@ -1,0 +1,55 @@
+Fortunately, there are many options available when choosing a firmware
+solution, which we will examine in the next few pages. The more you know
+about the options, the key players, their history, and the variables, the better
+decision you can make for your design. The decision will be a combination of
+arbitrary thought, low-hanging fruit, economies of scale, technical politics,
+and, of course, money vs. time.
+
+Intel has created an open-source-based system, known as Intel® Boot
+Loader Development Kit (Intel® BLDK), which provides a turnkey solution
+
+without a huge learning curve. Developers can go to www.intel.com and
+
+download Intel BLDK for various embedded platforms.
+Intel® Quark processor also has a UEFI implementation that is entirely
+open source and is built using the UEFI framework. This can be found online
+
+by searching for Galileo UEFI firmware.
+
+Initialization Roles and Responsibilities
+
+First, let’s get our definitions straight; understand what the industry has been
+up to, and how we can move forward to make the best decision we can make.
+Traditionally, a platform based on Intel architecture boots in three steps:
+
+system firmware, OS loader, and finally the operating system itself.
+
+System Firmware
+
+The system firmware is a layer between the hardware and the OS that
+maintains data for the OS about the hardware. As part of the power on self-
+test (POST), the system firmware begins to execute out of flash to initialize
+
+all the necessary silicon components, including the CPU itself and the
+Fortunately, there are many options available when choosing a firmware solution, which we will examine in the next few pages. The more you know about the options, the key players, their history, and the variables, the better decision you can make for your design. The decision will be a combination of arbitrary thought, low hanging fruit, economies of scale, technical politics, and, of course, money versus time.
+
+Intel has created an open source based system, known as Intel Boot Loader Development Kit (Intel B L D K), which provides a turnkey solution without a huge learning curve. Developers can go to w w w dot intel dot com and download Intel B L D K for various embedded platforms.
+
+Intel Quark processor also has a U E F I implementation that is entirely open source and is built using the U E F I framework. This can be found online by searching for Galileo U E F I firmware.
+
+### Initialization Roles and Responsibilities
+
+First, let's get our definitions straight; understand what the industry has been up to, and how we can move forward to make the best decision we can make. Traditionally, a platform based on Intel architecture boots in three steps: system firmware, O S loader, and finally the operating system itself.
+
+### System Firmware
+
+The system firmware is a layer between the hardware and the O S that maintains data for the O S about the hardware. As part of the power on self test (P O S T), the system firmware begins to execute out of flash to initialize all the necessary silicon components, including the C P U itself and the.
+The selection of a firmware solution for a computing system represents a multifaceted engineering decision, often driven by a complex interplay of technical feasibility, economic considerations, and strategic positioning. The process is not merely a technical exercise but involves assessing existing solutions for their ease of integration, often termed "low hanging fruit," and understanding the economies of scale that can be leveraged by adopting widely supported platforms. Furthermore, the decision is influenced by the technical politics within an organization or the broader industry, coupled with the critical constraints of financial resources and development time.
+
+Intel, as a prominent player in processor architecture, has significantly contributed to the firmware ecosystem through its Intel Boot Loader Development Kit, known as B L D K. This kit is an open source based system, designed to provide a turnkey solution, substantially lowering the barrier to entry for developers. A turnkey solution implies that the B L D K offers a comprehensive, ready-to-use framework that streamlines the creation of boot loaders for various embedded platforms. Embedded platforms, by their nature, are specialized computing systems often characterized by stringent power, size, and real time requirements, necessitating highly optimized and tailored firmware. Developers can access and utilize this kit to accelerate their development cycles for such platforms. Complementing this, the Intel Quark processor, which is frequently found in embedded applications, incorporates a U E F I implementation that is entirely open source. U E F I, the Unified Extensible Firmware Interface, represents a modern, standardized approach to system firmware, superseding the legacy B I O S. It offers enhanced capabilities such as modularity, support for larger storage devices, improved boot performance, and advanced security features, forming a robust foundation for system initialization. Specific U E F I implementations, such as the Galileo U E F I firmware for the Intel Quark based Galileo development board, further exemplify this commitment to an open and extensible firmware standard.
+
+Understanding the initialization sequence and the roles of various software layers is fundamental to comprehending system operation. Traditionally, on Intel architecture based platforms, the boot process unfolds in a structured, three-step sequence. The first and most foundational layer is the system firmware. This layer acts as the initial execution environment for the C P U immediately upon power up. Its critical responsibilities include performing the Power On Self Test, commonly referred to as P O S T, which verifies the basic functionality of essential hardware components like the C P U itself, R A M, and various peripheral controllers. Following P O S T, the system firmware proceeds to initialize all necessary silicon components, configuring memory controllers, clock generators, and crucial I O interfaces like P C I E. This initialization occurs from code stored in non volatile flash memory, as the dynamic R A M is not yet operational. The system firmware essentially prepares the hardware environment to a state suitable for the execution of the next layer.
+
+The second stage in this traditional boot sequence involves the O S loader. This component is typically invoked by the system firmware once the hardware environment is sufficiently stable and memory is accessible. The O S loader's primary function is to locate the operating system kernel, load it into system R A M, and then transfer control of program execution to the kernel's entry point. The final stage is the operating system itself. Once the O S kernel receives control from the O S loader, it takes over the management of system resources, initializes its own internal data structures, loads device drivers, and ultimately prepares the user space environment, thereby bringing the system to full operational readiness.
+
+In essence, system firmware is a crucial interface layer, bridging the raw hardware and the operating system. It provides the initial set of instructions and services necessary to transition the system from a powered off state to an operational state where the O S can commence its activities. Beyond initialization, it maintains critical configuration data about the hardware, allowing the O S to query and interact with the underlying platform in a standardized manner.

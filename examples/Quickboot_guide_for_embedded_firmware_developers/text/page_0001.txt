@@ -1,0 +1,41 @@
+Chapter 1
+System Firmware’s Missing Link
+
+Hardware: the parts of a computer that can be kicked.
+— Jeff Pesis
+
+Booting an Intel architecture platform should be easy. Anyone who thinks
+that writing an all-purpose Intel® architecture Basic Input Output System
+(BIOS) and/or an operating system (OS) boot loader from scratch is easy has
+yet to try it. The complexity and sheer number of documents and
+undocumented details about the motherboard and hardware components,
+operating system requirements, industry standards and exceptions, silicon-
+specific eccentricities beyond the standards, little-known tribal knowledge,
+basic configuration, compiler nuances, linker details, and variety of
+applicable debug tools are enormous. While it can be difficult, it doesn’t have
+to be.
+
+This book is designed to give a background in the basic architecture and
+details of a typical boot sequence to the beginner firmware developer.
+Various specifications provide the basics of both the code bases and the
+standards. While a summary is provided in the chapters below, there is no
+substitute for reading and comprehending the specifications and developer’s
+manuals first-hand. This book also provides insights into optimization
+
+techniques to the more advanced developers. With the background
+Chapter one: System Firmware's Missing Link.
+
+Hardware: the parts of a computer that can be kicked.
+
+—Jeff Pesis
+
+Booting an Intel architecture platform should be easy. Anyone who thinks that writing an all purpose Intel architecture Basic Input Output System, or B I O S, and or an operating system, or O S, boot loader from scratch is easy has yet to try it. The complexity and sheer number of documents and undocumented details about the motherboard and hardware components, operating system requirements, industry standards and exceptions, silicon specific eccentricities beyond the standards, little known tribal knowledge, basic configuration, compiler nuances, linker details, and variety of applicable debug tools are enormous. While it can be difficult, it doesn't have to be.
+
+This book is designed to give a background in the basic architecture and details of a typical boot sequence to the beginner firmware developer. Various specifications provide the basics of both the code bases and the standards. While a summary is provided in the chapters below, there is no substitute for reading and comprehending the specifications and developer's manuals first hand. This book also provides insights into optimization techniques to the more advanced developers. With the background.
+Developing system firmware, particularly for an Intel architecture platform, is far from a trivial undertaking. The perceived ease of merely booting such a system belies an astonishing depth of complexity, a reality quickly discovered by anyone attempting to write a comprehensive Basic Input Output System, or B I O S, or an operating system boot loader from scratch. The sheer volume of documentation, often coupled with undocumented specifics, surrounding motherboard designs and myriad hardware components, poses an immediate challenge. This intricacy extends to understanding operating system requirements, navigating industry standards alongside their exceptions, and grappling with silicon specific eccentricities—often referred to as tribal knowledge—that are not overtly codified.
+
+The fundamental process of booting a computer involves a precise orchestration of hardware initialization and software execution. It begins at power on, where the central processing unit, or C P U, typically fetches its first instruction from a predefined address in R O M, which contains the B I O S. This B I O S is responsible for conducting a Power On Self Test, or P O S T, to verify core components like Ram and the graphics adapter. Subsequently, it initializes various hardware controllers, establishes memory maps, and configures the I O subsystem, including P C I E devices and storage interfaces. The B I O S then locates a bootable device and loads the initial stage of the operating system boot loader, which in turn takes over the process of loading the main operating system kernel into Ram and transitioning control.
+
+The difficulty in this domain arises from several factors. Firstly, the interaction between different hardware components is governed by highly specific timings and protocols, demanding precise control over hardware registers, often through memory mapped I O. Secondly, Intel's Instruction Set Architecture, or I S A, has evolved considerably over decades, accumulating legacy modes and complex protected mode transitions that must be meticulously handled during boot. Compiler nuances, such as specific optimization flags, memory alignment directives, and inline assembly capabilities, become critical, as does understanding linker details for precise placement of code and data in memory, especially when operating in a constrained environment without the services of a full operating system. The lack of standard runtime environments in early boot stages necessitates direct hardware manipulation.
+
+Furthermore, developers must contend with a vast array of specialized debug tools. Unlike high-level application development, debugging firmware often requires dedicated hardware tools such as J T A G debuggers, in circuit emulators, and logic analyzers to observe and manipulate the system at its lowest levels, as conventional debugging frameworks are not yet active. The "missing link" alluded to in the title underscores the gap in accessible, consolidated knowledge necessary to navigate these labyrinthine technical details. A comprehensive grasp of these underlying principles, from the architectural characteristics of the C P U and its microcode to the intricate dance of peripheral initialization, is indispensable for constructing robust and efficient system firmware. For advanced developers, this understanding forms the bedrock for applying sophisticated optimization techniques, whether for reducing boot times, minimizing the memory footprint of firmware, or enhancing overall system performance and power management.

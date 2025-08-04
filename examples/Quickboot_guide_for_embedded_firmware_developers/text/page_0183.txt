@@ -1,0 +1,45 @@
+well be to garbage. System failures indicated by a POST code between “end
+of memory initialization” and the first following POST code almost always
+indicates a catastrophic memory initialization problem. If this is a new
+design, then chances are this is in the hardware and requires step-by-step
+
+debug.
+
+Memory Transaction Redirection
+
+For legacy option ROMs and BIOS memory ranges, Intel chipsets usually
+come with memory aliasing capabilities that allow reads and writes to
+sections of memory below 1 MB to be either routed to or from DRAM or
+nonvolatile storage located just under 4 GB. The registers that control this
+aliasing are typically referred to as programmable attribute maps (PAMs).
+Manipulation of these registers may be required before, during, and after
+firmware shadowing. The control over the redirection of memory access
+varies from chipset to chipset. For example, some chipsets allow control over
+reads and writes, while others only allow control over reads.
+
+For shadowing, if PAM registers remain at default values (all Os), all
+FWH accesses to the E and F segments (E_0000—F_FFFFh) will be directed
+downstream toward the flash component. This will function to boot the
+system, but is very slow. Shadowing, as we know, improves boot speed. One
+method of shadowing the E and F segments (E_0000—F_FFFFh) of the BIOS
+is to utilize the PAM registers. This can be done by changing the enables
+(HIENABLE| |, LOENABLE] ]) to be 10 (write only). This will direct reads
+to the flash device and writes to memory. By reading and then writing the
+same address, the data is shadowed into memory. Once BIOS code has been
+shadowed into memory, the enables can be changed to 0x01(read only), so
+
+memory reads are directed to memory. This also prevents accidental
+well be to garbage. System failures indicated by a POST code between end of memory initialization and the first following POST code almost always indicates a catastrophic memory initialization problem. If this is a new design, then chances are this is in the hardware and requires step by step debug.
+
+Memory Transaction Redirection
+
+For legacy option R O M s and B I O S memory ranges, Intel chipsets usually come with memory aliasing capabilities that allow reads and writes to sections of memory below one megabyte to be either routed to or from D R A M or nonvolatile storage located just under four gigabyte. The registers that control this aliasing are typically referred to as programmable attribute maps P A M s. Manipulation of these registers may be required before, during, and after firmware shadowing. The control over the redirection of memory access varies from chipset to chipset. For example, some chipsets allow control over reads and writes, while others only allow control over reads.
+
+For shadowing, if P A M registers remain at default values all zero s, all F W H accesses to the E and F segments E underscore zero zero zero zero F F F F h will be directed downstream toward the flash component. This will function to boot the system, but is very slow. Shadowing, as we know, improves boot speed. One method of shadowing the E and F segments E underscore zero zero zero zero F F F F h of the B I O S is to utilize the P A M registers. This can be done by changing the enables H I E N A B L E bracket comma L O E N A B L E bracket to be ten write only. This will direct reads to the flash device and writes to memory. By reading and then writing the same address, the data is shadowed into memory. Once B I O S code has been shadowed into memory, the enables can be changed to zero x zero one read only, so memory reads are directed to memory. This also prevents accidental
+The text discusses system failures potentially linked to memory initialization, specifically referencing POST (Power On Self Test) codes as indicators of hardware or design issues. It then delves into the concept of Memory Transaction Redirection, a technique employed in legacy systems, particularly with Intel chipsets, to manage memory access for option ROMs and BIOS.
+
+Memory Transaction Redirection involves mapping or "aliasing" sections of memory, typically the first one megabyte, to different physical locations. This redirection is controlled by specific registers, often referred to as Programmable Attribute Maps or PAMs. These PAMs can be configured before, during, and after firmware initialization, offering flexibility in how memory access is handled. For instance, some chipsets allow bidirectional control over memory access redirection, while others permit only read or write operations.
+
+A specific scenario described is when PAM registers are set to default values, often represented as all zeros. In this state, accesses to the E and F segments of memory, specifically the address range from E underscore zero zero zero zero F F F F hex to F underscore zero zero zero zero F F F F hex, are directed to the flash component. This redirection is crucial for the boot process, as it allows the system to access the BIOS firmware stored in flash memory. The benefit of this technique, known as shadowing, is improved boot speed.
+
+The process of shadowing involves redirecting reads and writes to memory. By reading the flash device and subsequently writing to memory, data from the flash can be duplicated into system Ram. Once this shadowing is complete, the controls for enabling this feature can be modified. For example, the enables for the HIENABLE and LOENABLE registers can be set to a value of ten, which signifies a write only operation. This arrangement ensures that memory reads are directed to the shadowed memory locations, preventing accidental modification of critical firmware data. This mechanism is a fundamental aspect of how early system firmware interacts with and initializes memory hardware.

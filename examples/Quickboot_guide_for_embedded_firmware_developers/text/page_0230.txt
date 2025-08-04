@@ -1,0 +1,44 @@
+modify various platform settings. This includes settings such as boot order,
+disabling various processor or chipset features, and modifying media
+parameters. On an embedded device, BIOS setup (and any similar settings
+provided by an operating system loader) is more of a liability since it gives
+the end user access to BIOS {features that are potentially untested on the
+device. It is better to have a set of setup options that may be chosen at BIOS
+
+build time. Removal of the BIOS setup also saves significant BIOS post time.
+
+Remove Video Option ROM
+
+The video option ROM on platforms featuring the Intel Atom processor and
+many other newer platforms is quite slow due to the many different video
+interfaces that must be supported and the display detection algorithms that
+must be employed. Replacement of a highly optimized DXE video driver in
+place of the video option ROM saves significant boot time. The speed of this
+optimized DXE video driver is highly dependent on the exact display chosen
+and video features required by the platform prior to installation of the
+operating system graphics driver. On the investigation platform, a fixed
+splash screen was displayed. It was unchanged during the boot process until
+the operating system graphics driver initialized the display. To achieve this,
+the capability to display text was removed from the DXE graphics driver. As
+a result, none of the normal BIOS or operating system initialization messages
+is displayed. This yields additional performance and a cleaner boot
+
+appearance.
+
+Remove BIOS USB Support
+
+Since USB-boot and a USB input device like a keyboard/mouse were not
+Modify various platform settings. This includes settings such as boot order, disabling various processor or chipset features, and modifying media parameters. On an embedded device, B I O S setup and any similar settings provided by an operating system loader is more of a liability since it gives the end user access to B I O S features that are potentially untested on the device. It is better to have a set of setup options that may be chosen at B I O S build time. Removal of the B I O S setup also saves significant B I O S post time.
+
+Remove Video Option R O M
+
+The video option R O M on platforms featuring the Intel Atom processor and many other newer platforms is quite slow due to the many different video interfaces that must be supported and the display detection algorithms that must be employed. Replacement of a highly optimized D X E video driver in place of the video option R O M saves significant boot time. The speed of this optimized D X E video driver is highly dependent on the exact display chosen and video features required by the platform prior to installation of the operating system graphics driver. On the investigation platform, a fixed splash screen was displayed. It was unchanged during the boot process until the operating system graphics driver initialized the display. To achieve this, the capability to display text was removed from the D X E graphics driver. As a result, none of the normal B I O S or operating system initialization messages is displayed. This yields additional performance and a cleaner boot appearance.
+
+Remove B I O S U S B Support
+
+Since U S B boot and a U S B input device like a keyboard or mouse were not
+The fundamental concept of firmware configuration, often referred to as BIOS setup, allows for granular control over a system's hardware initialization and boot processes. This includes parameters such as the boot order, which dictates the sequence in which storage devices are checked for an operating system, and the modification of media parameters, which can affect how storage devices are accessed and initialized. In embedded systems, particularly, the BIOS setup serves as a critical interface for configuring low level hardware features. Providing end users direct access to these low level BIOS features can introduce a liability if these features are not rigorously tested, as unintended configurations could lead to system instability or functional failures. It is generally considered best practice to finalize these setup options during the manufacturing or build time of the device, rather than allowing for extensive user modification post deployment. This approach minimizes the potential for user-induced errors and ensures a more stable operational baseline. Furthermore, streamlining the BIOS setup by removing unnecessary or infrequently used options, such as certain video initialization routines, can significantly reduce the overall BIOS post time, leading to faster system startup.
+
+The management of video initialization routines within the boot process is a key area for optimization. The video option R O M, particularly on platforms utilizing processors like the Intel Atom and requiring support for various video interfaces, can be a bottleneck. The complexity of display detection algorithms and the integration of specialized drivers, such as a DXE video driver, can contribute to a slower boot experience. Replacing a generic video option R O M with a highly optimized DXE driver, specifically tailored for the platform's display requirements, can yield substantial improvements in boot time. The effectiveness of such an optimized driver is contingent on its precise interaction with the chosen display hardware. In some implementations, to expedite the boot process and achieve a clean initialization of the display, the video driver may bypass the display of initialization messages, or even the traditional BIOS splash screen. This is achieved by having the graphics driver take control of the display early in the boot sequence, often before the full operating system initialization is complete. Such an approach, while enhancing boot performance and aesthetic cleanliness, means that diagnostic text or visual cues from the BIOS or early operating system stages might not be visible to the user.
+
+The integration of universal serial bus, or U S B, support within the BIOS extends beyond basic input devices. When a system is configured to boot from a U S B device, such as a U S B flash drive or an external hard drive, the BIOS must correctly enumerate and initialize the U S B controller and the connected storage device. This process involves the U S B host controller detecting the presence of a U S B device, establishing a communication link, and then allowing the operating system loader to access the bootable file system on that device. The functionality relies on the BIOS implementing the necessary U S B Mass Storage Class driver or relying on an operating system driver to handle the device.

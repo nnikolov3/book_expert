@@ -1,0 +1,84 @@
+'DDR3-800 DDR3-1066 DDR3-1333 DDR3-1600
+
+Parameter Symbol Units
+Min Max Min Max Min Max Min Max
+Ds, DOS # differential READ 'RPST 0.3 Note 0.3 Note 0.3 Note 0.3 Note CK
+postambie 27 27 27 27
+Command and Address Timings
+DLL locking time 'DLLK 512 - 512 - 512 - 512 - CE
+TRE, CD, Gage wg 200 - 125 ~- 65 = 4&5 = ps
+ADDR setup [Specification] ALIFE
+to CK, CK Vin@1 V/ns 35 = HM = 4: + RI = -
+ADR sap : ACTSHD S00 &25 Ady 320
+to CK, CEE Vil V/ns 4 T : - °F
+IPL, LY, Gas 75 - WO - M0 - 120 - ps
+ADDR hold a IH . 00 _ —
+i | - a dst at
+from CK. el D100 3s ’ pe
+CHE pari §
+Minimum CTRL, CMD, ADDR
+: "PW 00 - TAO - 620 - 560 - 0s
+pulse width
+ACTIVATE to internal READ or RCD See Speed Bin Tables (page 73) for ‘RCD ;
+Im x [1]
+WRITE delay P Page 72)
+PRECHARGE command period 'RP See Speed Bin Tables [page 72) for 'RP ns
+ACTIVATE-to-PRECHARGE
+’ ‘RAS See Speed Bin Tables (page 72) for 'RAS ns
+command peniod
+ACTIVATE-1o-ACTIVATE ‘RL
+See Speed Bin Tables (page £2) for "RC ns
+command
+‘RED MiN= MiN= MiN= MiN= CK
+ACTIVATE- ta
+ACTIVATE 1KB page greater of greater of greater of greater of
+ini fife CK or 100s  4SCKor 7.50% &CK or Gnd GLK of Gnas
+ZEB page MiN= MIN= CK
+command ior of art
+reater a
+pti size greater o g
+CK ar 10ns ACK ar 7.5ns
+Fou 166 page FAW 4&0 37.5 30 30
+ACTIVATE size i
+windows JKB pa
+Page 0 - 50 - 45 - &0 - ns
+
+Sire
+The table details various timing parameters for DDR3 memory, categorized by DDR3 speed grades: DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600, with corresponding minimum and maximum values in clock cycles (CK) or picoseconds (ps) and nanoseconds (ns).
+
+The first parameter listed is the DQS, DQS # differential READ postamble, with the symbol 'RPST'. For DDR3-800, the minimum is zero point three CK, and the maximum is Note 27. For DDR3-1066, the minimum is zero point three CK, and the maximum is Note 27. For DDR3-1333, the minimum is zero point three CK, and the maximum is Note 27. For DDR3-1600, the minimum is zero point three CK, and the maximum is Note 27.
+
+Following this, under the heading "Command and Address Timings," the DLL locking time, symbolized as 'DLLK', has a base value of five hundred twelve for DDR3-800, DDR3-1066, and DDR3-1333, with no maximum specified, and then five hundred twelve for DDR3-1600, with no maximum specified, all in CK units.
+
+Next, the address setup to CK, CK# timing is presented. For CTRL, CMD, and ADDR setup to CK, CK#, the base value is two hundred ps for DDR3-800, with no maximum specified. For DDR3-1066, it's one hundred twenty five ps. For DDR3-1333, it's sixty five ps. For DDR3-1600, it's forty five ps. The specification values for this parameter are: for DDR3-800, Vref at one volt per nanosecond. For DDR3-1066, Vref at one volt per nanosecond. For DDR3-1333, Vref at one volt per nanosecond. For DDR3-1600, Vref at one volt per nanosecond.
+
+The address hold timing from CK, CK# is detailed next. For CTRL, CMD, and ADDR hold from CK, CK#, the base value is one hundred forty ps for DDR3-1333, and one hundred twenty ps for DDR3-1600. The specification values are Vref at one volt per nanosecond for DDR3-800, and for DDR3-1066, the value is two hundred twenty ps. For DDR3-1333, the specification value is two hundred twenty ps. For DDR3-1600, it is two hundred twenty ps. The associated minimum values are: for DDR3-800, two hundred ps, with no maximum. For DDR3-1066, three hundred seventy five ps, with no maximum. For DDR3-1333, two hundred forty ps, with no maximum. For DDR3-1600, two hundred forty ps, with no maximum.
+
+The minimum CTRL, CMD, ADDR pulse width, symbolized as 'IPW', shows values of nine hundred ps for DDR3-800, seven hundred eighty ps for DDR3-1066, six hundred twenty ps for DDR3-1333, and five hundred sixty ps for DDR3-1600, all with no maximum specified.
+
+The table then lists ACTIVATE to internal READ or WRITE delay, with the symbol 'RCD', and the PRECHARGE command period, with the symbol 'RP'. For both these parameters, the values are listed as "See Speed Bin Tables (page 72)" for DDR3-800, DDR3-1066, and DDR3-1333, with the unit being nanoseconds.
+
+The ACTIVATE to ACTIVATE command period, symbolized as 'RAS', also refers to "See Speed Bin Tables (page 72)" for DDR3-800, DDR3-1066, and DDR3-1333, with the unit being nanoseconds. Similarly, the ACTIVATE to ACTIVATE command, symbolized as 'RC', has values "See Speed Bin Tables (page 72)" for DDR3-800, DDR3-1066, and DDR3-1333, with the unit being nanoseconds.
+
+For ACTIVATE to ACTIVATE minimum command period, there are two categories based on page size: one kilobyte page size and two kilobyte page size. For the one kilobyte page size, the parameter is symbolized as 'RRDD'. The timing is the minimum of four clock cycles or ten nanoseconds for DDR3-800. For DDR3-1066, it's the minimum of four clock cycles or seven point five nanoseconds. For DDR3-1333, it's the minimum of four clock cycles or six nanoseconds. For DDR3-1600, it's the minimum of four clock cycles or six nanoseconds. The units are CK.
+
+For the two kilobyte page size, the timing is also the minimum of four clock cycles or ten nanoseconds for DDR3-800. For DDR3-1066, it's the minimum of four clock cycles or seven point five nanoseconds. For DDR3-1333, it's the minimum of four clock cycles or six nanoseconds. For DDR3-1600, it's the minimum of four clock cycles or six nanoseconds. The units are CK.
+
+Finally, the "Four ACTIVATE windows" parameter, symbolized as 'FAW', is detailed. For the one kilobyte page size, the minimum value for DDR3-800 is forty, for DDR3-1066 is thirty seven point five, for DDR3-1333 is thirty, and for DDR3-1600 is forty five. The units are nanoseconds. For the two kilobyte page size, the minimum value for DDR3-800 is fifty, for DDR3-1066 is fifty, for DDR3-1333 is forty, and for DDR3-1600 is forty. The units are nanoseconds.
+The table presents a detailed breakdown of command and address timing parameters for different Double Data Rate Synchronous Dynamic Random Access Memory, or D Ram, generations, specifically DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600. These timings are critical for ensuring reliable data transfer between the memory controller and the D Ram modules. Each parameter, identified by a symbol, is quantified by minimum and maximum values, often expressed in clock cycles, denoted as CK, or in picoseconds, ps, and nanoseconds, ns. The variations across the different DDR3 speeds highlight the trade-offs between performance and timing requirements.
+
+The first parameter, 'RPST', DQS, DQS # differential READ postamble, is measured in clock cycles. For DDR3-800 and DDR3-1066, the minimum is zero point three CK, with a maximum specified as a note, indicating it's tied to a specific operational condition or revision. For DDR3-1333 and DDR3-1600, the minimum remains zero point three CK, with a similar note for the maximum. The postamble is a small time window after the data burst that aids in signal integrity.
+
+The section on Command and Address Timings delves into more granular control signals. 'DLLK', D L L locking time, is presented in picoseconds. Across all DDR3 speeds, it consistently has a minimum value of five hundred twelve picoseconds and no specified maximum, suggesting a critical alignment window for the delay lock loop to synchronize.
+
+Next are 'ADDR setup' and 'ADDR hold' times, measured relative to the clock signal, CK, or CK#. These are further broken down into 'Base' and '(Specification)' values. For instance, 'ADDR setup to CK, CK#' has base values of two hundred picoseconds for DDR3-800, one hundred twenty five picoseconds for DDR3-1066, sixty five picoseconds for DDR3-1333, and forty five picoseconds for DDR3-1600. The '(Specification)' values further refine these with details like "Vref@1V/ns," implying a dependency on voltage slew rate. Similarly, 'ADDR hold from CK, CK#' shows minimum values of three hundred fifty picoseconds for DDR3-800, with decreases for faster standards, down to two hundred twenty picoseconds for DDR3-1600. These setup and hold times are fundamental concepts in synchronous digital design, ensuring that data is stable at the sampling edge of the clock.
+
+The 'Minimum CTRL, CMD, ADDR pulse width' is given as 'IPW'. For DDR3-800, the minimum pulse width is nine hundred picoseconds, reducing to seven hundred eighty picoseconds for DDR3-1066, six hundred twenty picoseconds for DDR3-1333, and no value is provided for DDR3-1600, likely indicated by a note. This parameter ensures that command and address signals are held for a sufficient duration to be reliably captured by the memory controller.
+
+The timings 'ACTIVATE to internal READ or WRITE delay' denoted by 'RCD', and 'PRECHARGE command period' denoted by 'RP', are specified by referencing "Speed Bin Tables (page 72)." These parameters, measured in nanoseconds, relate to the internal operations within the D Ram chip itself, such as activating rows and precharging them for subsequent access.
+
+Similarly, 'ACTIVATE to PRECHARGE command period' and 'ACTIVATE to ACTIVATE command' are also referenced to speed bin tables. These timings are crucial for managing the overall memory access latency and throughput, dictating how quickly the memory can transition between different states and operations.
+
+The table then details 'ACTIVATE to ACTIVATE minimum command period' and 'Four ACTIVATE windows'. These are further subdivided by '1 K B page size' and '2 K B page size'. For instance, the minimum command period between successive ACTIVATE commands varies based on the page size and memory speed. 'RRD', which likely stands for Row to Row Delay, has a minimum defined as the greater of four clock cycles or ten nanoseconds for DDR3-800, and the greater of four clock cycles or six nanoseconds for DDR3-1066 and DDR3-1333, and so on. These timings directly impact the burst length and the efficiency of accessing contiguous data blocks.
+
+Finally, 'FAW', Four ACTIVATE window, specifies the minimum number of clock cycles or nanoseconds within which a certain number of ACTIVATE commands can be issued. For example, for DDR3-800, the minimum FAW is forty clock cycles or thirty seven point five nanoseconds. The values decrease for higher speed bins, reflecting the increased signaling frequencies. The presence of '1 K B page size' and '2 K B page size' indicates how memory organization affects these timing constraints, demonstrating the interplay between architectural choices and performance. The overall presentation underscores the meticulous timing requirements inherent in high-speed memory interfaces, where each clock cycle and nanosecond plays a role in achieving optimal data throughput and system stability.

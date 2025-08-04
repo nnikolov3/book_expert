@@ -1,0 +1,54 @@
+expanded configuration options for overclocking such as:
+—FEnable/disable clock output enable based on enumeration.
+
+—Adjust clock spread settings. Enable/disable and adjust amount. Note:
+settings are provided as fixed register values determined from
+
+expected usages.
+
+—Underclock CPU for adaptive clocking support. If done directly, the
+
+BIOS must perform adjustment with ramp algorithm.
+
+—Lock out clock registers prior to transitioning to host OS.
+
+PCI Device Enumeration
+
+Peripheral Connect Interface (PCI) device enumeration is a generic term that
+refers to detecting and assigning resources to PCI-compliant devices in the
+system. The discovery process assigns the resources needed by each device,
+
+including the following:
+—Memory, prefetchable memory, I/O space
+—Memory mapped I/O (MMIO) space
+—IRQ assignment
+—Expansion ROM detection and execution
+
+PCI device discovery applies to all the newer (nonlegacy) interfaces such as
+PCI Express (PCle) root ports, USB controllers, SATA controllers, audio
+
+controllers, LAN controllers, and various add-in devices. These newer
+Expanded configuration options for overclocking such as:
+
+Enable slash disable clock output enable based on enumeration.
+Adjust clock spread settings. Enable slash disable and adjust amount. Note: settings are provided as fixed register values determined from expected usages.
+Underclock C P U for adaptive clocking support. If done directly, the B I O S must perform adjustment with ramp algorithm.
+Lock out clock registers prior to transitioning to host O S.
+
+P C I Device Enumeration
+
+Peripheral Connect Interface P C I device enumeration is a generic term that refers to detecting and assigning resources to P C I compliant devices in the system. The discovery process assigns the resources needed by each device, including the following:
+
+Memory, prefetchable memory, I O space
+Memory mapped I O M M I O space
+I R Q assignment
+Expansion R O M detection and execution
+
+P C I device discovery applies to all the newer nonlegacy interfaces such as P C I Express P C I e root ports, U S B controllers, S A T A controllers, audio controllers, L A N controllers, and various add in devices. These newer
+The presented text outlines advanced configuration options, particularly focusing on overclocking and the fundamental process of Peripheral Connect Interface or P C I device enumeration.
+
+Regarding overclocking, several specialized configurations are detailed. The first is the ability to enable or disable clock output, a function typically determined by the system's enumeration process, which is the mechanism for identifying and initializing hardware components. Secondly, clock spread settings can be adjusted; this involves modifying the clock signal's timing characteristics to reduce electromagnetic interference and potentially improve signal integrity, though the specific adjustments are provided as fixed register values derived from anticipated usage scenarios. A crucial feature for performance tuning is the option to underclock the C P U for adaptive clocking support. When this underclocking is performed directly, it necessitates that the Basic Input Output System or B I O S implements a ramp algorithm. This algorithm gradually adjusts the clock frequency, preventing abrupt changes that could lead to instability or operational errors. Finally, the system allows for locking out clock registers prior to transitioning to the host O S. This action prevents unauthorized or unintended modifications to the clock configuration by the operating system, ensuring that the B I O S managed settings are maintained.
+
+The subsequent section elaborates on P C I device enumeration. This process is defined as a generic term encompassing the detection and allocation of system resources to devices that adhere to the P C I standard. The discovery phase, integral to enumeration, is responsible for assigning the necessary resources to each detected device. These resources typically include memory, which can be utilized for input output or I O operations, and specifically prefetchable memory, which allows the system to read data from the device in anticipation of its use, enhancing performance. Another critical resource assignment involves memory mapped I O or M M I O space. This method maps device control registers and data buffers directly into the processor's memory address space, enabling the C P U to access them using standard memory load and store instructions. Additionally, interrupt request or I R Q assignments are managed, ensuring that devices can signal the C P U when they require attention. The enumeration process also covers the detection and execution of Expansion R O M, a read only memory chip that often contains firmware for initializing the P C I device and providing basic functionality before the main operating system drivers are loaded.
+
+The scope of P C I device discovery extends to a wide array of modern interfaces and controllers. This includes not only the legacy P C I Express or P C I E root ports, which are foundational for the P C I Express hierarchy, but also common peripherals like U S B controllers for universal serial bus devices, S A T A controllers for storage devices, audio controllers for sound hardware, and various add in cards or devices. The text highlights that this discovery mechanism is applicable to all newer, non legacy interfaces, underscoring the pervasive nature of the P C I enumeration standard in contemporary computer hardware.

@@ -1,0 +1,67 @@
+—Certain hardware changes that are relatively easily detected by BIOS
+include CPU, memory, display, input, boot target, and RTC battery
+
+errors.
+
+—BIOS setting changes that will cause an event may include changes to
+
+the boot target and console input/output changes.
+—Software changes include UEFI updates.
+
+Not every exception event is likely to trigger a full boot on the next boot
+sequence or involve interrupting the current boot with a system reset. Table
+
+11.2 depicts the different types of exceptions that could occur.
+
+Table 11.2: Types of Exceptions
+
+Exception Type Current Boot Flow Requires RESET Next Boot Flow
+Type 1 Fast Boot Mo Fast Boot
+Type 2 Fast Boot up until Mo Fast Boot
+
+Exception, remainder of
+boot sequence is Full Boot
+
+Type 3 NA Yes Full Boot with Fast MRC
+Type 4 M/A Yes Full Boot with Full MRC
+training
+
+A Type 1 Exception can be completely handled within an EFI module and the
+remainder of the BIOS boot flow will continue with the BOOT _ WITH_
+MINIMAL_CONFIGURATION flag. Optionally, the exception can be logged
+for diagnostic purposes.
+
+A Type 2 Exception occurs if a BIOS module encounters an issue that
+will prevent the rest of the BIOS from continuing the Fast Boot framework.
+
+The remainder of the boot sequence may execute slower than anticipated but
+Certain hardware changes that are relatively easily detected by B I O S include C P U, memory, display, input, boot target, and R T C battery errors.
+
+B I O S setting changes that will cause an event may include changes to the boot target and console I O changes.
+
+Software changes include U E F I updates.
+
+Not every exception event is likely to trigger a full boot on the next boot sequence or involve interrupting the current boot with a system reset. Table 11.2 depicts the different types of exceptions that could occur.
+
+Table 11.2: Types of Exceptions
+
+The table shows exception types and their associated boot flows. Type One has a Fast Boot flow and does not require a reset, leading to a Fast Boot next boot flow. Type Two also has a Fast Boot flow, and it does not require a reset, resulting in a Fast Boot next boot flow, with the exception description noting it proceeds until the remainder of the boot sequence is a Full Boot. Type Three and Type Four both have N A for their current boot flow and require a reset, with Type Three leading to a Full Boot with Fast M R C next boot flow, and Type Four leading to a Full Boot with Full M R C training next boot flow.
+
+A Type One exception can be completely handled within an E F I module and the remainder of the B I O S boot flow will continue with the B O O T underscore W I T H underscore M I N I M A L underscore C O N F I G U R A T I O N flag. Optionally, the exception can be logged for diagnostic purposes.
+
+A Type Two exception occurs if a B I O S module encounters an issue that will prevent the rest of the B I O S from continuing the Fast Boot framework. The remainder of the boot sequence may execute slower than anticipated but
+The discussion centers on system exceptions that can influence the boot process, categorizing them by their impact on the boot flow and whether a system reset is required. These exceptions can stem from hardware changes, such as those involving the C P U, memory, display, input devices, boot target, or the real time clock battery. BIOS setting modifications are also identified as a trigger for events, potentially affecting the boot target and console input output operations. Furthermore, software changes, specifically U E F I updates, are cited as another source of exceptions.
+
+The text clarifies that not all exceptions necessitate a complete reboot of the system; some might interrupt the current boot sequence and resolve on the subsequent boot cycle. Table 11 dot 2 enumerates various exception types, detailing their current boot flow behavior, whether a reset is required, and the subsequent boot flow.
+
+Examining Table 11 dot 2:
+
+*   **Type 1 Exception:** Characterized by a "Fast Boot" current boot flow and does not require a reset. The next boot flow also remains "Fast Boot." This suggests a non-disruptive exception that is handled without altering the accelerated boot procedure.
+
+*   **Type 2 Exception:** Presents a "Fast Boot up until Exception, remainder of boot sequence is Full Boot" current boot flow, and similarly does not require a reset. The next boot flow continues as "Fast Boot." This indicates an exception that occurs partway through a fast boot, after which the system reverts to a standard full boot for the remainder of the current sequence, yet maintains fast boot capabilities for subsequent operations.
+
+*   **Type 3 Exception:** Labeled as "N A" for its current boot flow, this exception *requires* a reset. The subsequent boot flow is described as "Full Boot with Fast M R C." M R C likely refers to Memory Reference Code, implying that a more thorough memory initialization process is engaged after the reset.
+
+*   **Type 4 Exception:** Also designated "N A" for its current boot flow, this exception *requires* a reset. The next boot flow is "Full Boot with Full M R C training." This signifies a more comprehensive boot process than Type 3, involving complete memory retraining, which might be necessary for unstable or newly configured memory modules.
+
+The text further elaborates on Type 1 and Type 2 exceptions. A Type 1 exception is completely manageable within an E F I module. The subsequent boot process proceeds unimpeded, with the option to log the exception for diagnostic purposes if a specific flag, such as B O O T underscore W I T H underscore M I N I M A L underscore C O N F I G U R A T I O N, is set. Type 2 exceptions arise when a BIOS module encounters an issue that interferes with the fast boot framework. While the fast boot may be interrupted, the system eventually recovers, although the remainder of the boot sequence might take longer than initially anticipated. This implies a trade-off between boot speed and the robustness of the fast boot mechanism when certain exceptions occur.

@@ -1,0 +1,42 @@
+Chapter 2
+Intel Architecture Basics
+
+Architecture is a visual art, and the buildings speak for themselves.
+—Julia Morgan
+Architecture begins where engineering ends.
+—Walter Gropius
+
+Intel Architecture has been evolving since before the PC AT computer. It has
+ridden along with and contributed to many industry standards or become a de
+facto standard over the years. What used to be the IBM or a “clone,” or IBM-
+compatible, is now simply a PC motherboard most likely with Intel’s CPU
+and chipsets.
+
+Most people didn’t really begin to understand this until the Intel®
+Pentium® Processor with MMX technology and the bunny-suited fab workers
+dancing to Wild Cherry’s Play That Funky Music commercials. The
+accompanying five-tone melody reminds you from across the room, in a
+crowded sports bar, whose chips are in the computer they just ran an ad for,
+even when you cannot see the TV. And then there was the Blue Man Group
+commercials for the Intel® Pentium® III processors. Which did it? I’m not
+sure...you pick. Likely it was all the stickers on the machines that gave it
+
+away.
+Chapter two. Intel Architecture Basics.
+
+Architecture is a visual art, and the buildings speak for themselves. This quote is attributed to Julia Morgan.
+
+Architecture begins where engineering ends. This quote is attributed to Walter Gropius.
+
+Intel Architecture has been evolving since before the P C A T computer. It has ridden along with and contributed to many industry standards or become a de facto standard over the years. What used to be the I B M or a “clone,” or I B M compatible, is now simply a P C motherboard most likely with Intel’s C P U and chipsets.
+
+Most people didn’t really begin to understand this until the Intel Pentium Processor with M M X technology and the bunny suited fab workers dancing to Wild Cherry’s Play That Funky Music commercials. The accompanying five tone melody reminds you from across the room, in a crowded sports bar, whose chips are in the computer they just ran an ad for, even when you cannot see the T V. And then there was the Blue Man Group commercials for the Intel Pentium three processors. Which did it? I’m not sure, you pick. Likely it was all the stickers on the machines that gave it away.
+The text introduces fundamental concepts in computer architecture, specifically focusing on the evolution and impact of Intel's contributions to the personal computing landscape. Computer architecture, broadly defined, encompasses the structural and behavioral description of a computer system. It dictates how the C P U, memory, and input/output (I O) devices are organized and how they communicate. This design process balances performance, cost, power consumption, and backward compatibility.
+
+The historical context provided highlights the I B M P C A T computer as a seminal platform. The P C A T established a de facto industry standard, defining not only its instruction set architecture (I S A) but also the overall system design, including the motherboard layout, bus interfaces, and peripheral connectivity. The emergence of "clone" computers signifies the replication of this architectural standard by other manufacturers. This phenomenon was crucial for the proliferation of personal computers, as it created an open ecosystem where hardware components from various vendors could interoperate, fostering competition and innovation. The compatibility extended beyond the C P U to the entire system, particularly the motherboard and its accompanying chipsets.
+
+The relationship between the C P U and chipsets is central to motherboard architecture. The C P U, or Central Processing Unit, is the computational core, responsible for executing program instructions. It contains components like the Arithmetic Logic Unit (A L U) for integer operations, the Floating Point Unit (F P U) for real number calculations, and control units that manage instruction fetching, decoding, and execution. Chipsets, historically comprising a northbridge and a southbridge, facilitate communication between the C P U and other system components. The northbridge typically handled high-speed communication with the Ram and the graphics processor (via P C I E), while the southbridge managed slower I O devices such as U S B ports, S S D controllers, and network interfaces. This division of labor in the chipset optimizes data flow and reduces contention, ensuring efficient operation of the entire system.
+
+The mention of the Intel Pentium processor with M M X technology marks a significant advancement in C P U design. The Pentium series introduced a superscalar architecture, enabling the processor to execute more than one instruction per clock cycle, thereby improving overall throughput. M M X technology, or MultiMedia eXtensions, was a pioneering implementation of Single Instruction Multiple Data (S I M D) principles. S I M D allows a single instruction to operate simultaneously on multiple data elements, which are typically packed into larger registers. For instance, an M M X instruction might perform the same arithmetic operation on eight eight-bit integers in a sixty four-bit register in one clock cycle, rather than requiring eight separate instructions. This capability profoundly accelerated multimedia processing tasks, such as image manipulation, audio encoding, and video playback, by exploiting data-level parallelism inherent in such workloads.
+
+Subsequent generations, like the Intel Pentium three processors, further extended these S I M D capabilities with the introduction of S S E (Streaming S I M D Extensions). While M M X focused on integer operations, S S E primarily targeted floating point computations, which are critical for graphics rendering, scientific simulations, and digital signal processing. The evolution from M M X to S S E demonstrates a continuous drive in processor architecture to identify common computational patterns in emerging applications and design specialized instruction sets to accelerate them. This iterative process of architectural enhancement, driven by application demands, is a hallmark of high-performance computing design, aiming to deliver higher computational density and efficiency within constrained power and area budgets.

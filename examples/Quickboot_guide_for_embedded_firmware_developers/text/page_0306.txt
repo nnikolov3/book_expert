@@ -1,0 +1,49 @@
+Bit 7:3 Bit 2 Bit 1 Bit ©
+
+Reserved Module Minimum Nominal Voltage Vio
+0=NOT 1.25 V operable 0 =NOT 1.35 V operable 1 =1.35V operable
+1=1.25V aperable 0 =1.5V operable 1 =NOT 1.5 V operable
+
+1.35 V LV DDR3 devices are required to be 1.5 V operable.
+All DDR3 devices are required to be 1.5 V endurant,
+
+The value on Bit 0 uses a different polarity as compared with
+Bits 1 and 2 for backward compatibility with previous DDR3
+SPD definitions.
+
+000 = 1.5 VY only
+
+001 =N/A
+
+010=1.3%Vorl.5V
+
+011 =1.35V andl.5 Vendurant 100=1.25Vor1.5V
+101 = 1.25 and 1.5 V endurant
+
+110=1.20V¥, 1.35V. orl1.0 ¥
+
+111=1.25V or 1.35 V. 1.5 V-endurant
+
+The nominal Voltage parameter is extracted directly from the SDRAM
+datasheet, usually on the front page.
+
+SPD Field 0x07: Ranks & Device DQ Count
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+7 0x07 Ranks & Device DQ Count 0=01 Rank=1
+Width = x8
+
+From the JEDEC Specification, Byte 7: Module Organization
+
+This byte describes the organization of the SDRAM module. Bits 2—0 encode
+the device width of the SDRAM devices. Bits 5-3 encode the number of
+physical ranks on the module. For example, for a double-rank module with
+x8 DRAMs, this byte is encoded 00 001 001, or 0x09.
+The table shows SPD (Serial Presence Detect) bits and their corresponding values. Bit seven through three are reserved. Bit two specifies the module minimum nominal voltage V DD, where zero indicates not one point two five volts operable and one indicates one point two five volts operable. Bit one indicates the module nominal voltage. Zero means not one point three five volts operable, and one means one point five volts operable. Bit zero specifies the module voltage for backward compatibility with previous D D R three SPD definitions. One point three five volts L V D D R three devices are required to be one point five volts operable, and all D D R three devices are required to be one point five volts endurant. The value on Bit zero uses a different polarity as compared with Bits one and two for backward compatibility with previous D D R three S P D definitions. The possible values for Bits zero through two are: zero zero zero for one point five volts only, zero zero one for N A, zero one zero for one point three five volts or one point five volts, zero one one for one point three five volts and one point five volts endurant one zero zero for one point two five volts or one point five volts, one zero one for one point two five volts and one point five volts endurant, one one zero for one point two five volts, one point three five volts or one point five volts, and one one one for one point two five volts or one point three five volts, one point five volts endurant. The nominal voltage parameter is extracted directly from the S D R A M datasheet, usually on the front page.
+
+S P D Field zero x zero seven: Ranks and Device D Q Count. The table shows Byte in decimal as seven, Byte in hexadecimal as zero x zero seven, Field Name as Ranks and Device D Q Count, Typical Value as zero x zero one, and Definition as Rank is one, Width is x eight.
+
+From the J E D E C Specification, Byte seven: Module Organization. This byte describes the organization of the S D R A M module. Bits five through three encode the device width of the S D R A M devices. Bits two through zero encode the number of physical ranks on the module. For example, for a double rank module with times eight D R A M s, this byte is encoded zero zero one zero zero one, or zero x zero nine.
+The provided text details aspects of Synchronous Dynamic Random Access Memory, or S D Ram, specifically focusing on parameters defined within the Serial Presence Detect, or S P D, standard for memory modules. The first table outlines the encoding of the Module Minimum Nominal Voltage, V D D, using bits two through zero. This voltage parameter is critical for ensuring compatibility and proper operation of the memory module with the host system's power delivery capabilities. The table indicates that a three-bit field is used to represent various voltage levels, with specific bit combinations mapping to distinct operating voltages such as one point two five volt, one point three five volt, and one point five volt. The definitions also highlight operational characteristics like "operable" or "endurant," suggesting different levels of voltage tolerance or power saving modes. Notably, Bit zero uses an inverted polarity for backward compatibility with prior generations of S D Ram.
+
+The second table, labeled "S P D Field 0×07: Ranks & Device D Q Count," specifies the meaning of Byte seven of the S P D data. This byte is crucial for describing the module's organization, specifically the number of ranks and the data width of the individual S D Ram devices. A rank is a block of memory chips on a module that can be accessed independently. The data presented in this table shows that for Byte seven, the field name is "Ranks & Device DQ Count." The typical value for this field is hexadecimal zero x zero one, which is defined as indicating a Rank of one and a device width of times eight, often represented as x eight. This means the memory module has one rank, and each memory chip on that module has an eight-bit data interface. The accompanying text further explains that bits two through zero of this byte encode the number of physical ranks on the module, while bits five through three encode the device width. For instance, a dual-rank module with x eight D Rams would have a binary encoding of zero zero zero zero zero one zero zero one, or hexadecimal zero x zero nine, for this byte. This detailed bit-level encoding allows the system's memory controller to correctly configure and address the memory module, optimizing performance and ensuring functional integrity.

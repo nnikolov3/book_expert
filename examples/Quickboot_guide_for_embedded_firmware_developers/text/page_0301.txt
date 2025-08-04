@@ -1,0 +1,45 @@
+from bytes 60-116. Byte 3 identifies the SDRAM memory module type,
+which implies the width (D dimension) of the module. Other module physical
+characteristics, such as height (A dimension) or thickness (E dimension) are
+documented in the module-specific section of the SPD. Refer to the relevant
+JEDEC JC-11 module outline (MO) documents for dimension definitions.
+
+Bits 7:4 Bits 3:0
+Reserved Module Type
+X 0000 = Undefined
+0001 = RDIMM (width = 133.35 mm nom)
+0010 = UDIMM (width = 133.35 mm nom)
+0011 = SO-DIMM (width = 67.6 mm nom)
+0100 = Micro-DIMM (width = TBD mm nom)
+0101 = Mini-RDIMM (width = 82.0 mm nom)
+0110 = Mini-UDIMM (width = 82.0 mm nom)
+0111 = Mini-CDIMM (width = 67.6 mm nom)
+1000 = 72b-SO-UDIMM (width = 67.6 mm nom)
+1001 = 72b-SO-RDIMM (width = 67.6 mm nom)
+1010 = 72b-SO-CDIMM (width = 67.6 mm nom)
+1011 = LRDIMM (width = 133.35 mm nom)
+1100 = 16b-SO-DIMM (width = 67.6 mm nom)
+1101 = 32b-SO-DIMM (width = 67.6 mm nom)
+All others reserved
+Definitions:
+RDIMM: Registered Dual In-Line Memory Module
+LRDIMM: Load Reduction Dual In-Line Memory Module
+UDIMM: Unbuffered Dual In-Line Memory Module
+SO-DIMM: Unbuffered 64-bit Small Outline Dual In-Line Memory Module
+Micro-DIMM: Micro Dual In-Line Memory Module
+Mini-RDIMM: Mini Registered Dual In-Line Memory Module
+Mini-UDIMM: Mini Unbuffered Dual In-Line Memory Module
+From bytes sixty to one hundred sixteen, byte three identifies the S D R A M memory module type, which implies the width D dimension of the module. Other module physical characteristics, such as height A dimension or thickness E dimension, are documented in the module specific section of the S P D. Refer to the relevant J E D E C J C eleven module outline M O documents for dimension definitions.
+
+Bits seven to four, labeled Reserved, and bits three to zero, labeled Module Type. Reserved X corresponds to module type values zero zero zero zero through one one zero one.
+
+The table shows module type mappings. Zero zero zero zero is Undefined. Zero zero zero one is R D I M M with a width of one hundred thirty three point three five millimeters nominal. Zero zero one zero is U D I M M with a width of one hundred thirty three point three five millimeters nominal. Zero zero one one is S O D I M M with a width of sixty seven point six millimeters nominal. Zero one zero zero is M i c r o D I M M with a width of T B D millimeters nominal. Zero one zero one is M i n i R D I M M with a width of eighty two point zero millimeters nominal. Zero one one zero is M i n i U D I M M with a width of eighty two point zero millimeters nominal. Zero one one one is M i n i C D I M M with a width of sixty seven point six millimeters nominal. One zero zero zero is seventy two b S O U D I M M with a width of sixty seven point six millimeters nominal. One zero zero one is seventy two b S O R D I M M with a width of sixty seven point six millimeters nominal. One zero one zero is seventy two b S O C D I M M with a width of sixty seven point six millimeters nominal. One zero one one is L R D I M M with a width of one hundred thirty three point three five millimeters nominal. One one zero zero is sixteen b S O D I M M with a width of sixty seven point six millimeters nominal. One one zero one is thirty two b S O D I M M with a width of sixty seven point six millimeters nominal. All other values are reserved.
+
+Definitions: R D I M M stands for Registered Dual In Line Memory Module. L R D I M M stands for Load Reduction Dual In Line Memory Module. U D I M M stands for Unbuffered Dual In Line Memory Module. S O D I M M stands for Unbuffered sixty four bit Small Outline Dual In Line Memory Module. M i c r o D I M M stands for M i c r o Dual In Line Memory Module. M i n i R D I M M stands for M i n i Registered Dual In Line Memory Module. M i n i U D I M M stands for M i n i Unbuffered Dual In Line Memory Module.
+The text describes the function of specific bytes within a memory module's serial presence detect, or S P D, data structure, particularly focusing on identifying the memory module type and its physical dimensions. Byte three, specifically, encodes the S D Ram module type, and its interpretation is based on the value of bits three through zero.
+
+This byte's bit field is divided into two parts: bits seven through four, designated as reserved, and bits three through zero, which represent the module type. The following table illustrates the mapping of these four bits to various S D Ram module types, along with their specified nominal widths. For instance, a binary value of zero zero zero zero, or hexadecimal zero, in bits three through zero indicates an undefined module type. A value of zero zero zero one, hexadecimal one, signifies an R D I M M, a Registered Dual In line Memory Module, with a nominal width of one hundred thirty three point three five millimeters. Similarly, zero zero one zero, hexadecimal two, denotes a U D I M M, an Unbuffered Dual In line Memory Module, also with a nominal width of one hundred thirty three point three five millimeters.
+
+The table further defines S O D I M M, Small Outline Dual In line Memory Module, with a width of sixty seven point six millimeters, and Micro D I M M, Micro Dual In line Memory Module, whose width is marked as to be determined. It also categorizes various "mini" form factors: Mini R D I M M, Mini U D I M M, and Mini C D I M M, all with specified nominal widths. Additionally, it includes entries for 72 bit S O U D I M M, 72 bit S O R D I M M, and 72 bit S O C D I M M, all with a nominal width of sixty seven point six millimeters, along with L R D I M M, Load Reduction Dual In line Memory Module, at one hundred thirty three point three five millimeters, and 16 bit S O D I M M and 32 bit S O D I M M, both at sixty seven point six millimeters. Values not explicitly listed are reserved.
+
+The text also provides definitions for the acronyms used, clarifying that R D I M M stands for Registered Dual In line Memory Module, L R D I M M for Load Reduction Dual In line Memory Module, U D I M M for Unbuffered Dual In line Memory Module, S O D I M M for Unbuffered 64 bit Small Outline Dual In line Memory Module, Micro D I M M for Micro Dual In line Memory Module, Mini R D I M M for Mini Registered Dual In line Memory Module, and Mini U D I M M for Mini Unbuffered Dual In line Memory Module. These definitions are crucial for understanding the operational characteristics and physical attributes of different memory module form factors. The physical characteristics like width, represented by the D dimension, and height or thickness, represented by the A and E dimensions respectively, are documented in the module specific section of the S P D and are further detailed in the relevant JEDEC JC 11 module outline documents. This standardized approach ensures interoperability and allows system firmware to correctly identify and configure installed memory modules.

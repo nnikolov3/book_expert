@@ -1,0 +1,59 @@
+Detected 86 diacritics
+SPD Field #61: “(Unbuffered): Module Maximum Thickness” Definition
+from JEDEC DDR3 SPD Specification
+
+SPD Field 0x3E: (Unbuffered): Reference Raw Card Used
+
+Each DIMM equivalent consists of a single rank of x8 SDRAM devices, no
+ECC. This corresponds to RAW Card Version A, x64, which would make
+
+SPD field #62=0x00.
+FF Protest
+IT
+ET] DeDered DeCHTSOEY DORE Daya rly Ss OAD DCE oon Oop] OOF Corse al] COAG DOES SE]
+Charm © hi eet
+Lig] com) ELLY oe nL le [ele {Sa DRC (an) DOR Cae)
+DORT_ CORT | :
+EE EEL al PORT DOES] DDE DOE DDE DORA COE Dope] DOs Doar DORE DOES
+Charnal 1 ame VAT-EITF SORAM Devices Sh
+DOR (A588 J So one] 2 RA RCRA (Fain) EEE
+DOA CoE
+Charen 2
+COE Cher)
+
+The
+
+various Reference Raw Card Enumerators are described in this
+
+document: JEDEC Standard No. 21C: 240-Pin PC3-6400/PC3-8500/PC3-
+10600/PC3-12800 DDR3 SDRAM Unbuffered DIMM Design Specification,
+
+Revision 1.01, November 2009, http://www.jedec.org/ (requires account).
+
+Byte (Dec)
+
+Byte (Hex) Field Name Typ. Value Definition
+
+62
+
+0x3E (Unbuffered): Reference Raw Card Used 0=00 Raw Card A, =64
+S P D Field Sixty One: Unbuffered Module Maximum Thickness Definition from J E D E C D D R three S P D Specification.
+
+S P D Field Zero X three E: Unbuffered Reference Raw Card Used.
+
+Each D I M M equivalent consists of a single rank of times eight S D R A M devices, no E C C. This corresponds to R A W Card Version A, times sixty four, which would make S P D field sixty two equals zero times zero zero.
+
+The diagram shows a processor connected to Channel Zero, Channel One, and Channel Two. Channel Zero has D Q zero to D Q seven and D Q eight to D Q fifteen, D Q sixteen to D Q twenty three, D Q twenty four to D Q thirty one, D Q thirty two to D Q thirty nine, D Q forty to D Q forty seven, D Q forty eight to D Q fifty five, and D Q fifty six to D Q sixty three. It also shows C S zero and C S one for D O R one. Channel One shows D O R one C S zero to C S seven, D O R two D Q zero to D Q sixty three. Channel Two shows D O R two C S zero to C S seven. The diagram also shows M T four one J two five six M B H X dash one eight E I T F S D R A M Devices connected to these channels.
+
+The various Reference Raw Card Enumerators are described in this document: J E D E C Standard No. two one C: two hundred forty Pin P C three dash six four zero zero slash P C three dash eight five zero zero slash P C three dash one zero six zero zero slash P C three dash one two eight zero zero D D R three S D R A M Unbuffered D I M M Design Specification, Revision one point zero one, November two thousand nine, http colon slash slash www dot jedec dot org slash requires account.
+
+The table shows Byte in decimal, Byte in hexadecimal, Field Name, Type Value, and Definition. The first row has sixty two in decimal, zero X three E in hexadecimal, Unbuffered Reference Raw Card Used as the Field Name, zero X zero zero as the Type Value, and Raw Card A, times sixty four as the Definition.
+The page discusses aspects of the Serial Presence Detect, or S P D, standard for Double Data Rate Three, or D D R three, Synchronous Dynamic Random Access Memory, or S D Ram, modules. Specifically, it references S P D Field number sixty one, which defines the "Unbuffered: Module Maximum Thickness" and originates from the JEDEC D D R three S P D Specification.
+
+It also details S P D Field zero times three E, designated as "(Unbuffered): Reference Raw Card Used." The text clarifies that each D I M M, or Dual In line Memory Module, equivalent to a single rank of eight S D Ram devices, irrespective of Error Correction Code, or E C C, corresponds to a Raw Card Version A, specified as sixty four bits wide. This implies that S P D field number sixty two would hold the value zero times zero zero, indicating this configuration.
+
+A diagram illustrates a processor's memory interface, showing two memory channels, Channel zero and Channel one, and a partial view of a third, Channel two. Each channel connects to multiple D D R S D Ram devices. For instance, Channel zero demonstrates connections to D D R zero D Q zero through D Q eight, D Q sixteen through D Q twenty three, D Q thirty one through D Q thirty two, and D Q forty through D Q sixty three, along with Chip Select, or C S, signals like D D R zero C S zero and D D R one C S zero. The diagram visually represents the data and control pathways from the processor to the memory devices, explicitly showing eight D D R S D Ram devices labeled as "M T four one J two five six M B H X dash one eight seven E I T F S D Ram Devices." These devices are depicted as being connected to the memory controller through parallel data buses and individual C S lines, indicating a single rank configuration per channel, where each device contributes a portion of the overall data width. The arrangement suggests a parallel access scheme to the memory chips.
+
+The text further references a document, JEDEC Standard No. two one C, titled "two forty Pin P C three dash six thousand four hundred slash P C three dash eight thousand five hundred slash P C three dash twelve thousand eight hundred D D R three S D Ram Unbuffered DIMM Design Specification," Revision one point oh one, dated November two thousand nine, accessible via the J E D E C organization. This document presumably contains the complete definition of the S P D fields and the Raw Card enumerators.
+
+Finally, a table segment confirms the association of Byte sixty two (decimal), or zero times three E (hexadecimal), with the field "Unbuffered: Reference Raw Card Used." The Type Value is listed as zero times zero zero, and the Definition further specifies "Raw Card A, sixty four." This table entry directly links the S P D byte offset to its functional meaning within the memory module's configuration, indicating that this particular setting identifies a standard, unbuffered D D R three memory module designed for a sixty four bit data bus width, based on the "Raw Card A" definition.

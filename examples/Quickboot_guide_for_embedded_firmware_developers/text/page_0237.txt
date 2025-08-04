@@ -1,0 +1,28 @@
+make improvements at the millisecond level.
+
+It should be noted that many little changes can add up to a lot. Even in
+the sub-second range, where Miller’s results imply a need for approximately
+80 milliseconds to see results, a series of small changes of 5 to 10 ms can
+
+easily reach a noticeable timing result.
+
+Responsiveness
+
+Looking across the system, in order to achieve what your brain thinks is the
+right timing, many things must be aligned for speed and performance, not just
+during runtime, but during startup and resume operations, as well as during
+sleep and shutdown. Every millisecond wasted burns milliwatts, costing time
+and energy.
+
+We need responsiveness across all levels of the platform, as shown in
+Figure 11.4:
+make improvements at the millisecond level. It should be noted that many little changes can add up to a lot. Even in the sub second range, where Miller's results imply a need for approximately eighty milliseconds to see results, a series of small changes of five to ten ms can easily reach a noticeable timing result.
+
+Responsiveness
+
+Looking across the system, in order to achieve what your brain thinks is the right timing, many things must be aligned for speed and performance, not just during runtime, but during startup and resume operations, as well as during sleep and shutdown. Every millisecond wasted burns milliwatts, costing time and energy. We need responsiveness across all levels of the platform, as shown in Figure 11.4.
+The provided text delves into the critical aspect of system responsiveness, particularly at the millisecond level. It highlights that numerous small latency contributions, each perhaps only a few milliseconds, can accumulate to a significant overall delay, potentially exceeding eighty milliseconds. This cumulative effect can degrade the user experience to a point where it becomes noticeable. The principle here relates to the summation of individual delays in a computational pipeline or workflow, a concept crucial in fields like real-time systems engineering and human-computer interaction design.
+
+The text then transitions to the broader concept of "Responsiveness" as a system attribute. It posits that achieving optimal responsiveness requires precise timing and alignment of various system operations, not solely during active runtime but also encompassing critical phases like startup and resume. The statement "Every millisecond wasted burns milliwatts, costing time and energy" underscores the efficiency implications of latency. This connects the performance aspect of responsiveness to power consumption, a fundamental consideration in modern computing, especially for battery-powered devices and large-scale data centers where energy efficiency directly impacts operational costs and environmental footprint.
+
+Furthermore, the text indicates that responsiveness is a platform-wide characteristic, necessitating a holistic approach to optimization across all levels of the system architecture. The mention of "Figure 11.4" suggests a visual representation or detailed analysis of these cross-level responsiveness factors, likely illustrating how different components or subsystems contribute to the overall perceived latency and how their timing interdependencies impact performance. This implies a layered system design where optimizations in one layer can cascade and affect others, necessitating an understanding of the entire system's temporal behavior.

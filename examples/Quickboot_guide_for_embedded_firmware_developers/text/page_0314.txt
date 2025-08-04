@@ -1,0 +1,54 @@
+Dividend Divisor Timebase (nS) Use
+
+1 2 0.125 For clock frequencies 400-1066 MHz
+1 16 0.0625 Reserved for Future use
+
+SPD Field 0x0C: Cycle Time (t-xmin)
+This field can be tricky to calculate.
+
+1. Find the lowest tCK number in the SDRAM datasheet for CAS
+Latencies supported by that SDRAM chip (see SPD field 14 below). The
+example above from the Micron MT41J256M8 gives 1.875 ns.
+
+2. This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+
+3. 3.1.875ns/0.125 ns = 15 = Ox0F.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+12 Ox0C Cycle Time (teemin) OxOF 1.875n5
+
+Per JEDEC Specification, Byte 12: SDRAM Minimum Cycle Time (tCKmin)
+
+This byte defines the minimum cycle time for the SDRAM module, in
+Medium Timebase (MTB) units. This number applies to all applicable
+components on the module. This byte applies to SDRAM and support
+components as well as the overall capability of the DIMM. This value comes
+
+from the DDR3 SDRAM and support component datasheets.
+
+Bits 7:0
+Minimum SDRAM Cycle Time (tCKmin) MTB Units
+Values defined from 1 to 255
+The table shows dividend, divisor, timebase in nanoseconds, and use. The first row has a dividend of one, a divisor of eight, a timebase of zero point one two five nanoseconds, and is used for clock frequencies four hundred to one thousand and sixty six megahertz. The second row has a dividend of one, a divisor of sixteen, a timebase of zero point zero six two five nanoseconds, and is reserved for future use.
+
+S P D Field zero X 0 C: Cycle Time t C K minimum. This field can be tricky to calculate.
+One. Find the lowest t C K number in the S D R A M datasheet for C A S latencies supported by that S D R A M chip, see S P D field fourteen below. The example above from the Micron M T four one J two five six M eight gives one point eight seven five nanoseconds.
+Two. This number must be divided by the Medium Timebase Divisor, the value in zero X 0 B. In our example this is zero point one two five nanoseconds.
+Three. Three point eight seven five nanoseconds slash zero point one two five nanoseconds is equal to fifteen which is zero X 0 F.
+
+The table shows byte in decimal, byte in hexadecimal, field name, typical value, and definition. Byte twelve, represented as zero X 0 C in hexadecimal, is the field name Cycle Time t C K minimum. The typical value is zero X 0 F, and the definition is one point eight seven five nanoseconds.
+
+Per J E D E C Specification, Byte twelve: S D R A M Minimum Cycle Time t C K minimum. This byte defines the minimum cycle time for the S D R A M module, in Medium Timebase M T B units. This number applies to all applicable components on the module. This byte applies to S D R A M and support components, as well as the overall capability of the D I M M. This value comes from the D D R three S D R A M and support component datasheets.
+
+Bits seven to zero. Minimum S D R A M Cycle Time t C K minimum M T B Units. Values defined from one to two hundred fifty five.
+The provided text delves into the calculation of SDRAM Minimum Cycle Time, denoted as tCKmin, which is a critical parameter in synchronous dynamic random access memory performance.  This value represents the shortest time interval between consecutive clock signals that the memory can reliably operate.  The information presented is structured around understanding a specific serial presence detect, or S P D, field, specifically field zero x zero C, which defines this parameter.
+
+The initial table illustrates a relationship between a "Dividend," a "Divisor," and a resulting "Timebase" in nanoseconds, used for clock frequencies.  Row one shows a dividend of one and a divisor of eight, yielding a timebase of zero point one two five nanoseconds. This corresponds to clock frequencies in the range of four hundred to one thousand and sixty six megahertz. Row two, with a dividend of one and a divisor of sixteen, results in a timebase of zero point zero six two five nanoseconds, reserved for future applications. This table establishes a fundamental principle of deriving time-based metrics by dividing a base value by a specific divisor, often representing a scaling factor or prescaler.
+
+The subsequent section explains how to determine tCKmin, highlighting that it can be a complex calculation. The process begins by locating the lowest tCK number within the SDRAM datasheet for the specified CAS latencies, a value supported by the particular SDRAM chip. As an example, the Micron M T four one J two five six M eight is cited, which has a tCK value of one point eight seven five nanoseconds. This raw tCK value then needs to be adjusted by the "Medium Timebase Divisor," which is found elsewhere, indicated as field fourteen. In the provided example, this divisor is not explicitly given but is implied to be eight based on the preceding table's first row, which yields zero point one two five nanoseconds. The calculation then proceeds: one point eight seven five nanoseconds divided by zero point one two five nanoseconds equals fifteen. This result, fifteen, is then represented in hexadecimal as zero x zero F, signifying the encoded value for tCKmin. This process illustrates a common practice in embedded systems and memory interfaces where raw performance metrics are encoded into smaller, fixed-size fields within configuration or identification structures like S P D.
+
+Following this, a second table details the S P D field 12, corresponding to hexadecimal zero x zero C, which defines the SDRAM Minimum Cycle Time (tCKmin). The entry specifies that byte twelve holds the value for tCKmin in Medium Timebase or M T B units. This value is significant as it applies to all compatible SDRAM and support components on the memory module, reflecting the overall capabilities of the Double Data Rate three, or D D R three, SDRAM and its support components, as documented in their respective datasheets. The table shows that byte twelve in hexadecimal is zero x zero C, with the corresponding field name being "Cycle Time (tCKmin)". The typical value is given as zero x zero F, which translates to one point eight seven five nanoseconds. This explicitly links the encoded hexadecimal value from the S P D field to the actual timing parameter.
+
+Finally, the text defines "Bits 7:0" as representing the "Minimum SDRAM Cycle Time (tCKmin) M T B Units," with values defined from one to two hundred fifty five. This indicates that the tCKmin parameter is encoded as an eight bit unsigned integer within the S P D structure, where each unit of the value corresponds to a specific increment of the Medium Timebase. The range from one to two hundred fifty five suggests that this field can represent a wide spectrum of cycle times, scaled by the underlying timebase. This encoding scheme allows for compact representation of critical timing information necessary for system initialization and configuration.

@@ -1,0 +1,44 @@
+older OS. Many of the same commands are supported. Simple
+native applications similar to older OS applications can be created
+to run single function operations for the platform or provide
+diagnostics or a flash upgrade path. UEFI shells have become
+standardized in the past few years. For more information on shells,
+please refer to “Harnessing the UEFI Shell” or proceed to Chapter
+9.
+
+—Scalability. Having an open-source system-firmware offering
+supported by a community of many computing companies,
+including BIOS vendors, OEMs, motherboard manufacturers, add-
+in card vendors, OS vendors, and silicon vendors, can be very
+advantageous when starting and maintaining your own
+development in the long term. If you’re using a legacy proprietary
+code base, the learning curve exists as with any code base, and
+there are continuous improvements and maintenance costs/time.
+The solution may not scale quite so easily between computing
+
+segments.
+
+—Security. In the most recent updates of the UEFI development kit
+(UDK2015), Internet Protocol v6 is supported. UEFI variables can
+be securely stored and easily authenticated. A new UEFI security
+binary can be added to allow for hashing. UEFI option ROMs that
+are added in can be signed and the signatures checked before
+execution. As new operating systems come online, security will be
+a vital requirement across most market segments. UEFI is ready for
+the tasks.
+
+—Longevity. UEFI has legs for the foreseeable future. Legacy is legacy
+Older O S. Many of the same commands are supported. Simple native applications similar to older O S applications can be created to run single function operations for the platform or provide diagnostics or a flash upgrade path. U E F I shells have become standardized in the past few years. For more information on shells, please refer to “Harnessing the U E F I Shell” or proceed to Chapter nine.
+
+Scalability. Having an open source system firmware offering supported by a community of many computing companies, including B I O S vendors, O E M s, motherboard manufacturers, add in card vendors, O S vendors, and silicon vendors, can be very advantageous when starting and maintaining your own development in the long term. If you’re using a legacy proprietary code base, the learning curve exists as with any code base, and there are continuous improvements and maintenance costs per time. The solution may not scale quite so easily between computing segments.
+
+Security. In the most recent updates of the U E F I development kit, U D K two thousand fifteen, Internet Protocol version six is supported. U E F I variables can be securely stored and easily authenticated. A new U E F I security binary can be added to allow for hashing. U E F I option R O M s that are added in can be signed and the signatures checked before execution. As new operating systems come online, security will be a vital requirement across most market segments. U E F I is ready for the tasks.
+
+Longevity. U E F I has legs for the foreseeable future. Legacy is legacy.
+The Unified Extensible Firmware Interface, or U E F I, represents a fundamental paradigm shift in the initialization and management of computing platforms, moving beyond the limitations inherent in the legacy Basic I O System, or B I O S. Unlike its predecessor, U E F I introduces a sophisticated firmware shell environment, supporting a command line interface that provides capabilities remarkably similar to those found in conventional operating systems. This architectural advancement enables the development of rudimentary native applications that can execute directly within the pre-boot environment. Such applications are invaluable for performing single function operations, conducting low level system diagnostics prior to operating system boot, or facilitating robust and reliable firmware upgrade paths, often involving flash memory manipulation. The progressive standardization of U E F I shells over the past several years underscores a concerted industry effort to ensure interoperability and consistent tooling across diverse hardware platforms, a critical factor for robust system management.
+
+The scalability of U E F I is profoundly enhanced by its embrace of an open source system firmware development model. This collaborative ecosystem aggregates contributions from a diverse consortium of stakeholders, including B I O S vendors, Original Equipment Manufacturers, motherboard manufacturers, add in card vendors, operating system vendors, and silicon vendors. This distributed development model offers a distinct advantage over proprietary legacy code bases. Open source approaches inherently lower the barrier to entry, diminishing the steep learning curve often associated with highly specialized, closed source firmware development. Furthermore, the collective intelligence and broad participation in maintenance cycles lead to continuous improvements and more efficient resolution of issues, effectively distributing the long term costs associated with firmware evolution and upkeep. Conversely, proprietary solutions frequently encounter challenges in scaling effectively across varied computing segments due to their inherent isolation and limited resource pooling.
+
+Security is an increasingly critical aspect of modern computing infrastructure, and U E F I addresses this with advanced features. Recent iterations of the U E F I development kit, specifically U D K two thousand fifteen, have incorporated support for Internet Protocol version six. This signifies the capability for network communication within the pre-boot environment, necessitating robust security measures for data integrity and confidentiality. U E F I variables, which store crucial system configuration parameters, can be securely stored and are subject to stringent authentication protocols. This prevents unauthorized modification or access. A significant enhancement is the introduction of a new U E F I security binary, which enables cryptographic hashing of firmware components. This hashing mechanism provides a cryptographic fingerprint, ensuring that the integrity of the binary remains uncompromised from its creation to its execution. Moreover, U E F I option R O M s, which extend system functionality by adding support for specific hardware devices, are digitally signed. Before these option R O M s are allowed to execute, their digital signatures are rigorously checked against a trusted public key infrastructure. This establishes a fundamental chain of trust from the earliest stages of boot, preventing the execution of malicious or unauthorized code and forming the bedrock of secure boot processes. As new operating systems and demanding market segments come online, robust pre-boot security becomes an indispensable requirement for maintaining overall system integrity.
+
+The culmination of these architectural advantages, including its extensibility, open development model, and advanced security features, provides U E F I with substantial longevity. It is poised to remain the foundational firmware interface for the foreseeable future. The implication is clear: legacy B I O S systems, with their inherent limitations in extensibility, security, and addressable memory, represent an older, increasingly obsolete paradigm, while U E F I stands as the enduring standard for contemporary and future computing platforms.

@@ -1,0 +1,47 @@
+Slow Interface and Device Access
+
+Interface and device accesses can be time consuming, either due to the nature
+of the interfaces and/or devices, or the necessity of issuing multiple accesses
+
+to the particular controller, bus, and device.
+
+DMI Optimizations
+
+If the PCH and CPU are both capable of flexible interface timings, then faster
+DMI settings minimize I/O latency to PCH and onboard devices. The BIOS
+should be using the highest DMI link speed, as the DMI default link speed
+may not be optimal. The BIOS should enable Gen2 (or highest) DMI link
+speed as early as possible (in the SEC phase), if this does not conflict with
+hardware design constraints. The reason for this quirk is predictable
+survivability: the default value for DMI link speed is 2.5 GT/s (Gen 1). A
+faster DMI link helps in I/O configuration speed by 6 to 14 percent. Thus, it
+should be trained to 5 GT/s (Gen 2 speed), at an early SEC phase. There may
+be reasons why the link should not run at top speeds all the time. If the BIOS
+option controls the DMI link speed, when the option may only be read later in
+
+the boot, and down speed training.
+
+Processor Optimizations
+
+The following section describes processor optimizations.
+
+CPU Turbo Enabling
+Slow Interface and Device Access.
+Interface and device accesses can be time consuming, either due to the nature of the interfaces and or devices, or the necessity of issuing multiple accesses to the particular controller, bus, and device.
+
+DMI Optimizations.
+If the PCH and C P U are both capable of flexible interface timings, then faster DMI settings minimize I O latency to PCH and onboard devices. The BIOS should be using the highest DMI link speed, as the DMI default link speed may not be optimal. The BIOS should enable Gen2 or highest DMI link speed as early as possible in the S E C phase, if this does not conflict with hardware design constraints. The reason for this quirk is predictable survivability: the default value for DMI link speed is two point five G T slash s Gen one. A faster DMI link helps in I O configuration speed by six to fourteen percent. Thus, it should be trained to five G T slash s Gen two speed, at an early S E C phase. There may be reasons why the link should not run at top speeds all the time. If the BIOS option controls the DMI link speed, when the option may only be read later in the boot, and down speed training.
+
+Processor Optimizations.
+The following section describes processor optimizations.
+
+C P U Turbo Enabling.
+The provided text discusses performance optimizations for computer systems, focusing on interface and device access, and specifically the Direct Media Interface, or DMI.
+
+The section on "Slow Interface and Device Access" highlights that interface and device accesses can be time consuming. This is attributed to the inherent latency associated with the interfaces themselves, the devices being accessed, and the procedural overhead of issuing multiple access requests through the control plane, bus, and ultimately to the target device. Such delays can impact overall system responsiveness and throughput.
+
+The "DMI Optimizations" section delves into the specifics of enhancing the performance of the DMI, a point to point serial interface used to connect Intel chipsets. It explains that both the Platform Controller Hub, or PCH, and the Central Processing Unit, or C P U, are capable of supporting flexible interface timings. The goal of optimizing DMI settings is to minimize input output, or I O, latency for connections between the PCH and onboard devices. The text recommends that the system's Basic Input Output System, or B I O S, should aim to utilize the highest available DMI link speed. It notes that the default DMI link speed, which is two point five gigatransfers per second, or G T G T slash s, for Generation one, may not be the most performant configuration. Instead, the B I O S should attempt to enable Generation two, or G T G T slash s, which offers a speed of five G T G T slash s, as early as possible during the S E C phase, which is the initial boot sequence. This is contingent on the hardware design constraints, and it's crucial to ensure this higher speed setting does not conflict with other system functionalities.
+
+The text further elaborates on the benefits and potential issues related to DMI speed. A faster DMI link can improve I O configuration speed by an estimated six to fourteen percent. The reasoning behind this optimization is tied to "predictable survivability." This suggests that while operating at maximum speed is desirable, there might be scenarios or hardware configurations where the DMI link might not be able to sustain its top speeds reliably throughout the entire boot process. Consequently, the option to control the DMI link speed, potentially setting it to a lower, more stable speed during the initial boot, and then re training to the higher speed later, is presented as a strategy to balance performance and system stability. This implies a dynamic speed adjustment mechanism controlled by the B I O S.
+
+Finally, the text transitions to "Processor Optimizations," indicating that the subsequent discussion will focus on enhancements related to C P U performance. The immediate subsection mentioned is "C P U Turbo Enabling," which likely refers to technologies like Intel Turbo Boost or AMD Precision Boost, mechanisms that allow the C P U to dynamically increase its clock frequency beyond its base operating speed when workload demands and thermal conditions permit.

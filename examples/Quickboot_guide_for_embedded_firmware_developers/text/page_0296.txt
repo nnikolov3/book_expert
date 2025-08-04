@@ -1,0 +1,34 @@
+"MTA LIPSEMEH, 187E1 TF SORAM De wom as
+CTH Se EF |
+
+asl
+
+MTA LIANE TATE ITE SEAM De vces [ile
+
+Figure A.2: Schematic Analysis Example
+
+See the “References” section at the end of this appendix for links to the exact
+documents used.
+SPD Field 0x00: Number of Bytes
+
+SPD EEPROMs typically contain 256 bytes. Down-on-board memory
+designs should use 0x11 for this field.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+0 0x00 Number of Bytes 0x11 256 Bytes Tatal
+128 Bytes Used
+
+Byte 0: Number of Bytes Used / Number of Bytes in SPD Device/ CRC
+
+Coverage
+The least significant nibble of this byte describes the total number of bytes
+Figure A point two: Schematic Analysis Example. See the references section at the end of this appendix for links to the exact documents used.
+
+S P D Field hex 00: Number of Bytes. S P D E E P R O M s typically contain two hundred fifty six bytes. Down on board memory designs should use hex 11 for this field.
+
+The table shows data for a byte at decimal zero, which is hexadecimal zero zero. The field name is Number of Bytes. The typical value is hex 11, and the definition is two hundred fifty six bytes total, one hundred twenty eight bytes used.
+
+Byte zero: Number of Bytes Used, Number of Bytes in S P D Device, C R C Coverage. The least significant nibble of this byte describes the total number of bytes.
+The provided figure, labeled Figure A.2, presents a schematic analysis example, illustrating a typical memory interface. At the highest level, a processor is shown interacting with multiple memory channels. Channel zero demonstrates a configuration with several Dual Data Rate Synchronous Dynamic Random Access Memory, or D D R S D Ram, devices. Each D D R S D Ram device appears to be connected to the processor via separate data lines, designated as D Q zero through D Q sixty three, and a chip select line, D Q C S zero. Specifically, the diagram depicts D Q zero through D Q seven, D Q eight through D Q fifteen, and so forth, up to D Q fifty six through D Q sixty three, organized into groups of eight bits, forming a sixty four bit data bus per channel. The schematic also shows multiple D D R S D Ram devices connected to each channel. For channel zero, the MT41J256M8HX dash 187 E I T F S D Ram devices are indicated, suggesting a specific type of memory module. The connections imply a parallel data path for each memory device, with individual chip select signals enabling specific modules within a channel. The arrangement suggests a multi channel memory architecture, potentially for enhanced bandwidth and performance through parallel access.
+
+Below the schematic, the document details the Serial Presence Detect, or S P D, Field zero zero hexadecimal, which pertains to the Number of Bytes. S P D E E P R O M s, or Electrically Erasable Programmable Read Only Memory, commonly contain two hundred fifty six bytes of information used to describe memory module characteristics to the system. Down on board memory designs are specified to use zero hexadecimal zero one one for this particular field. A table is presented to elaborate on this S P D field. The table lists the byte index in decimal and hexadecimal format, the field name, a typical value, and its definition. For byte zero, represented as zero in decimal and zero hexadecimal zero zero in hexadecimal, the field name is "Number of Bytes". The typical value for this field is zero hexadecimal one one, which translates to seventeen in decimal. The definition clarifies that this indicates two hundred fifty six Bytes Total and one hundred twenty eight Bytes Used within the S P D E E P R O M. The text further explains that Byte zero, specifically "Number of Bytes Used/Number of Bytes in S P D Device/C R C Coverage", has its least significant nibble, meaning the four least significant bits, describing the total number of bytes. This implies a structured encoding of memory information within the S P D E E P R O M, where specific bits or bytes convey crucial configuration parameters for system initialization and memory operation.

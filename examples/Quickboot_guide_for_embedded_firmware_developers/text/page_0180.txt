@@ -1,0 +1,50 @@
+Once the memory controller has been initialized, a number of subsequent
+
+cleanup events take place.
+
+Memory Testing
+
+The memory testing is now part of the MRC, but it is possible to add more
+tests should the design merit it. BIOS vendors typically provide some kind of
+memory test on a cold boot. Writing custom firmware requires the authors to
+choose a balance between thoroughness and speed, as highly embedded/
+mobile devices require extremely fast boot times and memory testing can
+take up considerable time.
+
+If testing is warranted for a design, testing the memory directly
+following initialization is the time to do it. The system is idle, the subsystems
+are not actively accessing memory, and the OS has not taken over the host
+side of the platform. Memory errors manifest themselves in random ways,
+sometimes inconsistently. Several hardware features can assist in this testing
+both during boot and during runtime. These features have traditionally been
+thought of as high-end or server features, but over time they have moved into
+the client and embedded markets.
+
+One of the most common is ECC. Some embedded devices use error
+correction codes (ECC) memory, which may need extra initialization. After
+power up, the state of the correction codes may not reflect the contents and
+all memory must be written to; writing to memory ensures that the ECC bits
+are valid and sets the ECC bits to the appropriate contents. For security
+purposes, the memory may need to be zeroed out manually by the BIOS or in
+some cases a memory controller may incorporate the feature into hardware to
+save time.
+
+Depending on the source of the reset and security requirements, the
+
+system may not execute a memory wipe or ECC initialization. On a warm
+Once the memory controller has been initialized, a number of subsequent cleanup events take place.
+
+Memory Testing
+
+The memory testing is now part of the M R C, but it is possible to add more tests should the design merit it. B I O S vendors typically provide some kind of memory test on a cold boot. Writing custom firmware requires the authors to choose a balance between thoroughness and speed, as highly embedded mobile devices require extremely fast boot times and memory testing can take up considerable time.
+
+If testing is warranted for a design, testing the memory directly following initialization is the time to do it. The system is idle, the subsystems are not actively accessing memory, and the O S has not taken over the host side of the platform. Memory errors manifest themselves in random ways, sometimes inconsistently. Several hardware features can assist in this testing both during boot and during runtime. These features have traditionally been thought of as high end or server features, but over time they have moved into the client and embedded markets.
+
+One of the most common is E C C. Some embedded devices use error correction codes (E C C) memory, which may need extra initialization. After power up, the state of the correction codes may not reflect the contents and all memory must be written to; writing to memory ensures that the E C C bits are valid and sets the E C C bits to the appropriate contents. For security purposes, the memory may need to be zeroed out manually by the B I O S or in some cases a memory controller may incorporate the feature into hardware to save time.
+
+Depending on the source of the reset and security requirements, the system may not execute a memory wipe or E C C initialization. On a warm
+Following the initialization of the memory controller, several subsequent cleanup operations are performed.  The process of memory testing is integrated into the power on self test, or P O S T, sequence, often referred to as the M R C, or Memory Reference Code. While this testing is a standard part of system initialization, it is also possible to extend it with additional tests to thoroughly validate memory functionality, particularly on a cold boot scenario.  Developers creating custom firmware must carefully balance the thoroughness of these memory tests with the desired boot time, especially in highly embedded or mobile device contexts where extremely fast boot times are paramount.
+
+If memory testing is warranted for a specific design, the optimal time to conduct these tests is during the post initialization phase, when the system is idle and the operating system has not yet assumed control of the platform's subsystems. Memory errors often manifest in unpredictable ways, and hardware features designed to assist in this testing can be invaluable. Historically, such features were predominantly found in high end servers, but they have increasingly become integrated into client and embedded markets.
+
+A critical aspect of modern memory reliability is the implementation of error correction codes, or E C C. Many embedded devices benefit from E C C memory, which may necessitate specific initialization procedures. After a power up event, the integrity of the E C C correction codes themselves must be validated. Writing to memory ensures that the data written, along with the associated E C C bits, are correctly programmed into their respective locations. For security sensitive applications, it is often a requirement to zero out the entire memory space, either manually or by the B I O S. Some memory controllers might even incorporate hardware features to facilitate this zeroing process, thereby reducing the time required. The specific memory initialization procedures, including whether a full memory wipe or E C C initialization is performed, can be dependent on the system's reset and security requirements, especially in the context of a warm reboot.

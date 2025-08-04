@@ -1,0 +1,44 @@
+Understanding the requirements of a particular platform-supported OS will
+greatly affect what optimization paths can be taken in the BIOS. Since many
+“open” platforms have a wide variety of operating systems that they support,
+this limits some of the choices available. In the case of the proof-of-concept
+platform, there were only two main operating systems that were required to
+be supported. This enabled the author to make a few choices that allowed the
+codebase to save roughly 400 ms of boot time by avoiding the reading of
+some of the DIMM SPD data for creating certain SMBIOS records since they
+
+weren’t used by the target operating systems.
+
+Changes in the BIOS codebase that avoided the unnecessary creation of
+
+certain tables saved roughly 400 ms in the boot time.
+
+Do We Have to Support Legacy Operating Systems?
+
+Are the target operating systems UEFI-compliant or not? If all the OS targets
+are UEFI-compliant, then the platform can save roughly 0.5 second in
+initialization of the video option ROM. In this case, there were two operating
+systems that needed to be booted on the same motherboard. We had
+conflicting requirements where one was UEFI-compliant and one was not.
+There are a variety of tricks that could have been achieved by the platform
+BIOS when booting the UEFI-compliant OS but for purposes of keeping fair
+measurement numbers, the overall boot speed numbers reflect the overhead
+of supporting legacy operating systems as well (the compatibility segment
+
+module [CSM] was executed).
+
+Do We Have to Support Legacy Option ROMs?
+Understanding the requirements of a particular platform supported O S will greatly affect what optimization paths can be taken in the B I O S. Since many "open" platforms have a wide variety of operating systems that they support, this limits some of the choices available. In the case of the proof of concept platform, there were only two main operating systems that were required to be supported. This enabled the author to make a few choices that allowed the codebase to save roughly four hundred milliseconds of boot time by avoiding the reading of some of the D I M M S P D data for creating certain S M B I O S records since they weren't used by the target operating systems.
+
+Changes in the B I O S codebase that avoided the unnecessary creation of certain tables saved roughly four hundred milliseconds in the boot time.
+
+Do We Have to Support Legacy Operating Systems?
+
+Are the target operating systems U E F I compliant or not? If all the O S targets are U E F I compliant, then the platform can save roughly zero point five second in initialization of the video option R O M. In this case, there were two operating systems that needed to be booted on the same motherboard. We had conflicting requirements where one was U E F I compliant and one was not. There are a variety of tricks that could have been achieved by the platform B I O S when booting the U E F I compliant O S but for purposes of keeping fair measurement numbers, the overall boot speed numbers reflect the overhead of supporting legacy operating systems as well, the compatibility segment module [C S M] was executed.
+
+Do We Have to Support Legacy Option ROMs?
+The initial analysis delves into the intricate relationship between operating system requirements and the optimization of boot paths within the Basic Input Output System, or B I O S. Platforms that are characterized as "open" offer a broad spectrum of operating systems, thereby presenting a wider range of choices for system initialization. The text highlights a specific proof of concept where the platform initially supported only two main operating systems. Through modifications to the B I O S codebase, specifically by avoiding the reading of data from the Dual In Line Memory Module, or D I M M, Serial Presence Detect, or S P D, for certain S M B I O S records, a saving of approximately four hundred milliseconds in boot time was achieved. This optimization was facilitated by circumventing the creation of these tables, which would have otherwise been necessary for supporting the target operating systems.
+
+The subsequent discussion probes the necessity of supporting legacy operating systems. It poses a question regarding whether target operating systems are U E F I compliant or not. The platform's ability to save approximately zero point five seconds during the initialization of the video option R O M is contingent on this compliance. The scenario examined involves two operating systems needing to be booted on the same motherboard, where one operating system was U E F I compliant and the other was not. The text suggests that various methods could have been employed to achieve U E F I compliance for the operating system. However, for the purpose of maintaining objective boot speed measurements, the overhead associated with supporting legacy operating systems, particularly through the execution of a compatibility segment module, or C S M, is noted as a factor that influences the overall boot speed.
+
+Finally, the document raises a pertinent question about the requirement to support legacy option R O M s, which are typically found in older hardware systems and often contain firmware necessary for the operation of certain peripherals or devices before the operating system loads. The interplay between supporting these legacy components and modern U E F I standards presents a significant design consideration in platform initialization.

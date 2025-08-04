@@ -1,0 +1,51 @@
+shorter portions. When looking at attacking this problem, it is a good idea to
+step back and look at the bigger picture before charging ahead and tackling
+
+the problem feature by feature.
+
+First Boot versus Next Boot Concept
+
+In ACPI system state description, the system starts up from G3, G2/S5, or
+G1/S4, and ends in a G0O/SO working system state. Orthogonal to Global and
+Sleep states of the ACPI, Intel has defined Fast Boot states that can be
+thought of as:
+
+—B0. First boot, in order to robustly boot on any configuration, firmware
+dynamically scans all enumerable buses and configures all
+
+applicable peripherals required to boot the OS.
+
+—B1. Full boot, similar to first boot, whenever a configuration change is
+
+noted.
+
+—BN. Typical subsequent boot, which reuses data from previous scans to
+initialize the platform. This results in a sub-two-second user
+
+experience.
+
+Figure 11.5 is a diagram of the Fast Boot State.
+
+After a full boot and with no configuration changes, a fast path is taken
+in the subsequent BIOS boot, resulting in faster boot time. Fast Boot can be
+implemented without missing any platform features, assuming that the idea is
+to hand off to the OS loader. This fast path is a “normal” or “typical” boot
+path.
+shorter portions. When looking at attacking this problem, it is a good idea to step back and look at the bigger picture before charging ahead and tackling the problem feature by feature.
+
+First Boot versus Next Boot Concept
+
+In A C P I system state description, the system starts up from G three, G two slash S five, Or G one slash S four, and ends in a G zero slash S zero working system state. Orthogonal to Global and Sleep states of the A C P I, Intel has defined Fast Boot states that can be thought of as:
+
+B zero. First boot, in order to robustly boot on any configuration, firmware dynamically scans all enumerable buses and configures all applicable peripherals required to boot the O S.
+
+B one. Full boot, similar to first boot, whenever a configuration change is noted.
+
+B N. Typical subsequent boot, which reuses data from previous scans to initialize the platform. This results in a sub two second user experience.
+
+Figure eleven point five is a diagram of the Fast Boot State. After a full boot and with no configuration changes, a fast path is taken in the subsequent B I O S boot, resulting in faster boot time. Fast Boot can be implemented without missing any platform features, assuming that the idea is to hand off to the O S loader. This fast path is a "normal" or "typical" boot path.
+The text discusses the concept of "Fast Boot" within the context of ACPI (Advanced Configuration and Power Interface) system states. ACPI defines a hierarchy of system power states, typically ranging from G0 (working state) to G3 (mechanical off), with intermediate states like G2/S5 (soft off) and G1/S4 (suspend to disk).
+
+The core technical distinction presented is between a "First Boot" and a "Next Boot," particularly as it relates to the initialization process of a computer system. A "First Boot" is characterized by a comprehensive initialization sequence where the firmware dynamically scans all enumerating buses and configures all applicable peripherals required to boot the Operating System. This thorough scan ensures that the system is robustly initialized, even in the face of diverse or changing hardware configurations.
+
+In contrast, a "Next Boot," also referred to as a "Fast Boot," leverages previously gathered information from prior system scans. This approach significantly accelerates the boot process by reusing cached configuration data, thereby reducing the time needed to initialize the platform. The benefit of this method is a substantial reduction in boot time, often described as a "sub-two-second user experience." This optimization is contingent on the assumption that the system's hardware configuration has not undergone significant changes since the last boot. The "Fast Boot" path effectively bypasses the full hardware enumeration and configuration, directly proceeding to load the Operating System, provided no critical configuration changes are detected. This efficiency is a key aspect of modern system design aimed at improving user responsiveness.

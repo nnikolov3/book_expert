@@ -1,0 +1,90 @@
+OSD: Weak margin (6.86) for 575 blob text block, but using orientation anyway: 0
+tRCD (MTB MTB tRCD Offset FTB tRCD Use
+units) (ns) (FTE units) (ns) Result (ns)
+100 Oxé64 0.125% Ci 0 0.001 12.5 DOR3-B00D0
+120 Ox78 0.125 0 0 0.001 15 DDR3-800E
+LN Ox 54 0.125 Ci 0 0.00] 11.25 DODR3-1066E
+105 0x69 0.125 0 0 0.001 13.125 UDE3-1066F
+120 0x78 0.12% Ci iL LOO] 15 DOR3-1066G
+84 0x54 0.125 0 0 0.001 10.5 DOR3I-1333F
+96 Dx=60 0.125 0 0 0.001 12 DDR3-13336
+108 O=aC 0.125 0 0 0.001 13.5 DOR3-1333H,
+105% 0x69 0.125% 0 0 0.001 13.125 DDE3-1333H
+downhing
+120 O=x78 0.125 0 0 0.001 15 DDR3-1333)
+80 0x50 0.125 0 Li] 0.001 10 DDR 3-16000G
+90 Ox 54 0.125 0 0 0.001 11.25 UDR3-1600H
+100 O=64 0.125% 0 LL] 0.001 12.5 DOR3-1600]
+110 Ox6E 0.125 0 0 0.001 13.75 DDR3-1600K:
+105 0x69 0.125 0 LL] 0.001 13.12% DOR3-1600K
+downbin;
+86 Ox 56 0.125 = 50} o=CE 0.001 10.7 DDR3-1866)
+95 0x 5F 0.125 -105 0x07 0.001 11.77 DDR3-1866K
+tRCD (MTB MTB tRCD Offset FTE tRCD Use
+units) (ns) (FTB units)1 (ns) Result (ns)
+103 O=&7 0.125 35 D=DD 0.001 12.84 DDR3-1866L
+112 0x70 0.125 -20 Ox Ab 0.001 13.91 DDR3-1866M;
+105 O=69 0.125 0 0 0.001 13.125 DDR3-1866M
+downbin;
+83 0x53 0.125 0 Dx AH 0.001 10.285 DDR3-2133K
+o0 Ox 5A 0.125 -30 OxE2 0.001 11.22 DDRE3-2133L
+98 Oui? 0.125 -5h OxAl 0,00] 12.155 DDR3-2133M
+105 O=x69 0.125 -35 Ox DD 0.001 13.09 DDE3-2133N
+
+Notes:
+The table shows t R C D in M T B units, M T B in nanoseconds, t R C D offset in F T B units, F T B in nanoseconds, and t R C D result in nanoseconds, along with the corresponding use case.
+
+For the first set of data, when t R C D is one hundred M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is twelve point five nanoseconds for D D R three dash eight hundred D.
+
+When t R C D is one hundred twenty M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is fifteen nanoseconds for D D R three dash eight hundred E.
+
+When t R C D is ninety M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is eleven point two five nanoseconds for D D R three dash one thousand and sixty six E.
+
+When t R C D is one hundred five M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point one two five nanoseconds for D D R three dash one thousand and sixty six F.
+
+When t R C D is eighty four M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is ten point five nanoseconds for D D R three dash one thousand and sixty six G.
+
+When t R C D is ninety six M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is twelve nanoseconds for D D R three dash one thousand three hundred thirty three F.
+
+When t R C D is one hundred eight M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point five nanoseconds for D D R three dash one thousand three hundred thirty three G.
+
+When t R C D is one hundred five M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point one two five nanoseconds for D D R three dash one thousand three hundred thirty three H subscript two downbin.
+
+When t R C D is one hundred twenty M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is fifteen nanoseconds for D D R three dash one thousand three hundred thirty three J.
+
+When t R C D is eighty M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is ten nanoseconds for D D R three dash one thousand six hundred G.
+
+When t R C D is ninety M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is eleven point two five nanoseconds for D D R three dash one thousand six hundred H.
+
+When t R C D is one hundred M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is twelve point five nanoseconds for D D R three dash one thousand six hundred J.
+
+When t R C D is one hundred ten M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point seven five nanoseconds for D D R three dash one thousand six hundred K subscript two downbin.
+
+When t R C D is eighty six M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus fifty F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is ten point seven nanoseconds for D D R three dash one thousand eight hundred sixty six J.
+
+When t R C D is ninety five M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus one hundred five F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is eleven point seven seven nanoseconds for D D R three dash one thousand eight hundred sixty six K.
+
+The second set of data begins with t R C D in M T B units, M T B in nanoseconds, t R C D offset in F T B units, F T B in nanoseconds, and t R C D result in nanoseconds, along with the corresponding use case.
+
+When t R C D is one hundred three M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus thirty five F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is twelve point eight four nanoseconds for D D R three dash one thousand eight hundred sixty six L.
+
+When t R C D is one hundred twelve M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus ninety F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point nine one nanoseconds for D D R three dash one thousand eight hundred sixty six M subscript two downbin.
+
+When t R C D is one hundred five M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is zero F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point one two five nanoseconds for D D R three dash one thousand eight hundred sixty six M downbin.
+
+When t R C D is eighty three M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus ninety F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is ten point two eight five nanoseconds for D D R three dash two thousand one hundred thirty three K.
+
+When t R C D is ninety M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus thirty F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is eleven point two two nanoseconds for D D R three dash two thousand one hundred thirty three L.
+
+When t R C D is ninety eight M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus ninety five F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is twelve point one five five nanoseconds for D D R three dash two thousand one hundred thirty three M.
+
+When t R C D is one hundred five M T B units and M T B is zero point one two five nanoseconds, the t R C D offset is minus thirty five F T B units, F T B is zero point zero zero one nanoseconds, and the t R C D result is thirteen point zero nine nanoseconds for D D R three dash two thousand one hundred thirty three N.
+
+Notes:
+The tables presented here detail timing parameters for Double Data Rate 3 (DDR3) Synchronous Dynamic Random Access Memory (SD Ram) modules, specifically focusing on the tRCD (RAS to CAS Delay) parameter and its relationship with various other timing specifications and operational uses. Each row represents a specific configuration or performance characteristic, correlating tRCD, measured in cycles (MTB units), with its equivalent in nanoseconds (MTB ns), an offset value, a Fixed Clock Frequency (FTB) in nanoseconds, and a resultant tRCD in nanoseconds, ultimately categorized by its intended use, often relating to memory speed grades.
+
+The first table exhibits entries where the tRCD Offset (FTB units) is consistently zero. The MTB units column provides values ranging from eighty to one hundred twenty. Correspondingly, the MTB ns column shows a uniform value of zero point one two five nanoseconds, indicating a fixed base timing interval. The FTB ns column remains at zero point zero zero one nanoseconds across these entries. The resultant tRCD in nanoseconds is calculated based on these inputs, suggesting a direct proportionality between the MTB units and the resulting tRCD. For instance, an MTB unit value of one hundred yields a tRCD result of twelve point five nanoseconds, while one hundred twenty units result in fifteen nanoseconds. This section maps these timing characteristics to various DDR3 speed bins, such as DDR3-800D, DDR3-1066E, DDR3-1066F, DDR3-1066G, DDR3-1333F, DDR3-1333G, DDR3-1333H, DDR3-1333H downbin, DDR3-1333J, DDR3-1600G, DDR3-1600H, DDR3-1600J, and DDR3-1600K. The "downbin" designation typically implies a component that meets a lower speed grade than its initial specification, potentially due to manufacturing tolerances.
+
+The subsequent rows in the first table introduce a tRCD Offset. For example, a tRCD offset of minus fifty units, represented as hexadecimal zero times C E, with an MTB of eighty six units and zero point one two five MTB ns, results in a tRCD of ten point seven nanoseconds, associated with DDR3-1866J. Similarly, an offset of minus one hundred five units, hexadecimal zero times ninety seven, with ninety five MTB units and zero point one two five MTB ns, yields an eleven point seven nanosecond tRCD for DDR3-1866K. These offsets demonstrate how adjustments to the base tRCD can fine-tune performance for higher speed grades.
+
+The second table presents a similar structure but focuses on different timing offsets and DDR3 speed grades. Here, tRCD offsets include minus thirty five, minus ninety, and zero units. The MTB units range from eighty three to one hundred five, with MTB ns consistently at zero point one two five. The FTB ns remains at zero point zero zero one nanoseconds. The calculated tRCD results vary, with an offset of minus thirty five units (hexadecimal zero times D D) and one hundred three MTB units yielding twelve point eight four nanoseconds for DDR3-1866L. An offset of minus ninety units (hexadecimal zero times A six) with one hundred twelve MTB units results in thirteen point nine one nanoseconds for DDR3-1866M, and a zero offset with one hundred five MTB units produces thirteen point one two five nanoseconds, specified as DDR3-1866M downbin. Further entries show an offset of minus ninety five units (hexadecimal zero times A one) with ninety eight MTB units leading to twelve point one five nanoseconds for DDR3-2133M, and an offset of minus thirty five units (hexadecimal zero times D D) with one hundred five MTB units resulting in thirteen point zero nine nanoseconds for DDR3-2133N. These data points illustrate the critical role of precise tRCD tuning, influenced by offsets, to achieve the performance targets for increasingly higher frequency DDR memory standards. The underlying principle is that tRCD, a fundamental latency in memory access, needs to be carefully managed to synchronize operations between the memory row address strobe (RAS) and column address strobe (CAS) signals, ensuring data integrity and maximizing throughput. The variations in tRCD, influenced by these offsets and base timings, are essential for meeting the stringent timing requirements of successive generations of memory technology.

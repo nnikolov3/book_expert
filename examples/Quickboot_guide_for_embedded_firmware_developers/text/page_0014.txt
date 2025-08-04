@@ -1,0 +1,44 @@
+American Megatrends Inc.
+
+AMI was founded in 1985 by Subramanian Shankar and has created a large
+variety of solutions, including BIOS, software diagnostics, RAID technology,
+and hardware platforms. Beyond having a broad base of products, AMI is the
+only consistently privately owned commercial BIOS company. Its products
+today include the AMI 8 legacy core and the AMI Aptio core (a UEFI base
+
+first demonstrated in 2004) and AMI-Diags, all focused on system firmware.
+
+Insyde Software
+
+Insyde is a Taiwanese BIOS vendor formed in 1998, brought forth from the
+ashes of SystemSoft. Insyde was the first to launch a UEFI solution in the
+BIOS industry, Insyde H,0. They have expanded to include offerings in
+multiple segments and are today the only vendor in the Itanium segment.
+Besides UEFI Framework base BIOS, Insyde also offers UEFI applications
+
+and keyboard firmware.
+
+ByoSoft
+
+In early 2006, Nanjing ByoSoft Co., Ltd. (ByoSoft), was established in
+China. In 2008, ByoSoft became one of the four independent BIOS vendors
+in the world providing professional UEFI BIOS products and service and the
+only one based in mainland China. While they are the new kid on the block,
+they have many long-time BIOS engineers working for them and major
+
+companies signed up.
+American Megatrends Inc.
+A M I was founded in one thousand nine hundred eighty five by Subramanian Shankar and has created a large variety of solutions, including B I O S, software diagnostics, R A I D technology, and hardware platforms. Beyond having a broad base of products, A M I is the only consistently privately owned commercial B I O S company. Its products today include the A M I eight legacy core and the A M I Aptio core, a U E F I base first demonstrated in two thousand four, and A M I Diags, all focused on system firmware.
+
+Insyde Software
+Insyde is a Taiwanese B I O S vendor formed in one thousand nine hundred ninety eight, brought forth from the ashes of SystemSoft. Insyde was the first to launch a U E F I solution in the B I O S industry, Insyde H two zero. They have expanded to include offerings in multiple segments and are today the only vendor in the Itanium segment. Besides U E F I Framework base B I O S, Insyde also offers U E F I applications and keyboard firmware.
+
+ByoSoft
+In early two thousand six, Nanjing ByoSoft Company, Limited, ByoSoft, was established in China. In two thousand eight, ByoSoft became one of the four independent B I O S vendors in the world providing professional U E F I B I O S products and service and the only one based in mainland China. While they are the new kid on the block, they have many long time B I O S engineers working for them and major companies signed up.
+The foundational element of any computing system, often the very first layer of software that executes upon power on, is its system firmware. This critical component, traditionally known as the Basic I O System, or B I O S, is responsible for initializing the hardware, performing a power on self test, and eventually bootstrapping the operating system. American Megatrends Inc., or A M I, established in nineteen eighty five, is a prominent developer in this highly specialized domain. Their product portfolio extends beyond core B I O S implementations to encompass software diagnostics and R A I D technology. Software diagnostics are essential utilities embedded either within the firmware or provided as standalone tools, designed to identify and troubleshoot hardware malfunctions by running specific tests on components such as the C P U, Ram, or storage devices. R A I D, which stands for Redundant Array of Independent Disks, is a data storage virtualization technology that combines multiple physical disk drive components into a single logical unit for the purposes of data redundancy, performance improvement, or both. A M I's offerings in R A I D technology suggest their firmware can configure and manage disk arrays at a low level, often before the operating system is loaded, providing a robust storage infrastructure.
+
+A M I's evolution in system firmware is particularly illustrative of the industry's progression. Their A M I eight legacy core represents adherence to the traditional B I O S architecture, which typically operates in C P U real mode, limiting memory addressing to one megabyte and utilizing interrupt-driven mechanisms for hardware access. In contrast, the A M I Aptio core signifies a pivotal shift towards U E F I, the Unified Extensible Firmware Interface. U E F I is a modern firmware standard that overcomes many of the limitations of the legacy B I O S. It operates in C P U protected mode, enabling access to much larger amounts of R A M during the pre boot phase. Crucially, U E F I supports G P T, the G U I D Partition Table, which allows for disk partitions greater than two terabytes, a significant improvement over the M B R, or Master Boot Record, limit of traditional B I O S. Furthermore, U E F I provides a modular architecture, facilitating faster boot times through parallel initialization of devices, and offers enhanced security features like Secure Boot, which prevents unauthorized boot loaders or malicious software from executing during the boot process.
+
+Insyde Software, a Taiwanese B I O S vendor founded in nineteen ninety eight, has also been a key player in the transition to U E F I. Their early adoption and focus on U E F I solutions, particularly for the Itanium segment, highlight their capability in serving high-end and specialized computing markets. The Itanium architecture, developed by Intel, was a unique Very Long Instruction Word, or V L I W, based C P U design primarily aimed at servers and high performance computing, requiring sophisticated firmware support due to its distinct instruction set architecture and complex memory management units. Insyde's offerings include a U E F I Framework base B I O S, indicating their adherence to the U E F I specification, which defines a modular and extensible platform for pre boot operations. Beyond core system initialization, Insyde also provides U E F I applications, which are small executable programs that can run in the U E F I environment before the operating system loads, often used for diagnostics or firmware updates. Their expertise further extends to keyboard firmware, illustrating the pervasive nature of embedded software in modern hardware, where microcontrollers manage the intricate logic of peripherals and communicate with the host system.
+
+ByoSoft, established in two thousand six, exemplifies the ecosystem of independent B I O S vendors. These companies specialize in providing professional U E F I B I O S products and services to original equipment manufacturers, who integrate these firmware solutions into their hardware platforms. The complexity of U E F I development necessitates deep expertise in low level programming, hardware-software interaction, and adherence to various industry standards such as P C I E, U S B, and A C P I. The presence of numerous long time B I O S engineers within such firms underscores the significant institutional knowledge and specialized skill set required to design, develop, and customize firmware that is robust, performant, and compatible across a wide array of hardware configurations. This niche but critical industry ensures that the fundamental software layer governing hardware operations continues to evolve with advancements in computing architectures.

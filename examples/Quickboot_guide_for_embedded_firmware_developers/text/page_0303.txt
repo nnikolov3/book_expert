@@ -1,0 +1,41 @@
+0110 =16 Gb
+All others reserved
+
+AZ) cron: ( 2Gb:)x4, x8 x16 DDR3 SDRAM
+
+Features
+DDR3 SDRAM
+
+MT41J512M4 — 64 Meg x 4 x 8 Banks
+MT41J256M8 — 32 Meg x 8 x8 Banks _
+MT41J128M16 — 16 Meg x 16 x 8 Banks
+
+SPD Field #4: “SDRAM Density and Banks” Example from Micron
+T41J256M8 Datasheet
+
+This field is typically extracted directly from the SDRAM datasheet. Often
+the bank bits are specified instead of the number of banks (that is, three bank
+bits would provide eight banks, total). Likewise, in the odd situation where
+the DRAM density (or capacity) is not obviously spelled out in the datasheet,
+it can be calculated by multiplying the full address range by the DRAM
+width:
+
+Density (Capacity) = 2 (Rows + Columns + Bank Bits) x HR AM Width
+
+SPD Field 0x05: SDRAM Rows and Columns
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+5 0x05 SDRAM Rows and O=19 15 Rows
+Columns 10 Columns
+
+From JEDEC Specification, Byte 5: SDRAM Addressing
+
+This byte describes the row addressing and the column addressing in the
+Zero one one zero is equal to sixteen Gigabytes. All others reserved. Micron. D D R three S D Ram. M T four one J five one two M four dash sixty four Meg times four times eight Banks. M T four one J two five six M eight dash thirty two Meg times eight times eight Banks. M T four one J one two eight M sixteen dash sixteen Meg times sixteen times eight Banks. S P D Field number four, "S D Ram Density and Banks" Example from Micron T four one J two five six M eight Datasheet. This field is typically extracted directly from the S D Ram datasheet. Often the bank bits are specified instead of the number of banks, that is, three bank bits would provide eight banks, total. Likewise, in the odd situation where the D Ram density or capacity is not obviously spelled out in the datasheet, it can be calculated by multiplying the full address range by the D Ram width. Density, Capacity, is equal to two, Rows plus Columns plus Bank Bits, times D Ram Width. S P D Field zero times zero five, S D Ram Rows and Columns. The table shows byte, decimal, byte, hexadecimal, field name, typical value, and definition. The row with value five has hexadecimal value zero x zero five. The field name is S D Ram Rows and Columns. The typical value is zero x one nine. The definition is fifteen Rows and ten Columns. From J E D E C Specification, Byte five, S D Ram Addressing. This byte describes the row addressing and the column addressing in the
+The document details aspects of DDR3 Synchronous Dynamic Random Access Memory, or D D R three S D Ram, focusing on its density and addressing scheme as defined by the Serial Presence Detect, or S P D, standard.  A primary concept is the relationship between a memory module's capacity and its underlying structure, specifically the number of rows, columns, and memory banks.  The document highlights that memory density is not always explicitly stated but can be derived from these structural parameters.
+
+The first section presents a simplified model for calculating memory capacity, expressed as Density (Capacity) is equal to two raised to the power of the sum of row bits, column bits, and bank bits, multiplied by the D R A M width. This formula encapsulates the fundamental principles of addressable memory space within a semiconductor memory device. Each component—rows, columns, and banks—contributes to the total number of unique addresses, and the width of each data transfer (the D R A M width) determines how much data is retrieved per access.
+
+The table labeled "S P D Field 0 x 05: S D R A M Rows and Columns" provides specific encoding for memory configurations. Byte index five, represented numerically as five and hexadecimal zero x zero five, defines parameters for S D R A M addressing. The "Field Name" column indicates "S D R A M Rows and Columns," and the "Typ. Value" is hexadecimal zero x one nine. The "Definition" column clarifies that this value translates to fifteen rows and ten columns. This implies that the bits within S P D byte five are used to encode the number of rows and columns, which are critical for the memory controller to correctly address data. The notation "zero x one nine" signifies a hexadecimal value, which is a common representation in computer science for bit patterns.
+
+The text further explains that this specific S P D field is often interpreted in conjunction with other bits, such as bank bits, to fully describe the memory organization. It notes that sometimes the "number of banks" is encoded instead of the bank bits themselves, leading to potential ambiguities if not clearly specified. The example mentions a scenario where three bank bits are used, resulting in eight total banks (two raised to the power of three). Understanding these bit-level configurations is crucial for the system's memory controller, which translates logical addresses into the physical row, column, and bank addresses required by the memory integrated circuit. This process involves complex address translation logic and adherence to memory timing protocols to ensure data integrity and performance.

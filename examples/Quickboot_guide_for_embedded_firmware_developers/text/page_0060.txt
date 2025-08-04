@@ -1,0 +1,44 @@
+provide 24-bit base addresses with a physical memory size of up to 16 MB,
+support for virtual memory management on a segment swapping basis, and
+several protection mechanisms. The descriptors referred to are part of the
+Interrupt Descriptor Table (IDT) and Global Descriptor Tables (GDT). They
+are beyond the scope of this book. For more details on the GDT/IDT refer to
+the Intel® 64 and IA-32 Architectures Software Developer’s Manual online.
+
+Logical Addressing
+
+The segment selector identifies the segment to be accessed, and the offset
+identifies the offset in that segment. The logical address is formed by adding
+the base of the segment selector to the offset. The processor translates the
+logical address to a physical address, making the conversion transparent to
+
+software.
+
+Flat Protected Mode
+
+The preferred mode for system firmware is flat protected mode. This mode
+allows addressing memory above 1 MB, but does not require a logical-to-
+physical conversion. The GDT is set up so that the memory maps 1:1,
+
+meaning that the logical and physical addresses are identical.
+
+Reset Vector
+
+When an Intel architecture boot-strap processor (BSP) powers on, the first
+address fetched and executed is at physical address OxFFFFFFFO, also known
+
+as the reset vector. This accesses the ROM or flash device at the top of the
+The system provides twenty four bit base addresses with a physical memory size of up to sixteen megabytes, offering support for virtual memory management on a segment swapping basis, and several protection mechanisms. The descriptors referred to are part of the Interrupt Descriptor Table, I D T, and Global Descriptor Tables, G D T. These topics are beyond the scope of this book. For more details on the G D T slash I D T, refer to the Intel sixty four and I A thirty two Architectures Software Developer's Manual online.
+
+Regarding Logical Addressing, the segment selector identifies the segment to be accessed, and the offset identifies the offset within that segment. The logical address is formed by adding the base of the segment selector to the offset. The processor translates the logical address to a physical address, making the conversion transparent to software.
+
+In Flat Protected Mode, the preferred mode for system firmware is flat protected mode. This mode allows addressing memory above one megabyte, but does not require a logical to physical conversion. The G D T is set up such that the memory maps one to one, meaning that the logical and physical addresses are identical.
+
+For the Reset Vector, when an Intel architecture boot strap processor, B S P, powers on, the first address fetched and executed is at physical address hexadecimal F F F F F F F zero, also known as the reset vector. This accesses the R O M or flash device at the top of the.
+The discussion commences with the foundational elements of memory management within a computing architecture, specifically focusing on systems capable of utilizing twenty four bit base addresses to access a physical memory space extending up to sixteen megabytes. This architecture supports sophisticated virtual memory management, employing a segment swapping basis. Segment swapping, a technique in memory management, involves moving entire memory segments between physical R A M and secondary storage, thereby creating the illusion of a larger addressable memory space than physically available. Crucially, the system also incorporates several protection mechanisms designed to isolate processes, enforce privilege levels, and prevent unauthorized memory accesses, enhancing system stability and security. These protection mechanisms are fundamentally managed through descriptors, which are data structures containing information about memory segments or gates. These descriptors are housed within specialized tables: the Interrupt Descriptor Table, or I D T, and the Global Descriptor Table, or G D T. The I D T maps interrupt and exception vectors to their corresponding handler routines, ensuring proper system response to events, while the G D T defines the characteristics of all system-wide memory segments, including their base addresses, sizes, and access rights.
+
+Delving into the mechanism of Logical Addressing, the system employs a segmented memory model. In this paradigm, a logical address is not a direct physical memory location but rather a composite reference comprising two primary components: a segment selector and an offset. The segment selector acts as an index into a descriptor table, such as the G D T, to retrieve the segment's base address and its associated attributes. The offset then specifies a particular location within that identified segment. The actual logical address is thus formed by the arithmetic sum of the segment's base address, retrieved via the segment selector, and the specified offset. This logical address is then transparently translated by the processor's M M U, or Memory Management Unit, into a physical address. The term "transparent" here signifies that this translation process occurs at the hardware level, entirely abstracted from the software, allowing applications to operate using logical addresses without needing explicit knowledge of their underlying physical memory locations. This abstraction is a cornerstone of robust multitasking and memory protection.
+
+The concept of Flat Protected Mode represents a significant simplification of the segmented memory model, particularly favored for system firmware and modern operating systems. In this mode, the architectural setup of the Global Descriptor Table is configured in such a way that the logical addresses are directly mapped to physical addresses on a one to one basis. This means that the segment base address is typically zero and the segment limit encompasses the entire available memory, effectively negating the need for the complex logical-to-physical address translation characteristic of full segmented mode. This linear addressing scheme simplifies memory management for software, providing direct access to memory above the initial one megabyte boundary, which was a limitation in older real mode architectures. The one to one mapping inherent in flat protected mode provides the benefits of protected mode's security features and ability to access large memory spaces, but with the simplicity of a linear address space, making it efficient for applications and operating systems that prefer a contiguous memory view.
+
+Finally, the system's initialization sequence is defined by the Reset Vector. Upon power-on or assertion of the reset signal, the processor, specifically the boot strap processor, or B S P, automatically fetches and begins executing instructions from a predefined physical memory address. For Intel architecture systems, this critical starting point is typically hexadecimal F F F F F F F zero. This specific address is universally known as the reset vector. The significance of this address lies in its fixed, non-volatile nature; it is where the system's firmware, commonly stored in R O M or flash memory, resides. By design, this firmware is located at the very top of the system's addressable memory space, ensuring that the processor can immediately begin the crucial boot process upon startup. The code at the reset vector is responsible for initializing the C P U, performing a power on self test, or P O S T, and preparing the system for loading the operating system, thereby establishing the fundamental operational state of the computing system.

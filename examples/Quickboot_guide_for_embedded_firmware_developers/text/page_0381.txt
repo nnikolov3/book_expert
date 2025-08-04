@@ -1,0 +1,50 @@
+in the field from 122-125 as a tester ID byte and using the remaining bytes as
+a sequential serial number. Bytes 117-125 will then result in a 9-byte unique
+module identifier. Note that part number is not included in this identifier: the
+supplier may not give the same value for bytes 119-125 to more than one
+DIMM even if the DIMMs have different part numbers.
+
+SPD Field 0x7E and 0x7F: CRC Bytes
+
+The CRC bytes must be calculated for bytes 0-125 using the formula above.
+
+Note that
+
+CRC needs to be checked for bytes 0-116 if bit 7 in SPD field #0 was set to
+
+1b (which I don’t recommend). This site is very useful for calculating the
+
+CRC-16 values: http://www.lammertbies.nl/comm/info/crc-calculation.html.
+The result is shown in the CRC-16 field. Make sure to remove all spaces
+
+between the bytes, and make sure to select the “Hex” option, not “ASCII.”
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+126-127 OxTE-0=TF CHC Bytes QuB22Y
+
+Bytes 126-127: SPD Cyclical Redundancy Code (CRC)
+
+This 2-byte field contains the calculated CRC for previous bytes in the SPD.
+The following algorithm and data structures (shown in C) are to be followed
+
+in calculating and checking the code. Bit 7 of byte 0 indicates which bytes are
+covered by the CRC.
+In the field from one hundred twenty two to one hundred twenty five as a tester I D byte and using the remaining bytes as a sequential serial number. Bytes one hundred seventeen to one hundred twenty five will then result in a nine byte unique module identifier. Note that part number is not included in this identifier: the supplier may not give the same value for bytes one hundred nineteen to one hundred twenty five to more than one D I M M even if the D I M M s have different part numbers.
+
+S P D Field zero ex seven E and zero ex seven F: C R C Bytes
+
+The C R C bytes must be calculated for bytes zero to one hundred twenty five using the formula above. Note that C R C needs to be checked for bytes zero to one hundred sixteen if bit seven in S P D field number zero was set to one b (which I don't recommend). This site is very useful for calculating the C R C sixteen values: http: slash slash www dot lammertbies dot nl slash comm slash info slash crc calculation dot html. The result is shown in the C R C sixteen field. Make sure to remove all spaces between the bytes, and make sure to select the "Hex" option, not "A S C I I."
+
+The table shows byte information with decimal and hexadecimal representations, field names, typical values, and definitions. For the range of bytes one hundred twenty six to one hundred twenty seven, the hexadecimal representation is zero ex seven F, the field name is C R C Bytes, the typical value is zero ex B two two seven, and the definition is a hyphen.
+
+Bytes one hundred twenty six to one hundred twenty seven: S P D Cyclical Redundancy Code (C R C)
+
+This two byte field contains the calculated C R C for previous bytes in the S P D. The following algorithm and data structures (shown in C) are to be followed in calculating and checking the code. Bit seven of byte zero indicates which bytes are covered by the C R C.
+The description outlines the use of specific bytes within a Serial Presence Detect, or S P D, data structure, which is fundamental to how memory modules, such as D R A M, are identified and configured by a system's C P U. Bytes one hundred twenty two through one hundred twenty five are designated for a tester identification byte. The subsequent bytes, from one hundred seventeen through one hundred twenty five, are used to construct a nine byte unique module identifier. It's important to note that the actual part number of the memory module is not directly encoded within this identifier; rather, it serves to distinguish different modules. The text highlights a potential ambiguity where multiple D I M M s might share the same value for bytes one hundred nineteen through one hundred twenty five, even if they possess distinct part numbers, implying that this portion of the identifier may not be universally unique across all memory modules.
+
+The document then focuses on S P D fields hexadecimal zero seven E and hexadecimal zero seven F, which are identified as C R C bytes. Cyclical Redundancy Codes are error detection codes that are widely used in digital communication and storage systems to detect accidental changes to raw data. The core principle of C R C is the use of polynomial division in a finite field to generate a checksum. The text specifies that the C R C bytes are calculated from bytes zero through one hundred twenty five, utilizing a particular formula. A critical operational detail is mentioned: the C R C calculation needs to be performed on bytes zero through one hundred sixteen specifically if bit seven of S P D field hexadecimal zero is set to one. This conditional check underscores the importance of understanding the specific configuration bits within the S P D structure to correctly interpret and validate the data. The reference to a website, http colon slash slash www dot lammertbies dot nl slash comm slash info slash crc calculation dot html, suggests a practical tool or resource for understanding and performing C R C calculations, specifically mentioning the common C R C sixteen algorithm. The instruction to remove all spaces between bytes when performing this calculation and to select the "Hex" option rather than "ASCII" emphasizes the byte-level manipulation and hexadecimal representation required for accurate C R C computation.
+
+The table provided illustrates the byte range hexadecimal zero seven E through hexadecimal zero seven F, labeled as "CRC Bytes" in the "Field Name" column. The "Typ. Value" is shown as hexadecimal B two two seven, which is the expected C R C value for a valid configuration. The "Byte (Dec)" column indicates the byte positions one hundred twenty six and one hundred twenty seven in decimal, corresponding to the C R C field.
+
+Finally, the document elaborates on bytes one hundred twenty six through one hundred twenty seven, explicitly stating they represent the S P D Cyclical Redundancy Code. It clarifies that this two byte field contains the computed C R C value for the preceding bytes within the S P D data structure. The mention of an algorithm and data structures being followed, and that bit seven of byte zero indicates which bytes are covered by the C R C, reinforces the idea that the C R C calculation is not applied uniformly across all S P D data but is dynamically configured based on specific flags within the S P D structure itself. This mechanism allows for flexibility in error checking, potentially optimizing the scope of the C R C based on the data's importance or error sensitivity.

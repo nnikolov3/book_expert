@@ -1,0 +1,54 @@
+commands are there explicitly to enable and assist in debugging. In the UEFI
+Shell these are contained in the “Drivers1” and “Debugl” profiles; in the EFI
+Shell these are in the Full image.
+
+The basic parts of a driver that can be tested depend on the type of
+driver. Some drivers are much easier to get higher test coverage than others.
+
+For a driver with a storage medium present, you can verify that the
+driver installed the correct protocols, verify that the platform built the upper
+parts of the driver stack, verify writing and reading to/from the storage
+medium, and verify that the driver frees all the memory it allocated upon
+unloading. At the same time that you can test all of these things manually, the
+better method would be to test by running the installation program from a
+UEFI-aware operating system.
+
+For a driver with no storage medium present, such as a network driver,
+there may be limited coverage. The “Network1” profile has a ping command
+that can verify that the network controller can send and receive data, but not
+much more than that. The best test for this specific case would be a PXE boot
+test.
+
+If the driver you are testing is for a bus, not for a device, then you need
+to take into account it needs to create child controllers and usually an
+intermediate I/O protocol. Then you would use commands like DevTree,
+Devices, and Drivers to see that the parent-child relationships are correctly
+established.
+
+Testing an application, even a complex application such as a shell itself,
+requires a lot of work. The first thing is that an application should, when
+finished, leave the system with the same amount of memory. The second is
+that testing an application can utilize StdIn redirection to control the input to
+the application and use StdOut redirection, combined with script files, to
+
+automatically verify the output.
+The commands are there explicitly to enable and assist in debugging. In the U E F I Shell, these are contained in the "Drivers1" and "Debug1" profiles; in the E F I Shell, these are in the Full image.
+
+The basic parts of a driver that can be tested depend on the type of driver. Some drivers are much easier to get higher test coverage than others.
+
+For a driver with a storage medium present, you can verify that the driver installed the correct protocols, verify that the platform built the upper parts of the driver stack, verify writing and reading to or from the storage medium, and verify that the driver frees all the memory it allocated upon unloading. At the same time, that you can test all of these things manually, the better method would be to test by running the installation program from a U E F I aware operating system.
+
+For a driver with no storage medium present, such as a network driver, there may be limited coverage. The "Network1" profile has a ping command that can verify that the network controller can send and receive data, but not much more than that. The best test for this specific case would be a P X E boot test.
+
+If the driver you are testing is for a bus, not for a device, then you need to take into account it needs to create child controllers and usually an intermediate I O protocol. Then you would use commands like DevTree, Devices, and Drivers to see that the parent child relationships are correctly established.
+
+Testing an application, even a complex application such as a shell itself, requires a lot of work. The first thing is that an application should, when finished, leave the system with the same amount of memory. The second is that testing an application can utilize StdIn redirection to control the input to the application and use StdOut redirection, combined with script files, to automatically verify the output.
+This text delves into the practical aspects of testing device drivers and applications within a system environment, particularly focusing on the role of the Unified Extensible Firmware Interface, or U E F I. It highlights that commands are available to facilitate driver testing and debugging, with specific driver profiles like "Drivers one" and "Debug one" stored within the U E F I Shell, which is part of the E F I Shell. The comprehensiveness of driver testing is contingent on the driver's type.
+
+For drivers associated with storage media, a common testing methodology involves verifying correct protocols during the driver's installation. This verification extends to the platform's interaction with the driver stack, including reading and writing data to and from the storage medium. Crucially, it also involves confirming that the driver properly frees allocated memory upon unloading. A robust approach to testing these drivers entails executing an installation program within a U E F I aware operating system, which allows for the simultaneous testing of these functionalities.
+
+In scenarios where a driver operates without direct storage medium access, such as a network driver, testing becomes more nuanced. For instance, a network driver might expose a "ping" command functionality. Testing this would involve verifying the network controller's ability to send and receive data, a process that is critical for network communication. The text suggests that for such cases, a Preboot Execution Environment, or P X E, boot test would be a highly effective evaluation method.
+
+When evaluating drivers for a bus rather than a specific device, the testing strategy shifts. These drivers often necessitate the creation of child controllers and the utilization of intermediate I O protocols. Consequently, commands like DevTree are employed to inspect these parent child relationships, ensuring their correct establishment.
+
+The text then transitions to application testing, acknowledging that even complex applications, such as a shell itself, require a systematic approach. The initial step involves ensuring the application functions correctly with a consistent amount of memory. The second aspect focuses on controlling the application's input and output. This is achieved through techniques like standard input redirection, often combined with script files to manage the output programmatically, thereby enabling automated verification.

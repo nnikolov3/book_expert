@@ -1,0 +1,40 @@
+—BDS optimization (boot devices)
+—Platform memory speed
+
+—Remove PS/2 keyboard/mouse
+
+—Remove BIOS setup
+
+—Remove video option ROM
+
+—Remove BIOS USB functional support
+—Eliminate unnecessary data table creation
+—Booting to UEFI operating systems
+—Using UEFI drivers instead of option ROMS
+—Using UEFI services
+
+—Removed setup menu
+
+—Using a solid-state drive versus hard-disk drive to eliminate spin-up
+
+time and accelerate OS loading
+
+This is not an all-inclusive list. Let’s look at each of them individually that
+
+can be applied per design and then look at a better architectural method.
+
+Platform Policy (What Is It and Why Is It Here?)
+
+One of the first considerations when looking at a system BIOS and the
+
+corresponding requirements is whether you can limit the number of variables
+BDS optimization boot devices. Platform memory speed. Remove P S two keyboard slash mouse. Remove BIOS setup. Remove video option R O M. Remove BIOS U S B functional support. Eliminate unnecessary data table creation. Booting to U E F I operating systems. Using U E F I drivers instead of option R O M S. Using U E F I services. Removed setup menu. Using a solid state drive versus hard disk drive to eliminate spin up time and accelerate O S loading. This is not an all inclusive list. Let's look at each of them individually that can be applied per design and then look at a better architectural method. Platform Policy What Is It and Why Is It Here? One of the first considerations when looking at a system BIOS and the corresponding requirements is whether you can limit the number of variables
+The presented text outlines various optimizations and design considerations for system firmware, specifically focusing on aspects of the Basic Input/Output System, or B I O S, and its interaction with the operating system and hardware. The list item "BDS optimization (boot devices)" refers to optimizing the Boot Device Selection process, which determines the order in which storage devices are checked for a bootable operating system. This directly impacts system startup performance. "Platform memory speed" indicates a focus on enhancing the efficiency of memory access, a critical factor in overall system responsiveness.
+
+Several items concern the removal or reduction of legacy components and functionalities. "Remove PS/2 keyboard/mouse" points to the deprecation of the PS/2 interface in favor of Universal Serial Bus, or U S B, interfaces, which offer higher data transfer rates and hot plugging capabilities. Similarly, "Remove BIOS setup" and "Remove video option R O M" suggest streamlining the firmware by removing non essential or redundant configuration interfaces and video initialization routines. "Remove BIOS U S B functional support" implies reducing the scope of U S B support within the B I O S itself, likely offloading more complex U S B handling to the operating system drivers. "Eliminate unnecessary data table creation" suggests a focus on reducing firmware overhead by minimizing the generation and storage of temporary or redundant data structures.
+
+The transition to modern booting standards is highlighted by "Booting to U E F I operating systems." U E F I, or Unified Extensible Firmware Interface, is a successor to the traditional B I O S, offering features like graphical interfaces, network booting, and support for larger hard drives. "Using U E F I drivers instead of option R O Ms" emphasizes leveraging the more standardized and integrated U E F I driver model for hardware initialization, replacing the older practice of embedding option R O Ms within peripheral devices. "Using U E F I services" indicates a reliance on the standardized U E F I environment for firmware services, promoting interoperability and a consistent pre operating system environment. "Removed setup menu" likely refers to removing a BIOS setup utility that runs before the operating system loads, potentially for embedded systems or specific product configurations where direct user interaction with firmware settings is not required or desired.
+
+Finally, "Using a solid state drive versus hard disk drive to eliminate spin up time and accelerate O S loading" directly addresses the performance benefits of solid state drives, or S S Ds, over traditional hard disk drives, or H D D s. The mechanical nature of H D D s requires spin up time for their platters, whereas S S Ds, being entirely electronic, offer near instantaneous access times, significantly reducing boot and application loading durations.
+
+The section "Platform Policy (What Is It and Why Is It Here?)" introduces the concept of platform policy as a fundamental consideration in system design. It posits that a key aspect of defining a platform policy involves the ability to limit the number of variables, suggesting a goal of simplifying configuration and enhancing predictability and control over the system's behavior. This aligns with principles of robust system engineering, where reducing complexity and managing the surface area of potential configuration issues are paramount for stability and maintainability. The underlying principle is to create a well defined and predictable operating environment by constraining the variability inherent in hardware and software configurations.

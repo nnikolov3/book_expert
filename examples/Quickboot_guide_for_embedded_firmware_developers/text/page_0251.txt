@@ -1,0 +1,46 @@
+UEFI only boot. A legacy boot may be necessary for older OS loader
+and operating systems, but this will inevitably delay the boot times
+
+as well as open the system to potential root kit attacks.
+
+4.
+Setup Menu or other user entry (hot keys) during boot is not required.
+it is to be entered, then, when entered, boot speed is not a key
+requirement.
+
+D.
+
+When referring to sub-two-second timing the start and finish lines are
+
+described in the following manner:
+
+—The Start Line is when the processor comes out of reset and starts to
+fetch code from the SPI. While the starting line can be from the
+power button, depending on the scope of the parameters, the BIOS
+is not responsible for the approximately +300ms of power sequence
+
+time between the button until the CPU comes out of reset.
+
+—The Finish Line is when the UEFI BIOS calls LoadImage() for the OS
+loader image. On loading of the image, the system enters a handoff
+
+phase where the OS loader is responsible much more so than the
+BIOS.
+
+Intel Fast Boot Timing Results
+Three. U E F I only boot. A legacy boot may be necessary for older O S loader and operating systems, but this will inevitably delay the boot times as well as open the system to potential root kit attacks.
+
+Four. Setup Menu or other user entry, hot keys, during boot is not required. It is to be entered, then, when entered, boot speed is not a key requirement.
+
+Five. When referring to sub two second timing the start and finish lines are described in the following manner. The start line is when the processor comes out of reset and starts to fetch code from the S P I. While the starting line can be from the power button, depending on the scope of the parameters, the B I O S is not responsible for the approximately plus three hundred milliseconds of power sequence time between the button until the C P U comes out of reset. The finish line is when the U E F I B I O S calls LoadImage() for the O S loader image. On loading of the image, the system enters a handoff phase where the O S loader is responsible much more so than the B I O S.
+
+Intel Fast Boot Timing Results
+The text elaborates on aspects of system boot processes and timing metrics, particularly in the context of fast boot implementations.
+
+Point three discusses the Universal Extensible Firmware Interface, or U E F I, and its role in system boot-up. It contrasts U E F I boot with legacy boot mechanisms, noting that while legacy boot might be necessary for older operating systems, it can introduce delays in boot times and potentially expose the system to rootkit attacks. Rootkits are a class of malicious software designed to gain privileged access to a computer while actively hiding their presence. The vulnerability arises from legacy boot processes that may not have the same security assurances or integrity checks as modern U E F I implementations.
+
+Point four addresses user interaction during the boot sequence. It specifies that access to a setup menu, often invoked via hot keys, is not a requirement for the boot process itself. However, if such a menu is accessed and entered, the speed of boot is not considered a key performance metric in that scenario. This implies a distinction between the automated, performance-optimized boot path and interactive configuration modes.
+
+Point five defines the "start line" and "finish line" for sub-two-second timing measurements. The "start line" is identified as the precise moment the processor exits reset and commences fetching code from the Serial Peripheral Interface, or S P I. It is important to note that while the starting line is determined by events originating from the power button and the initial power sequence, the Basic Input Output System, or B I O S, is explicitly stated as not being responsible for the approximately plus three hundred milliseconds delay until the Central Processing Unit, or C P U, exits reset. This clarifies the scope of responsibility for different phases of the initial boot sequence. The "finish line" is defined as the point when the U E F I B I O S invokes the LoadImage function for the operating system loader. Subsequent to this call, during the operating system image loading phase, the system transitions into a handoff state. In this handoff phase, the responsibility for continued boot process execution largely shifts to the operating system loader, with the B I O S playing a more minimal role thereafter.
+
+Finally, the heading "Intel Fast Boot Timing Results" indicates that the preceding explanations provide the definitional context for measurements that would typically be presented in subsequent sections, focusing on the performance characteristics of Intel's fast boot technologies.

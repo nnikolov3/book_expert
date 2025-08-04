@@ -1,0 +1,57 @@
+In addition to the 2012 MEBx optimization, starting in 2012 platforms,
+during normal boot there are only two architecturally defined sync-points
+
+between ME and BIOS remaining:
+
+1. Device Initialization Done (DID). This happens as soon as memory is
+available for ME use following MRC initialization. The time is
+estimated to be between 50 ms and 120 ms after TSC starts, depending
+on the MRC and CPU requirements.
+
+2. End of POST (EOP). This happens before a BIOS process boot list (at
+the end of DXE phase). It is estimated to be 700 ms after TSC starts.
+
+All other ME-BIOS communication will happen asynchronously outside of
+these two sync-points (that is, no waiting for the other execution engine). The
+MEBx (ME BIOS extension) module is not expected to be called in a typical
+BIOS boot. If it is needed, it can be called via the exception handling
+
+methodology defined in Intel Fast Boot framework.
+
+Hardware Asset Reporting for Intel® Active Management Technology (Intel
+AMT)
+
+Within the Fast Boot framework, SMBIOS, PCI Asset, and ASF tables are
+always updated and passed to the ME Intel AMT firmware (GMB in size)
+regardless of boot mode.
+
+For the media table, the BIOS will enumerate all storage controllers and
+attached devices during full boot and upon request by the Intel AMT
+firmware. Upon detecting an Intel AMT firmware request, BIOS will
+enumerate all media (except USB) devices to generate and pass the media
+table. The heuristic on how frequent Intel AMT will request this is the
+responsibility of the Intel AMT design.
+In addition to the two thousand twelve M E B x optimization, starting in two thousand twelve platforms, during normal boot there are only two architecturally defined sync points between M E and B I O S remaining.
+
+One, Device Initialization Done (D I D). This happens as soon as memory is available for M E use following M R C initialization. The time is estimated to be between fifty milliseconds and one hundred twenty milliseconds after T S C starts, depending on the M R C and C P U requirements.
+
+Two, End of P O S T (E O P). This happens before a B I O S process boot list, at the end of D X E phase. It is estimated to be seven hundred milliseconds after T S C starts.
+
+All other M E B I O S communication will happen asynchronously outside of these two sync points, that is, no waiting for the other execution engine. The M E B x (M E B I O S extension) module is not expected to be called in a typical B I O S boot. If it is needed, it can be called via the exception handling methodology defined in Intel Fast Boot framework.
+
+Hardware Asset Reporting for Intel® Active Management Technology (Intel AMT)
+
+Within the Fast Boot framework, S M B I O S, P C I Asset, and A S F tables are always updated and passed to the M E Intel A M T firmware, five megabytes in size, regardless of boot mode.
+
+For the media table, the B I O S will enumerate all storage controllers and attached devices during full boot and upon request by the Intel A M T firmware. Upon detecting an Intel A M T firmware request, B I O S will enumerate all media, except U S B, devices to generate and pass the media table. The heuristic on how frequent Intel A M T will request this is the responsibility of the Intel A M T design.
+The provided text discusses synchronization points within the Intel Management Engine (ME) and Basic Input/Output System (BIOS) interaction during the platform boot process, particularly highlighting optimizations introduced in 2012 MEBx platforms. It identifies two architecturally defined synchronization points that dictate the sequence of operations between the ME and the BIOS.
+
+The first synchronization point is labeled "Device Initialization Done," or D I D. This event signifies the completion of memory initialization, specifically the Memory Reference Code or M R C execution, and also the completion of Central Processing Unit or C P U requirements. The timing for this synchronization is estimated to occur between fifty milliseconds and one hundred twenty milliseconds after the Time Stamp Counter or T S C begins its operation.
+
+The second synchronization point is referred to as "End of POST," or E O P. This event signifies the conclusion of the Power-On Self-Test, occurring before the Dynamic Execution Environment or D X E phase of the BIOS boot process. The estimated time for this point is seven hundred milliseconds after the T S C starts.
+
+The text further explains that all other communication between the ME and the BIOS, apart from these two explicit synchronization points, occurs asynchronously. This implies that the ME BIOS extension, or M E B x, does not have to wait for the other execution engine to complete its tasks. If specific ME BIOS extension functionalities are required, they can be invoked using an exception handling methodology, as defined within the Intel Fast Boot framework.
+
+A significant aspect discussed is the "Hardware Asset Reporting for Intel Active Management Technology," or I ntel A M T. Within the context of the Fast Boot framework, system information such as S M B I O S, P C I Asset, and other Abstract Service Facility or A S F tables are continuously updated and subsequently passed to the Intel A M T firmware, which occupies five megabytes of storage, irrespective of the boot mode.
+
+For media table processing, the BIOS is responsible for enumerating all storage controllers and attached devices during a full boot sequence. This enumeration also occurs upon specific requests from the Intel A M T firmware. When an Intel A M T firmware request is detected, the BIOS enumerates all media devices, with the exception of Universal Serial Bus or U S B devices, to generate and populate a media table. The logic or heuristic that governs how frequently Intel A M T will issue such requests is a responsibility delegated to the Intel A M T design itself. This systematic approach to hardware asset reporting and media enumeration ensures that management capabilities are effectively integrated into the system's boot and operational phases.

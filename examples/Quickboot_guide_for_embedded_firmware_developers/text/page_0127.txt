@@ -1,0 +1,48 @@
+breakpoint to be used to trace all real mode interrupt calls.
+
+—Console Output. If there’s a console available that’s accessible in real
+mode, use it. Your best friend printf may actually come to the
+
+rescue a few times.
+
+System Management Mode
+
+System Management Mode (SMM) is a special operating mode of an Intel
+architecture processor that allows an isolated and secure operating
+environment for many purposes, including operating system or firmware
+handshaking, error handling, and hardware abstraction. In many ways, it is
+very similar to ARM’s trust zone implementations in silicon, so heads up
+realtime programmers. SMM will be encountered in most firmware
+
+implementations. A couple of those situations may be:
+
+—ACPI/APM. In both of these power management specifications, SMM
+
+is invoked in order to change power states or modes.
+
+—Hardware I/O Traps. Firmware may implement hardware I/O traps to
+either communicate intentionally with an operating system entity
+(such as ACPI OSPM), emulate hardware, or perform security-
+based operations such as preventing GPIO manipulation for
+
+unsecured flash programming.
+
+Regardless of the situation, SMM is one of the most difficult parts of
+
+firmware code to debug.
+
+Debugging Methods
+A breakpoint can be used to trace all real mode interrupt calls. For console output, if a console is available and accessible in real mode, it should be used. The printf function may prove helpful for debugging on several occasions.
+
+### System Management Mode
+
+System Management Mode, or S M M, is a specialized operating mode of an Intel architecture processor. It provides an isolated and secure operating environment for various purposes, including handshaking between the operating system or firmware, error handling, and hardware abstraction. In many respects, S M M is quite similar to A R M's trust zone implementations in silicon, so real time programmers should be aware. S M M is frequently encountered in most firmware implementations. A couple of typical scenarios where S M M might be encountered include:
+
+First, with A C P I slash A P M. In the context of both these power management specifications, S M M is invoked to change power states or modes. Second, through hardware I O traps. Firmware may implement hardware I O traps to either intentionally communicate with an operating system entity, such as A C P I O S P M, or to emulate hardware, or to perform security based operations like preventing G P I O manipulation for unsecured flash programming.
+
+Regardless of the specific scenario, S M M is recognized as one of the most challenging components of firmware code to debug.
+
+### Debugging Methods
+The text discusses the utilization of breakpoints for tracing real mode interrupt calls. It also highlights the utility of console output, particularly the `printf` function, as a valuable debugging tool, especially in constrained environments where more advanced debugging mechanisms might not be available.
+
+A significant portion of the content is dedicated to explaining System Management Mode, or S M M. S M M is presented as a specialized operating mode within an Intel architecture. Its primary function is to provide an isolated and secure operating environment. This environment is instrumental for various critical operations such as system and firmware handshaking, error handling, and hardware abstraction. The text notes a conceptual similarity between S M M and ARM's trust zone implementations, both aiming to create secure enclaves within a system. S M M is frequently encountered in the context of firmware development, and its operation can manifest in several ways. Two such manifestations are detailed: the ACPI or APM (Advanced Power Management) interface, which is used to invoke S M M for managing power states or modes, and hardware I O traps. These hardware I O traps allow firmware to communicate intentionally with the operating system entity, often through mechanisms like ACPI OSPM. This interaction enables the firmware to emulate hardware behavior or execute security critical operations, such as preventing unauthorized flash programming by manipulating general purpose I O ports. The text concludes by emphasizing that S M M represents one of the more challenging aspects of firmware code to debug effectively. Finally, it briefly mentions "Debugging Methods" as a general category, likely to introduce subsequent discussion on techniques for tackling these challenges.

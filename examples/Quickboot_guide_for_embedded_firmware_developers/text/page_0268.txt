@@ -1,0 +1,46 @@
+Early SATA COMRESET:Ss: Drive Spin-Up
+
+Generally, in client platforms, the disk feature of power up in standby (PUIS)
+is disabled. The hard disk would automatically spin up once it receives a
+COMRESET, which is sent when the BIOS enables the related SATA port.
+Spinning up the hard drive as early as possible at the PEI phase is required by
+enabling ports right after setting the SATA DFT.
+
+While SATA SSD NAND drives do not literally spin up, the wear-
+leveling algorithms and databases required to track the bits take hundreds of
+milliseconds before data is ready to be fetched (including identifying drive
+data). While this can be mitigated with SSD firmware enhancements or
+controller augmentation to store such data, numbers in the range of 800 ms
+are probable with the latest SATA3 SSDs at the time of this writing.
+
+CSM-Free Intel® Raid Storage Technology (Intel RST) UEFI
+
+Driver
+
+The Intel RST UEFI driver is required to allow for SSD caching of a slower
+hard drive. The SSD performance far outweighs the HDD in both read/write
+and spin-up readiness. This newly optimized UEFI driver is needed to
+support the CSM-free Class Two and Class Three UEFI boot mechanism.
+Elimination of CSM is the primary time saving; however, the optimizations
+made to the new UEFI driver over the legacy Intel RST option ROM are
+dramatic. As with the MEBx UEFI driver, the Intel RST driver will follow
+the recommendation of the UEFI flag for Fast Boot. One of the fallback
+conditions for Fast Boot must also be that for any drive configuration change,
+the BIOS must inform the UEFI option ROMs via the UEFI boot mode flag.
+In SDRO (Single Disk RAID 0) Intel RST caching mode, the Intel RST
+Early S A T A COMRESETs: Drive Spin Up.
+
+Generally, in client platforms, the disk feature of power up in standby P U I S is disabled. The hard disk would automatically spin up once it receives a COMRESET, which is sent when the B I O S enables the related S A T A port. Spinning up the hard drive as early as possible at the P E I phase is required by enabling ports right after setting the S A T A D F T.
+
+While S A T A S S D NAND drives do not literally spin up, the wear leveling algorithms and databases required to track the bits take hundreds of milliseconds before data is ready to be fetched including identifying drive data. While this can be mitigated with S S D firmware enhancements or controller augmentation to store such data, numbers in the range of eight hundred milliseconds are probable with the latest S A T A three S S Ds at the time of this writing.
+
+C S M Free Intel Raid Storage Technology I N T E L R S T U E F I Driver.
+
+The Intel R S T U E F I driver is required to allow for S S D caching of a slower hard drive. The S S D performance far outweighs the H D D in both read write and spin up readiness. This newly optimized U E F I driver is needed to support the C S M free Class Two and Class Three U E F I boot mechanism. Elimination of C S M is the primary time saving; however, the optimizations made to the new U E F I driver over the legacy Intel R S T option R O M are dramatic. As with the M E B x U E F I driver, the Intel R S T driver will follow the recommendation of the U E F I flag for Fast Boot. One of the fallback conditions for Fast Boot must also be that for any drive configuration change, the B I O S must inform the U E F I option R O Ms via the U E F I boot mode flag.
+
+In S D R zero Single Disk R A I D zero Intel R S T caching mode, the Intel R S T.
+The text discusses fundamental aspects of storage device initialization and driver interaction, primarily focusing on Serial Advanced Technology Attachment or S A T A interfaces and Unified Extensible Firmware Interface or U E F I boot processes.
+
+The initial section details the behavior of S A T A C O M R E S E T S during drive spin up. In many client platforms, the feature of power up in standby, or P U I S, is disabled. This means that upon a C O M R E S E T command, which is issued by the Basic Input Output System or B I O S when it enables the related S A T A port, the storage device will spin up. This spin up is ideally performed as early as possible, typically at the P E I phase of the boot process, which corresponds to the enabling of S A T A ports and the execution of the S A T A D F T or Drive Fault Tolerance protocol. The text then contrasts this with S A T A S S D or Solid State Drive NAND drives, which do not physically spin up. Instead, their readiness is determined by complex wear leveling algorithms and databases that track data. Fetching this readiness information can take hundreds of milliseconds, potentially including identifying drive data. This latency can be mitigated by S S D firmware enhancements or controller augmentations designed to store this readiness state, with numbers in the range of eight hundred milliseconds being typical for S A T A three S S D s at the time of this writing.
+
+The subsequent section introduces C S M Free Intel R A I D Storage Technology or Intel R S T U E F I Driver. The Intel R S T U E F I driver is designed to enable S S D caching for slower hard disk drives. The performance advantage gained from S S D caching, in terms of both read and write operations and spin up readiness, is presented as significantly outweighing the drawbacks of using a mechanical hard drive. This optimized U E F I driver is a component of the C S M free Class Two and Class Three U E F I boot mechanisms. The primary efficiency gain from eliminating the Compatibility Support Module or C S M comes from these optimizations. The text highlights that migrating from legacy Intel R S T option R O M s to the new U E F I driver results in dramatic improvements. Similar to the recommendation for S S D boot flags for fast boot, the U E F I driver adheres to the U E F I flag for Fast Boot. However, for any drive configuration changes, the B I O S must inform the U E F I option R O M s through the U E F I boot mode flag. Specifically, in S D R zero or Single Disk R A I D zero configurations, the Intel R S T driver facilitates caching, further enhancing performance.

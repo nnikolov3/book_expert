@@ -1,0 +1,50 @@
+Reset Vector | ENP (last 16 bytes of
+0 x FFFFFFFO memary) 4 OE-10 es
+Unaddmssable
+memory in real
+mode
+1 MB
+
+0 x FFFFF
+[IIT p——
+
+0 x fif-m0 allasad from
+BIOS/Firmvara 0 % FFFFO
+0 = FODO0D : o60 KB
+— — B96 KB
+Expansion area
+{maps ROMs for old
+ia 768 KB
+Legacy video card
+y { 640 KB
+Accessible HAM
+memory
+0 x 0000,0000
+
+Figure 9.3: Example Intel® Architecture Memory Map at Power On
+
+The location of the device in the host memory address space is defined by the
+PCI base address register (BAR) for each of the devices. The device
+initialization typically enables all the BAR registers for the devices required
+as part of the system boot path. The BIOS will assign all devices in the
+system a PCI base address by writing the appropriate BAR registers during
+PCI enumeration. Long before full PCI enumeration, the BIOS must enable
+PCle BAR and the PCH RCBA BAR for memory, 1/0, and MMIO
+interactions during the early phase of boot.
+
+Depending on the chipset, there are prefetchers that can be enabled at
+this point to speed up the data transfer from the flash device. There may also
+
+be DMI link settings that must be tuned to optimal performance.
+Figure 9.3: Example Intel Architecture Memory Map at Power On.
+
+The diagram shows an Intel architecture memory map at power on. At the top of the memory map, from address zero times F F F F F zero to the highest address, is four gigabytes to sixteen bytes of memory, designated as E I P, which refers to the last sixteen bytes of memory. Below this, from address zero times F F F F F F to one megabyte, is unaddressable memory in real mode. At address zero times F F F F F, there is a reset aliased section. This reset aliased section includes the reset vector, which is read from address zero times F F F F F zero. The B I O S or F I R M W A R E is located from zero times F zero zero zero to nine hundred sixty kilobytes. Below that, from nine hundred sixty kilobytes to eight hundred ninety six kilobytes, is the extended system B I O S. From eight hundred ninety six kilobytes to seven hundred sixty eight kilobytes is an expansion area that maps R O M S for old peripheral cards. From seven hundred sixty eight kilobytes to six hundred forty kilobytes is legacy video card memory. The lowest portion of the map, starting at address zero times zero zero zero zero, is accessible R A M memory.
+
+The location of the device in the host memory address space is defined by the P C I base address register, or B A R, for each of the devices. The device initialization typically enables all the B A R registers for the devices required as part of the system boot path. The B I O S will assign all devices in the system a P C I base address by writing the appropriate B A R registers during P C I enumeration. Long before full P C I enumeration, the B I O S must enable P C I B A R and the P C H R C B A B A R for memory, I O, and M M I O interactions during the early phase of boot.
+
+Depending on the chipset, there are prefetchers that can be enabled at this point to speed up the data transfer from the flash device. There may also be D M I link settings that must be tuned to optimal performance.
+The diagram illustrates the memory map of an Intel architecture system at power on, detailing the address space allocation for various components. At the highest address range, from hexadecimal FFFF FFF F zero zero zero to hexadecimal FFFF FFF F F F F, lies the Reset Vector, containing the instruction pointer E I P, which points to the last sixteen bytes of memory and is used to initiate program execution upon system reset. Immediately below this, covering a significant portion of the address space down to one megabyte, is unaddressable memory in real mode. This region signifies memory that is not accessible or utilized during the early real mode operation of the processor.
+
+The address range from hexadecimal FFFF FFFF down to hexadecimal F zero zero zero zero is designated for the Reset Aliased region, which points to the reset vector. Below this, the BIOS or Firmware resides, occupying the space from hexadecimal F zero zero zero zero up to hexadecimal F zero F F F F. This block contains the essential firmware required for system initialization. Following the BIOS firmware, the Extended System B I O S is mapped from hexadecimal F zero zero zero zero to a lower address, consuming nine hundred sixty K B of memory. Further down, an expansion area is allocated, mapping Read Only Memories for old peripheral cards, occupying eight hundred ninety six K B. Below this, legacy video card memory is addressed, using seven hundred sixty eight K B. Finally, the accessible R A M memory occupies the address space from hexadecimal zero zero zero zero zero zero upwards, providing the main memory for the system.
+
+The text further elaborates on the role of the Peripheral Component Interconnect or P C I bus in defining the host memory address space. Each device on the P C I bus utilizes Base Address Register or B A R registers to communicate its memory requirements. Upon system initialization, the B I O S typically enumerates all P C I devices and enables their respective B A R registers. This process involves writing appropriate values to these registers to map device memory regions into the system's address space. The B I O S must ensure that P C I e B A Rs and the Platform Controller Hub or P C H Root Complex Base Address or R C B A B A R for memory, I O, and Memory Mapped I O or M M I O interactions are correctly configured during the early boot phase. The chipset may also feature prefetchers that can be activated to accelerate data transfers from flash devices. The configuration of these prefetchers and D M I link settings are crucial for optimizing system performance.

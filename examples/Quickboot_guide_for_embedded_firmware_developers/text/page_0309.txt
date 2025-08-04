@@ -1,0 +1,38 @@
+Intel® 5100
+
+MCH Chipset DIMMO
+DCLKPI[O] 185 COLIP
+DCLEM
+
+DCLKN[O] ii
+
+ODT[O] 195 oD To
+ODT] 1] 77 o-CT1
+
+CS[o}# 183.>°
+
+CS[1]#
+
+S
+
+CS[2]# ws A
+
+CS[al# 2h
+CKEO] 52 _CKEO
+CKE[] 171 CKE1
+
+Notes: 1. DIMM pin numbers and name definitions come from the JEDEC
+specificed DDR2 240-pin Heqistered DIMM Pinouts.
+
+Figure 37 Configuration 1.1 - Clock and Control Signal DIMM Pin Mapping
+(One DIMM per Channel - 32 GB Mode, Quad-rank with S3 Support)
+Figure 37 from Intel® 5100 Platform Design Guide—Single QuAD- Rank
+DIMM equilvalent
+The diagram illustrates the pin mapping between an Intel 5100 MCH Chipset and a DIMM. On the left, the Intel 5100 MCH Chipset is depicted with several signals: DCL K P[0], DCL K N[0], ODT[0], ODT[1], CS[0]#, CS[1]#, CS[2]#, CS[3]#, CKE[0], and CKE[1]. On the right, the DIMM side shows corresponding pins with numerical labels and signal names. Specifically, DCL K P[0] from the chipset connects to DIMM pin 185 labeled DCL K P. DCL K N[0] connects to DIMM pin 186 labeled DCL K N. ODT[0] connects to DIMM pin 195 labeled ODT 0. ODT[1] connects to DIMM pin 77 labeled ODT 1. CS[0]# connects to DIMM pin 193 labeled S0. CS[1]# connects to DIMM pin 76 labeled S1. CS[2]# connects to DIMM pin 220 labeled S2. CS[3]# connects to DIMM pin 221 labeled S3. CKE[0] connects to DIMM pin 52 labeled CKE 0. CKE[1] connects to DIMM pin 171 labeled CKE 1.
+
+Notes: DIMM pin numbers and name definitions come from the JEDEC specified DDR2 240 pin Registered DIMM Pinouts.
+
+Figure 37 shows Configuration 1.1, which is Clock and Control Signal DIMM Pin Mapping. This configuration is described as One DIMM per Channel with 32 GB Mode, Quad-rank with S3 Support. Figure 37 is sourced from the Intel 5100 Platform Design Guide, specifically detailing a Single Quad-Rank DIMM equivalent.
+This figure illustrates a pin mapping configuration for a memory module, specifically a Dual In line Memory Module, or D I M M, connected to an Intel 5100 Chipset. The diagram delineates the signal lines originating from the Chipset and terminating at the D I M M, showing the specific pin assignments for clock and control signals. On the left side, the Intel 5100 Chipset is represented, with signals such as D C L K P bracket zero and D C L K N bracket zero, which are differential clock signals, likely for differential signaling to improve signal integrity at high frequencies. These are depicted as originating from the Chipset. Following these are O D T bracket zero and O D T bracket one, which correspond to On Die Termination signals. These signals are crucial for impedance matching in high-speed memory interfaces, helping to minimize signal reflections and ensure data integrity. The diagram then shows Chip Select signals, C S bracket zero hash through C S bracket three hash. Chip Select signals are used by the memory controller to select specific memory devices or ranks within a memory module. The hash symbol indicates an active low signal. Lastly, C K E bracket zero and C K E bracket one represent Clock Enable signals, which are used to enable or disable the clock input to the memory devices, influencing power consumption and bus operation.
+
+On the right side of the diagram is the D I M M, labeled D I M M zero. Each signal from the Chipset is connected to a specific pin on the D I M M, identified by a numerical pin number and a corresponding signal name. For instance, D C L K P from the Chipset maps to pin one hundred eighty five D C L K P on the D I M M, and D C L K N maps to pin one hundred eighty six D C L K N. Similarly, O D T bracket zero connects to pin one hundred ninety five O D T zero, and O D T bracket one connects to pin seventy seven O D T one. The Chip Select signals C S bracket zero hash through C S bracket three hash are mapped to pins one hundred ninety three S zero, seventy six S one, two hundred twenty S two, and two hundred twenty one S three, respectively. It is noteworthy that the signal names S zero through S three on the D I M M side are likely internal designations for the Chip Select inputs. Finally, C K E bracket zero connects to pin fifty two C K E zero, and C K E bracket one connects to pin one hundred seventy one C K E one. These mappings are in accordance with J E D E C standards for DDR two two hundred forty pin Registered D I M M Pinouts, which are industry standards that ensure interoperability between different memory components and systems. The figure caption specifies that this configuration is for one D I M M per channel, operating in a thirty two Gigabyte mode, with a Quad rank configuration, and includes S three support. This implies a complex memory subsystem capable of high capacity and performance, utilizing multiple ranks of memory per module to increase bandwidth and capacity. The term Quad rank signifies that the D I M M has four independent sets of memory chips, each addressable by the memory controller through the Chip Select signals.

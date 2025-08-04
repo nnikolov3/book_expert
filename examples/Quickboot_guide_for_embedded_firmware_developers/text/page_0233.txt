@@ -1,0 +1,36 @@
+Chapter 11
+Intel’s Fast Boot Technology
+
+A little simplification would be the first step toward rational living, I
+think.
+
+— Eleanor Roosevelt
+
+One of the key objectives of computing platforms is responsiveness. BIOS
+boot time is a key factor in responsiveness that OEM manufacturers, end
+users, and OS vendors ask firmware developers to deliver. Here the focus is
+on system startup time and resume times.
+
+Traditional Intel architecture BIOS has labored through the years to
+design itself to boot on any configuration that the platform can discover, each
+time it boots it works to rediscover anything it can about a change to the
+machine configuration that may have happened when it was off. This
+provides the most robust, flexible experience possible for dynamic open
+boxes with a single binary. However, this has also resulted in a bloated boot
+time upwards of 30 seconds for the BIOS alone. As we have covered in other
+chapters, when properly tuned and equipped, a closed box consumer
+electronics or embedded computing device powering on can easily boot in
+under two seconds. This normally requires a customized hard-coded solution
+or policy-based decisions, which can cost several months of optimizations to
+
+an embedded design. By following the methods contained in this chapter,
+Chapter Eleven Intel's Fast Boot Technology
+
+A little simplification would be the first step toward rational living, I think.
+
+—Eleanor Roosevelt
+
+One of the key objectives of computing platforms is responsiveness. B I O S boot time is a key factor in responsiveness that O E M manufacturers, end users, and O S vendors ask firmware developers to deliver. Here the focus is on system startup time and resume times.
+
+Traditional Intel architecture B I O S has labored through the years to design itself to boot on any configuration that the platform can discover, each time it boots it works to rediscover anything it can about a change to the machine configuration that may have happened when it was off. This provides the most robust, flexible experience possible for dynamic open boxes with a single binary. However, this has also resulted in a bloated boot time upwards of thirty seconds for the B I O S alone. As we have covered in other chapters, when properly tuned and equipped, a closed box consumer electronics or embedded computing device powering on can easily boot in under two seconds. This normally requires a customized hard coded solution or policy based decisions, which can cost several months of optimizations to an embedded design. By following the methods contained in this chapter,
+The fundamental principle driving the discussion in this chapter is the optimization of computing platform responsiveness, with a particular focus on reducing system startup time and improving resume times.  This is a critical aspect for Original Equipment Manufacturers, end users, and Operating System vendors alike.  The chapter delves into the architecture of the Basic Input Output System, or B I O S, and its historical evolution within the Intel ecosystem.  Traditional Intel architecture B I O S implementations are characterized by their design to boot into any configuration discoverable by the platform, a process that involves re-evaluating machine configurations even after the system has been powered down.  This approach, while offering robustness and flexibility for dynamic open-box scenarios, has led to increased complexity and what is termed a "bloated boot."  Historically, the B I O S boot process alone could take upwards of thirty seconds.  The chapter asserts that highly optimized and equipped computing devices, such as closed box consumer electronics, can achieve boot times of under two seconds.  This rapid boot capability is typically achieved through customized, hard-coded solutions rather than policy based decisions.  The development of such optimized boot sequences often involves months of meticulous tuning and adaptation to specific embedded designs, a process that this chapter aims to elucidate through its methodologies.

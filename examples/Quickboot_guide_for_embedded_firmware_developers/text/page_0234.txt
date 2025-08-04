@@ -1,0 +1,48 @@
+even open-box PCs can be as fast as embedded devices and consumer
+electronics, less than two seconds. And the benefit to embedded designs is
+that they need not spend weeks and months of analysis per design to get the
+
+desired effect on boot speed.
+
+The Human Factor
+
+Assuming the device being created will interact with people, it is important to
+understand how the human brain reacts to stimulus, or what it expects in
+
+response with regards to timing.
+
+Immediate Impatient Lost
+< 200 m3 = 2 seconds = 4 seconds
+
+Figure 11.1: Response Time in Man-Computer Conversational Transactions
+
+Back in 1968, a psychologist named Robert B. Miller, working at IBM in
+Poughkeepsie, New York, conducted experiments between people and
+computers using the latest input devices at the time. While the devices have
+changed over the last few decades, the human brain has not (Miller, 1968).
+
+In Miller’s experiments, he showed that a person would believe that, in
+terms of response time, less than 200 milliseconds (ms) is considered to be
+immediate, greater than two seconds makes people start to get impatient, and
+
+after four seconds, communication between human and machine is broken
+Even open box P Cs can be as fast as embedded devices and consumer electronics, less than two seconds. And the benefit to embedded designs is that they need not spend weeks and months of analysis per design to get the desired effect on boot speed.
+
+The Human Factor
+
+Assuming the device being created will interact with people, it is important to understand how the human brain reacts to stimulus, or what it expects in response with regards to timing.
+
+The figure displays three overlapping circles representing different response times. The leftmost circle, labeled "immediate," indicates a response time of less than two hundred milliseconds. The middle circle, labeled "impatient," shows a response time greater than two seconds. The rightmost circle, labeled "lost," represents a response time greater than four seconds.
+
+Figure 11.1: Response Time in Man Computer Conversational Transactions
+
+Back in nineteen sixty eight, a psychologist named Robert B. Miller, working at I B M in Poughkeepsie, New York, conducted experiments between people and computers using the latest input devices at the time. While the devices have changed over the last few decades, the human brain has not (Miller, nineteen sixty eight).
+
+In Miller's experiments, he showed that a person would believe that, in terms of response time, less than two hundred milliseconds (ms) is considered to be immediate, greater than two seconds makes people start to get impatient, and after four seconds, communication between human and machine is broken.
+The fundamental principle discussed here relates to human-computer interaction and the critical role of response time in shaping user perception and experience. This concept is deeply rooted in cognitive psychology and human factors engineering, emphasizing how the timing of a system's reaction to user input influences perceived responsiveness and overall satisfaction.
+
+The text highlights that open-box personal computers and embedded devices can achieve speeds comparable to or exceeding typical user expectations, often completing boot sequences in less than two seconds. This is contrasted with the previous paradigm where performance analysis and design optimization might have consumed weeks or months. The efficiency gains are attributed to advancements in hardware and software design, allowing for rapid initialization and operational readiness.
+
+A key section, "The Human Factor," delves into the psychological impact of system responsiveness. It posits that understanding how the human brain processes stimuli and forms expectations is crucial for designing effective interfaces. The accompanying visual, Figure 11.1, illustrates this concept through three conceptual zones representing different response time categories and their psychological implications. The leftmost zone, labeled "Immediate," signifies response times less than two hundred milliseconds. This duration is generally perceived as instantaneous by humans, leading to a seamless interaction where the user does not consciously register a delay. The middle zone, "Impatient," covers response times greater than two seconds. In this range, users tend to become frustrated or develop a perception that the system is malfunctioning or broken. The rightmost zone, "Lost," represents response times exceeding four seconds, where the user's attention may wander, leading to a complete disengagement and a breakdown in the conversational flow between human and machine.
+
+This understanding is supported by historical research, specifically mentioning experiments conducted by Robert B. Miller at IBM in Poughkeepsie, New York, in 1968. Miller's work, focused on interactions with contemporary input devices, established significant thresholds for human perception of system delays. His findings suggest that response times below two hundred milliseconds are crucial for maintaining immediate feedback, while delays exceeding two seconds can lead to impatience. This research forms a foundational basis for modern user interface design principles, where minimizing perceived latency is paramount to creating intuitive and engaging user experiences. The progression from early computing to modern systems has seen a continuous effort to reduce these response times, aligning technological capabilities with human cognitive processing speeds to foster more natural and efficient interactions.

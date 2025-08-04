@@ -1,0 +1,91 @@
+Bit7 Bits 6-5
+
+Reference Raw Card
+Extension
+
+Bits 4-0
+
+Reference Raw Card
+Revision
+
+Reference Raw Card
+
+1 = Reference raw cards
+AM through CB
+
+00 = revision 0
+01 = revision 1
+10 = revision 2
+11 = revision 3
+
+When bit 7 = 1,
+
+00000 = Reference raw card AM
+00001 = Reference raw card AN
+00010 = Reference raw card AP
+00011 = Reference raw card AR
+00100 = Reference raw card AT
+00101 = Reference raw card AU
+00110 = Reference raw card AV
+00111 = Reference raw card AW
+01000 = Reference raw card AY
+01001 = Reference raw card BA
+01010 = Reference raw card BE
+01011 = Reference raw card BC
+01100 = Reference raw card BD
+01101 = Reference raw card BE
+01110 = Reference raw card BF
+01111 = Reference raw card BG
+10000 = Reference raw card BH
+10001 = Reference raw card BJ
+10010 = Reference raw card BK
+10011 = Reference raw card BL
+10100 = Reference raw card BM
+10101 = Reference raw card BN
+10110 = Reference raw card BP
+10111 = Reference raw card BR
+11000 = Reference raw card BT
+The table details the encoding for Reference Raw Card Extension, Revision, and specific reference raw cards.
+
+The first column, labeled "Bit 7", describes the "Reference Raw Card Extension". If Bit 7 is set to one, it indicates that reference raw cards AM through CB are used.
+
+The second column, "Bits 6-5", defines the "Reference Raw Card Revision".
+A value of "00" corresponds to revision 0.
+A value of "01" corresponds to revision 1.
+A value of "10" corresponds to revision 2.
+A value of "11" corresponds to revision 3.
+
+The third column, "Bits 4-0", specifies the "Reference Raw Card" when Bit 7 is equal to 1.
+Binary "00000" indicates Reference raw card AM.
+Binary "00001" indicates Reference raw card AN.
+Binary "00010" indicates Reference raw card AP.
+Binary "00011" indicates Reference raw card AR.
+Binary "00100" indicates Reference raw card AT.
+Binary "00101" indicates Reference raw card AU.
+Binary "00110" indicates Reference raw card AV.
+Binary "00111" indicates Reference raw card AW.
+Binary "01000" indicates Reference raw card AY.
+Binary "01001" indicates Reference raw card BA.
+Binary "01010" indicates Reference raw card BB.
+Binary "01011" indicates Reference raw card BC.
+Binary "01100" indicates Reference raw card BD.
+Binary "01101" indicates Reference raw card BE.
+Binary "01110" indicates Reference raw card BF.
+Binary "01111" indicates Reference raw card BG.
+Binary "10000" indicates Reference raw card BH.
+Binary "10001" indicates Reference raw card BI.
+Binary "10010" indicates Reference raw card BJ.
+Binary "10011" indicates Reference raw card BK.
+Binary "10100" indicates Reference raw card BL.
+Binary "10101" indicates Reference raw card BM.
+Binary "10110" indicates Reference raw card BN.
+Binary "10111" indicates Reference raw card BP.
+Binary "11000" indicates Reference raw card BR.
+Binary "11001" indicates Reference raw card BT.
+This document presents a bit-field decoding scheme, likely for hardware identification or configuration registers within a computer system. It breaks down an eight bit field into three distinct parts: Bit 7, Bits 6 through 5, and Bits 4 through 0, each serving a specific purpose in identifying or classifying components.
+
+The first section, labeled "Bit 7," designates this bit as "Reference Raw Card Extension." The specific value "1" indicates "Reference raw cards AM through CB." This suggests that Bit 7 acts as a flag or an enable for a particular category or range of reference cards, potentially differentiating them from other types or revisions. The binary value of this bit determines whether this extension mechanism is active.
+
+The second section, "Bits 6-5," is designated as "Reference Raw Card Revision." This two-bit field allows for the representation of multiple revision levels. The table shows that the binary pattern "00" corresponds to revision zero, "01" to revision one, "10" to revision two, and "11" to revision three. This is a standard encoding practice where a two-bit field can represent up to four distinct states, ideal for version management of hardware components. The number of possible states is two raised to the power of the number of bits, so two to the power of two equals four possible revisions.
+
+The third and most detailed section concerns "Bits 4-0," labeled "Reference Raw Card." This five-bit field is used to specify individual reference raw cards. The table provides a mapping for values when Bit 7 is equal to one, indicating the extension is active. Here, the binary values from "00000" up to "11000" are explicitly mapped to specific reference cards, starting with "Reference raw card AM" and progressing through sequential alphanumeric identifiers like "AN," "AP," "AR," and so on, up to "Reference raw card BT." A five-bit field, with its two to the power of five, or thirty two possible states, allows for the identification of a significant number of unique items, in this case, reference cards. The table demonstrates a direct binary-to-identifier mapping, where each unique five-bit binary sequence translates to a particular reference card, enabling the system to precisely identify which specific reference card is being utilized or referenced. This level of granular identification is crucial in complex systems where many similar but distinct hardware components need to be managed and distinguished.

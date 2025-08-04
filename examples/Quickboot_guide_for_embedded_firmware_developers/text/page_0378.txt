@@ -1,0 +1,56 @@
+SPD Field #63: “Address Mapping from Edge Connector to DRAM”
+Definition from JEDEC DDR3 SPD Specification
+
+SPD Field 0x40-0x74: Reserved
+
+All reserved fields should be set to 0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+6h4=116 Ox40=-0x74 Unbuffered RESERVED 0x00
+
+SPD Field 0x75 and 0x76: Module Manufacturer ID Code, LSB
+
+Although a module is “technically” the DIMM manufacturer, it is
+recommended to put in the ID for the SDRAM vendor. The JEDEC
+specification JEP-106 contains the list of module vendors. The code for
+Micron Technology is 0x802C.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+117=118 O0x75=0x76 Module Manufacturer ID Code, LSB 0x80 0=2C Micron Technology
+
+Byte 117: Module Manufacturer ID Code, Least Significant Byte
+
+Byte 118: Module Manufacturer ID Code, Most Significant Byte
+
+This two-byte field indicates the manufacturer of the module, encoded as
+follows: the first byte is the number of continuation bytes indicated in JEP-
+106; the second byte is the last nonzero byte of the manufacturer’s ID code,
+again as indicated in JEP-106.
+
+Byte 118 Bits 7-0 Byte 117 Bit 7 Byte 117 Bits 6-0
+S P D Field sixty three: Address Mapping from Edge Connector to D Ram. Definition from J E D E C D D R three S P D Specification.
+
+S P D Field zero to four zero to seven four: Reserved. All reserved fields should be set to zero times zero zero.
+
+The table shows byte assignments, field names, typical values, and definitions for S P D fields. For bytes sixty four through one hundred sixteen, the hexadecimal range is zero times forty to zero times seventy four. The field name is Unbuffered Reserved, and the typical value is zero times zero zero. The definition is indicated by ellipses.
+
+S P D Field zero times seventy five and zero times seventy six: Module Manufacturer I D Code, L S B. Although a module is technically the D I M M manufacturer, it is recommended to put in the I D for the S D R A M vendor. The J E D E C specification J E P one zero six contains the list of module vendors. The code for Micron Technology is zero times eight zero two C.
+
+The table presents byte ranges, hexadecimal representations, field names, typical values, and definitions. For the byte range one hundred seventeen through one hundred eighteen, the hexadecimal range is zero times seventy five to zero times seventy six. The field name is Module Manufacturer I D Code, L S B, and the typical value is zero times eighty C two C. The definition is Micron Technology.
+
+Byte one hundred seventeen: Module Manufacturer I D Code, Least Significant Byte.
+Byte one hundred eighteen: Module Manufacturer I D Code, Most Significant Byte.
+This two byte field indicates the manufacturer of the module, encoded as follows: the first byte is the number of continuation bytes indicated in J E P one zero six; the second byte is the last nonzero byte of the manufacturer's I D code, again as indicated in J E P one zero six.
+
+Byte one hundred eighteen Bits seven to zero.
+Byte one hundred seventeen Bit seven.
+Byte one hundred seventeen Bits six to zero.
+The provided text delves into the structure and meaning of specific fields within the Serial Presence Detect, or S P D, data associated with dynamic random access memory, or D Ram, modules, particularly referencing the J E D E C D D R three S P D specification.
+
+First, it details S P D Field number sixty three, which is designated for "Address Mapping from Edge Connector to D Ram". This field, derived from the J E D E C D D R three S P D specification, serves to define how the physical connections on the memory module's edge connector are mapped to the internal addressing schemes of the D Ram chips.
+
+Subsequently, S P D Field zero through forty through seventy four is identified as "Reserved". This segment of the S P D data is explicitly set aside for future use or standardization by the J E D E C committee. As a general principle in hardware specifications, reserved fields are typically initialized to zero, or hexadecimal zero zero in this context, to maintain backward compatibility and avoid unintended behavior if uninitialized or random data were present. The table confirms this, showing bytes sixty four through one hundred sixteen are designated as Unbuffered Reserved, with a typical value of hexadecimal zero zero.
+
+The document then focuses on S P D Field seventy five and S P D Field seventy six, which together encode the Module Manufacturer I D Code, with these specific fields representing the Least Significant Byte, or L S B, and the Most Significant Byte, or M S B, respectively. The presence of a module manufacturer I D code within the S P D is a crucial element for system firmware, such as the Basic Input/Output System, or B I O S, to identify the vendor of the memory module. This identification enables the system to potentially load specific configuration profiles or apply vendor-specific tuning parameters for optimal performance and compatibility. The J E D E C specification J E P one hundred six provides the standardized method for encoding these manufacturer identifiers. For instance, the data presented indicates that Micron Technology is assigned the code hexadecimal eighty zero C, which is distributed across the L S B and M S B fields. Specifically, byte one hundred seventeen holds the L S B of the manufacturer I D, and byte one hundred eighteen contains the M S B. The encoding scheme described suggests a multi byte representation for manufacturer I D codes, where the first byte might indicate the number of continuation bytes following it, and subsequent bytes contain the actual manufacturer I D, with the last non zero byte of the identifier being stored in the specified S P D fields, as per J E P one hundred six. The breakdown into "Byte one hundred seventeen Bits seven to zero" and "Byte one hundred seventeen Bit seven" and "Byte one hundred seventeen Bits six to zero" likely refers to sub fields within byte one hundred seventeen, potentially for further granular encoding within the manufacturer I D structure.

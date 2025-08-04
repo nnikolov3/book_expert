@@ -1,0 +1,38 @@
+accordance with the following specifications:
+—Enhanced Disk Drive Specification, v3.0, rev0.8.
+—BIOS Boot Specification, v1.01.
+
+—PCI BIOS Specification, v2.1. POST Memory Manager Specification,
+v1.01.
+
+—Plug and Play BIOS Specification, v1.0A.
+
+—SATA AHCI Revision 1.1 specification.
+
+Advanced Configuration and Power Interface
+(ACPI)
+
+ACPI consists of tables and namespace. While many people equate this with
+simple power management descriptions of system and device power
+management features, ACPI as an industry standard has usurped several other
+legacy system tables over time to become the unified method for describing
+
+the platform capabilities to the operating system.
+
+ACPI Tables
+
+There are ACPI tables to describe every aspect of the system hardware and its
+preferred capabilities to an ACPI-aware OS. The ACPI tables that matter are:
+
+—Root System Description Pointer (RSDP). The Main ACPI table that
+points to all the other tables, the Root System Descriptor Table
+In accordance with the following specifications, first, the Enhanced Disk Drive Specification, version three point zero, revision zero point eight. Second, the B I O S Boot Specification, version one point zero one. Third, the P C I B I O S Specification, version two point one, and P O S T Memory Manager Specification, version one point zero one. Fourth, the Plug and Play B I O S Specification, version one point zero A. And finally, the S A T A A H C I Revision one point one specification.
+
+Advanced Configuration and Power Interface, or A C P I. A C P I consists of tables and namespace. While many people equate this with simple power management descriptions of system and device power management features, A C P I as an industry standard has usurped several other legacy system tables over time to become the unified method for describing the platform capabilities to the operating system.
+
+A C P I Tables. There are A C P I tables to describe every aspect of the system hardware and its preferred capabilities to an A C P I aware O S. The A C P I tables that matter are: the Root System Description Pointer, or R S D P. This is the main A C P I table that points to all the other tables, which is the Root System Descriptor Table.
+The fundamental operational paradigm of modern computing platforms is underpinned by a series of precise technical specifications that govern the intricate handoff from firmware to the operating system. Among these are foundational documents such as the Enhanced Disk Drive Specification, version three point zero, revision zero point eight, which defines an extended set of I O services for interacting with mass storage devices, thereby enabling support for larger disk capacities and more efficient data transfer mechanisms than traditional B I O S disk services. Concurrently, the B I O S Boot Specification, version one point zero one, dictates the standardized boot sequence, allowing the system firmware to identify, prioritize, and initiate the boot process from various media, thereby ensuring a consistent and predictable launch of the operating system. The P C I B I O S Specification, version two point one, in conjunction with the P O S T Memory Manager Specification, version one point zero one, delineates the methods by which the B I O S discovers and configures P C I devices and initializes the system's memory during the Power On Self Test phase. This includes the crucial task of enumerating P C I peripherals and allocating system resources such as memory ranges, I O ports, and interrupt requests. Furthermore, the Plug and Play B I O S Specification, version one point zero A, introduced the capability for automatic hardware configuration, significantly simplifying device installation by allowing the B I O S to dynamically assign resources, mitigating potential conflicts that were pervasive in earlier, manually configured systems. Lastly, the S A T A A H C I Revision one point one specification standardizes the host controller interface for Serial A T A devices, enabling advanced features like Native Command Queuing, which optimizes disk I O performance by reordering commands, and hot plugging, which permits device attachment and removal without system shutdown.
+
+Building upon these foundational specifications, the Advanced Configuration and Power Interface, or A C P I, emerged as a transformative industry standard designed to centralize and enhance system configuration and power management. While frequently simplified as merely a power management framework, A C P I represents a comprehensive, unified method for the operating system to describe and control platform capabilities, effectively superseding a multitude of disparate, legacy system tables and proprietary interfaces. Its design philosophy shifts significant control from the B I O S firmware to the operating system, allowing for more intelligent, dynamic, and granular management of system resources and power states, such as sleep, hibernate, and suspend, based on real time workload and user preferences. The architectural elegance of A C P I resides in its reliance on structured tables and an object oriented namespace, which collectively provide a detailed abstract model of the platform's hardware, including its power states, thermal zones, and device capabilities. Within this framework, executable methods, often written in A C P I Machine Language, are embedded directly into the tables, enabling the operating system to invoke specific hardware control functions.
+
+The efficacy of A C P I hinges critically on its system of tables, which are meticulously designed to convey every pertinent aspect of the system hardware and its preferred operational capabilities to an A C P I-aware operating system. These tables form a cohesive and hierarchical data structure that the O S parses to comprehend the underlying platform. The cornerstone of this structure is the Root System Description Pointer, or R S D P. This particular A C P I table serves as the primary entry point for the operating system, providing the essential memory address pointer to the Root System Description Table, or R S D T, or its more modern extended counterpart, the X S D T. From these foundational tables, the O S can then navigate to discover and access pointers to all other A C P I tables within the system. This pointer driven discovery mechanism ensures that the operating system can systematically enumerate and understand the complete hardware landscape, enabling robust configuration, precise power management, and responsive interaction with the platform's diverse components.

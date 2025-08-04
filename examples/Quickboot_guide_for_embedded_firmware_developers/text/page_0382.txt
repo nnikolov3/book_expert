@@ -1,0 +1,65 @@
+int re, 1; crc = 0;
+while (=-=-count > 0) |
+
+crc = Croc * (int) *ptr+4+ << 8; for (1 = 0; 1 < 8; ++1)
+
+1f (cre & 0O0xBEQO0)
+
+cre = crc << 1 ~ 0x1021l; else
+
+crc = Croc =< 1;
+
+|
+
+return (crc & QxFFEFE):
+
+char spdBytes|[] = {| SPD byte 0, SPD byte 1, ..., SPD_ byte N-1 };
+
+int datalé;
+
+datale = Crclée (spaBytes, sizeof (spdBytes)): SPD byte lie =
+(char) (datalé & OxFF): SPD byte 127 = (char) (datale >> 8):
+
+SPD Field #126 and #127: “CRC Bytes” Definition from JEDEC DDR3
+SPD Specification
+
+SPD Field 0x80-0x91
+
+Since there isn’t a physical DIMM, I tend to use the SDRAM component
+name in lieu of the Module Part number. Also, this site is very useful for
+converting ASCII strings to hex values: http://easycalculation.com/ascii-
+
+hex.php.
+Ensure to use the “Equivalent Hex Value” result.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+128-145 0xB0=0x91 Module Part Number (ASCII) ss “*MT&1)256MBHX-187"
+
+Bytes 128-145: Module Part Number
+The code defines a Crc16 function that takes a character pointer and a count as input. Inside the function, it initializes integer variables 'rc' and 'i', and sets 'crc' to zero. A while loop continues as long as 'count' is greater than zero. Within the loop, 'crc' is XORed with the current character pointed to by 'ptr', which is then shifted right by eight bits, and 'ptr' is incremented. An if condition checks if 'crc' has the most significant bit set by performing a bitwise AND with hexadecimal 8000. If true, 'crc' is left-shifted by one and XORed with hexadecimal 1021; otherwise, it's just left-shifted by one. The loop proceeds by decrementing 'count' and incrementing 'i' until the condition is false. Finally, the function returns the computed 'crc' value after performing a bitwise AND with hexadecimal FFFF.
+
+Following the function, a character array 'spdBytes' is declared and initialized with SPD byte zero, SPD byte one, and so on, up to SPD byte N minus one. An integer variable 'data16' is declared. The 'data16' variable is assigned the result of calling the Crc16 function with 'spdBytes' and its size. It then calculates SPD byte one hundred twenty six by taking 'data16' and right-shifting it by eight bits, and assigns it to SPD byte one hundred twenty six.
+
+The text then highlights "S P D Field #126 and #127: CRC Bytes Definition from JEDEC DDR3 S P D Specification."
+
+It further explains "S P D Field 0x80-0x91". The accompanying text states that when a physical DIMM is not available, the SDRAM component name in lieu of the Module Part number is used. This site is described as very useful for converting A S C I I strings to hex values, providing the URL http://easycalculation.com/ascii-hex.php. It advises to use the "Equivalent Hex Value" result for conversions.
+
+The provided table details specific S P D fields. The first column, "Byte (Dec)", indicates the byte range from one hundred twenty eight to one hundred forty five. The second column, "Byte (Hex)", shows the corresponding hexadecimal range as 0x80-0x91. The "Field Name" column specifies this range as "Module Part Number (A S C I I)". The "Typ. Value" column shows an ellipsis, indicating a variable or unspecified typical value. The "Definition" column provides the example value "MT41J256M8HX-187".
+
+Below the table, it's stated that "Bytes 128-145: Module Part Number".
+The provided code snippet implements a cyclic redundancy check, specifically a 16-bit CRC calculation often used for error detection in data transmission and storage. The function `Crc16` takes a character pointer `ptr` and an integer `count` as input, representing the data buffer and its size, respectively.
+
+The algorithm initializes a 16-bit integer `crc` to zero. It then enters a loop that iterates through each byte of the input data. Inside the loop, the current byte from the buffer is XORed with the high byte of the `crc` register. The `crc` register is then shifted left by eight bits. This operation effectively incorporates the new byte into the ongoing checksum calculation.
+
+A crucial part of the CRC algorithm is the polynomial division, which is implemented through a conditional shift and XOR operation. If the most significant bit of the `crc` register is set (i.e., `crc` is greater than or equal to hexadecimal 8000, or `crc` ANDed with hexadecimal 8000 is non-zero), then `crc` is shifted left by one bit, and XORed with the hexadecimal value 1021. This hexadecimal value, 1021, represents a common polynomial used in CRC-16 implementations, often referred to as the CRC-16-CCITT polynomial. The `else` branch simply shifts `crc` left by one bit. This process is repeated for each bit of the data, though the code implicitly handles this by processing byte by byte and performing bitwise operations.
+
+After processing all bytes, the function returns the final 16-bit CRC value.
+
+The subsequent code snippet demonstrates the usage of this `Crc16` function with an array named `spdBytes` which is declared to hold `SPD_byte_0`, `SPD_byte_1`, and so on, up to `SPD_byte_N-1`. This array likely represents data read from the Serial Presence Detect (SPD) chip on a memory module. The `spdBytes` array is passed to the `Crc16` function along with its size. The result of the CRC calculation is stored in `datal6`.
+
+The text then focuses on "SPD Field #126 and #127: ‘CRC Bytes’ Definition from JEDEC DDR3 SPD Specification." This indicates that these specific fields within the SPD data structure are dedicated to storing CRC values, likely for verifying the integrity of the SPD data itself. The range specified, "0x80-0x91," denotes the byte offsets within the SPD memory where these CRC bytes are located.
+
+The following paragraph explains that in the absence of a physical DIMM, the SDRAM component name is used as a substitute for the Module Part number. It also points to an external resource for converting ASCII strings to hexadecimal values, highlighting the utility of online tools for such conversions. The recommendation to use the "Equivalent Hex Value" result underscores the importance of presenting data in a consistent, often hexadecimal, format for technical analysis.
+
+Finally, a table outlines the structure of SPD data related to the Module Part Number. It shows that bytes 128 through 145 (decimal) correspond to the byte range hexadecimal 80 through hexadecimal 91. This range is designated as the "Module Part Number (ASCII)" field. The "Typ. Value" column indicates that this field typically contains an ASCII string representing the part number, exemplified by "MT41J256M8HX-187". This implies that the `spdBytes` array and the subsequent CRC calculation are likely intended to validate the contents of this crucial identifying field within the memory module's SPD data. The descriptive caption "Bytes 128-145: Module Part Number" further clarifies the purpose of this data segment.

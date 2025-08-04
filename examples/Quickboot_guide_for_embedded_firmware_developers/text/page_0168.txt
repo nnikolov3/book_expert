@@ -1,0 +1,49 @@
+high performance and backward compatibility to the existing
+
+software base.
+
+—Real-address mode or “real mode” is the operating mode that provides
+the programming environment of the Intel 8086 processor, with a
+few extensions (such as the ability to switch to protected or system
+management mode). Whenever a reset or a power-on happens, the
+
+system transitions back to real-address mode.
+
+—System management mode (SMM) is a standard architectural feature in
+all IA-32 processors, beginning with the Intel386 SL. This mode
+provides an operating system or executive with a transparent
+mechanism for implementing power management and OEM
+differentiation features. SMM is entered through activation of an
+external system interrupt pin (SMI#), which generates a system
+management interrupt (SMI). In SMM, the processor switches to a
+separate address space while saving the context of the currently
+running program or task. SMM-specific code may then be executed
+transparently. Upon returning from SMM, the processor is placed
+
+back into its state prior to the SMI.
+
+Normally the system firmware creates an SMI handler, which may
+periodically take over the system from the host OS. There are normally
+workarounds that are executed in the SMI handler and handling and
+logging-off errors that may happen at the system level. As this presents a
+potential security issue, there is also a lock bit that resists tampering
+
+with this mechanism.
+
+Real-time OS vendors often recommend disabling this feature
+
+because it has a potential of subverting the nature of the OS
+High performance and backward compatibility to the existing software base.
+
+Real address mode or real mode is the operating mode that provides the programming environment of the Intel 8086 processor, with a few extensions such as the ability to switch to protected or system management mode. Whenever a reset or a power on happens, the system transitions back to real address mode.
+
+System management mode S M M is a standard architectural feature in all I A thirty two processors, beginning with the Intel three hundred eighty six S L. This mode provides an operating system or executive with a transparent mechanism for implementing power management and O E M differentiation features. S M M is entered through activation of an external system interrupt pin S M I hash, which generates a system management interrupt S M I. In S M M, the processor switches to a separate address space while saving the context of the currently running program or task. S M M specific code may then be executed transparently. Upon returning from S M M, the processor is placed back into its state prior to the S M I.
+
+Normally the system firmware creates an S M I handler, which may periodically take over the system from the host O S. There are normally workarounds that are executed in the S M I handler and handling and logging off errors that may happen at the system level. As this presents a potential security issue, there is also a lock bit that resists tampering with this mechanism.
+
+Real time O S vendors often recommend disabling this feature because it has a potential of subverting the nature of the O S.
+The text discusses processor operating modes and system management mechanisms, particularly focusing on architectural features relevant to the Intel 8086 and later IA 32 processors. It highlights "real address mode" or "real mode" as the original operating environment of the Intel 8086, which is characterized by its ability to switch to protected or system management modes. This transition, initiated by a reset or power on event, returns the processor to real address mode.
+
+A key concept introduced is "System Management Mode," abbreviated as SMM. This mode is described as a standard architectural feature originating with the Intel 386 SL processor. Its fundamental purpose is to provide an operating system or executive with a transparent mechanism for implementing power management and original equipment manufacturer specific features. SMM is entered via the activation of an external system interrupt, specifically the system management interrupt, denoted as S M I#. Upon receiving this interrupt, the processor switches to a separate address space, meticulously saving the context of the currently executing program or task. The code executed within SMM is specifically tailored for this purpose and is then transparently executed. Crucially, upon exiting SMM, the processor is restored to its state immediately preceding the S M I.
+
+The system firmware is responsible for creating an S M I handler. This handler can periodically take control of the system from the host operating system. The operations performed within the S M I handler and any associated logging off errors occur at the system level. This mechanism is noted for its potential to present a security issue, as it includes a lock bit designed to resist tampering. Consequently, vendors of real time operating systems often recommend disabling this feature due to its potential to subvert the fundamental nature of the operating system's control and execution flow.

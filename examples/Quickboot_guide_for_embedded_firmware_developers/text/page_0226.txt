@@ -1,0 +1,58 @@
+Initial configuration 11.66 -
+
+Turn off debugging 8.39 3.27
+
+Decrease flash size 8.18 0.21
+
+Caching of PEI phase 7.91 0.27
+®
+
+Intel SpeedStep 7 80 0.09
+
+technology enabled early
+
+BDS optimization (boot 7 £9 0.29
+
+devices)
+
+Platform memory speed 7.43 0.10
+
+Remove PS/2
+
+keyboard/mouse 7-35 0.07
+
+Remove BIOS setup 5.43 1.93
+
+Remove video option
+
+ROM 3.33 2.10
+
+Remove BIOS USB 1 65 168
+
+support
+
+Turn Off Debugging
+
+Turning off debugging removes the serial debugging information and turns
+on C Compiler optimizations. Because framework BIOS is almost entirely
+written in C (unlike earlier BIOS versions, which were written in assembly
+language), enabling compiler optimizations is particularly useful.
+
+EFI BIOS makes extensive use of spewing debugging information over
+a serial port to aid development and debug of the BIOS. While this
+debugging information is valuable in a development environment, it can be
+eliminated in a production environment. In addition to the boot time
+improvements realized, there are also IP considerations to shipping a BIOS
+developed in a higher-level language that has debugging information enabled.
+
+Likewise, compiler optimizations must be disabled when it is desired to
+The table displays boot time comparisons for various BIOS configurations. The initial configuration has a boot time of eleven point six six, with no comparable value for the second metric. Turning off debugging results in a boot time of eight point three nine, compared to three point two seven when it is enabled. Decreasing flash size leads to a boot time of eight point one eight, versus zero point two one when it is not decreased. Caching of P E I phase has a boot time of seven point nine one, and zero point two seven when not cached. Intel SpeedStep technology enabled early shows a boot time of seven point eight two, and zero point zero nine when not enabled early. B D S optimization for boot devices has a boot time of seven point five three, and zero point two nine when not optimized. Platform memory speed is at seven point four three, with a comparable value of zero point ten. Removing P S slash two keyboard slash mouse results in a boot time of seven point thirty six, and zero point zero seven. Removing B I O S setup shows five point forty three, and one point ninety three. Removing the video option R O M has a boot time of three point thirty three, and two point ten. Removing B I O S U S B support has a boot time of one point sixty five, and one point sixty eight.
+
+The section titled "Turn Off Debugging" explains that disabling debugging removes serial debugging information and enables C C P U optimizations. It notes that framework B I O S is largely written in assembly language, making C C P U optimizations particularly beneficial. E F I B I O S extensively uses spewing debugging information via a serial port for development and debugging. While this debugging information is valuable in a development environment, it is typically removed in a production environment. Additionally, B I O S boot time improvements may involve considerations for shipping a B I O S developed in a higher level language that includes debugging information. Similarly, C C P U optimizations need to be disabled when desired.
+The provided text details a performance comparison of various system configurations, likely related to firmware or operating system boot times, presented in a tabular format followed by an explanatory paragraph. The table lists several operations or configurations, each with associated numerical values, presumably representing time in some unit, though not explicitly stated.
+
+The first column lists the operations: "Initial configuration," "Turn off debugging," "Decrease flash size," "Caching of PEI phase," "Intel SpeedStep® technology enabled," "BDS optimization (boot devices)," "Platform memory speed," "Remove PS/2 keyboard/mouse," "Remove BIOS setup," "Remove video option ROM," and "Remove BIOS USB support." The subsequent columns present numerical data associated with these operations. For "Initial configuration," a value of "eleven point six six" is presented without a corresponding value in the next column, indicated by a dash. For "Turn off debugging," the values are "eight point three nine" and "three point two seven." "Decrease flash size" shows "eight point one eight" and "zero point two one." "Caching of PEI phase" has "seven point ninety one" and "zero point two seven." "Intel SpeedStep® technology enabled" is listed with "seven point eighty two" and "zero point zero nine." "BDS optimization (boot devices)" records "seven point five three" and "zero point two nine." "Platform memory speed" shows "seven point four three" and "zero point one zero." "Remove PS/2 keyboard/mouse" has "seven point three six" and "zero point zero seven." "Remove BIOS setup" lists "five point four three" and "one point nine three." "Remove video option ROM" presents "three point three three" and "two point one zero." Finally, "Remove BIOS USB support" shows "one point sixty five" and "one point sixty eight."
+
+The numerical values in the second and third columns likely represent measurements of time, possibly in seconds or milliseconds, under different conditions or with different optimizations enabled. The large differences between the first column's values (e.g., "eleven point six six" for initial configuration) and subsequent values (e.g., "three point two seven" for turning off debugging) suggest that the table is illustrating the impact of specific system tuning parameters on overall performance, particularly boot time. The first column might represent a baseline or a specific configuration, while the second column represents the performance metric after applying the operation or change described in the first column. The absence of a unit is a limitation, but the relative magnitudes imply time-based measurements.
+
+The section titled "Turn Off Debugging" elaborates on one specific operation from the table. It explains that turning off debugging removes serial debugging information and enables compiler optimizations. The text highlights that framework BIOS is often written in assembly language, unlike earlier BIOS versions, which were written in C. This suggests that the compiler optimizations enabled by turning off debugging are particularly beneficial in this context, leading to a potentially more efficient or faster execution. The Extended Firmware Interface (EFi) BIOS is described as making extensive use of "spewing debugging information" over a serial port to facilitate development and debugging. However, this debugging information is eliminated in a production environment to improve performance. The text also mentions intellectual property considerations related to shipping a BIOS developed in a higher-level language that includes debugging information. It concludes by stating that compiler optimizations must be disabled when desired, implying a trade-off between debugging capabilities and performance. This indicates a core principle in system design: the need to balance development and diagnostic features with the performance requirements of the final product. The mention of "compiler optimizations" points to the field of compiler theory and optimization techniques, where instructions are rearranged or transformed to improve execution speed or code size. The reference to "assembly language" versus "C" highlights differences in programming abstractions and their impact on performance and maintainability.

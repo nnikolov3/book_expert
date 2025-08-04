@@ -1,0 +1,46 @@
+Tools being used to measure speed can produce an observer effect if not
+properly implemented. Using file I/O, or serial output, or post codes, or other
+slow recording mechanisms can add to a boot flow. And the more precise the
+data collection is, the greater the effect. Methods can vary broadly per tool,
+but the best tools will use memory to store the data during the boot flow and
+then read it off the platform afterwards. For a complete picture of the boot
+flow (into the OS level), the best tools are from the OS vendor that has
+incorporated the Firmware Performance Data Table (FPDT), where the BIOS
+reports the data into a memory location inside the ACPI tables. Runtime tools
+
+can read the data after the fact.
+
+Human Developer’s Resistance to Change
+
+As Confucius said, “Only the wisest and stupidest of men never change.” The
+developer’s attitudes toward the challenge of boot speeds can have a huge
+impact on the results. “It’s only a few milliseconds” can add up quickly. “S3
+is fast enough” will leave many milliwatts and milliseconds on the table. “It’s
+a systemic problem, what can I do?” will leave others to solve the problem if
+they choose to. “Even if the BIOS disappeared entirely, the OS is still too
+slow,” but that cannot be said any more.
+
+Intel architecture platforms have not all been optimized with this
+technology to date. Customers need to work with their independent BIOS
+vendors to see if the capability has been included with their BIOS release to
+achieve Fast Boot optimization.
+
+Motherboards can be developed to encompass the right sequencing with
+the right parts. Tradeoffs can be worked through for the right reasons. Tools
+can be obtained and code modules instrumented properly. And with the right
+
+approach, developers can streamline the entire boot path into something truly
+Tools being used to measure speed can produce an observer effect if not properly implemented. Using file I O, or serial output, or post codes, or other slow recording mechanisms can add to a boot flow. And the more precise the data collection is, the greater the effect. Methods can vary broadly per tool, but the best tools will use memory to store the data during the boot flow and then read it off the platform afterwards. For a complete picture of the boot flow (into the O S level), the best tools are from the O S vendor that has incorporated the Firmware Performance Data Table (F P D T), where the B I O S reports the data into a memory location inside the A C P I tables. Runtime tools can read the data after the fact.
+
+Human Developer's Resistance to Change
+
+As Confucius said, "Only the wisest and stupidest of men never change." The developer's attitudes toward the challenge of boot speeds can have a huge impact on the results. "It's only a few milliseconds" can add up quickly. "S three is fast enough" will leave many milliwatts and milliseconds on the table. "It's a systemic problem, what can I do?" will leave others to solve the problem if they choose to. "Even if the B I O S disappeared entirely, the O S is still too slow," but that cannot be said any more.
+
+Intel architecture platforms have not all been optimized with this technology to date. Customers need to work with their independent B I O S vendors to see if the capability has been included with their B I O S release to achieve Fast Boot optimization.
+
+Motherboards can be developed to encompass the right sequencing with the right parts. Tradeoffs can be worked through for the right reasons. Tools can be obtained and code modules instrumented properly. And with the right approach, developers can streamline the entire boot path into something truly
+Tools employed to measure speed can introduce an observer effect if they are not implemented correctly. Utilizing file I O, serial output, or post codes, and other slow recording mechanisms can alter the boot flow. The precision of data collection directly influences the magnitude of this effect. Methods for data acquisition vary broadly by tool; however, the most effective tools leverage system memory to store data during the boot sequence, subsequently reading it off the platform. For a comprehensive understanding of the boot process, data captured at the Operating System level, often integrated within the Firmware Performance Data Table or F P D T by the Operating System vendor, is invaluable. This data resides in memory locations accessible via the ACPI tables, and runtime tools can then retrieve this information for analysis.
+
+The section titled "Human Developer's Resistance to Change" touches upon a crucial aspect of software development and system optimization, relating it to a quote attributed to Confucius: "Only the wisest and stupidest of men never change." This highlights how entrenched developer attitudes can significantly impact project outcomes. The principle here is that a developer's resistance to modifying their approach, often rationalized with statements like "It's only a few milliseconds," can lead to accumulated inefficiencies. These small, seemingly insignificant delays, when compounded across numerous operations or across a system's lifecycle, can result in substantial energy consumption, measured in milliwatts, and considerable time losses, measured in milliseconds. This creates a systemic problem where a proactive question, "What can I do?" is replaced by a passive acceptance of the status quo. Even if a component, such as the basic input output system or B I O S, were to be entirely removed, the prevailing mindset might still deem the system too slow.
+
+This resistance to change is particularly relevant in the context of Intel architecture platforms, which have historically undergone continuous evolution. Customers require their independent B I O S vendors to align with these architectural advancements to achieve optimized Fast Boot times. Motherboards, as foundational hardware components, must be engineered with careful consideration for the correct sequencing of operations and the rationale behind design choices. Tools can be developed to facilitate this process, enabling developers to instrument code modules appropriately. Through this diligent approach, developers can streamline the entire boot path, transforming it into a highly efficient and rapid process.

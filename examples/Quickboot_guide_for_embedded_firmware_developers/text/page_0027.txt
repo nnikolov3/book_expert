@@ -1,0 +1,47 @@
+If you are reading this book, you are probably familiar with a computer’s
+basic parts: chassis, motherboard, power supply, CPU, and hard drives. To
+understand how to adapt Intel architecture to a variety of embedded usage
+models that will work with today’s system on a chip (SoC) and be ready to
+program and debug the devices, we really need go several layers deeper.
+
+As features are added to the platform, chipset, and processor, several
+new definitions have been added to the memory maps of Intel architecture
+machines. The definition and usage of these regions are vital to understand
+whether, when, and how to initialize the system properly for a given use case.
+We will start with a look back. While some may be bored to tears by history,
+much legacy is built up over time and if we intend to advance or move
+beyond it, we have to understand why it was done to properly utilized it for
+embedded designs (or ignore it).
+
+We will skip past the first two decades of computer technology and start
+with the basic Intel processor and Intel chipset combinations of the 1990s and
+then point ahead at what we are looking at in the present (at least to when this
+book was written). In the 1990s, Intel discrete processors used a front side
+bus connection to a north bridge of the chipset, PClset, or AGPset, where a
+PCI host controller is combined with a memory controller. While the system
+architecture has changed dramatically since, it is here that you should start
+understanding what the architecture is and why it works and why you may or
+
+may not need to include or exclude something (see Figure 2.1).
+
+This is where you start when debugging most computer problems.
+Essentially, the two-chip chipsets are the key integrated parts on the
+motherboard. Each part is generally connected to one other part via a bus,
+link, or interconnect, which is just a series of wires (or cables, traces, lanes,
+fabric, or backbone). It is through these buses and interconnects that the
+
+various components talk to one another.
+If you are reading this book, you are probably familiar with a computer’s basic parts: chassis, motherboard, power supply, C P U, and hard drives. To understand how to adapt Intel architecture to a variety of embedded usage models that will work with today’s system on a chip, or S o C, and be ready to program and debug the devices, we really need go several layers deeper.
+
+As features are added to the platform, chipset, and processor, several new definitions have been added to the memory maps of Intel architecture machines. The definition and usage of these regions are vital to understand whether, when, and how to initialize the system properly for a given use case. We will start with a look back. While some may be bored to tears by history, much legacy is built up over time and if we intend to advance or move beyond it, we have to understand why it was done to properly utilize it for embedded designs, or ignore it.
+
+We will skip past the first two decades of computer technology and start with the basic Intel processor and Intel chipset combinations of the nineteen nineties and then point ahead at what we are looking at in the present, at least to when this book was written. In the nineteen nineties, Intel discrete processors used a front side bus connection to a north bridge of the chipset, P C I set, or A G P set, where a P C I host controller is combined with a memory controller. While the system architecture has changed dramatically since, it is here that you should start understanding what the architecture is and why it works and why you may or may not need to include or exclude something, refer to Figure two point one.
+
+This is where you start when debugging most computer problems. Essentially, the two chip chipsets are the key integrated parts on the motherboard. Each part is generally connected to one other part via a bus, link, or interconnect, which is just a series of wires, or cables, traces, lanes, fabric, or backbone. It is through these buses and interconnects that the various components talk to one another.
+A fundamental understanding of computer system architecture begins with its constituent hardware components: the chassis, which provides the physical enclosure and structural integrity; the motherboard, serving as the central nervous system, electrically connecting all other elements; the power supply, which converts utility power into stable direct current voltages for internal components; the central processing unit, or C P U, the computational engine; and various forms of persistent storage, such as hard drives or solid state drives. To successfully adapt contemporary architectures, particularly Intel's, into diverse embedded usage models that frequently manifest as systems on a chip, or S o C, necessitates a deep, multi layered comprehension of the underlying hardware and software interfaces for effective programming and debugging.
+
+As architectural features have evolved, new definitions have emerged regarding the memory maps within computing systems. The definition and proper utilization of these memory regions are critical. This involves understanding the precise sequence and method for initializing various memory areas and hardware registers for a specific use case. This knowledge is essential because much of modern system design inherits principles and structures from historical architectures. A comprehensive grasp of this legacy is not merely academic; it is vital for advancing the field and designing new systems that correctly leverage or bypass these established paradigms in embedded contexts.
+
+To illustrate, we can consider the trajectory of computer technology from the nineteen nineties forward. In that decade, Intel discrete processors often interfaced with the system through a front side bus. This high speed, synchronous bus connected the C P U to a north bridge, which was a primary component of the chipset. The north bridge, sometimes referred to as P C I set or A G P set, integrated key functionalities such as the memory controller, which directly managed the system's D Ram, and a P C I host controller, facilitating communication with P C I expansion cards and other peripherals. The overall system architecture has undergone significant transformation since this era. Therefore, understanding the historical context, including the roles and interactions of these components, is crucial for comprehending why contemporary architectures are structured as they are, and for making informed decisions on what to include or exclude in a specific design.
+
+Debugging complex computer problems frequently originates from issues at this foundational hardware level. At its core, the motherboard integrates key components through chipsets, which act as central hubs for data flow. Each integrated part on the motherboard communicates with others via various forms of physical interconnects, whether these are traditional electrical buses, dedicated high speed links, etched traces on the printed circuit board, specialized lanes, or more complex network on a chip fabrics and backbones. These interconnections are the physical and logical conduits through which different system components exchange data, addresses, and control signals, enabling the coherent operation of the entire system. Understanding the topology, protocols, and timing of these communication pathways is paramount for diagnosing and resolving deep seated system malfunctions.

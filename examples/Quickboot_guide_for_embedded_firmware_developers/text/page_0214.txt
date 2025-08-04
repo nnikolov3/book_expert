@@ -1,0 +1,50 @@
+Using an SSD versus HDD to
+
+. 3.65 2.1
+eliminate spin-up time
+Using UEFI services 3.40 0.25
+Removed setup menu 1.99 1.41
+
+Admittedly, broad marketing requirements are not the first thing that comes
+to mind when a developer sits down to optimize a firmware for performance;
+however, the reality is that marketing requirements form the practical limits
+for how the technical solution can be adjusted.
+
+Answering some basic questions can help you make decisions that will
+set outer bounds and define the performance characteristics of the system.
+Since this section details the engineering responses to marketing
+requirements, it does not provide a vast array of code optimization tricks.
+Unless the code has a serious set of implementation bugs, the majority of
+boot speed improvements can be achieved from the following guidelines.
+
+There are codebase-independent tricks spelled out.
+
+What Are the Design Goals?
+
+How does the user need to use the platform? Is it a closed-box system? Is it
+more of a traditional desktop PC? Is it a server-based system with some
+unique add-ons? How the platform is thought of will ultimately affect what
+users expect. Making conscious design choices to either enable or limit some
+of these expectations is where the platform policies can greatly affect the
+
+resulting performance characteristics.
+
+What Are the Supported Target Operating Systems?
+Using an S S D versus H D D to eliminate spin up time yielded three point six five and two point one respectively. Using U E F I services resulted in three point four zero and zero point two five, while removing the setup menu showed one point nine nine and one point four one.
+
+Admittedly, broad marketing requirements are not the first thing that comes to mind when a developer sits down to optimize a firmware for performance; however, the reality is that marketing requirements form the practical limits for how the technical solution can be adjusted.
+
+Answering some basic questions can help you make decisions that will set outer bounds and define the performance characteristics of the system. Since this section details the engineering responses to marketing requirements, it does not provide a vast array of code optimization tricks. Unless the code has a serious set of implementation bugs, the majority of boot speed improvements can be achieved from the following guidelines. There are codebase independent tricks spelled out.
+
+What Are the Design Goals?
+
+How does the user need to use the platform? Is it a closed box system? Is it more of a traditional desktop P C? Is it a server based system with some unique add ons? How the platform is thought of will ultimately affect what users expect. Making conscious design choices to either enable or limit some of these expectations is where the platform policies can greatly affect the resulting performance characteristics.
+
+What Are the Supported Target Operating Systems?
+The provided text offers insights into performance optimization and system design considerations, particularly in the context of computing platforms. A table presents comparative performance metrics, illustrating the impact of different hardware and software configurations. Specifically, it contrasts the performance of using a solid state drive, or S S D, versus a hard disk drive, or H D D, to eliminate spin up time. The first row indicates a metric of three point sixty five for the S S D and two point one for the H D D. The second row shows that using U E F I services results in a metric of three point forty compared to zero point twenty five. The third row presents data for a removed setup menu, yielding a metric of one point ninety nine versus one point forty one. These figures implicitly suggest that architectural choices, such as employing an S S D and adopting U E F I standards, or streamlining the setup process by removing unnecessary menus, can yield substantial performance improvements, possibly measured in units of time or a related performance index.
+
+The accompanying text delves into the interplay between marketing requirements and engineering realities. It highlights that while marketing directives may initially focus on optimizing for performance, the actual technical implementation is often constrained by these very requirements. The passage emphasizes that a clear understanding of fundamental questions can guide decision-making and help define system performance characteristics. It suggests that the engineering responses to marketing requirements do not always involve a broad spectrum of code optimization techniques. Furthermore, it posits that significant improvements in boot speed, for example, can be achieved by adhering to specific guidelines rather than relying on complex or potentially buggy code optimizations. These guidelines are described as being "codebase independent tricks," implying a focus on fundamental principles and architectural decisions.
+
+The text then transitions to discuss broader platform design goals. It poses critical questions about user needs and the nature of the platform, such as whether it is a closed-box system, a traditional desktop personal computer, or a server-based system with unique add ons. The underlying theme is that the platform's conceptualization and the design choices made significantly influence user expectations and ultimately impact the resulting performance characteristics. Making conscious design decisions is presented as crucial for enabling or limiting certain functionalities and for shaping the user experience.
+
+Finally, the text introduces the concept of supported target operating systems, indicating a further consideration in platform design and development. This suggests that the choice of operating systems a platform is intended to run on is a fundamental aspect that informs architectural decisions and influences the overall ecosystem of the platform.

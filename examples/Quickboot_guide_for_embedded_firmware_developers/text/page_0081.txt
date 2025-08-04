@@ -1,0 +1,48 @@
+PCI Device Enumeration
+
+For dynamic PCI enumeration, the pre-OS firmware must scan the PCI bus
+for devices and bridges. To do this, the BIOS must start looking for devices
+at the host to PCI bridge (PCI Bus 0, PCI Device 0, PCI function 0), and start
+scanning or “walking through” the devices, methodically looking for PCI
+devices and PCI bridges. When function 0 is not present in the system, it is
+assumed that the functions 1 through 7 of that device are not incorporated.
+For each PCI device/function found, the BIOS must:
+
+—Examine the header type register to determine if the device is a PCI-
+to-PCI bridge. The Header Type field at register offset 0x0A will
+indicate type O for devices and type 1 for bridges.
+
+—For Type 0 headers:
+
+0 Assign Standard Base Address Registers
+= Prefetchable Memory
+
+= Non-Prefetchable Memory
+
+= Legacy I/O ranges to device
+
+o Enable Bus Mastering, memory, and I/O ranges as needed in the
+
+configuration register
+0 Program Master Latency Timer Register
+0 Program Cache Line size
+
+0 Program Min Grant and Max Latency values (not used for PCI
+P C I Device Enumeration.
+
+For dynamic P C I enumeration, the pre O S firmware must scan the P C I bus for devices and bridges. To do this, the B I O S must start looking for devices at the host to P C I bridge, specifically P C I Bus zero, P C I Device zero, P C I function zero, and then start scanning or walking through the devices, methodically looking for P C I devices and P C I bridges. When function zero is not present in the system, it is assumed that the functions one through seven of that device are not incorporated. For each P C I device or function found, the B I O S must:
+
+First, examine the header type register to determine if the device is a P C I to P C I bridge. The Header Type field at register offset hexadecimal zero A will indicate type zero for devices and type one for bridges.
+
+Second, for Type zero headers, the B I O S must perform several actions. These include: assigning Standard Base Address Registers; handling memory, which involves both Prefetchable Memory and Non Prefetchable Memory; configuring Legacy I O ranges to the device; enabling Bus Mastering, memory, and I O ranges as needed in the configuration register; programming the Master Latency Timer Register; programming the Cache Line size; and finally, programming Minimum Grant and Maximum Latency values, though these are not used for P C I.
+The intricate process of P C I device enumeration represents a foundational aspect of system initialization within modern computer architectures. This dynamic discovery and configuration procedure, executed by the pre-O S firmware, typically the B I O S, is essential for identifying and preparing all Peripheral Component Interconnect devices and their associated bridges for subsequent O S operation.
+
+The enumeration commences by systematically scanning the P C I bus, beginning at the root of the P C I hierarchy: P C I Bus zero, Device zero, Function zero. This systematic traversal, often referred to as "walking through" the devices, involves methodically probing potential P C I device locations. A key architectural characteristic of P C I is its support for multi function devices, where a single physical device can expose multiple logical functions. If Function zero of a device is not detected, it is axiomatically concluded that none of the other functions, specifically functions one through seven, are present or incorporated into the system. Conversely, the presence of Function zero indicates that additional functions might exist and require further probing.
+
+Upon the discovery of each P C I device or function, the B I O S undertakes a series of critical configuration steps. The initial step involves examining the Header Type register, located at configuration space offset hexadecimal zero A. The value within this register dictates the fundamental nature of the P C I entity: a value of Type zero indicates a general P C I endpoint device, while a Type one value signifies a P C I to P C I bridge. This distinction is paramount for the B I O S to correctly navigate the P C I topology, as bridges introduce new P C I bus segments, necessitating recursive enumeration.
+
+For devices exhibiting a Type zero header, the B I O S proceeds with several specific configuration routines. The first is the assignment of Standard Base Address Registers, or B A R s. These B A R s are critical components within a device's configuration space that specify the memory mapped or I O mapped address ranges that the device requires for operation. The B I O S allocates unique, non-overlapping address segments from the system's global memory and I O address spaces to these B A R s, thereby preventing resource conflicts. Within B A R configuration, distinction is made between prefetchable and non-prefetchable memory regions. Prefetchable memory regions permit the system to speculatively read data, potentially optimizing performance through techniques such as caching, because reads from these regions are guaranteed to be side effect free. In contrast, non-prefetchable memory regions, such as those mapping device status registers, must only be accessed on demand, as reads could alter device state or contain transient information that would be invalidated by speculative access. Furthermore, the B I O S may configure legacy I O ranges, which cater to older device architectures still relying on traditional I O port mapping.
+
+Following B A R assignment, the B I O S must enable key operational capabilities within the device's P C I configuration register. This includes enabling bus mastering, which is a pivotal P C I feature allowing a device to directly initiate D M A transfers to or from system memory without requiring C P U intervention. This capability is fundamental for high performance peripherals to achieve maximum data throughput. Concurrently, the allocated memory and I O ranges are enabled, allowing the device to respond to transactions directed at its newly assigned addresses.
+
+The B I O S also programs the Master Latency Timer Register. This register specifies the maximum duration, in P C I clock cycles, for which a P C I bus master is permitted to hold the bus once granted. This mechanism is crucial for ensuring fair bus access and preventing any single master from excessively monopolizing the shared P C I medium, thereby maintaining a degree of quality of service for other attached devices. Finally, the B I O S informs the P C I device about the system's cache line size by programming the Cache Line Size register. This enables the device to optimize D M A transfers by performing accesses that are aligned to the C P U's cache lines, which can significantly reduce cache coherency overheads and improve transfer efficiency by mitigating false sharing. The parameters Min Grant and Max Latency, historically used for P C I bus arbitration to advise the arbiter on desired burst periods and tolerated latency, are noted as not currently used in contemporary P C I implementations, reflecting an evolution in bus arbitration mechanisms towards more sophisticated schemes like those found in P C I E.

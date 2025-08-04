@@ -1,0 +1,95 @@
+tAAmin MTB tAAmin Offset FTB tAAmin Use
+MTB units) (ns) (FTB units)1 (ns) Result (ns)
+105 0x69 0.125 0 0 0.001 13.125 DOR3-1066F
+120 0x78 0.125 0 0 0.001 15 DDR3-106606
+84 0x54 0.125 0 Ci 0.001 10.5 DDR3I-1333F
+96 Ox&0 0.125 0 0 0.001 12 DDR3-1333G
+108 Ox6C 0.125 0 i 0.001 13.5 DDR3I-1333H;
+105 0x69 0.125 0 0 0.001 13.125 DOR3-1333H
+downhbin;
+120 HEF 0.125 0 0 0,001 15 DDR3-1333]
+80 Dx 50 0.125 0 0 0.001 10 DDR3-160006
+90 Ox 5A 0.125 0 0 0.001 11.25% DDR3-1600H
+100 Ox G4 0.125 0 0 0.001 12.5 DDR3-1600
+110 Ox6E 0.125 0 0 0.001 13.75 DDR3-1600K:
+105 0x69 0.125 0 0 0.001 13.125 DDR3-1600K
+downbin;
+86 0x56 0.125 -50 OxCE 0.00] 1007 DDR3-18B66]
+9% Ox=5F 0.125 -105 OxQ7F 0.001 11.77 DOR3-1866K
+103 0x67 0.125 -35 0x=DD 0,001 12.84 DDR3-1866L
+112 0x70 0.125 00 Ox AG 0.001 13.91 DOR3-1866M:
+105 0x69 0.125 0 0 0.001 13.125 DDR3-1866M
+downbin?
+83 0x53 0.125 90 Dw Ah 0.001 10.285 DOR3-2133K
+90 Ox 5A 0.125 «30 OxE2 0.001 11.22 DDR3-2133L
+98 0x2 0.125 -95 OxAl O00] 12.155 DDR3-2133M
+105 0x69 0.125 35 O=DD 0.001 13.09 DDRE3-2133N
+Notes:
+
+1. See SPD byte 35.
+
+2. Refer to device datasheet for downbin support details.
+
+SPD Field #16: “Minimum CAS Latency Time (tp ymin)” Definition from
+
+JEDEC DDR3 SPD Specification
+The table displays timing parameters for DDR3 memory modules. The columns include tAAm in M T B units, M T B in nanoseconds, tAAm offset in F T B units, F T B in nanoseconds, tAAm Result in nanoseconds, and Use.
+
+The first row shows one hundred and five M T B units, zero point zero six nine hexadecimal, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, thirteen point one two five nanoseconds tAAm Result, and the Use is D D R three dash one zero six six F.
+
+The second row shows one hundred and twenty M T B units, zero hexadecimal seven eight, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, fifteen nanoseconds tAAm Result, and the Use is D D R three dash one zero six six G.
+
+The third row shows eighty four M T B units, zero hexadecimal five four, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, ten point five nanoseconds tAAm Result, and the Use is D D R three dash one three three three F.
+
+The fourth row shows ninety six M T B units, zero hexadecimal six zero, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, twelve point five nanoseconds tAAm Result, and the Use is D D R three dash one three three three G.
+
+The fifth row shows one hundred and eight M T B units, zero hexadecimal six C, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, thirteen point five nanoseconds tAAm Result, and the Use is D D R three dash one three three three H two.
+
+The sixth row shows one hundred and five M T B units, zero hexadecimal six nine, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, thirteen point one two five nanoseconds tAAm Result, and the Use is D D R three dash one three three three H downbin.
+
+The seventh row shows one hundred and twenty M T B units, zero hexadecimal seven eight, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, fifteen nanoseconds tAAm Result, and the Use is D D R three dash one three three three J.
+
+The eighth row shows eighty M T B units, zero hexadecimal five zero, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, ten nanoseconds tAAm Result, and the Use is D D R three dash one six zero zero G.
+
+The ninth row shows ninety M T B units, zero hexadecimal five A, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, eleven point two five nanoseconds tAAm Result, and the Use is D D R three dash one six zero zero H.
+
+The tenth row shows one hundred M T B units, zero hexadecimal six four, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, twelve point five nanoseconds tAAm Result, and the Use is D D R three dash one six zero zero J.
+
+The eleventh row shows one hundred and ten M T B units, zero hexadecimal six E, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, thirteen point seven five nanoseconds tAAm Result, and the Use is D D R three dash one six zero zero K two.
+
+The twelfth row shows one hundred and five M T B units, zero hexadecimal six nine, zero point one two five nanoseconds M T B, zero tAAm offset, zero point zero zero one nanoseconds F T B, thirteen point one two five nanoseconds tAAm Result, and the Use is D D R three dash one six zero zero K downbin.
+
+The thirteenth row shows eighty six M T B units, zero hexadecimal five six, zero point one two five nanoseconds M T B, negative fifty tAAm offset, zero hexadecimal C E, zero point zero zero one nanoseconds F T B, ten point seven nanoseconds tAAm Result, and the Use is D D R three dash one eight six six J.
+
+The fourteenth row shows ninety five M T B units, zero hexadecimal five F, zero point one two five nanoseconds M T B, negative one zero five tAAm offset, zero hexadecimal nine seven, zero point zero zero one nanoseconds F T B, eleven point seven seven nanoseconds tAAm Result, and the Use is D D R three dash one eight six six K.
+
+The fifteenth row shows one hundred and three M T B units, zero hexadecimal six seven, zero point one two five nanoseconds M T B, negative thirty five tAAm offset, zero hexadecimal D D, zero point zero zero one nanoseconds F T B, twelve point eight four nanoseconds tAAm Result, and the Use is D D R three dash one eight six six L.
+
+The sixteenth row shows one hundred and twelve M T B units, zero hexadecimal seven zero, zero point one two five nanoseconds M T B, negative ninety tAAm offset, zero hexadecimal A six, zero point zero zero one nanoseconds F T B, thirteen point nine one nanoseconds tAAm Result, and the Use is D D R three dash one eight six six M two.
+
+The seventeenth row shows one hundred and five M T B units, zero hexadecimal six nine, zero point one two five nanoseconds M T B, zero tAAm offset, zero, zero point zero zero one nanoseconds F T B, thirteen point one two five nanoseconds tAAm Result, and the Use is D D R three dash one eight six six M downbin.
+
+The eighteenth row shows eighty three M T B units, zero hexadecimal five three, zero point one two five nanoseconds M T B, negative ninety tAAm offset, zero hexadecimal A six, zero point zero zero one nanoseconds F T B, ten point two eight five nanoseconds tAAm Result, and the Use is D D R three dash two one three three K.
+
+The nineteenth row shows ninety M T B units, zero hexadecimal five A, zero point one two five nanoseconds M T B, negative thirty tAAm offset, zero hexadecimal E two, zero point zero zero one nanoseconds F T B, eleven point two two nanoseconds tAAm Result, and the Use is D D R three dash two one three three L.
+
+The twentieth row shows ninety eight M T B units, zero hexadecimal six two, zero point one two five nanoseconds M T B, negative ninety five tAAm offset, zero hexadecimal A one, zero point zero zero one nanoseconds F T B, twelve point one five five nanoseconds tAAm Result, and the Use is D D R three dash two one three three M.
+
+The twenty first row shows one hundred and five M T B units, zero hexadecimal six nine, zero point one two five nanoseconds M T B, negative thirty five tAAm offset, zero hexadecimal D D, zero point zero zero one nanoseconds F T B, thirteen point zero nine nanoseconds tAAm Result, and the Use is D D R three dash two one three three N.
+
+Notes are provided: one is See S P D byte thirty five, and two is Refer to device datasheet for downbin support details.
+
+The text also specifies S P D Field number sixteen, which is defined as Minimum C A S Latency Time, t A A min, from J E D E C D D R three S P D Specification.
+The provided data details timings associated with Dynamic Random Access Memory, specifically for DDR3 modules, and correlates these timings with specific usage designations. The core of this analysis revolves around memory latency, a critical performance metric in computer systems.
+
+The table presents several key timing parameters. The first column, "tAAmin (MTB units)", refers to the minimum CAS (Column Address Strobe) latency, expressed in Medium Time Base units. CAS latency is a fundamental aspect of synchronous DRAM operation, representing the number of clock cycles required from when a column address is sent to the memory chip until the data is available on the data output pins. The value is given in "MTB units," which are defined elsewhere in the JEDEC specification as a base timing unit for specific memory technologies.
+
+The second column, "MTB (ns)," provides the duration of one Medium Time Base unit in nanoseconds. This column acts as a conversion factor, allowing the "MTB units" to be translated into absolute time. For instance, if "tAAmin" is expressed in "MTB units" and the "MTB (ns)" is, say, 0.125 nanoseconds, then the absolute minimum CAS latency in nanoseconds can be calculated by multiplying these two values.
+
+The "tAAmin Offset (FTB units)" column indicates an adjustment or offset to the base tAAmin value, measured in Fine Time Base units. The "FTB (ns)" column, similar to the MTB column, defines the duration of one Fine Time Base unit in nanoseconds. This suggests a hierarchical timing structure where offsets are also subject to a base time unit. The "tAAmin Result (ns)" column then presents the final calculated minimum CAS latency in nanoseconds, likely derived from the tAAmin value in MTB units and potentially adjusted by the offset values, all converted to nanoseconds.
+
+The "Use" column provides a designation for the DDR3 memory, such as "DDR3-1066F," "DDR3-1333G," or "DDR3-1866M downbin." These designations are standard industry identifiers that indicate the memory's rated speed or bus frequency. For example, DDR3-1066 implies a memory bus speed of 1066 megahertz (MT/s), DDR3-1333 implies 1333 megahertz, and DDR3-1866 implies 1866 megahertz. The suffixes (F, G, H, I, J, K, L, M, N) often denote specific sub-timings, voltage requirements, or other characteristics that differentiate modules operating at similar nominal frequencies. The term "downbin" suggests that a particular module might be rated for a higher speed but is being utilized or specified at a lower, more conservative timing to ensure stability or compatibility, possibly due to variations in manufacturing or signaling integrity.
+
+The notes provide crucial context. Note 1, "See SPD byte 35," points to a specific location within the Serial Presence Detect (SPD) data structure on the memory module. The SPD is a small Rom chip on a DIMM that stores vital information about the memory, which the system's C P U and memory controller read during initialization to configure the memory correctly. Byte 35 likely contains encoded timing information or a reference to other SPD bytes relevant to tAAmin. Note 2, "Refer to device datasheet for downbin support details," indicates that further specific information regarding the behavior and limitations of "downbin" configurations can be found in the manufacturer's documentation for that particular memory device.
+
+Finally, "SPD Field #16: 'Minimum CAS Latency Time (tAAmin)' Definition from JEDEC DDR3 SPD Specification" explicitly states that the data presented is derived from JEDEC standard DDR3 specifications, specifically defining SPD Field number sixteen as the minimum CAS latency time. This reinforces the regulatory and standardized nature of these timing parameters for ensuring interoperability and predictable performance of DDR3 memory modules. The values in the table thus represent empirical data or programmed configurations for various DDR3 memory modules, demonstrating the relationship between programmed timing parameters and their actual performance characteristics or designated operating speeds.

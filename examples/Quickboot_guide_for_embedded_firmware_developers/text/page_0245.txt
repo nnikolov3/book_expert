@@ -1,0 +1,64 @@
+First Assembled
+
+\ System Refurbished
+uz ™) (Factory reassembled) ™)
+— an
+— B1 (Full
+BO (first boot) Bool - various flows)
+\e. Be \ 3?
+
+Successful boot Successful bool Exceptions requiring resel
+(including HW changes)
+
+nmi
+
+-~
+
+En (Fast Bool - Typical Boot) successful boot
+
+Ye
+
+Figure 11.5: Boot State Diagram
+
+Some environments may not be suitable for such a Fast Boot scenario: IT
+activity, development activity, or a lab environment may not provide enough
+flexibility. For those cases, the atypical full boot path or first boot paths
+continue to be supported. Decisions can be made automatically or triggered
+
+by user or other external trigger.
+
+Boot Mode UEFI Configuration Setting
+
+In general, the B-states can be aligned to the UEFI-defined boot modes listed
+in Table 11.1.
+
+Table 11.1: UEFI-Defined Boot Modes
+
+Full Boot Configuration Fast Boot
+BO B1 B(n)
+Figure 11 dot 5: Boot State Diagram.
+
+Some environments may not be suitable for such a Fast Boot scenario: I T activity, development activity, or a lab environment may not provide enough flexibility. For those cases, the atypical full boot path or first boot paths continue to be supported. Decisions can be made automatically or triggered by user or other external trigger.
+
+Boot Mode U E F I Configuration Setting.
+
+In general, the B states can be aligned to the U E F I defined boot modes listed in Table 11 dot 1.
+
+Table 11 dot 1: U E F I Defined Boot Modes.
+
+Full Boot Configuration. Fast Boot. B zero. B one. B open parenthesis n close parenthesis.
+Figure 11.5 presents a state diagram illustrating the boot process of a system, likely within the context of UEFI (Unified Extensible Firmware Interface) or a similar firmware architecture. This diagram defines distinct states and the transitions between them, based on the system's operational status and configuration.
+
+The diagram commences with a "First Assembled" state, which is indicated by a circular marker with a number one inside, suggesting an initial or primary state. From "First Assembled," a transition labeled "B zero (first boot)" leads to a state denoted as "B zero (first boot)." This signifies the initial power-on sequence for a newly manufactured or reset system.
+
+A subsequent transition originates from "B zero (first boot)," labeled "System Refurbished (Factory reassembled)." This indicates a pathway where a system, after undergoing refurbishment or reassembly, might re-enter a controlled boot state.
+
+Another important transition emanates from "B zero (first boot)" and leads to "B one (Full Boot - various flows)." This transition suggests that upon successful completion of the initial boot sequence, the system progresses to a more comprehensive boot mode. The "various flows" descriptor implies that this state might encompass different operational paths or configurations.
+
+A transition from "B one (Full Boot - various flows)" is labeled "Successful boot," pointing back to "B zero (first boot)." This feedback loop signifies a successful standard boot operation. Conversely, a transition labeled "Exceptions requiring reset (including H W changes)" also originates from "B one (Full Boot - various flows)," leading to a state labeled "B n (Fast Boot - Typical Boot)." This indicates that system anomalies, particularly those involving hardware modifications, might trigger a transition to a faster, more typical boot mode.
+
+The "B n (Fast Boot - Typical Boot)" state itself has two outgoing transitions. One is labeled "Successful boot," which loops back to the "B n (Fast Boot - Typical Boot)" state, representing a successful fast boot. The other transition, labeled "Successful boot," appears to originate from "B n (Fast Boot - Typical Boot)" and leads to the "B one (Full Boot - various flows)" state. This suggests that even after a fast boot, the system can re-enter a full boot sequence if conditions necessitate it or if the fast boot itself completes successfully.
+
+The descriptive text further elaborates on the flexibility of these boot states. It notes that certain environments, such as those involving IT activity, development, or laboratory settings, may not allow for a full boot. In such cases, the atypical full boot path or first boot paths are still supported, and decisions about which path to take can be automated or triggered by external factors.
+
+The text then introduces "Boot Mode UEFI Configuration Setting," and Table 11.1, "UEFI Defined Boot Modes," which categorizes these boot states. The table lists "Full Boot Configuration" with a "B zero" mode, and a "Fast Boot" mode designated as "B one (n)." This implies a mapping where "B zero" corresponds to the initial, comprehensive boot sequence, and "B one (n)" represents a faster, possibly simplified boot process that can be parameterized by 'n'. This parameterization suggests that the "Fast Boot" mode might have configurable levels or behaviors. The B states are generally aligned with UEFI-defined boot modes, indicating adherence to industry standards for system initialization.

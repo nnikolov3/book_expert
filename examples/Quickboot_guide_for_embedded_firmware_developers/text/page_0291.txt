@@ -1,0 +1,90 @@
+Byte Byte Field Typ. Typical Value
+(Dec) (Hex) Name Value Definition
+24 0x18 Min. Refresh Recovery Delay (Terc-min) 0x00 —
+LSE
+25 0x19 Min. Refresh Recovery Delay (Terc-min) 0x05 160ns
+MSB
+26 Ox1A Min. Write to Read Cmd Delay (Twre-min)  0x3C 7.505
+27  O0x1B Min. Read to Precharge Cmd Delay (Tare-  0=3C 7.5ns
+min)
+28  0x1C TrawUpper Nibble 0x01 -
+29 0x10 Min. Four Activate Window Delay Traw- On2C 37.50%
+min
+30 Ox1E SDRAM Optional Features 0x83 REQ/7, RIQ/6, and DLL-
+Off Mode Support
+31  O=x1F SDRAM Thermal and Refresh Options 0x07 Extended Temp. Ranges &
+Auto Self Refresh (ASR)
+32 0x20 Module Thermal Sensor 0x00 None
+33 0x21 SDRAM Device Type Ox00 Normal DRAM
+34 Ox22- Reserved x00 wi
+a 0x38
+60 0=3C Unbuffered Module Nominal Height ** Ox00 Height<15mm
+61 0x30 Unbuffered Module Max. Thickness ** DxD0 Thickness<lmm
+62 0x3E Unbuffered Reference Raw Card Used ** 0x00 RAW Card A, x64
+63 Ox3F Unbuffered Address Mapping from Edge 0x00 Standard
+Connector to DREAM **
+64 0x40. Unbuffered RESERVED =* D=00
+116 O=74
+117 0x75 Module Manufacturer ID Code, LSB Ox80 Micron Technology
+118 0x76 Module Manufacturer ID Code, LSB Ox2C eo
+
+** Grayed out fields are different for Unbuffered and Registered DDR3
+DRAM
+The table details memory parameters with byte offsets, field names, typical values, and definitions.
+
+For byte offset twenty four, hexadecimal eighteen, the field is Min. Refresh Recovery Delay T F C min L S B, with a typical value of hexadecimal zero zero and a dash in the definition.
+
+For byte offset twenty five, hexadecimal nineteen, the field is Min. Refresh Recovery Delay T F C min, with a typical value of hexadecimal zero five and a definition of one hundred sixty nanoseconds.
+
+For byte offset twenty six, hexadecimal one A, the field is Min. Write to Read Cmd Delay T W T R min, with a typical value of hexadecimal three C and a definition of seven point five nanoseconds.
+
+For byte offset twenty seven, hexadecimal one B, the field is Min. Read to Precharge Cmd Delay T R P min, with a typical value of hexadecimal three C and a definition of seven point five nanoseconds.
+
+For byte offset twenty eight, hexadecimal one C, the field is T F A W Upper Nibble, with a typical value of hexadecimal zero one and a dash in the definition.
+
+For byte offset twenty nine, hexadecimal one D, the field is Min. Four Activate Window Delay T F A W min, with a typical value of hexadecimal two C and a definition of thirty seven point five ns.
+
+For byte offset thirty, hexadecimal one E, the field is S D Ram Optional Features, with a typical value of hexadecimal eighty three and a definition that includes R Z Q slash seven, R Z Q slash six, and D L L Off Mode Support.
+
+For byte offset thirty one, hexadecimal one F, the field is S D Ram Thermal and Refresh Options, with a typical value of hexadecimal zero seven and a definition that includes Extended Temp. Ranges and Auto Self Refresh A S R.
+
+For byte offset thirty two, hexadecimal twenty, the field is Module Thermal Sensor, with a typical value of hexadecimal zero zero and a definition of None.
+
+For byte offset thirty three, hexadecimal twenty one, the field is S D Ram Device Type, with a typical value of hexadecimal zero zero and a definition of Normal D Ram.
+
+For byte offset thirty four, hexadecimal twenty two, the field is Reserved, with a typical value of hexadecimal zero zero and a dash in the definition.
+
+For byte offset fifty nine, hexadecimal three B, there is no field name specified, and the typical value is hexadecimal zero zero.
+
+For byte offset sixty, hexadecimal three C, the field is Unbuffered Module Nominal Height, with a typical value of hexadecimal zero zero and a definition of Height less than fifteen millimeters.
+
+For byte offset sixty one, hexadecimal three D, the field is Unbuffered Module Max. Thickness, with a typical value of hexadecimal zero zero and a definition of Thickness less than one millimeter.
+
+For byte offset sixty two, hexadecimal three E, the field is Unbuffered Reference Raw Card Used, with a typical value of hexadecimal zero zero and a definition of R A W Card A, x sixty four.
+
+For byte offset sixty three, hexadecimal three F, the field is Unbuffered Address Mapping from Edge Connector to D Ram, with a typical value of hexadecimal zero zero and a definition of Standard.
+
+For byte offset sixty four, hexadecimal forty, the field is Unbuffered Reserved, with a typical value of hexadecimal zero zero and a dash in the definition.
+
+For byte offset one hundred sixteen, hexadecimal seventy four, there is no field name specified, and the typical value is hexadecimal zero zero.
+
+For byte offset one hundred seventeen, hexadecimal seventy five, the field is Module Manufacturer ID Code, L S B, with a typical value of hexadecimal eighty and a definition of Micron Technology.
+
+For byte offset one hundred eighteen, hexadecimal seventy six, the field is Module Manufacturer ID Code, L S B, with a typical value of hexadecimal two C and a dash in the definition.
+
+A note indicates that grayed out fields are different for Unbuffered and Registered D Ram.
+The presented table details specific fields, their typical values, and their definitions, likely pertaining to the configuration or status of a memory module, possibly Double Data Rate Synchronous Dynamic Random Access Memory, or D D R three S D Ram. Each row represents a distinct byte offset within a control or status register or a configuration block, indicated by the 'Byte (Dec)' column, and its corresponding hexadecimal address in the 'Byte (Hex)' column.
+
+The 'Field Name' column describes the function or purpose of the data stored at that byte offset. For instance, byte offset twenty four (hexadecimal one eight) defines the minimum refresh recovery delay, denoted as T R F C min, with a typical value of hexadecimal zero zero and a definition indicating it's the Least Significant Byte, or L S B. The next byte, offset twenty five (hexadecimal one nine), also relates to minimum refresh recovery delay but is the Most Significant Byte, or M S B, showing a typical value of hexadecimal zero five and a defined value of one hundred sixty nanoseconds. This suggests that the refresh recovery delay is a multi-byte field, where the L S B and M S B work together to represent the full value.
+
+Further down, byte offset twenty six (hexadecimal one A) defines the minimum write to read command delay, T W T R min, with a typical value of hexadecimal three C and a definition of seven point five nanoseconds. Similarly, byte offset twenty seven (hexadecimal one B) defines the minimum read to precharge command delay, T R T P min, also with a typical value of hexadecimal three C and seven point five nanoseconds. These fields highlight critical timing parameters essential for maintaining data integrity and efficient operation in synchronous memory systems. Delays between specific command types, like write-to-read or read-to-precharge, are crucial for ensuring that the memory array can complete its internal operations before new, potentially conflicting, commands are issued.
+
+Byte offset twenty eight (hexadecimal one C) refers to the T F A W upper nibble, with a typical value of hexadecimal zero one. The T F A W, or Write to Active Command Delay, is another important timing parameter in S D Ram. The "upper nibble" designation implies that this specific field only utilizes four bits of the byte, with the remaining four bits potentially being unused or serving another purpose. Byte offset twenty nine (hexadecimal one D) specifies the minimum four activate window delay, also referred to as T F A W, with a typical value of hexadecimal two C and a definition of thirty seven point five nanoseconds. This parameter likely defines the minimum time interval during which multiple activate commands must occur to be considered part of the same activation window.
+
+Byte offset thirty (hexadecimal one E) is labeled "S D Ram Optional Features," with a typical value of hexadecimal eight three. The definition here is more descriptive, listing "R Z Q slash seven, R Z Q slash six, and D L L Off Mode Support." This indicates a configuration register that enables or disables certain advanced or optional functionalities of the S D Ram module. The presence of R Z Q, which often relates to impedance calibration in memory interfaces, suggests support for features that improve signal integrity. Similarly, byte offset thirty one (hexadecimal one F) is "S D Ram Thermal and Refresh Options," with a typical value of hexadecimal zero seven. Its definition specifies "Extended Temp. Ranges & Auto Self Refresh (ASR)." This implies that this field controls power management and thermal management features, allowing the memory to operate in wider temperature ranges and to employ automatic self-refresh cycles to conserve power when idle.
+
+Byte offset thirty two (hexadecimal twenty) is "Module Thermal Sensor" with a typical value of hexadecimal zero zero and a definition of "None." This suggests that some modules may not incorporate an on-board thermal sensor. Byte offset thirty three (hexadecimal twenty one) is "S D Ram Device Type" with a typical value of hexadecimal zero zero, defined as "Normal D Ram." This field would likely distinguish between different types of D Ram, such as standard or low-power variants. Byte offset thirty four (hexadecimal twenty two) is marked as "Reserved," implying that these bits are not currently used and their content should be disregarded. Similarly, byte offset fifty nine (hexadecimal three B) is also reserved.
+
+A block of entries from byte offset sixty (hexadecimal three C) to sixty three (hexadecimal three F) pertains to "Unbuffered Module" characteristics. Byte offset sixty (hexadecimal three C) defines "Nominal Height" with a typical value of hexadecimal zero zero and a definition of "Height less than fifteen millimeters." Byte offset sixty one (hexadecimal three D) defines "Max. Thickness" with a typical value of hexadecimal zero zero and a definition of "Thickness less than one millimeter." Byte offset sixty two (hexadecimal three E) specifies "Reference Raw Card Used" as hexadecimal zero zero, with the definition "R A W Card A, x sixty four." This likely refers to a physical form factor or a reference standard for the module. Byte offset sixty three (hexadecimal three F) defines "Address Mapping from Edge" with a typical value of hexadecimal zero zero, and its definition is "Standard." This may relate to how memory addresses are mapped to physical chip locations or pinouts.
+
+Byte offset sixty four (hexadecimal forty) is "Unbuffered RESERVED," also with a typical value of hexadecimal zero zero. Then, at byte offset one hundred sixteen (hexadecimal seventy four), there's an entry without a specific field name or typical value, but byte offset one hundred seventeen (hexadecimal seventy five) is "Module Manufacturer ID Code, L S B," with a typical value of hexadecimal eighty and a definition of "Micron Technology." This indicates that the following bytes can be used to identify the manufacturer of the memory module. Byte offset one hundred eighteen (hexadecimal seventy six) is "Module Manufacturer ID Code, L S B," with a typical value of hexadecimal two C. The repetition of "L S B" for manufacturer ID codes might imply a specific encoding scheme or that these are indeed the low-order bytes of a multi-byte identifier. The note at the bottom clarifies that grayed-out fields are different for unbuffered and registered D D R three, suggesting a variation in configuration or capabilities depending on the module type. This information is crucial for system designers and hardware engineers to properly configure and interface with memory modules, ensuring optimal performance and compatibility.

@@ -1,0 +1,54 @@
+(RSDP) is located either at EOOOO-FFFFF in legacy BIOS or can be
+
+located elsewhere as specified in the UEFI system table.
+
+—System Description Table Header. Common structure that is at the top
+
+of every table, except FACS.
+
+—Root System Description Table (RSDT). A 32-bit table that is becoming
+obsolete and may no longer be used in modern systems. It still can
+be used to point to many of the other tables listed below, but the
+system may lack certain feature compatibility. Older ACPI-aware
+
+operating systems may require this for functionality.
+
+—Extended System Description Table (XSDT). Replaces RSDT and
+supports both 32/64-bit systems. It points to all other tables (see
+
+below).
+
+—Fixed ACPT Description Table (FADT). Provides fixed addresses for
+key ACPI hardware registers, including GPE block, PM block, and
+ACPI Timer. It also provides I/O port details to access or enable
+SMI ports, which turns on ACPI mode (and the value written), and
+
+the Port address and value to reset the system.
+
+The FADT was previously known as FACP and is pointed to by the XSDT,
+and in turn the FADT points to the DSDT and FACS tables.
+
+—Firmware ACPI Control Structure (FACS). Hardware signature,
+waking vector of the 32-bit real mode, and 64-bit physical address
+
+resume vectors and global lock support.
+
+—Differentiated System Description Table (DSDT). Main table for AML,
+
+not changing once loaded and exit boot services is called (or Int
+R S D P is located either at hexadecimal E zero zero zero zero to F F F F F in legacy B I O S or can be located elsewhere as specified in the U E F I system table. The System Description Table Header is a common structure that is at the top of every table, except F A C S. The Root System Description Table (R S D T) is a thirty two bit table that is becoming obsolete and may no longer be used in modern systems. It still can be used to point to many of the other tables listed below, but the system may lack certain feature compatibility. Older A C P I aware operating systems may require this for functionality. The Extended System Description Table (X S D T) replaces R S D T and supports both thirty two slash sixty four bit systems. It points to all other tables (see below). The Fixed A C P T Description Table (F A D T) provides fixed addresses for key A C P I hardware registers, including G P E block, P M block, and A C P I Timer. It also provides I O port details to access or enable S M I ports, which turns on A C P I mode (and the value written), and the Port address and value to reset the system. The F A D T was previously known as F A C P and is pointed to by the X S D T, and in turn the F A D T points to the D S D T and F A C S tables. The Firmware A C P I Control Structure (F A C S) includes the hardware signature, waking vector of the thirty two bit real mode, and sixty four bit physical address resume vectors and global lock support. The Differentiated System Description Table (D S D T) is the main table for A M L, not changing once loaded and exit boot services is called (or Int.
+The A C P I, or Advanced Configuration and Power Interface, specification defines a set of tables that firmware provides to the operating system, allowing the O S to discover system hardware and manage power efficiently. These tables form a crucial interface between the platform firmware, typically B I O S or U E F I, and the operating system.
+
+The discovery process begins with the R S D P, or Root System Description Pointer. This pointer is located at a fixed memory range, specifically hexadecimal E zero zero zero zero to F F F F F in legacy B I O S systems, a region often used for B I O S R O M. In more modern U E F I systems, the R S D P's location is dynamically specified within the U E F I system table, offering a more flexible and robust discovery mechanism for the operating system.
+
+Most A C P I tables, with one significant exception, share a common structure known as the System Description Table Header. This header provides essential metadata, including a unique signature to identify the table type, its total length, the revision of the specification it conforms to, a checksum for data integrity verification, and identifiers for the O E M, the O E M's table I D, and a specific O E M revision. This uniformity in header design is fundamental for the operating system to parse and interpret the various A C P I tables correctly, ensuring compatibility and stable operation across diverse hardware platforms.
+
+The R S D T, or Root System Description Table, was an earlier iteration of the primary index table. It is a thirty two bit table, meaning it could only store thirty two bit physical addresses to point to other A C P I tables. In contemporary sixty four bit computing environments, this thirty two bit address limitation makes the R S D T largely obsolete, as it cannot address the full range of physical memory. However, it might still be present in some systems or required by older A C P I-aware operating systems to maintain backward compatibility or access certain legacy functionalities.
+
+To overcome the R S D T's limitations, the X S D T, or Extended System Description Table, was introduced. This table effectively replaces the R S D T and is designed to support both thirty two bit and sixty four bit systems. Crucially, it stores sixty four bit physical addresses, enabling it to point to any A C P I table regardless of its location in the vastly larger sixty four bit physical address space. The X S D T is therefore the standard mechanism for operating systems to discover and access A C P I tables in modern systems, facilitating comprehensive hardware and power management.
+
+The F A D T, or Fixed A C P I Description Table, is a cornerstone for core A C P I operations. It provides fixed memory addresses for critical A C P I hardware registers. These include the G P E, or General Purpose Event, block, which handles system events, the P M, or Power Management, block for controlling processor power states, and the A C P I Timer, which offers a high-resolution timer for the O S. Additionally, the F A D T specifies I O port details required to access or enable S M I, or System Management Interrupt, ports, which are vital for system management mode operations. It also contains the specific port address and value combination necessary to trigger a system reset. The F A D T itself points to other essential tables, namely the D S D T and F A C S tables, making it a central point of reference for critical system configuration and control data. Historically, the F A D T was known as F A C P.
+
+The F A C S, or Firmware A C P I Control Structure, is unique among A C P I tables because it does not adhere to the standard System Description Table Header. Instead, it holds essential hardware-specific signatures and vectors required for system resume operations. This includes the thirty two bit real mode waking vector and the sixty four bit physical address resume vectors, which are indispensable for bringing the system out of low-power sleep states, such as suspend to R A M. Furthermore, the F A C S provides information regarding global lock support, a mechanism critical for ensuring atomic operations and preventing race conditions when multiple agents, such as the firmware and the operating system, concurrently access shared A C P I resources.
+
+The D S D T, or Differentiated System Description Table, is the primary repository for A M L, or A C P I Machine Language, code. A M L is a byte code interpreted by the operating system's A C P I driver to control various hardware components. The D S D T contains the bulk of the system's A C P I descriptive information and power management methods. A key design principle for the D S D T is its static nature; once loaded by the operating system during the boot process, its contents do not change during runtime. This immutability ensures a consistent and predictable interface between the operating system and the underlying hardware, simplifying the O S's hardware management responsibilities and contributing to system stability.

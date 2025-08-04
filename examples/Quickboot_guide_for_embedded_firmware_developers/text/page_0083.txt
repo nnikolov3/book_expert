@@ -1,0 +1,50 @@
+bridge(s) must be discovered and enumerated.
+
+o After the PCI bus/device network under a bridge is completely
+enumerated, assigning of nested Memory, and I/O ranges must be
+made to PCI bridges
+
+0 Bridge Control Register
+
+While there are up to 256 buses on PCI, the minimum granularity of the I/0
+base and limit registers of 4 KB really limit that to approximately 16 bridges
+possible (assuming each has some amount of I/O required).
+
+When configuring the PCI devices of the chipset and CPU, there will be
+several private registers above 0x3F in PCI and in the PCI Express ranges
+that will need to be programmed for specific purposes. Also, in the chipset,
+memory-mapped I/O configuration spaces are mapped by the Root Complex
+Base Address register at Bus 0, Device 31, Function 0, Offset OxFO0. It
+specifies the physical address of Chipset Configuration space. Also used in
+“RCBA xxxxh,” where xxxxh is the offset of a particular register location in
+the Chipset Configuration space.
+
+For static PCI enumeration, a designer can define a specific mapping
+and hard-code the standard registers for a particular system. But that is not
+the right way. While some believe that this saves time in walking the buses
+dynamically, the entire bus scan should take on the order of 20 ms. The
+benefits of doing it dynamically will likely outweigh the return of saving 20
+ms and hand-coding the map statically for every closed-box configuration. If
+there are any expansion slots on PCle buses on the system, then static
+
+enumeration is really not an option.
+
+PCI BIOS
+Bridges must be discovered and enumerated. After the P C I bus device network under a bridge is completely enumerated, assigning of nested Memory, and I O ranges must be made to P C I bridges. This process involves the Bridge Control Register.
+
+While there are up to two hundred fifty six buses on P C I, the minimum granularity of the I O base and limit registers of four K B really limit that to approximately sixteen bridges possible, assuming each has some amount of I O required.
+
+When configuring the P C I devices of the chipset and C P U, there will be several private registers above hexadecimal three F in P C I and in the P C I Express ranges that will need to be programmed for specific purposes. Also, in the chipset, memory mapped I O configuration spaces are mapped by the Root Complex Base Address register at Bus zero, Device thirty one, Function zero, Offset hexadecimal F zero. It specifies the physical address of Chipset Configuration space. It is also used in R C B A xxxx h, where xxxx h is the offset of a particular register location in the Chipset Configuration space.
+
+For static P C I enumeration, a designer can define a specific mapping and hard code the standard registers for a particular system. But that is not the right way. While some believe that this saves time in walking the buses dynamically, the entire bus scan should take on the order of twenty milliseconds. The benefits of doing it dynamically will likely outweigh the return of saving twenty milliseconds and hand coding the map statically for every closed box configuration. If there are any expansion slots on P C I E buses on the system, then static enumeration is really not an option.
+
+P C I B I O S
+The fundamental process of establishing a functional hardware environment within a computer system commences with the discovery and enumeration of the Peripheral Component Interconnect, or P C I, bus infrastructure. This process involves a meticulous traversal of the bus topology, identifying each P C I bridge. A P C I bridge serves as a crucial intermediary, connecting two distinct P C I buses and facilitating communication between devices residing on either side. Once a particular P C I bus segment and its associated devices, nested beneath a bridge, have been entirely discovered and identified, the system must then proceed to assign distinct memory and I O address ranges to these newly found P C I bridges themselves. This hierarchical allocation ensures proper isolation and addressing for subsequent device enumeration within those bridged segments.
+
+The architecture of P C I imposes certain constraints on the system's ability to expand. While the P C I specification allows for up to two hundred fifty six distinct P C I buses within a system, a practical limitation arises from the granularity of I O address assignments. Specifically, the minimum allocation unit for I O base and limit registers is four K B. This inherent granularity, when combined with the necessity for each bridge to consume a certain amount of I O address space, practically restricts the number of usable bridges in a given hierarchy to approximately sixteen. This constraint highlights a design trade-off between address space efficiency and the potential for extensive bus expansion.
+
+During the configuration phase of the system's chipset and the central processing unit, specifically for P C I and P C I Express devices, several private registers beyond the standard P C I configuration space (which extends up to hexadecimal three F) require programming. These registers are essential for enabling specific functionalities or optimizing performance, often dictating the behavior of P C I Express lanes and their associated ranges. A critical element in modern architectures is the concept of memory-mapped I O configuration spaces. These are regions within the C P U's physical memory address space that directly correspond to device configuration registers. For instance, in many chipset designs, the Root Complex Base Address Register, commonly referred to as R C B A, located at Bus zero, Device thirty one, Function zero, and at Offset hexadecimal F zero, specifies the physical address where the Chipset Configuration Space resides. This R C B A mechanism enables efficient memory-mapped access to configuration information, allowing the system's firmware to read and write control bits and data directly as if accessing memory, rather than relying on slower, dedicated I O port instructions. The value following R C B A, denoted as 'x x x x h', represents an offset from this base address, pointing to a specific register location within that chipset configuration space.
+
+The method of P C I enumeration presents a significant architectural choice: static versus dynamic configuration. Static P C I enumeration involves a designer pre-defining and hard-coding the mapping of standard registers and address ranges for every device in a particular system. While this approach might appear to save time during system boot by eliminating the need for a dynamic scan, it is generally not considered the optimal method for modern, flexible computing platforms. The dynamic enumeration process, which involves actively traversing and scanning the P C I and P C I E buses to discover and configure devices at boot time, typically takes on the order of twenty milliseconds. This relatively short duration is a small price to pay for the immense flexibility gained. The benefits of dynamic enumeration, specifically its ability to automatically adapt to varying hardware configurations, particularly in systems equipped with multiple P C I Express expansion slots that can host diverse peripherals, overwhelmingly outweigh the marginal return of saving twenty milliseconds by hand-coding a static map. If a system allows for any expansion slots on its P C I Express buses, then static enumeration fundamentally ceases to be a viable option due to its inherent rigidity.
+
+The entire process of P C I device discovery, configuration, and resource allocation is orchestrated by the P C I B I O S. This firmware component is responsible for implementing the complex algorithms that enumerate the bus, assign memory and I O resources, and configure devices according to their capabilities and the system's requirements. Its role is pivotal in ensuring that all connected peripherals are correctly initialized and ready for operation before the operating system takes control.

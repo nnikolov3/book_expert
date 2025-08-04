@@ -1,0 +1,60 @@
+When using a POST code, it will give you a clue to the last checkpoint
+called. But then you still have 100 files in which the system may be hung. So
+you go down and begin the trace code, starting from that checkpoint using an
+in-target probe (ITP), incircuit emulator (ICE) or another run-control debug
+tool.
+
+If you are using the Tiano code with serial debug on, there will be a
+GUID for the particular code that is executing.
+
+When you get to the point where it stops, there may be absolutely
+nothing wrong with that line or that file. What do you do? You backtrack and
+start debugging what the hardware or silicon is doing versus what you think it
+
+should be doing, looking at register level details, poring over specifications.
+
+When Hardware Isn’t Stable, Where Do I Start?
+
+When your hardware isn’t stable, the initialization may inconsistently hang.
+
+There are a number of reasons why:
+
+1. Make sure all cards and cables are properly seated. Check your
+configuration in every way you can; you can spend hours chasing ghosts
+because someone partially knocked a connection loose or you may not
+have the right version of the card/cable to support your current debug
+activity.
+
+2. The previous configuration steps may not be complete or correct (BIOS
+can fix it).
+
+3. Check the voltage rails on the motherboard and make sure they are
+stable.
+
+4. The power sequencing or input clocking may not be correct, and the
+
+silicon may be in an indeterminate state. If this is the case, there is some
+When using a P O S T code, it will give you a clue to the last checkpoint called. But then you still have one hundred files in which the system may be hung. So you go down and begin the trace code, starting from that checkpoint using an in target probe, I T P, in circuit emulator, I C E, or another run control debug tool.
+
+If you are using the Tiano code with serial debug on, there will be a G U I D for the particular code that is executing. When you get to the point where it stops, there may be absolutely nothing wrong with that line or that file. What do you do? You backtrack and start debugging what the hardware or silicon is doing versus what you think it should be doing, looking at register level details, poring over specifications.
+
+When Hardware Isn't Stable, Where Do I Start?
+
+When your hardware is not stable, the initialization may inconsistently hang. There are a number of reasons why. First, make sure all cards and cables are properly seated. Check your configuration in every way you can; you can spend hours chasing ghosts because someone partially knocked a connection loose or you may not have the right version of the card or cable to support your current debug activity. Second, the previous configuration steps may not be complete or correct, and for B I O S, you can fix it. Third, check the voltage rails on the motherboard and make sure they are stable. Fourth, the power sequencing or input clocking may not be correct, and the silicon may be in an indeterminate state. If this is the case, there is some.
+When a computing system experiences a hang, particularly during its initial boot phase, identifying the root cause is a profound challenge. The P O S T, or Power On Self Test, provides an initial diagnostic pathway. During P O S T, the system's B I O S or U E F I firmware executes a sequence of checks on fundamental hardware components, emitting diagnostic codes. These P O S T codes can indicate the last successfully completed step or the point of failure, offering a coarse granularity for troubleshooting. However, even with a P O S T code indicating a hang, a system may still have hundreds of firmware or operating system files involved in its initialization, making precise fault isolation difficult.
+
+To delve deeper into such system hangs, especially when the issue occurs beyond the initial P O S T, one must engage in detailed trace code analysis. This involves starting the investigation from the last known checkpoint provided by the P O S T code. Specialized hardware debugging tools are indispensable for this task. An In-Target Probe, or I T P, allows for direct, low level access to the processor's internal state, registers, and memory, bypassing the need for a functioning operating system. Similarly, an Incirucit Emulator, or I C E, replaces the target processor with an emulating device that offers comprehensive debug capabilities, including the ability to halt execution, examine memory, and single step through instructions. Both I T P s and I C E s are examples of sophisticated run control debug tools, enabling granular control over the system's execution flow.
+
+When debugging firmware, such as Tiano code, which refers to the U E F I firmware environment, serial debug output becomes an invaluable resource. This involves transmitting diagnostic messages, register dumps, and execution traces over a serial port to a host debugging station. A Globally Unique Identifier, or G U I D, mentioned in the context of Tiano code and serial debug, serves as a unique identifier for specific firmware modules or data structures. Observing which G U I D is active at the time of a hang can help narrow down the failing firmware component.
+
+The debugging process often involves reaching the precise point where the system stops executing, even if the code at that location appears syntactically correct and semantically sound. The critical next step is to backtrack, analyzing the sequence of events and instruction flow that led to the hang. This is not merely about identifying a line of code but rather understanding the discrepancy between the expected behavior of the hardware or silicon and its actual actions. This necessitates poring over the architectural specifications and examining register level details, comparing the observed values of C P U and peripheral registers against their specified states during normal operation. This deep dive into the hardware's instantaneous state is often the only way to uncover subtle timing issues or data corruption.
+
+A particularly vexing class of system problems arises from hardware instability, often manifesting as inconsistent hangs during initialization. Such erratic behavior suggests underlying physical or electrical issues rather than purely logical software bugs. Several fundamental reasons contribute to this instability.
+
+Firstly, the physical integrity of the system is paramount. All expansion cards and data or power cables must be properly seated in their respective slots and connectors. Even a slight misconnection can lead to intermittent electrical contact, causing signal integrity degradation, spurious errors, or complete component failure. Debugging such issues can be analogous to "chasing ghosts" because the problem may only appear under specific thermal conditions or mechanical stresses. It is also crucial to ensure that the correct version of any card or cable is used, as mismatches in pinouts or electrical specifications can prevent proper initialization.
+
+Secondly, the system's previous configuration steps, particularly those managed by the B I O S or U E F I firmware, may be incorrect or incomplete. The B I O S is responsible for initializing and configuring numerous hardware parameters, including memory timings, C P U frequencies, and peripheral settings. An improperly configured B I O S can lead to an unstable system, even if the hardware itself is functional. Modern B I O S implementations often include mechanisms for auto configuration or recovery from bad settings, but manual intervention may be required in persistent cases.
+
+Thirdly, the stability of the voltage rails on the motherboard is critical. Integrated circuits require precise and stable power delivery. Fluctuations or deviations from specified voltage levels, known as voltage ripple or droop, can cause digital circuits to operate outside their design parameters, leading to incorrect logic states or memory corruption. Verifying the stability of these power delivery networks with an oscilloscope is often a necessary diagnostic step.
+
+Finally, fundamental timing and power sequencing issues can render the silicon itself indeterminate. Power sequencing dictates the precise order in which various power rails are brought up or down during system initialization. Incorrect sequencing can put integrated circuits into metastable states, where internal logic gates are neither a clear zero nor one, or even damage them. Similarly, input clocking, the precise frequency and phase of the clock signals distributed throughout the system, is essential for synchronous digital logic. If the input clocks are unstable, incorrect, or out of phase, the system's operations will lose synchronization, leading to data inconsistencies and system hangs. When these conditions occur, the silicon enters an indeterminate state, meaning its behavior becomes unpredictable and often unrecoverable without a full reset, highlighting the intricate interdependencies within complex electronic systems.

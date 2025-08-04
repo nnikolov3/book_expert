@@ -1,0 +1,67 @@
+SDRAM device. Bits 2-0 encode the number of column address bits, and bits
+
+5-3 encode the number of row address bits. These values come from the
+DDR3 SDRAM datasheet.
+
+Bit 7:6 Bits 5:3 Bits 2:0
+Reserved Row Address Bits Column Address Bits
+000 = 12 000=9
+001 =13 001 = 10
+010 = 14 010=11
+011 =15 011 =12
+100 = 16 All others reserved
+
+All others reserved
+
+Table 2 Addressing
+
+Parameter 512 Meg x 4 256 Meg x B 128 Meg x 16
+Configuration 6&4 Meg x 4 = 8B banks 32Meg = 8x Ebanks 16 Meg = 16 = 8 banks
+Refresh count 8K 8K 8K
+
+Row addressing 32K (A[14:0]) ©. 32K (A[14:00) = 16K (A[13:0])
+
+Bank addressing & (BA[2:0]) 8 (BA[2:0]) 8 (BA[2:0])
+
+Column addressing 2K (A[11,9:0]) w 1K{A[2:0]) 2 1K(A[9:0])
+
+SPD Field #5: “SDRAM Rows & Columns” Example from Micron
+MT41J256M8 Datasheet
+
+Rows and columns are the number of address signals that are active when the
+RAS# and CAS# signals strobe respectively. The row and column values
+required by the SPD data are extracted directly from the SDRAM datasheet
+as shown above. Here, A[9:0] consists of ten individual address lines, not
+nine. Both column and row fields required in the SPD data are not nibble
+
+aligned. This is a common mistake with this field.
+S D R A M device. Bits two to zero encode the number of column address bits, and bits five to three encode the number of row address bits. These values come from the D D R three S D R A M datasheet.
+
+Bit seven to six, Bits five to three, Bits two to zero: Reserved Row Address Bits, Column Address Bits.
+Zero zero zero is equal to twelve, Zero zero zero is equal to nine.
+Zero zero one is equal to thirteen, Zero zero one is equal to ten.
+Zero one zero is equal to fourteen, Zero one zero is equal to eleven.
+Zero one one is equal to fifteen, Zero one one is equal to twelve.
+One hundred is equal to sixteen.
+All others reserved. All others reserved.
+
+Table two Addressing.
+
+The table presents data for different memory configurations: five hundred twelve megabytes by four times eight banks, two hundred fifty six megabytes by eight times eight banks, and one hundred twenty eight megabytes by sixteen times eight banks.
+
+The parameter is Configuration. The refresh count is eight K. Row addressing for five hundred twelve megabytes by four is thirty two K, A fourteen to zero. For two hundred fifty six megabytes by eight, it is thirty two K, A fourteen to zero. For one hundred twenty eight megabytes by sixteen, it is sixteen K, A thirteen to zero.
+
+Bank addressing for five hundred twelve megabytes by four is eight B A two to zero. For two hundred fifty six megabytes by eight, it is eight B A two to zero. For one hundred twenty eight megabytes by sixteen, it is eight B A two to zero.
+
+Column addressing for five hundred twelve megabytes by four is two K A eleven to zero. For two hundred fifty six megabytes by eight, it is one K A nine to zero. For one hundred twenty eight megabytes by sixteen, it is one K A nine to zero.
+
+S P D Field number five: "S D R A M Rows and Columns" Example from Micron M T forty one J two hundred fifty six M eight Datasheet.
+
+Rows and columns are the number of address signals that are active when the R A S hash and C A S hash signals strobe respectively. The row and column values required by the S P D data are extracted directly from the S D R A M datasheet as shown above. Here, A nine to zero consists of ten individual address lines, not nine. Both column and row fields required in the S P D data are not nibble aligned. This is a common mistake with this field.
+The provided text delves into the addressing schemes of Synchronous Dynamic Random Access Memory, specifically DDR3 SDRAM, and illustrates how this information is encoded within the Serial Presence Detect, or S P D, data. It begins by explaining that certain bits within the SDRAM device's command structure are dedicated to encoding the number of row and column address bits. Bits two through zero, for instance, are designated to convey the number of column address bits, while bits five through three specify the number of row address bits. This mapping of bit ranges to specific addressing information is a fundamental aspect of memory interface design, allowing the memory controller to correctly interpret and utilize the available address lines for accessing data.
+
+The text then presents a detailed breakdown of this bit encoding, showing how specific binary patterns correspond to a particular number of address bits. For example, the binary pattern zero zero zero maps to twelve row address bits, and this pattern continues, with zero zero one corresponding to thirteen, zero one zero to fourteen, zero one one to fifteen, and one zero zero to sixteen row address bits. Any other combinations are reserved. This explicit mapping is crucial for the memory controller to dynamically configure its address generation logic based on the capabilities of the attached SDRAM modules, ensuring efficient and correct data retrieval. The table titled "Table two Addressing" further elucidates this, demonstrating how different SDRAM configurations, such as fifty two Megabytes multiplied by four data bits multiplied by eight banks, twenty five six Megabytes multiplied by eight data bits multiplied by eight banks, and twelve eight Megabytes multiplied by sixteen data bits multiplied by eight banks, utilize varying numbers of row and column address bits.
+
+In the fifty two Megabytes multiplied by four configuration, there are thirty two K, or thirty two thousand, row addresses, which are represented by address bits A fourteen through zero, and two K, or two thousand, column addresses, represented by address bits A eleven through nine. Similarly, the twenty five six Megabytes multiplied by eight configuration uses thirty two K row addresses, again A fourteen through zero, and one K, or one thousand, column addresses, specified by A nine through zero. The twelve eight Megabytes multiplied by sixteen configuration requires sixteen K, or sixteen thousand, row addresses, denoted by A thirteen through zero, and one K column addresses, using A nine through zero. The table also shows the refresh count, which is typically eight K, and bank addressing, which consistently uses three bits, represented as B A two through zero, across these configurations. The variation in the number of row and column address bits directly correlates to the total capacity and organization of the memory, influencing the memory controller's internal logic for calculating memory locations.
+
+The section "S P D Field five: 'S D Ram Rows and Columns' Example from Micron M T four one two five six M eight Datasheet" provides a practical instance of how this information is consumed. It clarifies that the row and column values are derived from the signals that are active when the Row Address Strobe, or R A S, and Column Address Strobe, or C A S, signals are strobed, respectively. The S P D data is directly extracted from the specific SDRAM datasheet. In this particular example, A nine through zero represents ten individual address lines, which are used for both column and row fields in the S P D data. The text notes that this particular mapping is a common point of error with this field, highlighting the importance of precise interpretation of the S P D information for correct memory operation. The underlying principle here is the efficient encoding of configuration parameters for memory devices, allowing a system's memory controller to adapt to different types and sizes of installed memory modules without requiring explicit hardware configuration changes. This self configuring capability is a cornerstone of modern computer system design, enabling greater flexibility and interoperability.

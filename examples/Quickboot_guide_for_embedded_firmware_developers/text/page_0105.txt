@@ -1,0 +1,60 @@
+RAID request.
+
+—The system BIOS clears the Interrupt status in the SATA/RAID
+
+controller.
+—The system BIOS does not mask the IRQ in the PIC.
+—The system BIOS sets byte 40h:8Eh to a nonzero byte value.
+
+—The system BIOS issues an EOI and IRET.
+
+If the system BIOS does not use the interrupt mechanism, then the system
+
+BIOS does not receive this INT13h request; therefore, it does nothing.
+
+Int13h Drive Access to a SATA ATAPI Device. System BIOS control flow:
+system BIOS can choose any method to access the ATAPI drive (interrupt or
+
+polling).
+—System BIOS completes the INT13h service request.
+
+—Contact your Intel Representative to get the RAID option ROM.
+
+Enable Flexible RAID OROM Features
+Panther Point with RAID-capable SKU can customize the RAID {features
+through setting the Intel® RST Feature Capabilities (RSTF) register before
+loading the RAID option ROM. The RAID OROM will enable the desired
+features based on the setting in that register; please refer to the Panther Point
+EDS for more details.
+
+For example, if the platform-desired features are RAIDO, RAIDI,
+RAIDS and RAID10, system BIOS should set RSTF (ABAR + C8h [15:0]) to
+002Fh before loading RAID OROM.
+Raid request.
+
+The system B I O S clears the Interrupt status in the S A T A slash Raid controller.
+The system B I O S does not mask the I R Q in the P I C.
+The system B I O S sets byte hexadecimal forty colon eight E to a nonzero byte value.
+The system B I O S issues an E O I and I R E T.
+
+If the system B I O S does not use the interrupt mechanism, then the system B I O S does not receive this I N T thirteen H request; therefore, it does nothing.
+
+I N T thirteen H Drive Access to a S A T A A T A P I Device. System B I O S control flow: system B I O S can choose any method to access the A T A P I drive, interrupt Or polling.
+
+The system B I O S completes the I N T thirteen H service request.
+Contact your Intel Representative to get the Raid option R O M.
+
+Enable Flexible Raid O R O M Features.
+
+Panther Point with Raid capable S K U can customize the Raid features through setting the Intel R S T Feature Capabilities, R S T F, register before loading the Raid option R O M. The Raid O R O M will enable the desired features based on the setting in that register; please refer to the Panther Point E D S for more details.
+
+For example, if the platform desired features are Raid zero, Raid one, Raid five and Raid ten, system B I O S should set R S T F, A B A R increment by hexadecimal C eight, bits fifteen through zero, to hexadecimal zero zero two F before loading Raid O R O M.
+The provided text describes fundamental aspects of low-level system initialization and hardware interaction, particularly concerning R A I D controllers and mass storage device access within a computer system’s firmware environment.
+
+The first section details the process of handling a R A I D request, which is an event indicating the R A I D controller requires attention. Upon receiving such a request, the system B I O S, or Basic I O System, performs a critical sequence of operations. Initially, it clears the interrupt status within the S A T A slash R A I D controller. This action is crucial to acknowledge the interrupt, effectively telling the controller that its signal has been received and preventing it from continuously asserting the same interrupt. Concurrently, the B I O S ensures that the Interrupt ReQuest line, or I R Q, associated with the R A I D controller is not masked within the P I C, the Programmable Interrupt Controller. Unmasking the I R Q ensures that subsequent interrupt signals from the R A I D controller can be processed, maintaining an active communication channel for ongoing operations or future requests. Following these steps, the B I O S directly interacts with the hardware by setting a specific byte at memory address hexadecimal four zero H colon eight E H to a nonzero value. This is a common method for firmware to signal a state change, enable a feature, or write configuration data into a memory mapped control register of the hardware component. Finally, to conclude the interrupt service routine, the B I O S issues an E O I, or End Of Interrupt, command to the P I C and then executes an I R E T, an Interrupt Return instruction. The E O I informs the P I C that the interrupt has been fully serviced, allowing it to manage interrupt priorities and re-enable lower-priority interrupts. The I R E T restores the C P U's execution context, returning control to the program that was interrupted.
+
+The text then elucidates the dependency of legacy I O operations on the interrupt mechanism. Specifically, it states that if the system B I O S is configured to bypass or not utilize the interrupt mechanism for I O operations, it will not process an I N T thirteen H request. I N T thirteen H is a legacy B I O S service interrupt primarily used for disk access. This highlights a fundamental distinction in I O design: systems can employ either interrupt-driven I O, which is asynchronous and event-driven, or polling, which is synchronous and involves the C P U continuously checking device status. If interrupt services are not active for a specific pathway, an interrupt-based request like I N T thirteen H will simply be ignored, resulting in no action.
+
+Moving to the topic of I N T thirteen H drive access for S A T A A T A P I devices, the document clarifies that the B I O S retains flexibility in how it communicates with these devices. A T A P I, which stands for A T A Packet Interface, is a standard for interfacing with devices such as C D-R O M, D V D-R O M, and tape drives. The B I O S can choose either interrupt-driven I O, where the device asynchronously signals the B I O S upon task completion or error, or polling, where the B I O S periodically queries the device's status registers. Each approach presents trade-offs in terms of C P U utilization and responsiveness. Upon successful completion of the drive access, the B I O S completes the I N T thirteen H service request. The document also provides practical guidance, noting that acquiring the R A I D option R O M, which contains proprietary firmware for specific R A I D features, may require contacting the I N T E L representative.
+
+The final section addresses the enablement of "Flexible R A I D O R O M Features," indicating a customizable aspect of R A I D functionality. The "Panther Point" platform, when equipped with a R A I D-capable S K U, can tailor its R A I D features by manipulating the I N T E L R S T Feature Capabilities, or R S T F, register. This register must be configured before the R A I D option R O M is loaded into memory during the system's boot sequence. The R S T F register acts as a control plane, dictating which specific R A I D functionalities the O R O M will subsequently activate. The R A I D O R O M's behavior is entirely contingent upon the bit settings within this register, illustrating a layered firmware design where a core B I O S loads and configures specialized modules. The document suggests referring to the Panther Point E D S, or External Design Specification, for detailed information on these register settings. As a concrete example, if the desired R A I D configurations include R A I D zero for striping, R A I D one for mirroring, R A I D five for distributed parity, and R A I D ten for combined mirroring and striping, the system B I O S must program the R S T F register, located at an offset of hexadecimal C eight H from the A B A R base address, specifically bits fifteen through zero, to the value hexadecimal zero zero two F H. This precise bit-level manipulation before the R A I D O R O M is loaded exemplifies the critical low-level control required to provision complex hardware features within the boot environment.

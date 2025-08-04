@@ -1,0 +1,50 @@
+OS Loader
+
+If the OS is being examined, then the OS loader times also can be improved
+by looking at the OS image size. Limiting the OS requirements for pre-OS
+keyboard can speed up boot by tens to hundreds of milliseconds. Loading the
+user interface sooner in the boot flow of the kernel will make a noticeable
+difference to the end user. Device driver load and start times and usage of
+services can be streamlined to positively affect boot performance.
+
+During runtime, the UEFI capabilities are very limited and not all the
+UEFI drivers that were used to boot the platform are available for the OS to
+call. Once Exit-BootServices() is called by the OS loader and it assumes
+control of the platform, much information is lost.
+
+The OS loader can collect quite a bit of data about the platform above
+and beyond the typical ACPI table standard set of information accessing the
+BIOS through UEFI function calls. Before exiting boot services, the OS
+loader can both get and give data directly to the BIOS.
+
+An example of the OS level of interactions is setting up for the graphics
+resolution of the splash screen such that it will match the OS via a hint during
+OS loading.
+
+Legacy OS Interface
+
+Windows 7 and other legacy operating systems that require a CSM in the
+BIOS to provide Int 10h (and other legacy software interrupts) execute
+hundreds of milliseconds to several seconds slower due to the nature of their
+boot flow. Initialization of each and every legacy option ROM serially is just
+one reason why it may be many seconds slower than UEFI boot flows. If the
+
+OS was not optimized for boot during the kernel and driver loading, then any
+O S Loader.
+
+If the O S is being examined, then the O S loader times also can be improved by looking at the O S image size. Limiting the O S requirements for pre O S keyboard can speed up boot by tens to hundreds of milliseconds. Loading the user interface sooner in the boot flow of the kernel will make a noticeable difference to the end user. Device driver load and start times and usage of services can be streamlined to positively affect boot performance.
+
+During runtime, the U E F I capabilities are very limited and not all the U E F I drivers that were used to boot the platform are available for the O S to call. Once Exit Boot Services is called by the O S loader and it assumes control of the platform, much information is lost.
+
+The O S loader can collect quite a bit of data about the platform above and beyond the typical A C P I table standard set of information accessing the B I O S through U E F I function calls. Before exiting boot services, the O S loader can both get and give data directly to the B I O S.
+
+An example of the O S level of interactions is setting up for the graphics resolution of the splash screen such that it will match the O S via a hint during O S loading.
+
+Legacy O S Interface.
+
+Windows seven and other legacy operating systems that require a C S M in the B I O S to provide Int ten h and other legacy software interrupts execute hundreds of milliseconds to several seconds slower due to the nature of their boot flow. Initialization of each and every legacy option R O M serially is just one reason why it may be many seconds slower than U E F I boot flows. If the O S was not optimized for boot during the kernel and driver loading, then any.
+The fundamental process of initiating an operating system, known as OS loading, can be optimized by examining the performance characteristics of the OS loader itself. The metrics for OS loader time are directly influenced by factors such as the OS image size, which dictates the volume of data that must be processed. Furthermore, the requirements for pre OS operations, such as keyboard input handling, contribute to the overall boot time. Loading the user interface elements sooner in the boot sequence, relative to the kernel's initialization, can significantly improve the perceived responsiveness of the system to the end user. This is because it accelerates the availability of interactive services, making the system feel more responsive during the crucial initial startup phase.
+
+During the runtime environment, specifically within the context of the Unified Extensible Firmware Interface, or U E F I, the capabilities are quite extensive, but not all U E F I drivers designed for booting a platform are universally available or compatible for direct OS invocation. When the Exit Boot Services function is called, control transitions from the firmware to the OS loader. At this juncture, the OS loader plays a critical role in gathering platform information. It accesses a standard set of data, often structured within A C P I tables, which provide details about the hardware configuration. This information is essential for the OS to correctly initialize and manage system resources. The OS loader can retrieve this data either directly from the platform's firmware or through the U E F I services, which might involve specific function calls. Before relinquishing control to the OS kernel, the loader ensures that critical data, such as graphics resolution, is communicated to the BIOS, often via hints, enabling a consistent visual experience during the OS loading process.
+
+Transitioning to the topic of Legacy OS Interfaces, systems that predate more modern boot standards, such as Windows seven and other older operating systems, often rely on a Compatibility Support Module, or C S M, embedded within the basic input output system, or B I O S. This module is necessary to provide support for legacy interrupts, specifically interrupt 10h, which was commonly used for video services in older systems. The execution of these legacy interrupts, and other legacy software interrupts, to initialize hardware can be significantly slower compared to their modern U E F I counterparts, often adding hundreds of milliseconds to several seconds to the boot process. This performance difference stems from the nature of accessing information from read only memory, or R O M, serially, which is inherently less efficient than the parallel access methods facilitated by U E F I. Initialization of each and every legacy option rom, which contains firmware for specific hardware devices, contributes to this cumulative delay. Consequently, systems employing legacy boot flows can experience boot times that are many seconds longer than systems utilizing U E F I boot flows. The performance penalty is particularly noticeable if the OS was not optimized for boot during the kernel and driver loading phases, exacerbating the inherent inefficiencies of the legacy interface.

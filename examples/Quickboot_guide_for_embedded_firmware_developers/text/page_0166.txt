@@ -1,0 +1,31 @@
+Figure 9.1: Power Sequencing Overview
+
+The Intel Manageability Engine (ME), available on some mainstream,
+desktop, and server-derived chips, is one such component. While the main
+system firmware does not initialize these devices, there is likely to be some
+level of interactions that must be taken into account in the settings of the
+firmware, or in the descriptors of the flash component for the ME to start up
+and enable the clocks correctly. The main system firmware also has the
+potential to make calls and be called from the ME.
+
+Another example is the microengines, which are part of
+telecommunications segment components in the embedded-market segments.
+These microengines have their own firmware that starts independently of the
+system BIOS, but the host system BIOS has to make allowances for this in
+the ACPI memory map to allow for proper interaction between host drivers
+
+and the microengine subsystem.
+Figure 9.1: Power Sequencing Overview.
+
+The diagram illustrates a power sequencing overview. It shows a Board Clock connected to a Power Sequencing and Control block, which in turn connects to a S O C Device. A Reset signal is shown going from the Power Sequencing and Control block to the S O C Device.
+
+An Input Supply of twelve volt goes into a Power Regulation block. This Power Regulation block outputs several voltages: one point zero five volt, one point five volt, three point three volt, five volt, and twelve volts. These regulated voltages are fed into a block labeled Field Effect Transistors, described as switches. The Field Effect Transistors also receive a signal from the Power Sequencing and Control block. The output of the Field Effect Transistors goes to the S O C Device and also to Expansion I O Devices.
+
+The Intel Manageability Engine, or M E, available on some mainstream, desktop, and server derived chips, is one such component. While the main system firmware does not initialize these devices, there is likely to be some level of interactions that must be taken into account in the settings of the firmware, or in the descriptors of the flash component for the M E to start up and enable the clocks correctly. The main system firmware also has the potential to make calls and be called from the M E.
+
+Another example is the microengines, which are part of telecommunications segment components in the embedded market segments. These microengines have their own firmware that starts independently of the system B I O S, but the host system B I O S has to make allowances for this in the A C P I memory map to allow for proper interaction between host drivers and the microengine subsystem.
+The diagram illustrates a power sequencing overview, a critical aspect of system initialization. At the core of this process is the "S O C Device," representing the System on a Chip, which is the central processing unit and integrated components of a modern computing system. Power management is orchestrated by several key elements. The "Input Supply (eg twelve V)" feeds into "Power Regulation," which generates various voltage rails, such as one point oh five V, one point five V, three point three V, five V, and twelve Volts. These regulated voltages are then directed to "Field Effect Transistors (switches)." These transistors act as controlled switches, enabling or disabling power to different parts of the system based on the sequencing logic.
+
+The "Power Sequencing and Control" block is central to determining the order and timing of power delivery. It receives signals from the "Board Clock," which provides the timing reference for the entire system, and also receives a "Reset" signal, which initiates the power up sequence. The "Power Sequencing and Control" block then commands the "Field Effect Transistors" to switch on or off in a specific order, ensuring that components receive power at the correct time, preventing damage and facilitating proper initialization. The regulated power outputs from the transistors are then supplied to the "S O C Device" and "Expansion I O Devices," allowing these components to become operational.
+
+The accompanying text elaborates on the role of firmware in this power sequencing process, specifically mentioning the Intel Manageability Engine (ME). It highlights that the main system firmware does not initialize these power sequencing devices directly. Instead, the ME, often found in mainstream, desktop, and server-derived chips, manages the initialization sequence. The text explains that the ME interacts with the flash component of the system to start up and enable the clocks correctly. It also notes that the main system firmware can be called by the ME, indicating a layered approach to system control. Furthermore, the text introduces "microengines," which are specialized processing units found in telecommunications segment components and embedded market segments. These microengines possess their own firmware that initializes independently of the host system's Basic Input Output System (B I O S). The host B I O S must provide mechanisms, such as those defined by the Advanced Configuration and Power Interface (A C P I) memory map, to facilitate interaction between host drivers and these microengine subsystems, ensuring interoperability and correct system operation. This intricate interplay between hardware power sequencing, firmware management by dedicated engines like the ME, and the initialization of specialized processing units underscores the complexity of bringing a modern electronic system to a functional state.

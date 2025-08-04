@@ -1,0 +1,58 @@
+as “legacy USB support.”
+
+These are the basics that have existed since USB started in the 1990s. Adding
+this USB pre-OS support to a firmware stack is a substantial effort (multiple-
+man months). The additional boot times involved can also be inhibitive,
+several hundred milliseconds to several seconds depending on the number of
+USB ports/devices/usages enabled.
+
+In addition to the USB pre-OS support listed above, there are a few
+
+other areas of USB that can be explored for additional value to the platform:
+
+1. Pre-boot authentication (PBA) may also require USB support and that is
+an additional concern that must worked out with the PBA vendors and
+the OEM of the system.
+
+2. Trusted USB, where there is an established root of trust from the boot
+vector and where a USB device is not allowed to function unless it is
+authenticated and/or secured in some manner in either the BIOS
+
+hardened firmware and/or the operating system.
+
+PBA devices and Trusted USB share some common and interesting traits, but
+we will focus on the non-secure USB enumeration and initialization in this
+book.
+
+There are different versions of USB controllers implemented in the Intel
+
+chipsets and systems on chips. Here we will focus on the PCH.
+
+PCI Enumeration and Initialization of USB Controllers
+
+The simplest form of USB support is basic PCI support with no additional
+USB network initialization. During the PCI enumeration in the BIOS flow,
+
+the USB controllers’ BARS are assigned, IRQs are provided, and memory
+as “legacy U S B support.”
+
+These are the basics that have existed since U S B started in the nineteen nineties. Adding this U S B pre O S support to a firmware stack is a substantial effort, requiring multiple man months. The additional boot times involved can also be inhibitive, ranging from several hundred milliseconds to several seconds depending on the number of U S B ports, devices, or usages enabled.
+
+In addition to the U S B pre O S support listed above, there are a few other areas of U S B that can be explored for additional value to the platform. First, Pre boot authentication, or P B A, may also require U S B support. This is an additional concern that must be worked out with the P B A vendors and the O E M of the system. Second, Trusted U S B is a scenario where there is an established root of trust from the boot vector. In this case, a U S B device is not allowed to function unless it is authenticated and, or, secured in some manner, either in the B I O S hardened firmware or in the operating system.
+
+P B A devices and Trusted U S B share some common and interesting traits. However, in this book, we will focus on the non secure U S B enumeration and initialization.
+
+There are different versions of U S B controllers implemented in the Intel chipsets and systems on chips. Here, we will focus on the P C H.
+
+P C I Enumeration and Initialization of U S B Controllers
+
+The simplest form of U S B support is basic P C I support with no additional U S B network initialization. During the P C I enumeration in the B I O S flow, the U S B controllers’ B A R S are assigned, I R Qs are provided, and memory
+The concept of "legacy U S B support" refers to the foundational Universal Serial Bus functionalities that have been integral to computing platforms since the protocol's inception in the nineteen nineties. Integrating this low level U S B support into the pre-O S environment, specifically within a platform's firmware stack, represents a significant engineering challenge, often requiring multiple man months of dedicated development. This complexity arises from the necessity to instantiate and manage U S B controllers and connected devices before the full operating system is loaded, which inherently lacks the extensive device drivers and resource management capabilities of a mature O S. Consequently, the additional boot time incurred by this pre-O S U S B initialization can be substantial, ranging from several hundred milliseconds to several seconds, depending critically on the number of U S B ports and devices that require enumeration and initialization.
+
+Beyond the fundamental pre-O S U S B support, two advanced areas offer enhanced value to a platform: Pre-Boot Authentication, or P B A, and Trusted U S B. Pre-Boot Authentication requires robust U S B support to facilitate the authentication process itself, which typically involves external U S B devices such as security tokens or biometric scanners. This necessitates close collaboration between system Original Equipment Manufacturers and P B A solution vendors to ensure seamless integration and proper functionality of U S B dependent authentication mechanisms within the early boot phases.
+
+Trusted U S B, on the other hand, introduces a cryptographic root of trust that anchors the security posture of U S B device interactions from the earliest stages of system boot. In this model, a U S B device is permitted to function only after it has been rigorously authenticated and cryptographically secured, either through the B I O S hardened firmware or under the direct supervision of the operating system's security mechanisms. This establishes a chain of trust that extends from the platform's immutable boot vector through the U S B stack to the connected peripheral, ensuring that only verified and authorized devices can participate in system operations, thereby mitigating risks from malicious U S B devices.
+
+Both P B A devices and Trusted U S B rely on sophisticated U S B enumeration and initialization procedures. However, the focus here will be on the non-secure enumeration and initialization, which underpins the basic functionality before additional security layers are applied. In Intel based platforms, various versions of U S B controllers are implemented within the chipsets and systems on chips. Our specific focus in this context is on the Platform Controller Hub, or P C H, which serves as the central hub for most I O functions, including U S B connectivity.
+
+The process of P C I enumeration and initialization is fundamental to bringing U S B controllers online. The simplest form of U S B support during boot relies directly on the P C I enumeration process without additional, complex U S B network initialization. During the P C I enumeration phase, which is orchestrated by the B I O S, the system discovers all P C I compliant devices, including U S B controllers. For each discovered U S B controller, the B I O S assigns Base Address Registers, or B A R S, which are crucial memory mapped regions that allow the C P U to communicate with the controller's internal registers and memory. Concurrently, Interrupt ReQuests, or I R Q s, are provided to these controllers, establishing a dedicated channel for the U S B controller to signal the C P U when events occur, such as a device connection or data transfer completion. These assignments are critical for the operating system or pre-O S environment to properly identify, configure, and interact with the U S B hardware, enabling basic U S B functionality.

@@ -1,0 +1,115 @@
+_DDR3-800 DDR3-1066 DDR3-1333 DDR3-1600
+
+command cycle time
+
+Parameter Simm bol = Units
+Min Max Min Max Min Max Min Max
+DOS, DOS # differential READ RPST 0.3 Note 0.3 HNote 0.3 Note 0.3 Note CK
+postamble a7 27 27 27
+Command and Address Timings
+DLL locking time DLLE 512 = Ly rd = 512 = 512 = CK
+LTRL, LOAD, Base 4s 200 ~- 125 = 65 = 45 = ps
+ADDR setup (Specification) ACI7?S ar 300 40 720
+CK, CE Ver@1 V/ns Fo 2 : wo
+CTRL, CMD, Base - 150 _ _ a a os
+ADDR setup (Specification)
+d ACT 50 SiO - 525 - 240 - 320 - p
+to CK, CK# Veri1 V/ns
+CTRL. Cp, Base gu 2S = 200 ~- 140 = 120 =~ ps
+ADDR setup (Specification)
+DC1040 rs - E11 - F4 - F230 - pS
+to CK, CKA Veritl Vins
+Minimum CTRL, CMD, ADDR
+4 PW $00 - 780 - 620-560 = ps
+pulse width
+ACTIVATE to internal READ or RED see Speed Bin Tables (page 73} for ‘RCD
+WRITE delay ee Spe in Tables (page or ns
+PRECHARGE command period ‘RP See Speed Bin Tables (page 72) lor "RP ns
+ACTIVATE-to-PRECHARGE
+> . HAS See Speed Bin Tables (page 72) for "RAS ns
+command period
+ACTIVATE to-ACTIVATE ‘RL
+! See Speed Bin Tables (page 72) for "RC ns
+command
+EAE ‘RED MiN= MiN= MiN= MIN = CK
+AEHIATE we 1KB page greater of greater of greater of greater of
+loki sire 4CK or 10ns  A&CKor 7.%ns &CK or 6ns GCE or Gns
+i
+2KB page MiN= MIN= CK
+command :
+: sire greater of greater of
+peniod
+4CKE or 10ns &CK or 7.5ns
+Four 1KB page
+"FAW &0 i 37.5 a 30 = 30 -
+ACTIVATE size i
+windows 2KB
+Page 30 - 30 - 45% - LL - ns
+sre
+Write recovery time WR MIN = 15ns; MAX = nfa ns
+Delay from star of internal WTR MIN = greater of 4CK or 7.50% MAX =n/a CK
+WRITE transaction to
+internal READ command
+READ-to-PRECHARGE time ‘RTP MIN = greater of 4CK or 7.505; MAX = n/a CK
+CASH to CASK command delay ‘CCD MIN = 4CK: MAX = n/a CK
+Auto precharge write "DAL MIN = WR+tRP "CK (AVG); MAX = n/a CK
+recovery + precharge ime
+MODE REGISTER SET 'MED MIN = CK; MAX = n/a CK
+The table details command and address timings for different DDR3 memory speeds, specifically DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600, with corresponding minimum and maximum values in clock cycles or picoseconds, and units.
+
+The first row under parameters describes the DQS, DQS # differential READ postamble, with a symbol 'RPST'. For DDR3-800, it is zero point three CK, with a note 27 for the maximum value. For DDR3-1066, it is also zero point three CK, with note 27 for the maximum. For DDR3-1333, it is zero point three CK, and for DDR3-1600, it is zero point three CK with a note 27 for the maximum.
+
+Under Command and Address Timings, the DLL locking time has a symbol 'DLLK' and is five hundred twelve CK for DDR3-800, DDR3-1066, and DDR3-1333, and also five hundred twelve CK for DDR3-1600.
+
+The CTRL, CMD, ADDR setup time to CK, CK# has a symbol 'tS'. For DDR3-800, the base value is two hundred picoseconds, and the specified value is three hundred seventy five picoseconds for the minimum and not specified for the maximum. For DDR3-1066, the base value is one hundred twenty five picoseconds and the specified value is three hundred picoseconds minimum and two hundred forty picoseconds maximum. For DDR3-1333, the base value is sixty five picoseconds and the specified value is two hundred forty picoseconds minimum. For DDR3-1600, the specified value is two hundred twenty picoseconds minimum.
+
+The CTRL, CMD, ADDR setup time to CK, CK# with a different specification has a symbol 'tS'. For DDR3-800, the base value is five hundred picoseconds, and the specified value is three hundred picoseconds minimum and not specified maximum. For DDR3-1066, the base value is four hundred twenty five picoseconds, with three hundred forty picoseconds minimum and three hundred twenty picoseconds maximum. For DDR3-1333, the base value is three hundred forty picoseconds, with three hundred twenty picoseconds minimum and not specified maximum. For DDR3-1600, the specified value is three hundred twenty picoseconds minimum.
+
+The CTRL, CMD, ADDR setup time to CK, CK# with yet another specification has a symbol 'tH'. For DDR3-800, the base value is two hundred seventy five picoseconds, and the specified value is two hundred picoseconds minimum. For DDR3-1066, the base value is two hundred picoseconds, and the specified value is one hundred forty picoseconds minimum. For DDR3-1333, the base value is one hundred forty picoseconds, and the specified value is one hundred twenty picoseconds minimum. For DDR3-1600, the specified value is one hundred twenty picoseconds minimum.
+
+The CTRL, CMD, ADDR setup time to CK, CK# with a further specification has a symbol 'tDC100'. For DDR3-800, the base value is three hundred seventy five picoseconds, and the specified value is three hundred picoseconds minimum. For DDR3-1066, the base value is three hundred picoseconds, and the specified value is two hundred forty picoseconds minimum. For DDR3-1333, the base value is two hundred forty picoseconds, and the specified value is two hundred twenty picoseconds minimum. For DDR3-1600, the specified value is two hundred twenty picoseconds minimum.
+
+The minimum CTRL, CMD, ADDR pulse width has a symbol 'tIPW'. For DDR3-800, it is nine hundred picoseconds. For DDR3-1066, it is seven hundred eighty picoseconds. For DDR3-1333, it is six hundred twenty picoseconds. For DDR3-1600, it is five hundred sixty picoseconds.
+
+The ACTIVATE to internal READ or WRITE delay has a symbol 'tRCD'. The values are listed as "See Speed Bin Tables (page 72) for tRCD" for all DDR3 speeds, and the unit is nanoseconds.
+
+The PRECHARGE command period has a symbol 'tRP'. The values are listed as "See Speed Bin Tables (page 72) for tRP" for all DDR3 speeds, and the unit is nanoseconds.
+
+The ACTIVATE to PRECHARGE command period has a symbol 'tRAS'. The values are listed as "See Speed Bin Tables (page 72) for tRAS" for all DDR3 speeds, and the unit is nanoseconds.
+
+The ACTIVATE to ACTIVATE command with a 1KB page size has a symbol 'tRC'. For DDR3-800, the minimum is greater than or equal to four clock cycles or ten nanoseconds. For DDR3-1066, the minimum is greater than or equal to four clock cycles or seven point five nanoseconds. For DDR3-1333, the minimum is greater than or equal to four clock cycles or six nanoseconds. For DDR3-1600, the minimum is greater than or equal to four clock cycles or six nanoseconds. The unit is clock cycles.
+
+The ACTIVATE to ACTIVATE command with a 2KB page size has a symbol 'tRC'. For DDR3-800, the minimum is greater than or equal to four clock cycles or ten nanoseconds. For DDR3-1066, the minimum is greater than or equal to four clock cycles or seven point five nanoseconds. For DDR3-1333, the minimum is greater than or equal to four clock cycles or six nanoseconds. For DDR3-1600, the minimum is greater than or equal to four clock cycles or six nanoseconds. The unit is clock cycles.
+
+The four ACTIVATE windows with a 1KB page size has a symbol 'tFAW'. For DDR3-800, the value is forty picoseconds. For DDR3-1066, the value is thirty seven point five picoseconds. For DDR3-1333, the value is thirty picoseconds. For DDR3-1600, the value is thirty picoseconds. The unit is picoseconds.
+
+The four ACTIVATE windows with a 2KB page size has a symbol 'tFAW'. For DDR3-800, the value is fifty picoseconds. For DDR3-1066, the value is fifty picoseconds. For DDR3-1333, the value is forty five picoseconds. For DDR3-1600, the value is forty five picoseconds. The unit is picoseconds.
+
+The Write recovery time has a symbol 'tWR'. For DDR3-800, the minimum is fifteen nanoseconds, and the maximum is not applicable. For DDR3-1066, the minimum is fifteen nanoseconds, and the maximum is not applicable. For DDR3-1333, the minimum is fifteen nanoseconds, and the maximum is not applicable. For DDR3-1600, the minimum is fifteen nanoseconds, and the maximum is not applicable. The unit is nanoseconds.
+
+The delay from start of internal WRITE transaction to internal READ command has a symbol 'tWTR'. The minimum value is greater than or equal to four clock cycles or seven point five nanoseconds for all DDR3 speeds. The unit is clock cycles.
+
+The READ to PRECHARGE time has a symbol 'tRTP'. The minimum value is greater than or equal to four clock cycles or seven point five nanoseconds for all DDR3 speeds. The unit is clock cycles.
+
+The CAS# to CAS# command delay has a symbol 'tCCD'. The minimum value is four clock cycles, and the maximum value is not applicable for all DDR3 speeds. The unit is clock cycles.
+
+The auto precharge write recovery plus precharge time has a symbol 'tDAL'. The minimum value is WR plus tRP divided by Clock frequency average, and the maximum value is not applicable for all DDR3 speeds. The unit is clock cycles.
+
+The MODE REGISTER SET command cycle time has a symbol 'tMRD'. The minimum value is four clock cycles, and the maximum value is not applicable for all DDR3 speeds. The unit is clock cycles.
+The presented table details timing parameters for DDR3 memory, specifically comparing different speed bins: DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600. These timings are critical for ensuring reliable data transfer between the C P U and the memory modules, as they define the minimum or maximum allowable durations for various operations in terms of clock cycles or absolute time units like picoseconds and nanoseconds.
+
+The table is structured with a "Parameter" column, a "Symbol" column, and then columns for each DDR3 speed bin, subdivided into "Min" and "Max" values, and finally a "Units" column. The "Units" column indicates whether the timing is measured in clock cycles (CK) or picoseconds (ps).
+
+Let's examine some key parameters. The "DQS, DQS # differential READ postamble" is given in clock cycles. For DDR3-800 and DDR3-1066, it's a minimum of zero point three clock cycles, with a note indicating "Note 27" for the maximum value, suggesting specific conditional or supplemental definitions. For DDR3-1333, it's zero point three clock cycles minimum, and for DDR3-1600, it's again zero point three clock cycles minimum, with "Note 27" for the maximum. This parameter relates to the signal integrity and timing of the data strobe during read operations.
+
+Under "Command and Address Timings," we see several critical parameters. "DLL locking time" is measured in clock cycles. For all speed bins, it's five hundred twelve clock cycles, indicating a synchronization process for the delay lock loop, which is essential for accurate timing recovery.
+
+Setup times, such as "CTRL, CMD, ADDR setup," are often specified in picoseconds. For instance, for the DDR3-800 speed bin, the base setup time is two hundred picoseconds, while the specified setup time is three hundred seventy-five picoseconds. As the speed increases, these setup times generally decrease, reflecting the tighter timing margins required at higher frequencies. For DDR3-1600, the specified setup time is two hundred forty picoseconds, a reduction from the lower speed bins. These setup times are fundamental to the setup and hold time requirements of synchronous sequential logic, ensuring that data is stable when the clock edge arrives.
+
+Pulse width parameters, like "Minimum CTRL, CMD, ADDR pulse width," are also crucial. For example, the minimum pulse width for DDR3-800 is nine hundred picoseconds. This ensures that control signals are sufficiently long to be reliably recognized by the memory interface.
+
+The table also shows relationships between different timing parameters. For instance, "ACTIVATE to internal READ or WRITE delay" and "PRECHARGE command period" are referenced to "See Speed Bin Tables (page 72)" for RCD, RP, and RAS timings. These are typically measured in nanoseconds. The RCD, or Row Address to Column Address Delay, RP, or Row Precharge time, and RAS, or Row Active time, are fundamental to DRAM operation, defining the time between activating a row and accessing columns within that row, and the time required to precharge a row before activating a new one.
+
+Other parameters, like "ACTIVATE to ACTIVATE command" and "ACTIVATE to ACTIVATE minimum command period," are defined based on multiples of clock cycles and specific durations, often depending on page size. For example, the minimum command period for ACTIVATE commands can be specified as the greater of four clock cycles or seven point five nanoseconds. These timings are crucial for managing the refresh and row activation cycles in DRAM, directly impacting memory bandwidth and latency.
+
+The "Write recovery time" is defined as the minimum time required after a write operation before another operation can commence. The "Delay from start of internal WRITE transaction to internal READ command" is also a significant timing parameter, measured as the greater of four clock cycles or seven point five nanoseconds for DDR3-1600. Similarly, the "READ to PRECHARGE time" and "CAS to CAS command delay" are defined. The "CAS to CAS command delay" for DDR3-1600 is a minimum of four clock cycles and a maximum of not applicable. The "Auto precharge write recovery plus precharge time" and the "MODE REGISTER SET command cycle time" are also specified, contributing to the overall operational efficiency and stability of the memory system. These parameters collectively define the intricate dance of signals and timing that governs high-speed memory operation.

@@ -1,0 +1,48 @@
+control to the caller (of the shell). This could be done so that the next
+application in the boot list is called, to un-nest from one instance of the shell
+to another, or to return control directly to the boot manager or setup screen.
+
+The next simplest of these is when the OS Loader application is run. At
+some point during the OS Loader application, the ExitBootServices API is
+called (via the system table), causing the shell to end indirectly. In this case,
+all memory in the system not marked as Runtime is allowed to be
+overwritten, including the shell. The goal is that the OS will take over
+memory management and thus the boot service memory is no longer
+required.
+
+The next possible method is that a shell application (or UEFI
+application) is the end-goal of the platform. This means there is no operating
+system at all and that the platform will forever (until powered off) just run the
+application. The best example of this scenario is how some Hewlett-Packard
+printers use an application to do all the work of handling print jobs,
+controlling the queue, monitoring ink, and so on. This embedded platform
+has no operating system whatsoever. All it has is an application that runs
+forever.
+
+The most complex is somewhat of a hybrid of the previous two types.
+This is an application that handles everything like the preceding example, but
+uses the Exit-BootServices API as in the second example. This does allow the
+application to directly access hardware, but it also requires that this new
+application have drivers to handle this interaction. This distinction between
+this type of application and a true operating system may be more in the mind
+of the creator than anything else. It could be easily used for a hardware test
+where the boot time drivers need to stop interacting with the hardware, but
+where there is no real replacement of the features provided by an operating
+
+system. I do not know of any examples of this type of application.
+Control to the caller, or of the shell. This could be done so that the next application in the boot list is called, to un nest from one instance of the shell to another, or to return control directly to the boot manager or setup screen.
+
+The next simplest of these is when the O S Loader application is run. At some point during the O S Loader application, the Exit Boot Services A P I is called, via the system table, causing the shell to end indirectly. In this case, all memory in the system not marked as Runtime is allowed to be overwritten, including the shell. The goal is that the O S will take over memory management and thus the boot service memory is no longer required.
+
+The next possible method is that a shell application, or U E F I application, is the end goal of the platform. This means there is no operating system at all and that the platform will forever, until powered off, just run the application. The best example of this scenario is how some Hewlett Packard printers use an application to do all the work of handling print jobs, controlling the queue, monitoring ink, and so on. This embedded platform has no operating system whatsoever. All it has is an application that runs forever.
+
+The most complex is somewhat of a hybrid of the previous two types. This is an application that handles everything like the preceding example, but uses the Exit Boot Services A P I as in the second example. This does allow the application to directly access hardware, but it also requires that this new application have drivers to handle this interaction. This distinction between this type of application and a true operating system may be more in the mind of the creator than anything else. It could be easily used for a hardware test where the boot time drivers need to stop interacting with the hardware, but where there is no real replacement of the features provided by an operating system. I do not know of any examples of this type of application.
+The text discusses different models of application execution, particularly within the context of system startup and the transition from a boot environment to a fully functional operating system.
+
+The simplest model involves an application that directly returns control to the caller, which could be a shell or another application instance. This implies a sequential execution flow where one program terminates and another begins, potentially within the same execution context or by relinquishing control to a predecessor in a hierarchical process.
+
+A more specific scenario arises when the Operating System Loader, an application in its own right, invokes an `ExitBootServices` A P I. This action signals the end of the boot services phase. Crucially, any memory utilized by these boot services that is not explicitly marked as Runtime memory will be overwritten. The objective here is for the Operating System to assume control over memory management, rendering the boot services memory obsolete.
+
+A further evolution in this interaction is an application, potentially a U E F I application, that functions as the ultimate goal of the platform. This application persists indefinitely, or until a power cycle. A practical example is found in certain Hewlett-Packard printers, where an embedded application manages all print job handling, queue monitoring, and ink status without requiring a conventional Operating System. This demonstrates a specialized, self-contained system architecture.
+
+The most sophisticated model described is a hybrid approach, combining elements of the previous two. This type of application, like the one using the `ExitBootServices` A P I in the second example, handles extensive tasks. It can interact directly with hardware, but it also necessitates that the new application provide the necessary drivers to manage these hardware interactions. This distinction highlights a design pattern where a highly capable application supersedes the typical Operating System role, or at least its initial boot stages, for specific functionalities. Such systems might be conceived for hardware testing or situations where a full Operating System is not required or is deliberately omitted, with the application providing all necessary operational features, effectively replacing the services typically offered by an operating system. The text notes the lack of widespread examples of this specific hybrid model.

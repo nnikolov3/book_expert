@@ -1,0 +1,30 @@
+Chapter 8
+Loading an Operating System
+
+A fanatic is one who sticks to his guns whether they’re loaded or not.
+— Franklin P. Jones
+
+When loading the OS, there are many ways to bootstrap the system and jump
+into the OS. For Intel architecture devices, there are two sets of OS interfaces
+we need to contend with: EFI and legacy OS. There are a number of second-
+stage boot loaders for each interface of Microsoft and Linux, the major
+operating system camps. RTOS and other proprietary operating systems will
+have either EFI, legacy, or both flavors; or support neither.
+
+There is a third OS interface, the null option: when there is a blind
+handoff, there is no interface at all and at the end of the BIOS, it just grabs a
+specific address in a piece of NVRAM, loads it, and jumps to it, and the OS
+never looks back.
+
+Before we get to the details, let’s back up and look into the Boot Device
+Selection phase theory of operation. In other BIOS implementations, it is
+
+known as the boot services. How does one get to the disk we want to get to?
+
+The Boot Path
+Chapter eight Loading an Operating System A fanatic is one who sticks to his guns whether they're loaded or not. Franklin P. Jones When loading the O S, there are many ways to bootstrap the system and jump into the O S. For Intel architecture devices, there are two sets of O S interfaces we need to contend with: E F I and legacy O S. There are a number of second stage boot loaders for each interface of Microsoft and Linux, the major operating system camps. R T O S and other proprietary operating systems will have either E F I, legacy, or both flavors; or support neither. There is a third O S interface, the null option: when there is a blind handoff, there is no interface at all and at the end of the B I O S, it just grabs a specific address in a piece of N V R A M, loads it, and jumps to it, and the O S never looks back. Before we get to the details, let's back up and look into the Boot Device Selection phase theory of operation. In other B I O S implementations, it is known as the boot services. How does one get to the disk we want to get to? The Boot Path
+Chapter eight delves into the intricacies of loading an operating system, a fundamental process in computer operation. The narrative begins by acknowledging the diverse methods by which a system can be initialized and subsequently transferred to the operating system's control. For systems based on Intel architecture, a key distinction is made between two primary operating system interfaces: EFI and legacy OS interfaces.
+
+The discussion then expands to encompass a broader landscape of operating systems, including RTOS and other proprietary systems. These systems are characterized by their adherence to either EFI or legacy standards, or in some cases, a support for both. A third type of operating system interface is described, notable for its null option, which implies a direct handoff. In this scenario, there is no explicit interface at the end of the BIOS; instead, the system directly accesses a pre-defined address within NVRAM, loads the operating system from there, and then proceeds to its execution, without any need for further interaction or backward compatibility checks.
+
+To contextualize these loading mechanisms, the text proposes a step back to examine the Boot Device Selection phase, a critical component of the boot process. In the realm of BIOS implementations, this selection process is often referred to as the "boot services." The chapter sets out to explore how this selection ultimately leads to the desired storage device from which the operating system will be loaded. This exploration necessitates an understanding of how the system determines the correct boot path, a process that involves identifying and prioritizing bootable devices according to system configuration and user preferences.

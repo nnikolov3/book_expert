@@ -1,0 +1,42 @@
+solution.
+
+Appendix A
+
+Generating Serial Presence
+Detection Data for Down Memory
+Configurations
+
+I have no data yet. It is a capital mistake to theorize before one has data.
+Insensibly one begins to twist facts to suit theories, instead of theories to
+
+suit facts.
+— Sherlock Holmes in “A Scandal in Bohemia”
+
+This appendix provides guidance on how to create the SPD data required for
+motherboard designs that have the DDR3 SDRAM chips soldered directly
+onto the motherboard. Modular DIMMs normally have an SPD EERPOM
+that contains this information, which is used by the BIOS to correctly
+configure the system during Memory Reference Code. Without this data, the
+system will not boot; or at best it will try to boot with slow settings.
+
+Since memory-down designs do not include DIMMs, they do not have
+ready-made SPD data on an EEPROM for the BIOS to read, and the board
+designer must assist BIOS or firmware developers to create the data. The data
+can then be put into an onboard EEPROM off the SMBus (as a physical
+DIMM would have), or the data can be hard-coded into the BIOS or placed
+solution.
+
+Appendix A Generating Serial Presence Detection Data for Down Memory Configurations
+
+I have no data yet. It is a capital mistake to theorize before one has data. Insensibly one begins to twist facts to suit theories, instead of theories to suit facts.
+
+—Sherlock Holmes in “A Scandal in Bohemia”
+
+This appendix provides guidance on how to create the S P D data required for motherboard designs that have the D D R three S D Ram chips soldered directly onto the motherboard. Modular D I M Ms normally have an S P D E E P R O M that contains this information, which is used by the B I O S to correctly configure the system during Memory Reference Code. Without this data, the system will not boot; or at best it will try to boot with slow settings.
+
+Since memory down designs do not include D I M Ms, they do not have ready made S P D data on an E E P R O M for the B I O S to read, and the board designer must assist B I O S or firmware developers to create the data. The data can then be put into an onboard E E P R O M off the S M B us (as a physical D I M M would have), or the data can be hard coded into the B I O S or placed
+This appendix focuses on the generation of Serial Presence Detection, or S P D, data for down memory configurations. S P D is a crucial set of information stored on memory modules, typically within an E E P R O M chip, that allows the system's B I O S, or Basic Input Output System, to correctly identify and configure the installed memory. The appendix highlights that when a system fails to boot, or attempts to boot with suboptimal settings, it often stems from issues related to this S P D data.
+
+The text explains that modular D I M Ms, or Dual In line Memory Modules, commonly found in desktop computers, usually incorporate an S P D E E P R O M chip containing this vital data. This information is read by the B I O S during the power on self test, or P O S T, phase to determine the memory's characteristics, such as its size, speed, and timings, enabling proper initialization and operation. Without accurate S P D data, the system's hardware cannot interface with the memory correctly, leading to boot failures or performance degradations.
+
+The appendix then addresses scenarios where memory down designs, often encountered in embedded systems or specialized server configurations, might not include readily available S P D data. In such cases, the responsibility falls on the board designer and potentially B I O S or firmware developers to provide this information. The data can be programmed onto an on board E E P R O M, which is often connected via the S M B us, or System Management Bus, a two wire serial communication protocol. Alternatively, the memory configuration data can be hard coded directly into the B I O S or a similar firmware component. This ensures that the system can still correctly identify and utilize the memory even in the absence of a standard S P D E E P R O M. The underlying principle is that the system's firmware must have access to the memory's specifications to manage its operation, whether through a standardized interface like S P D or through direct configuration.

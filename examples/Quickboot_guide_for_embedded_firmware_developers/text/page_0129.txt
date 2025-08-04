@@ -1,0 +1,50 @@
+Just because you have a good understanding of a hardware debugger and
+some knowledge into industry specifications that are supported doesn’t mean
+that debugging the platform after handover to the OS will be a breeze. There
+
+are several pitfalls that are very common.
+
+Industry Specification Overlap
+Many industry standard specifications document firmware/OS
+communication methods for the same information in a different manner. The
+best example of this would be the communication of platform interrupt
+routing.
+
+Platform interrupt routing may be communicated by the following
+
+mechanisms:
+—$PIR table per the PCI IRQ Routing Table Specification
+—Interrupt entries in the MP table per the MultiProcessor Specification
+— PRT methods per the ACPI Specification
+
+Since there is overlap in the communicated data, you cannot assume that all
+or any of these are used by the operating system. If you’re implementing only
+one of those methods, your interrupt information may not be consumed by
+the operating system. If you’re implementing all of them, you don’t always
+know which method(s) the operating system is consuming. Therefore, in
+supporting all these methods, you need to ensure that the information
+communicated by all of them is consistent. Also, make no assumptions about
+
+which method is being used.
+
+Disappearing Breakpoints
+Just because you have a good understanding of a hardware debugger and some knowledge into industry specifications that are supported doesn't mean that debugging the platform after handover to the O S will be a breeze. There are several pitfalls that are very common.
+
+Industry Specification Overlap
+
+Many industry standard specifications document firmware slash O S communication methods for the same information in a different manner. The best example of this would be the communication of platform interrupt routing. Platform interrupt routing may be communicated by the following mechanisms:
+
+Dollar P I R table per the P C I E I R Q Routing Table Specification
+
+Interrupt entries in the M P table per the MultiProcessor Specification
+
+P R T methods per the A C P I Specification
+
+Since there is overlap in the communicated data, you cannot assume that all or any of these are used by the operating system. If you're implementing only one of those methods, your interrupt information may not be consumed by the operating system. If you're implementing all of them, you don't always know which method or methods the operating system is consuming. Therefore, in supporting all these methods, you need to ensure that the information communicated by all of them is consistent. Also, make no assumptions about which method is being used.
+
+Disappearing Breakpoints
+The document discusses the complexities of system debugging, particularly concerning hardware and operating system interactions, and highlights potential pitfalls that arise from the overlap and varying implementations of industry specifications. It emphasizes that a superficial understanding of hardware debugging tools and industry specifications is insufficient for a seamless debugging experience post-handover to the operating system.
+
+A significant challenge arises from "Industry Specification Overlap," where multiple industry standards may document the same communication methods or information, but in different formats or contexts. A prime example of this is platform interrupt routing, which can be communicated through various mechanisms. These include the "$PIR table" as defined in the "P C I E I R Q Routing Table Specification," interrupt entries within the "M P table" from the "MultiProcessor Specification," and "P R T methods" detailed in the "A C P I Specification."
+
+The presence of such overlapping specifications means that developers cannot assume that all systems utilize only one specific method for communicating interrupt information. If a developer implements support for only a subset of these methods, relying on the assumption that they are universally consumed by the operating system, they may encounter issues. The critical implication here is that when supporting multiple interrupt routing mechanisms, it is imperative to ensure that the information communicated by all supported methods is consistent. Without this consistency, or by making assumptions about which method is being employed, the system's behavior can become unpredictable, leading to debugging difficulties. The section concludes with the seemingly unrelated phrase "Disappearing Breakpoints," which, in the context of debugging, typically refers to a phenomenon where breakpoints set within the code cease to be effective or are removed by the debugger itself, often due to optimizations or dynamic code modification by the operating system or application. This suggests that the underlying mechanisms discussed, particularly related to interrupt handling and platform configuration, can directly impact the ability to effectively debug a system by interfering with the standard debugging mechanisms like breakpoints.

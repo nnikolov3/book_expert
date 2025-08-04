@@ -1,0 +1,42 @@
+This byte defines the minimum CAS Latency in Medium Timebase (MTB)
+units. Soft-
+
+ware can use this information, along with the CAS Latencies supported
+(found in bytes 14 and 15) to determine the optimal cycle time for a particular
+module. This value comes from the DDR3 SDRAM datasheet.
+
+Bits 7:0
+Minimum SDRAM CAS Latency Time (tp ymin) MTB Units
+Values defined from 1 to 255
+
+If tAAmin cannot be divided evenly by the MTB, this byte must be rounded
+up to the next larger integer and the Fine Offset for tAAmin (SPD byte 35)
+
+used for correction to get the actual value.
+
+Examples:
+
+tAAmin MTB tAAmin Offset FTE tAAmin Use
+
+MTB units) (ns) (FTB units) (ns) Result (ns)
+
+10:0 Dd 0.125 0 0 0.001 12.5 DDR3-8000
+120 Ox78 0.125 0 0 0.001 15 DDR3-800E
+
+SO (54 0.125 0 € 0.007] 11.25 DDR3-1066E
+This byte defines the minimum CAS Latency in Medium Timebase units. Software can use this information, along with the CAS Latencies supported, found in bytes fourteen and fifteen, to determine the optimal cycle time for a particular module. This value comes from the DDR three S D Ram datasheet.
+
+Bits seven to zero: Minimum S D Ram CAS Latency Time, t A A min, M T B Units. Values defined from one to two hundred fifty five.
+
+If t A A min cannot be divided evenly by the M T B, this byte must be rounded up to the next larger integer and the Fine Offset for t A A min, S P D byte thirty five, used for correction to get the actual value.
+
+Examples: The table shows the following data. The first column, t A A min M T B units, has values one hundred, one hundred twenty, and ninety. The second column, M T B in nanoseconds, shows hexadecimal sixty four, hexadecimal seventy eight, and hexadecimal five A, with associated values zero point one two five for all three rows. The third column, t A A min Offset, F T B units one, shows zero for all three rows. The fourth column, F T B in nanoseconds, shows zero point zero zero one for all three rows. The fifth column, t A A min Result in nanoseconds, displays twelve point five, fifteen, and eleven point twenty five. The final column, Use, indicates D D R three eight hundred D, D D R three eight hundred E, and D D R three one thousand and sixty six E.
+This byte defines the minimum CAS Latency, or Column Address Strobe Latency, in Medium Timebase, or M T B, units. CAS Latency is a crucial parameter in synchronous dynamic random access memory, or S D Ram, modules, dictating the number of clock cycles required between the assertion of the CAS signal and the availability of the data. Software can leverage this information, in conjunction with the CAS Latencies supported, which are typically found in bytes fourteen and fifteen of the memory's serial presence detect, or S P D, data, to ascertain the optimal cycle time for a particular memory module. This value is derived from the D D R3 S D Ram datasheet.
+
+The bits labeled seven through zero, or seven down to zero, specify the Minimum S D Ram CAS Latency Time, often denoted as t A A min, measured in M T B units. These values are defined to range from one to two hundred fifty-five. A critical aspect of this representation is the handling of non-integer divisions. If the t A A min value cannot be divided evenly by the M T B, the resulting value must be rounded up to the next larger integer. This rounded value, along with a Fine Offset, which is also stored in S P D byte thirty-five, is then used for correction to derive the actual, precise timing.
+
+An examination of the provided examples further elucidates this concept. For instance, when the t A A min in M T B units is one hundred, this corresponds to a hexadecimal value of zero x sixty four. The M T B value is zero point one two five nanoseconds. The t A A min Offset, measured in Fine Timebase, or F T B, units, is zero, and the F T B value itself is zero point zero zero one nanoseconds. This configuration results in a calculated t A A min Result of twelve point five nanoseconds, which is utilized for D D R three dash eight hundred D memory modules.
+
+Another entry shows a t A A min of one hundred twenty M T B units, represented as zero x seventy eight hexadecimal. This also has an M T B value of zero point one two five nanoseconds. Again, the t A A min Offset and F T B values are zero and zero point zero zero one nanoseconds, respectively. The resulting t A A min is fifteen nanoseconds, applicable to D D R three dash eight hundred E memory.
+
+Finally, a t A A min of ninety M T B units, equivalent to zero x fifty A hexadecimal, with an M T B of zero point one two five nanoseconds, and zero offset values, yields a t A A min Result of eleven point two five nanoseconds, intended for D D R three dash one zero six six E memory. These examples demonstrate how the raw M T B units, combined with offsets and the fundamental M T B period, are used to calculate the precise CAS Latency in nanoseconds, a critical performance metric for memory systems.

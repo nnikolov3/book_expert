@@ -1,0 +1,47 @@
+objects do so, though, in a very standard way that can be easily implemented
+either though binary or source or mixture. Expansion ROM code extends the
+BIOS capabilities beyond what the standard CPU and chipset programming
+requirements provide.
+
+They can be used for add-in cards or with integrated components.
+Option ROMs get loaded and executed by the system firmware during
+initialization and, if needed, shadowed during runtime. Newer capabilities of
+UEFI option ROMs offer the developers a driver model where the ROM can
+be loaded but not executed unless it is needed to be enabled via the boot path.
+
+There are some other advantages to UEFI option ROMs:
+
+—Prior to EFI capabilities, all legacy option ROMs are located below 1
+MB between 0xC0000 and OXFFFFF and carry around a good deal
+of 16-bit code.
+
+—Newer option ROMs can be called by various names, including DXE
+drivers in the Tiano realm and can be relocated above 1 MB, which
+eliminates the crunch on size requirements of most option ROMs
+
+and alleviates the expansion limitation of larger server systems.
+
+Devices such as LAN, SCSI, SATA, RAID, and video often have option
+ROMs initialize key low-level requirements of proprietary designs. It is
+possible to embed or integrate the code into the main BIOS ROMs.
+Sometimes the intellectual property of the various silicon integrated into the
+design may not allow access to that code or knowledge of the exact registers.
+There is a positive aspect to binary code: As a developer, you don’t have to
+fix what cannot be fixed. And as the black box, a legacy option ROM binary
+gives an excellent chance to innovate along alternative lines when the
+
+opportunity presents itself.
+objects do so, though, in a very standard way that can be easily implemented either though binary or source or mixture. Expansion R O M code extends the B I O S capabilities beyond what the standard C P U and chipset programming requirements provide.
+
+They can be used for add in cards or with integrated components. Option R O Ms get loaded and executed by the system firmware during initialization and, if needed, shadowed during run time. Newer capabilities of U E F I option R O Ms offer the developers a driver model where the R O M can be loaded but not executed unless it is needed to be enabled via the boot path. There are some other advantages to U E F I option R O Ms. Prior to E F I capabilities, all legacy option R O Ms are located below one M B between hexadecimal C zero zero zero zero and hexadecimal F F F F F and carry around a good deal of sixteen bit code. Newer option R O Ms can be called by various names, including D X E drivers in the Tiano realm and can be relocated above one M B, which eliminates the crunch on size requirements of most option R O Ms and alleviates the expansion limitation of larger server systems.
+
+Devices such as L A N, S C S I, S A T A, R A I D, and video often have option R O Ms initialize key low level requirements of proprietary designs. It is possible to embed or integrate the code into the main B I O S R O Ms. Sometimes the intellectual property of the various silicon integrated into the design may not allow access to that code or knowledge of the exact registers. There is a positive aspect to binary code: As a developer, you don't have to fix what cannot be fixed. And as the black box, a legacy option R O M binary gives an excellent chance to innovate along alternative lines when the opportunity presents itself.
+The fundamental principles underlying the operation of computer systems dictate that hardware components require initialization and configuration prior to software execution. This process is typically managed by a form of non-volatile memory known as R O M, or Read Only Memory, which stores the system's firmware. A crucial extension of this foundational concept is the `option R O M`, which provides device specific firmware.
+
+Option R O M s serve as an elegant mechanism for extending the capabilities of the system's core B I O S, or Basic I O System, beyond the base functionalities provided by the main C P U and chipset programming requirements. These R O M s are typically embedded within peripheral devices or add in cards, or integrated directly into specialized components. During the system's power on self test and boot sequence, these option R O M s are loaded into system R A M, a process often referred to as `shadowing`, which improves execution speed by leveraging the significantly faster access times of D Ram compared to the R O M chip itself. If not immediately needed for initialization, their code may be invoked later during runtime, contingent on system requirements or user interaction enabled via the boot path.
+
+Historically, prior to the advent of E F I, or Extensible Firmware Interface, capabilities, all legacy option R O M s were constrained to a specific memory region below one megabyte. Specifically, they resided within the memory range from hexadecimal C zero zero zero zero to hexadecimal F F F F F. This allocation was a holdover from early P C architectures, designed around the sixteen bit real mode addressing limitations of processors like the eight zero eight eight. Consequently, the code within these legacy R O M s was almost exclusively sixteen bit, which imposed significant constraints on functionality and size, often leading to a complex interplay of memory mapping and resource management within the limited conventional memory space.
+
+The evolution to more advanced firmware architectures, such as U E F I, introduced a transformative `driver model` for option R O M s. This paradigm shift, often associated with `DXE` drivers in the Tiano realm, allows these newer option R O M s to be relocated and executed from memory regions above one megabyte. This liberation from the one megabyte boundary fundamentally alleviates the severe size and addressing limitations that plagued legacy option R O M s, thereby enabling richer, more complex firmware for modern server systems and high performance peripherals. The U E F I `driver model` also promotes modularity and extensibility, allowing for more sophisticated initialization routines and run time services.
+
+Devices necessitating such specialized firmware include those for L A N, S C S I, S A T A, R A I D arrays, and video adapters. These components frequently incorporate option R O M s to initialize their low level hardware requirements, often embodying proprietary designs. While it is theoretically possible to integrate some of this device specific code directly into the main B I O S R O M, this practice is rare due to the inherent complexities of hardware integration and intellectual property considerations. Often, the intellectual property associated with the silicon design is such that the vendor prefers to distribute their device specific code as a closed source binary, preventing external access to the exact register configurations or algorithmic implementations. This `black box` approach, while sometimes posing challenges for debugging or modification, also presents an intriguing dynamic for innovation. When direct access to the underlying code or precise hardware registers is precluded, developers are compelled to devise alternative solutions or workarounds, fostering novel approaches to system integration and functionality. This constraint can, paradoxically, drive significant advancements by forcing creative problem solving in the absence of complete transparency.

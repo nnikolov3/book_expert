@@ -1,0 +1,50 @@
+Additional Programming Requirements During SATA
+
+Initialization
+
+System BIOS must execute several other part-specific steps as part of system
+BIOS initialization of the SATA controller on both cold boot (G3/S5) and
+S3/S4 resume path. The bit settings are required for basic operation. Please
+refer to the PCH datasheet for the SATA initialization settings and the actual
+
+register indexes/values to be programmed.
+
+External SATA Programming
+
+If an external SATA port is implemented in the system, there are additional
+
+steps that need to be followed.
+
+—Follow steps in 13.1.6 for additional programming to external SATA
+port.
+
+—FEnable the port through the corresponding bits (example:
+D31:F2:92[5:0])).
+
+—Put the port into Listen Mode (refer to AHCI specification for Listen
+Mode information), which achieves similar power savings as if the
+
+port is in SATA Slumber power state.
+
+Compliance with Industry Specifications
+
+To ensure a satisfactory user experience and to provide the RAID option
+ROM implementation with a “well-known” framework under which it can
+
+operate, the system BIOS and option ROM need to be implemented in
+Additional Programming Requirements During S A T A Initialization
+
+System B I O S must execute several other part specific steps as part of system B I O S initialization of the S A T A controller on both cold boot G three slash S five and S three slash S four resume path. The bit settings are required for basic operation. Please refer to the P C H datasheet for the S A T A initialization settings and the actual register indexes slash values to be programmed.
+
+External S A T A Programming
+
+If an external S A T A port is implemented in the system, there are additional steps that need to be followed. These steps include first following the instructions in section thirteen dot one dot six for additional programming to the external S A T A port. Second, the port must be enabled through its corresponding bits, for example, D thirty one colon F two colon ninety two index five colon zero. Third, the port needs to be put into Listen Mode. For more information on Listen Mode, refer to the A H C I specification. This mode achieves power savings similar to when the port is in a S A T A Slumber power state.
+
+Compliance with Industry Specifications
+
+To ensure a satisfactory user experience and to provide the R A I D option R O M implementation with a "well known" framework under which it can operate, the system B I O S and option R O M need to be implemented in accordance with these guidelines.
+The intricate process of S A T A initialization during a computer system's boot sequence mandates precise programming by the System B I O S. This is crucial for both cold boot scenarios, represented by the G three or S five power state, where the system powers on from an entirely off condition, and for resume paths from lower power states such as S three, for suspend to R A M, or S four, for suspend to disk. These varied power state transitions necessitate distinct initialization sequences to correctly configure the S A T A controller and ensure its basic operational readiness. The specific bit settings required for this configuration are detailed in the P C H datasheet, which serves as the authoritative source for the register indexes and corresponding values that the B I O S must program. This highlights a fundamental aspect of low level system design: the B I O S acts as the initial arbiter of hardware state, directly manipulating control registers within the P C H to establish the operational parameters for devices like the S A T A controller.
+
+Furthermore, implementing an external S A T A port introduces additional programming requirements. Beyond the general S A T A initialization, these external ports often demand specific handling to support features like hot plugging or advanced power management. As such, the system B I O S must follow a dedicated sequence of steps, often detailed in specific sections of the overall documentation, such as section one three point one point six, to ensure proper functionality of external S A T A connectivity. A critical aspect of this involves enabling the port itself through direct bit manipulation. For instance, a common operation would involve setting specific bits within a P C I E configuration register, such as bits zero through five at offset hexadecimal nine two of device three one, function two. This granular control over individual bits within hardware registers is a hallmark of embedded and firmware programming, directly influencing device behavior. Moreover, it is imperative to configure the external S A T A port to enter Listen Mode. This mode, defined within the A H C I, or Advanced Host Controller Interface, specification, is a power saving state that achieves reductions in power consumption similar to those seen when the port enters the more aggressive S A T A Slumber power state. A H C I provides a standardized abstraction layer for S A T A host controllers, allowing for consistent device driver development and enhanced interoperability across different hardware platforms, while modes like Listen Mode are vital for modern energy efficiency targets.
+
+Finally, ensuring a robust and satisfactory user experience, particularly when providing advanced features like R A I D, or Redundant Array of Independent Disks, mandates strict compliance with industry specifications. The implementation of R A I D functionality often relies on a dedicated R A I D option R O M, which is a firmware module loaded either from the peripheral device itself or integrated into the system B I O S. To operate correctly, both the system B I O S and this R A I D option R O M must be meticulously implemented within a "well known" framework. This implies adhering to established architectural patterns, interface specifications, and programming models that ensure harmonious interaction between the core system firmware and the specialized R A I D functionality. Such adherence is paramount for maintaining system stability, ensuring data integrity across disk arrays, and guaranteeing interoperability with various operating systems and storage devices, ultimately leveraging widely adopted standards to deliver predictable and reliable system behavior.

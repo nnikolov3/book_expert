@@ -1,0 +1,51 @@
+whole USB network under a port may not need to be enumerated five-plus
+hubs deep. The BIOS really needs to initialize all the hardware that cannot be
+enumerated through industry standards (such as i2C). The coordination can
+be made tighter in an embedded design where an RTOS and a custom
+
+firmware have minimum overlap in enumeration.
+
+Other Factors Affecting Boot Speed
+
+Certain devices or configurations are known to extend the boot times,
+
+including but not limited to the following items.
+
+No Duplication in Hardware Enumeration within UEFI
+
+While replication of enumeration maybe required between BIOS and OS, it is
+not required within the UEFI domain itself. If necessary, the BIOS can pass
+information between modules via UEFI variables or HOBs. For example, we
+can use an HOB to pass CPUI BIST information from SEC to PEI, and
+memory information from MRC to the SMBIOS module. It is recommended
+that we not access the same hardware I/O twice unless the data is expected to
+
+change.
+
+Minimize Occurrences of Hardware Resets
+
+Most hardware have a long power reset sequence. Question whether a
+hardware reset is necessary, or if it can be handled in software without
+reinitializing hardware. It is possible that CPU initialization, memory
+
+initialization, or ME initialization may all require an extra system or CPU
+whole U S B network under a port may not need to be enumerated five plus hubs deep. The B I O S really needs to initialize all the hardware that cannot be enumerated through industry standards such as i C. The coordination can be made tighter in an embedded design where an R T O S and a custom firmware have minimum overlap in enumeration.
+
+Other Factors Affecting Boot Speed
+
+Certain devices or configurations are known to extend the boot times, including but not limited to the following items.
+
+No Duplication in Hardware Enumeration within U E F I
+
+While replication of enumeration maybe required between B I O S and O S, it is not required within the U E F I domain itself. If necessary, the B I O S can pass information between modules via U E F I variables or H O B s. For example, we can use an H O B to pass C P U I B I S T information from S E C to P E I, and memory information from M R C to the S M B I O S module. It is recommended that we not access the same hardware I O twice unless the data is expected to change.
+
+Minimize Occurrences of Hardware Resets
+
+Most hardware have a long power reset sequence. Question whether a hardware reset is necessary, or if it can be handled in software without reinitializing hardware. It is possible that C P U initialization, memory initialization, or M E initialization may all require an extra system or C P U
+The initialization process of hardware components, particularly within a universal serial bus or U S B network, can extend deeply into multiple hub layers. The Basic Input Output System or B I O S, in its critical role of enumerating hardware, must manage this potential complexity. The efficiency of this enumeration is further influenced by industry standards such as I triple C or Inter Integrated Circuit, which dictates communication protocols. In highly integrated embedded systems, where an Real Time Operating System or R T O S works in conjunction with custom firmware, the coordination of these enumeration tasks can be optimized to minimize redundancy and overlap.
+
+Beyond the primary boot sequence, other factors significantly affect overall boot speed. Certain hardware configurations, or specific device choices, can introduce additional latency. These factors are not strictly limited to the initial enumeration phase but can encompass a broader spectrum of system setup processes, including but not limited to the items discussed.
+
+A key aspect of efficient boot performance involves avoiding redundant operations during hardware enumeration within the Universal Extensible Firmware Interface or U E F I environment. While the replication of enumeration data between the B I O S and the Operating System or O S might seem like a logical step, it is not always necessary within the U E F I domain itself. If information sharing is required, it can be efficiently managed through U E F I variables or Hardware Option B u f f e r s or H O B s. For instance, the B I O S might pass Central Processing Unit or C P U Built In Self Test or C P U I B I S T information from the Security Engine or S E C phase to the Pre E F I Initialization or P E I phase, and then subsequently transmit memory configuration data from the Memory Reference Code or M R C to the System Management Basic Input Output System or S M B I O S module. This approach is recommended to avoid accessing the same hardware Input Output or I O twice, thereby improving efficiency and reducing the overall time required for initialization.
+
+Minimizing the occurrences of hardware resets is another critical consideration for optimizing boot times. Many hardware components are designed with a power on reset sequence that can be quite extensive. The necessity of a hardware reset, or the ability to handle such events through software mechanisms, directly impacts system responsiveness. It is often the case that C P U initialization, memory initialization, or even specific chipset initialization procedures, such as the Management Engine or M E initialization, can each require a separate and potentially time consuming reset cycle. Questioning whether a full hardware reset is truly indispensable, or if these initialization steps can be managed more efficiently in software without a complete hardware reinitialization, presents an opportunity for significant boot time improvements. This could involve leveraging software capabilities to perform targeted resets or reconfigurations rather than resorting to a complete system power cycle.

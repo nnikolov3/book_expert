@@ -1,0 +1,43 @@
+system main memory, CMOS, small NVRAM flash chips, and large disk
+
+drives.
+
+Processor Cache
+
+Processors have local memory on them. While not normally thought about as
+memory, it is akin to “short-term memory” for the system. During runtime,
+the processor manages the cache per ranges that the system BIOS or
+operating system configure. Caching of information provides the best access
+times you can get. Cache used to be disabled by default, but these days, cache
+is enabled when the processor is powered.
+
+During early system BIOS phases, the cache can be configured to
+provide a small stack space for firmware to execute as soon as possible.
+Cache must be set to avoid evictions and then disabled after main memory is
+up, but for a short time using more advanced algorithms. More on this “cache
+as RAM” potential later.
+
+System Memory
+
+When you buy memory for a computer or other expandable device, people
+think about modular DIMMs. There have been many technology changes
+over the years, from EDO to BEDO to SDRAM to RDRAM and back to
+SDRAM in the form of DDR, DDR2, DDR3, and, coming soon, DDR4. In
+the future, there is a roadmap of memory that will make today’s best seem
+like EDO or ROM. On a scale of fastest to slowest in the system, main
+system memory is in the middle.
+
+Access time to this memory is typically faster than from NVRAM (disk-
+or SPI-based), but slower than CPU cache. It is sized for the platform market
+System main memory, C M O S, small N V Ram flash chips, and large disk drives are discussed.
+
+**Processor Cache**
+
+Processors have local memory on them. While not normally thought about as memory, it is akin to short term memory for the system. During runtime, the processor manages the cache per ranges that the system B I O S or operating system configure. Caching of information provides the best access times you can get. Cache used to be disabled by default, but these days, cache is enabled when the processor is powered. During early system B I O S phases, the cache can be configured to provide a small stack space for firmware to execute as soon as possible. Cache must be set to avoid evictions and then disabled after main memory is up, but for a short time using more advanced algorithms. More on this cache as Ram potential later.
+
+**System Memory**
+
+When you buy memory for a computer or other expandable device, people think about modular D I M Ms. There have been many technology changes over the years, from E D O to B E D O to S D Ram to R D Ram and back to S D Ram in the form of D D R, D D R two, D D R three, and, coming soon, D D R four. In the future, there is a roadmap of memory that will make today's best seem like E D O or R O M. On a scale of fastest to slowest in the system, main system memory is in the middle. Access time to this memory is typically faster than from N V Ram, which is disk or S P I based, but slower than C P U cache. It is sized for the platform market.
+The computational architecture of modern systems fundamentally relies on a hierarchical organization of memory to bridge the vast speed discrepancies between processing units and storage media. At the apex of this hierarchy lies processor cache, a critically important local memory directly integrated with or in very close proximity to the C P U. This cache functions as a high-speed, temporary repository for data and instructions that the processor anticipates needing, or has recently accessed. Conceptually, it acts as a "short term memory" for the processing unit, vastly reducing the latency inherent in fetching data from slower main memory. During system runtime, the processor, often in conjunction with the operating system, employs sophisticated algorithms to manage the data within these cache ranges. The objective is to maximize cache hit rates, thereby providing the C P U with the fastest possible access to necessary information. Historically, processor cache required explicit enabling during system boot-up, often managed by the B I O S or operating system configuration. However, in contemporary systems, the cache is a perpetually enabled and integral component of the processor's operation. Early in the system's initialization sequence, during the initial B I O S phases, the cache can be temporarily configured to allocate a small stack space, facilitating the very first executions of firmware code before the full system memory infrastructure is fully operational. A crucial aspect of cache management involves preventing unwanted evictions of critical data and ensuring cache coherence, particularly when modifications are made to main memory. This necessitates complex cache coherency protocols and advanced eviction algorithms to maintain data integrity and consistency across the entire memory hierarchy.
+
+Beneath the C P U cache in the memory hierarchy resides system memory, commonly referred to as R A M. This is the primary working memory for the operating system and running applications, typically manifesting as modular D I M Ms. The evolution of system memory technology has seen a rapid progression over the decades, driven by the continuous demand for higher bandwidth and lower latency. This progression spans from early forms such as E D O D Ram and its burst-capable variant, B E D O D Ram, to S D Ram, which synchronized memory operations with the system clock, significantly enhancing performance. This was followed by R D Ram, a proprietary technology, before the industry coalesced around the D D R S D Ram standard. Each successive generation, including D D R, D D R two, D D R three, and the more recent D D R four, has introduced improvements in data transfer rates, power efficiency, and capacity, with D D R four representing a substantial leap forward in performance capabilities. When considering the continuum of memory speeds within a system, system main memory occupies an intermediate position. Its access time is significantly faster than that of non-volatile memory technologies, such as N V Ram flash chips used for firmware or configuration data, or large disk drives (H D D s or S S D s), which represent the slowest tier of storage. However, system memory is considerably slower than the ultra-fast C P U cache, which is designed for microsecond or nanosecond access times. This intermediate speed and relatively high capacity make system memory the optimal choice for the dynamic storage needs of operating systems and applications, balancing performance requirements with cost considerations for the broader platform market.

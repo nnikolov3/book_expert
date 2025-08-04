@@ -1,0 +1,50 @@
+The newer BSD License (three clauses) is compatible with GPL. The third
+
+clause appears below for comparison to the fourth clause above.
+
+* Neither the name of the <organization> nor the names of its
+contributors may be used to endorse or promote products derived from
+
+this software without specific prior written permission.
+
+In addition to the three-clause version, there is also a simplified BSD license
+(two clauses) that is similar in that it is compatible with GPL where the third
+
+clause above was considered optional. The two clauses are as follows:
+
+Redistributions of source code must retain the above copyright notice,
+
+this list of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the
+
+distribution.
+
+One key benefit of the BSD license is that companies that create their own
+proprietary software can take BSD-licensed code to start with, create
+derivative works, or augment their existing code. Companies that create their
+own firmware or software regularly take the BSD drivers that are created by
+silicon vendors and weave their goodness into these “free” offerings. Intel®
+BLDK also uses a form of this license for the reused Tiano-based source code
+
+that it releases.
+The newer BSD License, three clauses, is compatible with G P L. The third clause appears below for comparison to the fourth clause above. Neither the name of the organization nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+In addition to the three clause version, there is also a simplified BSD license, two clauses, that is similar in that it is compatible with G P L where the third clause above was considered optional. The two clauses are as follows:
+
+One. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+Two. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and or other materials provided with the distribution.
+
+One key benefit of the BSD license is that companies that create their own proprietary software can take BSD licensed code to start with, create derivative works, or augment their existing code. Companies that create their own firmware or software regularly take the BSD drivers that are created by silicon vendors and weave their goodness into these "free" offerings. Intel B L D K also uses a form of this license for the reused Tiano based source code that it releases.
+The provided text details aspects of the BSD license, specifically its compatibility with the GNU General Public License, or G P L, and outlines the stipulations for its use in both source and binary forms. The newer BSD license, characterized by three clauses, is presented as being compatible with G P L, a significant consideration in software licensing. This compatibility allows for the integration of BSD-licensed code into projects that are themselves licensed under the G P L, fostering a more permissive ecosystem for software development and distribution.
+
+A key clause, presented with an asterisk, states that neither the name of the originating organization nor the names of its contributors may be utilized to endorse or promote derivative products without explicit prior written consent. This clause addresses the attribution and endorsement aspects of intellectual property, ensuring that the original developers receive appropriate recognition while preventing the unauthorized use of their names for commercial endorsement.
+
+Furthermore, the text introduces a simplified, two-clause version of the BSD license, noting its similarity to the three-clause version and that the third clause of the latter is considered optional in this simplified form. The two-clause license's requirements are then enumerated. The first stipulation mandates that any redistribution of the source code must retain the original copyright notice, along with the established conditions and the accompanying disclaimer. This preserves the integrity of the original work and its licensing terms within the source code distribution.
+
+The second stipulation concerns redistributions in binary form. It requires that the binary distribution reproduce the original copyright notice, the conditions, and the following disclaimer within the accompanying documentation or any other materials provided with the distribution. This ensures that even when the software is distributed in an executable format, the licensing information and disclaimers are readily accessible to the end-user.
+
+The text then highlights a significant benefit of the BSD license: its utility for companies creating proprietary software. Such companies can leverage BSD-licensed code as a foundation, subsequently developing their own derivative works or augmenting their existing codebases. This flexibility is particularly attractive to silicon vendors and those involved in firmware development, enabling them to incorporate open-source components while maintaining control over their proprietary offerings. The example of Intel, which utilizes this licensing model for its reused Tiano-based source code, illustrates this practical application. This approach allows for the integration of robust, open-source components into commercial products, thereby accelerating development cycles and benefiting from community contributions while adhering to specific licensing obligations.

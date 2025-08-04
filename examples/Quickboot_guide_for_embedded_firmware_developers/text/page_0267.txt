@@ -1,0 +1,47 @@
+Start Panel Power Early
+
+Like the disk drives, the panel now must be started early to parallelize the
+delays in the hardware during boot. A PEI module to power up the eDP panel
+is needed if the target display panel has a noticeable delay in the power-up
+sequence. For example, if a panel requires 300 ms to power up, a PEI module
+to enable (power up) the eDP port needs to be executed at least 300 ms before
+the video module is reached in BDS phase of BIOS.
+
+Storage Subsystems
+
+The following section describes storage subsystems.
+
+Spinning Media
+
+For spinning media storage devices, the spin-up time for a hard drive is
+2seconds minimum. Even if the BIOS starts the initialization a short time
+after it gets control of the system, the drive may not be ready to provide an
+OS.
+
+Utilizing Nonblocking Storage 1/0
+
+The Intel PCH integrated SATA controller supports Nonblocking Command
+Queuing (NCQ) in native AHCI mode operation. Unless required by the
+target operating system, the BIOS should access the storage subsystem in the
+most efficient way possible. For example: in all Windows operating systems
+since Windows XP, AHCI mode should be the default SATA storage mode.
+Start Panel Power Early.
+
+Like the disk drives, the panel now must be started early to parallelize the delays in the hardware during boot. A P E I module to power up the e D P panel is needed if the target display panel has a noticeable delay in the power up sequence. For example, if a panel requires three hundred milliseconds to power up, a P E I module to enable power up the e D P port needs to be executed at least three hundred milliseconds before the video module is reached in B D S phase of B I O S.
+
+Storage Subsystems.
+
+The following section describes storage subsystems.
+
+Spinning Media.
+
+For spinning media storage devices, the spin up time for a hard drive is two seconds minimum. Even if the B I O S starts the initialization a short time after it gets control of the system, the drive may not be ready to provide an O S.
+
+Utilizing Nonblocking Storage I O.
+
+The Intel P C H integrated S A T A controller supports Nonblocking Command Queuing N C Q in native A H C I mode operation. Unless required by the target operating system, the B I O S should access the storage subsystem in the most efficient way possible. For example, in all Windows operating systems since Windows XP, A H C I mode should be the default S A T A storage mode.
+The discussion begins by addressing the "Start Panel Power Early" phase, highlighting the critical need for parallelizing delays during hardware initialization, particularly for display panels. It posits that a display panel requiring three hundred milliseconds to power up necessitates an equivalent delay in the power up sequence of the embedded DisplayPort or eDP interface. This synchronization is crucial because the eDP port itself needs to be enabled, which involves a power up sequence that can take up to three hundred milliseconds, and this operation must complete before the video module can be reliably utilized, typically during the Basic Input/Output System or BIOS phase of the boot process. This illustrates a fundamental principle of system concurrency and dependency management in modern computing systems, where multiple hardware components must initialize and become ready within specific time windows to ensure system stability and functionality.
+
+The text then transitions to "Storage Subsystems," providing an overview of the subsequent discussion. Within this domain, "Spinning Media" refers to traditional hard disk drives, which are characterized by mechanical platters that spin to allow data access. The inherent nature of these devices means they have a spin up time, which is stated as a minimum of two seconds. This mechanical latency means that even if the BIOS successfully initializes the system and gains control, the hard drive might not yet be ready to provide data, leading to a potential delay in the overall system responsiveness. This highlights the impact of physical limitations on system performance, contrasting with more modern solid-state storage technologies.
+
+The final section, "Utilizing Nonblocking Storage I/O," delves into advanced storage controller features. It specifically mentions the Intel Platform Controller Hub or PCH, which integrates a Serial Advanced Technology Attachment or Sata controller that supports Nonblocking Command Queuing, also known as N C Q. N C Q is a sophisticated feature that allows the storage device to reorder incoming read and write commands. Instead of executing commands strictly in the order they are received, the drive's internal firmware can optimize the sequence to minimize head movement and rotational latency, thereby improving overall I O performance. The text clarifies that N C Q is generally beneficial for storage subsystem efficiency. It suggests that unless specifically mandated by the target operating system, the BIOS should leverage the storage subsystem in the most efficient way possible. As an example, it points out that in Windows operating systems prior to Windows XP, the Advanced Host Controller Interface or AHCI mode, which typically incorporates N C Q, was often the default Sata storage mode, implying its widespread adoption and recognized benefits for performance. This discussion touches upon device driver interfaces, command queuing mechanisms, and the evolution of storage protocols in achieving higher throughput and lower latency.

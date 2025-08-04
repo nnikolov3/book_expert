@@ -1,0 +1,49 @@
+ATA/IDE programming interface that uses standard task file I/O registers or
+PCI IDE Bus Master I/O block registers. The term “AHCI Mode” refers to
+the AHCI programming interface that uses memory-mapped register/buffer
+space and a command-list-based model.
+
+A separate document, RS — Intel® I/O Controller Hub 6 (ICH6) Serial
+ATA Advanced Host Controller Interface (SATA-AHCI) Hardware
+Programming Specification (HPS), details SATA software configuration and
+
+considerations.
+
+SATA Controller Initialization
+
+The general guidelines for initializing the SATA controller during POST and
+S3 resume are described in the following sections. Upon resuming from S3,
+System BIOS is responsible for restoring all registers it initialized during
+POST.
+
+Setting the SATA Controller Mode
+The system BIOS must program the SATA controller mode prior to
+beginning other initialization steps. The SATA controller mode is set by
+programming the SATA Mode Select (SMS) field of the Port Mapping
+register (D31:F2:Reg 90h[7:6]). The system BIOS may never change the
+SATA controller mode during runtime. Please note that the availability of the
+following modes depends on the SKU of PCH in use.
+
+If system BIOS is enabling AHCI Mode or RAID Mode, system BIOS
+must disable D31:F5 by setting the SAD2 bit, RCBA 418h[25]. System BIOS
+must ensure that it has not enabled memory space, I/O space, or interrupts for
+
+this device prior to disabling the device.
+ATA I O programming interface that uses standard task file I O registers or P C I E I D E Bus Master I O block registers. The term AHCI Mode refers to the AHCI programming interface that uses memory mapped register buffer space and a command list based model. A separate document, R S — Intel I O Controller Hub six ICH6 Serial ATA Advanced Host Controller Interface SATA AHCI Hardware Programming Specification HPS, details SATA software configuration and considerations.
+
+SATA Controller Initialization
+
+The general guidelines for initializing the SATA controller during POST and S three resume are described in the following sections. Upon resuming from S three, System BIOS is responsible for restoring all registers it initialized during POST.
+
+Setting the SATA Controller Mode
+
+The system BIOS must program the SATA controller mode prior to beginning other initialization steps. The SATA controller mode is set by programming the SATA Mode Select S M S field of the Port Mapping register D thirty one colon F two colon Reg ninety h open bracket seven colon six close bracket. The system BIOS may never change the SATA controller mode during runtime. Please note that the availability of the following modes depends on the S K U of P C H in use. If system BIOS is enabling AHCI Mode or R A I D Mode, system BIOS must disable D thirty one colon F five by setting the S A D two bit, R C B A four eighteen open bracket twenty five close bracket. System BIOS must ensure that it has not enabled memory space, I O space, or interrupts for this device prior to disabling the device.
+The text describes the Advanced Host Controller Interface, or A H C I, which is a protocol for communication between a host system and Serial ATA, or S A T A, storage devices. It clarifies that A H C I is a standardized programming interface that leverages memory mapped registers and buffer space, operating with a command list based model, distinguishing it from the older P C I IDE bus master I O block register model.
+
+A separate document, referred to as the Intel I O Controller Hub six, or I C H six, Serial A T A Advanced Host Controller Interface, or S A T A A H C I, Hardware Programming Specification, or H P S, is cited as the source for detailed S A T A software configuration and related considerations.
+
+The document then delves into S A T A Controller Initialization, outlining general guidelines for this process during the Power On Self Test, or P O S T, and S three resume states. Specifically, the system B I O S is responsible for restoring all registers that were initialized during P O S T, ensuring a seamless transition.
+
+A subsection titled "Setting the S A T A Controller Mode" emphasizes that the system B I O S must program the S A T A controller's mode before commencing other initialization steps. This mode is determined by the S A T A Mode Select, or S M S, field within the Port Mapping register, identified as D thirty one through F two, register ninety H, bits seven through six. The B I O S should not alter the S A T A controller mode during runtime, and the availability of specific modes is contingent upon the SKU, or Stock Keeping Unit, of the Platform Controller Hub, or P C H, in use.
+
+Furthermore, if the system B I O S is configured to enable A H C I mode or R A I D mode, it must set the S A D two bit and potentially access R C B A forty one H, specifically bit twenty five. The system B I O S must then ensure that memory space, I O space, or interrupts for the device are not enabled if the controller is not properly configured for these modes, thereby preventing potential conflicts or errors during device operation.

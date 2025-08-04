@@ -1,0 +1,55 @@
+operating system based on the IBM BIOS specification. Tiano does have
+enough documentation, as well as the UEFI API, which replaces the legacy
+interface, and the UEFI drivers, which replace legacy option ROMs; overall
+
+more robust.
+
+Coreboot
+
+Formerly Linux BIOS, Coreboot provides source code under a GPL license.
+It has grown and evolved since starting out at Cluster Research Lab at the
+Advanced Computing Laboratory at Los Alamos National Laboratory. It got
+a lift from Google in the last 5 years as a few of the leads joined the
+
+company.
+
+Uboot
+Also known as Das Universal Boot, or Das U-boot, Uboot is owned by
+DENX software and is distributed under a GPL license. Uboot is broadly
+used in embedded devices.
+
+For more information about these and other alternatives, like Aboot,
+
+please explore the web.
+
+Consider Creating Something from Scratch
+
+Regardless of the challenges, it is possible to start coding from Os and 1s, in
+assembly, or in C, or PERL, and so on. The language doesn’t matter. You
+would have had to take on the tasks of initialization one at a time, and likely
+have a tightly bundled RTOS or native-mode application. It is possible to
+boot Intel architecture completely from scratch. You can also use the open
+
+sources as reference code (licenses included). It may take an NDA with a few
+operating system based on the I B M B I O S specification. Tiano does have enough documentation, as well as the U E F I A P I, which replaces the legacy interface, and the U E F I drivers, which replace legacy option R O M s; overall more robust.
+
+Coreboot
+
+Formerly Linux B I O S, Coreboot provides source code under a G P L license. It has grown and evolved since starting out at Cluster Research Lab at the Advanced Computing Laboratory at Los Alamos National Laboratory. It got a lift from Google in the last five years as a few of the leads joined the company.
+
+Uboot
+
+Also known as Das Universal Boot, or Das U-boot, Uboot is owned by D E N X software and is distributed under a G P L license. Uboot is broadly used in embedded devices. For more information about these and other alternatives, like Aboot, please explore the web.
+
+Consider Creating Something from Scratch
+
+Regardless of the challenges, it is possible to start coding from zeros and ones, in assembly, or in C, or P E R L, and so on. The language doesn't matter. You would have had to take on the tasks of initialization one at a time, and likely have a tightly bundled R T O S or native mode application. It is possible to boot Intel architecture completely from scratch. You can also use the open sources as reference code, licenses included. It may take an N D A with a few
+The discussion centers on foundational system software, specifically firmware and bootloaders, which are critical components initiating a computing system from its power-off state. The evolution from legacy architectures to modern, more flexible designs is a core theme.
+
+First, the text introduces Tiano, referencing an operating system based on the I B M B I O S specification. The B I O S, or Basic I O System, served as the fundamental firmware layer responsible for hardware initialization and providing basic runtime services to the operating system. However, the B I O S operated in a sixteen bit real mode, with inherent limitations in memory addressing, typically restricted to one megabyte of R A M (Ram), and possessed a rigid, monolithic structure. Tiano, particularly TianoCore, is an open source implementation of U E F I, the Unified Extensible Firmware Interface. U E F I represents a significant architectural shift, replacing the legacy B I O S with a more robust and extensible framework. Its advantages include support for sixty four bit execution, enabling access to vastly larger memory spaces, and a more modular design. The U E F I A P I, or Application Programming Interface, provides a standardized interface for the operating system to interact with the firmware, offering comprehensive services beyond what B I O S could provide. Furthermore, U E F I drivers replace the older option R O M s (Read Only Memory), which were typically limited and tied to specific peripheral hardware. These U E F I drivers are software modules that can be dynamically loaded and executed during the pre-boot environment, leading to a more flexible and adaptable system, enhancing its overall robustness and maintainability.
+
+Next, Coreboot is presented as a sophisticated firmware replacement, often referred to colloquially as a Linux B I O S due to its open source nature and common use with Linux systems. Unlike traditional proprietary B I O S, Coreboot provides its source code under a G P L (General Public License), ensuring transparency, auditability, and the freedom to modify and redistribute the software. Its genesis at the Advanced Computing Laboratory at Los Alamos National Laboratory signifies its origins in environments demanding high levels of control, performance, and reliability, such as supercomputing. Google's subsequent involvement underscores its value in scenarios requiring rapid boot times, customizable hardware initialization, and enhanced security, particularly in server and cloud infrastructure. The core principle of Coreboot is to perform the absolute minimum amount of hardware initialization necessary, then quickly hand off control to a payload, which could be a traditional bootloader like G R U B or even directly load an operating system kernel. This approach drastically reduces boot times and eliminates large, opaque binary blobs of proprietary firmware, which can harbor vulnerabilities or limit system control.
+
+Following this, Uboot, or Das Universal Boot, is discussed. Uboot is another widely adopted open source bootloader, also distributed under a G P L license, indicating its similar commitment to open development and community contribution. While Coreboot often targets general purpose computing and server platforms, Uboot's primary domain is embedded devices. The embedded systems landscape is characterized by diverse C P U (Central Processing Unit) architectures, ranging from A R M (A R M) to P O W E R P C (Power P C) and M I P S (M I P S), and a wide array of specialized I O (Input Output) peripherals. Uboot's design specifically caters to this heterogeneity, providing a flexible, configurable, and extensible framework for low level hardware initialization, memory setup, and loading operating system images, often a Linux kernel or a real time operating system, into R A M (Ram) for execution. Its modularity allows it to be extensively customized for various System on Chip, or S o C (S o C), designs, making it an indispensable tool in the development of consumer electronics, networking equipment, and industrial control systems.
+
+Finally, the text delves into the formidable challenge of creating a bootloader from scratch. This endeavor requires an understanding that spans multiple levels of abstraction within computer architecture. Beginning from 'zeros and ones' implies the absolute lowest level of machine code, which is impractical for direct programming beyond trivial cases. More practically, such development often commences in assembly language, a low level programming language that provides direct control over the C P U's instruction set architecture, or I S A (I S A), and registers. While highly efficient, assembly is architecture specific and verbose, making development complex. The C programming language is the de facto standard for systems programming, including operating systems and bootloaders, due to its efficiency and ability to interface directly with hardware, bypassing many operating system abstractions. The mention of P E R L (P E R L) is atypical for core bootloader code but highlights the role of scripting languages in the broader development ecosystem, perhaps for build automation, configuration generation, or testing. The process of initialization involves a sequence of critical tasks: bringing up the C P U (C P U), configuring memory controllers for D R A M (D Ram) access, enumerating and initializing P C I E (P C I E) devices and other buses, and preparing storage and basic I O (Input Output) peripherals. For Intel architecture specifically, this involves navigating complex transitions between C P U (C P U) operating modes and setting up memory management unit, or M M U (M M U), structures. The text emphasizes that the resulting system might be a tightly bundled R T O S (R T O S), a Real Time Operating System designed for deterministic timing in embedded systems, or a native mode application running directly on the hardware without the full overhead of a general purpose O S (O S). Leveraging open sources as reference code, such as TianoCore or Coreboot, can significantly mitigate the complexity and development time, as they provide proven implementations of many initialization routines. However, even with open source, obtaining proprietary documentation or engaging in N D A (N D A) agreements may be necessary to access detailed hardware specifications for newly designed or highly specialized silicon, underscoring the interplay between open source collaboration and the protection of proprietary intellectual property in the semiconductor industry.

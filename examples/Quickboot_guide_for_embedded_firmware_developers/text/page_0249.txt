@@ -1,0 +1,56 @@
+no reset is needed. The boot will continue and it is recommended that a
+logging of the vent occurs.
+
+A Type 3 Exception requires an interruption of the current boot flow
+with a system reset. The next boot will be a full boot (without BOOT _
+WITH_ MINIMAL_ CONFIGURATION flag) to handle the exception. It is
+unlikely, unless the error was generated during memory initialization, that a
+full MRC training would be required on top of the full boot.
+
+A Type 4 Exception is similar to Type 3, except that after the system
+reset, the BIOS is in Full Boot mode, and Memory Initialization needs to
+perform full training.
+
+Table 11.3 lists a series of exceptions and the probable type casting.
+
+Several of these can be different, depending on the policy decisions of the
+
+designer.
+
+Table 11.3: Exceptions and Probable Type Casting
+
+Type Exception Example
+3 BIOS Setup Fast boot setting override, setup option changes
+Boot
+
+4 No successful first/full boot, watch dog timeout
+Failure
+
+4 Hardware ConOut changed, RTC power loss, CMOS clear, 4-second
+Change power button override is pressed
+Hardware ..
+
+4 Override Recovery jumper, MFG jumper, critical CPU error
+Software
+
+2 Override UEFI capsule
+
+4 User/Setup User interrupt, separate from dock
+
+Memory
+
+p)
+Changed DIMM change, no DIMM ID, CPU changed:
+No reset is needed. The boot will continue and it is recommended that a logging of the vent occurs. A Type Three Exception requires an interruption of the current boot flow with a system reset. The next boot will be a full boot, without B O O T underscore M I N I M A L underscore C O N F I G U R A T I O N flag, to handle the exception. It is unlikely, unless the error was generated during memory initialization, that a full M R C training would be required on top of the full boot. A Type Four Exception is similar to Type Three, except that after the system reset, the B I O S is in Full Boot mode, and Memory Initialization needs to perform full training. Table Eleven point three lists a series of exceptions and the probable type casting. Several of these can be different, depending on the policy decisions of the designer. Table Eleven point three: Exceptions and Probable Type Casting. The table shows Type Exception and Example. Type Exception three is B I O S Setup Fast boot setting override, setup option changes. Type Exception four, Boot Failure, is No successful first slash full boot, watch dog timeout. Type Exception four, Hardware Change, is C o n O u t changed, R T C power loss, C M O S clear, four second power button override is pressed. Type Exception four, Hardware Override, is Recovery jumper, M F G jumper, critical C P U error. Type Exception two, Software Override, is U E F I capsule. Type Exception four, User slash Setup, is User interrupt, separate from dock. Type Exception four, Memory Changed, is D I M M change, no D I M M I D, C P U changed?
+The system's boot process is being described, focusing on error handling and recovery mechanisms. When a "no reset is needed" condition is met, the boot process continues, and any logging of the "vent occurs" is noted.
+
+A "Type 3 Exception" necessitates an interruption in the current boot flow, leading to a system reset. The subsequent boot will be a "full boot," meaning it proceeds without certain optimizations or flags, specifically mentioning the "B O O T underscore MINIMAL underscore C O N F I G U R A T I O N" flag being absent. This scenario is considered unlikely unless the exception was generated during memory initialization, and a full Memory Reliability Check, or M R C, training would be required before proceeding with the full boot sequence.
+
+A "Type 4 Exception" is similar to a "Type 3 Exception" in that it also triggers a system reset. However, after the system reset, the Basic Input Output System, or B I O S, enters "Full Boot mode" and performs "Memory Initialization" to complete the training.
+
+"Table 11.3" categorizes these exceptions and their probable type casting. The table lists several types of exceptions and their corresponding examples:
+
+Type 3 exceptions include scenarios like "B I O S Setup Fast boot setting override" and "setup option changes."
+Type 4 exceptions encompass "Boot Failure," which might manifest as "No successful first/full boot, watch dog timeout." "Hardware Change" can be a cause, resulting in events like "C O N O U T changed, R T C power loss, C M O S clear, 4-second power button override is pressed." Another "Hardware Override" scenario involves "Recovery jumper, M F G jumper, critical C P U error." A "Software Override" might be related to a "U E F I capsule." Finally, "User/Setup" changes leading to "User interrupt, separate from dock" and "Memory Changed" events like "D I M M change, no D I M M I D, C P U changed?" are also categorized.
+
+The table structure implicitly suggests a classification of boot exceptions, where the exception type dictates the subsequent boot behavior. The "probable type casting" aspect implies a mechanism within the system firmware or operating system that interprets the nature of the exception and maps it to a specific recovery or initialization procedure. The diversity of examples highlights the complex interplay of hardware and software states that can lead to a deviation from the normal boot path, requiring these exception handling routines. The observation that these classifications "can be different, depending on the policy decisions of the designer" underscores the customizable nature of boot firmware and system initialization logic.

@@ -1,0 +1,87 @@
+DDR3-1066 Speed Bin -187E -187
+Cl-'RCD-"RP 7-7-7 8-8-8
+
+Parameter Symbol Min Max Min Max Units Notes
+
+ACTIVATE to internal "RCD 13.125 15 ns
+
+READ or WRITE
+
+delay time
+
+PRECHARGE ‘RP 13.125 15 ns
+
+command period
+
+ACTIVATE-to- ‘RC 50.625 52.5 ns
+
+ACTIVATE or Refresh
+
+command period
+
+ACTIVATE-to- ‘RAS 37.5 @ = tREFI 37.5 2 = REF ns 1
+
+FRECHARGE
+
+command period
+
+(L="5% CWL=5 "CK (AVG) 3.0 3.3 3.0 3.3 ns 2,3
+CWL=6 'CK (AVG) Reserved Reserved ns 3
+
+LlL=6& CWL=5 'CKIAVG) 2.5 3.3 2.5 3.3 ns 2
+CWL=6 ‘CK (AVG) Reserved Reserved ns 2.3
+
+(L=7 CWL=15 ‘CK (AVG) Reserved Reserved ns 3
+CWL=6 ‘CK(AVG) 1.875 «2.5 Reserved ns 2,3
+
+ClL=8 CWL=15 "CK (AVG) Reserved Reserved ns 3
+CWL=6 ‘CK(AVG) 1.875 <2.5 1.875 ¢2.5 ns 2
+
+Supported CL settings 56,7, 8 5 6, 8 CK
+
+Supported CWL settings Ge 6 Gy 6 CK
+
+Notes:
+
+1. 'REFI depends on Tgpgg.
+
+2. The CL and CWL settings result in ‘CK requirements. When selecting
+'CK, both CL and CWL requirement settings need to be fulfilled.
+
+3. Reserved settings are not allowed.
+The table details timing parameters for D D R three to one O six six speed bin, specifically for CL-RCD-RP settings of seven dash seven dash seven and eight dash eight dash eight. The parameters listed include activation to internal read or write delay time, precharge command period, activate to activate or refresh command period, and activate to precharge command period.
+
+For the seven dash seven dash seven bin, the activate to internal read or write delay time is thirteen point one two five nanoseconds minimum and is not specified for maximum. For the eight dash eight dash eight bin, this delay is fifteen nanoseconds minimum and also not specified for maximum.
+
+The precharge command period for the seven dash seven dash seven bin is thirteen point one two five nanoseconds minimum, with no specified maximum. For the eight dash eight dash eight bin, this period is fifteen nanoseconds minimum with no specified maximum.
+
+The activate to activate or refresh command period for the seven dash seven dash seven bin is fifty point six two five nanoseconds minimum, with a maximum of fifty two point five nanoseconds. For the eight dash eight dash eight bin, this period is not specified for minimum or maximum.
+
+The activate to precharge command period for both bins is thirty seven point five nanoseconds minimum, and nine times T R E F I for the maximum. The units for these parameters are nanoseconds, and a note indicates that REF depends on T O P E R.
+
+Further down, the table presents timing for various CL and CWL combinations for the seven dash seven dash seven bin. For CL equals five and CWL equals five, the value is three point zero to three point three nanoseconds. For CL equals five and CWL equals six, it is reserved. For CL equals six and CWL equals five, it is two point five to three point three nanoseconds. For CL equals six and CWL equals six, it is also reserved.
+
+For the eight dash eight dash eight bin, similar CL and CWL combinations are shown with corresponding values. For CL equals five and CWL equals five, the value is three point zero to three point three nanoseconds. For CL equals five and CWL equals six, it is reserved. For CL equals six and CWL equals five, it is two point five to three point three nanoseconds. For CL equals six and CWL equals six, it is reserved.
+
+Then, for CL equals seven and CWL equals five, the value is one point eight seven five nanoseconds with a maximum less than two point five nanoseconds for the seven dash seven dash seven bin, and reserved for the eight dash eight dash eight bin. For CL equals seven and CWL equals six, it is reserved for both bins. For CL equals eight and CWL equals five, it is one point eight seven five nanoseconds with a maximum less than two point five nanoseconds for the seven dash seven dash seven bin, and reserved for the eight dash eight dash eight bin. For CL equals eight and CWL equals six, it is one point eight seven five nanoseconds with a maximum less than two point five nanoseconds for both bins.
+
+The supported CL settings for the seven dash seven dash seven bin are five, six, seven, and eight, while for the eight dash eight dash eight bin, they are five, six, and eight. Supported CWL settings for the seven dash seven dash seven bin are five and six, and the same for the eight dash eight dash eight bin.
+
+The notes section clarifies that REF depends on T O P E R. It also states that the CL and CWL settings result in T C K requirements, and when selecting T C K, both CL and CWL requirement settings need to be fulfilled. Finally, it notes that reserved settings are not allowed.
+The presented data characterizes timing parameters for DDR3-1066 Random Access Memory modules, specifically detailing performance bins labeled "-187E" and "-187", with associated Command/Address (CA) timings of "7-7-7" and "8-8-8" respectively. These bins represent different performance grades of the memory chips, influenced by factors such as manufacturing process variations and testing. The table delineates critical timing parameters, measured in nanoseconds, which are fundamental to the synchronous operation of dynamic random-access memory.
+
+The parameters listed are essential for ensuring correct data retrieval and command execution within a memory subsystem. Specifically, 'RCD, tRP, and tRC represent various latency periods associated with memory operations. 'RCD, or the ACTIVATE to internal READ or WRITE delay time, signifies the duration required for the memory array to become ready to accept a read or write command after an ACTIVATE command has been issued to a specific row. The minimum value for the "-187E" bin is thirteen point one two five nanoseconds, with a maximum not specified, while the "-187" bin mandates a minimum of fifteen nanoseconds.
+
+tRP, the PRECHARGE command period, dictates the minimum time that must elapse between issuing a PRECHARGE command to a row and issuing an ACTIVATE command to any row. This timing is crucial for the internal state of the memory bank to be reset correctly. For the "-187E" bin, this is thirteen point one two five nanoseconds, and for the "-187" bin, it is fifteen nanoseconds.
+
+tRC, the ACTIVATE to ACTIVATE or Refresh command period, specifies the minimum interval between successive ACTIVATE commands directed to different rows within the same memory bank, or between an ACTIVATE command and a Refresh command to the same bank. This parameter ensures sufficient time for charge refreshing within the dynamic memory cells. Here, the minimum is fifty point six two five nanoseconds for "-187E" and fifty two point five nanoseconds for "-187".
+
+tRAS, the ACTIVATE to PRECHARGE command period, defines the minimum time a row must remain open after an ACTIVATE command before a PRECHARGE command can be issued to that row. This period is directly related to the refresh requirements of the DRAM cells. The "-187E" bin specifies thirty seven point five nanoseconds or nine times the tREFI period, with a corresponding maximum of nine times tREFI. The "-187" bin shows identical timing constraints.
+
+The table also details CAS Latency (CL) and Column Write Latency (CWL) settings, which are critical for synchronous memory protocols. CAS Latency refers to the number of clock cycles between the memory controller issuing a column access command and the first bit of data being available from the memory device. Column Write Latency is analogous, but for write operations. These are presented in conjunction with clock cycles, denoted as 'tCK. For CL equal to five, supported CWL settings include 'CK average, which is reserved, and 'CK average, which requires three point zero to three point three clock cycles, with corresponding notes indicating possible dependency on operational temperature and system configuration.
+
+For CL equal to six, the CWL settings vary. When CWL is five, 'CK average is reserved, and when CWL is six, 'CK average is reserved. The note for these configurations implies that for specific 'tCK values, both CL and CWL requirement settings must be met.
+
+When CL is seven, CWL five requires one point eight seven five nanoseconds or less than two point five clock cycles, with the system noting it as reserved. CWL six is also reserved. Similarly, for CL equal to eight, CWL five requires one point eight seven five nanoseconds or less than two point five clock cycles, and CWL six is one point eight seven five nanoseconds or less than two point five clock cycles, with a note indicating that reserved settings are not permissible.
+
+The table concludes by listing supported CL settings as five, six, seven, and eight, and supported CWL settings as five and six. These supported combinations define the operational envelope for timing configurations of the DDR3-1066 memory. The notes clarify that 'tREFI is dependent on operating temperature, and that when specific 'tCK values are selected, both CL and CWL requirement settings must be fulfilled. Note three explicitly states that reserved settings are not allowed, reinforcing the strict adherence to specified operational parameters.

@@ -1,0 +1,53 @@
+The GUID Partition Table (GPT), part of the UEFI specification, has
+replaced the Master Boot Record (MBR) in part because MBR is limited in
+size to 2.2TB. As drives have grown in size, the GPT allows for a maximum
+disk and partition size of 9.4 zettabytes. Most modern operating systems
+support and/or require a GPT above and beyond a legacy MBR. The Legacy
+MBR is located in LBAO, and the GPT header is located in LBA1, followed
+by the partition table itself.
+
+Real Mode
+
+Real Mode is 16-bit code created to work with 16-bit registers. Real Mode
+allows the accessing of only 1 MB of memory. Memory is accessed in the
+following format: segment : offset. The physical address is calculated by
+
+shifting the segment left by four bits and adding the offset to it. Figure 3.4
+
+shows an example of calculating the physical address.
+
+Segment Ix FOO0
+
+Offset Oxb543Z
+
+Physical adaress DxFOOOd Jxog 4.7
+Physical address QxF5432
+
+Figure 3.4: Example Physical Address Calculation in Real Mode
+
+Protected Mode
+
+Protected mode was introduced to address memory above 1 MB. Protected
+mode also allows 32-bit code to execute. Protected mode uses the segment
+
+register content as selectors or pointers into descriptor tables. Descriptors
+The G U I D Partition Table (G P T), part of the U E F I specification, has replaced the Master Boot Record (M B R) in part because M B R is limited in size to two point two terabytes. As drives have grown in size, the G P T allows for a maximum disk and partition size of nine point four zettabytes. Most modern operating systems support and or require a G P T above and beyond a legacy M B R. The Legacy M B R is located in L B A zero, and the G P T header is located in L B A one, followed by the partition table itself.
+
+Real Mode
+
+Real Mode is sixteen bit code created to work with sixteen bit registers. Real Mode allows the accessing of only one megabyte of memory. Memory is accessed in the following format: segment colon offset. The physical address is calculated by shifting the segment left by four bits and adding the offset to it. Figure three point four shows an example of calculating the physical address.
+
+The table illustrates an example physical address calculation. The segment value is hexadecimal F zero zero zero. The offset value is hexadecimal five four three two. To calculate the physical address, the segment, hexadecimal F zero zero zero, is shifted left by four bits to become hexadecimal F zero zero zero zero. This shifted segment value is then added to the offset, hexadecimal five four three two, resulting in a physical address of hexadecimal F five four three two.
+
+Figure three point four: Example Physical Address Calculation in Real Mode
+
+Protected Mode
+
+Protected mode was introduced to address memory above one megabyte. Protected mode also allows thirty two bit code to execute. Protected mode uses the segment register content as selectors or pointers into descriptor tables. Descriptors
+The evolution of disk partitioning standards is a fundamental aspect of operating system design and data management. The G U I D Partition Table, or G P T, represents a significant advancement over its predecessor, the Master Boot Record, or M B R, and is an integral part of the U E F I specification. The primary impetus for this transition stems from the M B R's inherent limitation, which caps the maximum addressable disk and partition size at two point two terabytes. As storage technologies progressed, and individual hard disk drives expanded far beyond this capacity, a new standard was imperative. G P T addresses this by supporting immensely larger disk and partition sizes, reaching up to nine point four zettabytes, a capacity that far exceeds current commercial storage limits and provides substantial headroom for future growth. Most contemporary operating systems now either natively support G P T or necessitate its use, often alongside or in place of a legacy M B R scheme for compatibility. Structurally, the M B R typically resides at Logical Block Address zero, L B A zero, the very beginning of the disk. In contrast, the G P T header is strategically positioned at L B A one, immediately following any potential legacy M B R, with the actual partition table data located thereafter.
+
+Transitioning from storage organization to processor operational modes, we encounter the historical context of "Real Mode" in computing. Real Mode is characterized by its reliance on 16-bit code and 16-bit registers, defining a foundational execution environment for early x eighty six processors. A critical constraint of Real Mode is its addressable memory limit: it can only access a maximum of one megabyte of physical memory. The mechanism for memory access in Real Mode employs a segment colon offset paradigm. The calculation of a physical address from a logical segment and offset pair involves a straightforward arithmetic operation. Specifically, the segment value is shifted left by four bits, which is arithmetically equivalent to multiplying it by sixteen, or appending a hexadecimal zero to its least significant end. This shifted segment value then serves as a base address, to which the offset value is added to yield the final twenty-bit physical address.
+
+An illustrative example of this calculation is provided. Imagine a conceptual table with two distinct columns, one for the identifier and another for its corresponding hexadecimal value. In the first row, we observe a "Segment" value of hexadecimal F zero zero zero. In the second row, the "Offset" is given as hexadecimal five four three two. To determine the physical address, the segment value of hexadecimal F zero zero zero is first conceptually shifted left by four bits, transforming it into hexadecimal F zero zero zero zero. This operation effectively provides the starting address of the memory segment. Then, the offset value of hexadecimal five four three two is arithmetically added to this shifted segment address. The result of this summation, which is shown in the final row, is a "Physical address" of hexadecimal F five four three two. This straightforward linear mapping effectively creates a twenty-bit address space from two sixteen-bit components.
+
+The inherent limitations of Real Mode, particularly its one megabyte memory barrier, necessitated a paradigm shift, leading to the development of "Protected Mode." Introduced to facilitate access to memory regions beyond the initial one megabyte, Protected Mode represents a significant architectural evolution. It enables the execution of 32-bit code and beyond, dramatically expanding the addressable memory space. A fundamental departure from Real Mode's direct segmentation is Protected Mode's sophisticated memory management. Here, segment registers no longer directly hold segment base addresses. Instead, they function as "selectors" or pointers that reference "descriptor tables." These tables, which are structured data arrays, contain "descriptors" that fully define each memory segment. A descriptor provides comprehensive information, including the segment's true linear base address, its size or limit, and crucial access rights and privilege levels. This indirection, managed by the M M U, is key to enabling advanced operating system features such as virtual memory, robust memory protection between processes, and efficient multitasking, fundamentally transforming how software interacts with hardware memory.

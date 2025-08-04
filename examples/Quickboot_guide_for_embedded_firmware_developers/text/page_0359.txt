@@ -1,0 +1,56 @@
+tFAW (MTB units) Timebase tFAW Result Use
+
+(ns) (ns)
+320 Ox 140 0.125 40 Example; DDR3-800 1 KB page size
+00 Ox 190 0.125 50 Example: DDR3-800 2 KB page size
+300 Ox120 0.125 37.5 Example: DDR3-1066 1 KB page size
+G00 O=190 0.125 50 Example: DDR3-1066 2 KB page size
+240 Ox 0FD 0.125 30 Example: DDE3-1333 1 KB page size
+360 Ox 168 0.125 &5 Example: DDR3-1333 2 KB page size
+240 0=0F0 0.125 30 Example: DDE3-1600 1 KBE page size
+320 Ox140 0.125 40 Example; DDR3-1600 2 KB page size
+216 0=x0DS8 0.125 27 Example: DDR3-1866 1 KB page sire
+280 Dx118 0.125 35 Example; DDR3-1866 2 KB page size
+200 0=x0C8 0.125 25 Example: DDR3-2133 1 KB page size
+tFAW (MTB units) Timebase (FAW Result Use
+
+(ns) (ns)
+280 0x118 0.125 35 Example: DDR3-2133 2 KB page size
+
+SPD Field #29: “Minimum Four Activate Window Delay Time (tFAWmin)
+
+LSB” Definition from JEDEC DDR3 SPD Specification
+
+Table 56 Electrical Characteristics and AC Operating Conditions
+
+(Continued) Notes 1-8 apply to the entire table
+The table displays information about tFAW, or Minimum Four Activate Window Delay Time, in micro-units, with associated Timebase values in nanoseconds, tFAW Results in nanoseconds, and their corresponding Use cases.
+
+The first part of the table shows the following data:
+A tFAW of three hundred twenty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of forty nanoseconds, used as an example for D D R three dash eight hundred with a one K B page size.
+A tFAW of four hundred micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of fifty nanoseconds, used as an example for D D R three dash eight hundred with a two K B page size.
+A tFAW of three hundred micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of thirty seven point five nanoseconds, used as an example for D D R three dash one zero six six with a one K B page size.
+A tFAW of four hundred micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of fifty nanoseconds, used as an example for D D R three dash one zero six six with a two K B page size.
+A tFAW of two hundred forty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of thirty nanoseconds, used as an example for D D R three dash one three three three with a one K B page size.
+A tFAW of three hundred sixty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of forty five nanoseconds, used as an example for D D R three dash one three three three with a two K B page size.
+A tFAW of two hundred forty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of thirty nanoseconds, used as an example for D D R three dash one six zero zero with a one K B page size.
+A tFAW of three hundred twenty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of forty nanoseconds, used as an example for D D R three dash one six zero zero with a two K B page size.
+A tFAW of two hundred sixteen micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of twenty seven nanoseconds, used as an example for D D R three dash one eight six six with a one K B page size.
+A tFAW of two hundred eighty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of thirty five nanoseconds, used as an example for D D R three dash one eight six six with a two K B page size.
+A tFAW of two hundred micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of twenty five nanoseconds, used as an example for D D R three dash two one three three with a one K B page size.
+
+The second part of the table shows:
+A tFAW of two hundred eighty micro-units with a Timebase of zero point one two five nanoseconds results in a tFAW Result of thirty five nanoseconds, used as an example for D D R three dash two one three three with a two K B page size.
+
+The document also includes the definition for SPD Field number twenty nine, which is the Minimum Four Activate Window Delay Time, or tFAW minimum, with the Least Significant Byte definition from the J E D E C D D R three S P D Specification. Additionally, it notes that Table fifty six, Electrical Characteristics and A C Operating Conditions, specifically notes one through eight, apply to the entire table.
+The tables present data related to the "Minimum Four Activate Window Delay Time," denoted as tFAW, in the context of DDR3 memory specifications. This parameter is crucial for memory controller operation and is defined by the JEDEC DDR3 SPD (Serial Presence Detect) specification. The data illustrates how tFAW values vary across different DDR3 memory speeds and page sizes.
+
+The first table displays several entries, each correlating a value in "tFAW (MTB units)" with a "Timebase (ns)," a "tFAW Result (ns)," and a "Use" description. The "MTB units" likely refer to a specific clock domain or timing unit relevant to the memory interface. The "Timebase" column consistently shows zero point one two five nanoseconds, suggesting a fixed timing reference or clock period. The "tFAW Result (ns)" column indicates the calculated delay time in nanoseconds, derived from the "tFAW (MTB units)" value multiplied by the timebase. For instance, an entry with thirty-two MTB units and a timebase of zero point one two five nanoseconds yields a tFAW result of forty nanoseconds. The "Use" column provides context, linking these timing parameters to specific DDR3 memory speeds, such as DDR3-800, DDR3-1066, DDR3-1333, DDR3-1600, DDR3-1866, and DDR3-2133, and their associated page sizes, which can be one K B or two K B. The page size influences how data is accessed and organized within the memory banks.
+
+The second table, which is presented as a continuation, displays a similar structure. It shows an entry with two hundred eighty MTB units, a timebase of zero point one two five nanoseconds, a tFAW result of thirty-five nanoseconds, and an associated use case of "Example: DDR3-2133 2 KB page size."
+
+The definition provided clarifies that SPD Field #29 specifies the "Minimum Four Activate Window Delay Time (tFAWmin)" and that the "LSB" refers to the least significant byte. This indicates that the value stored in the SPD chip for tFAW is likely encoded in a specific format, and the LSB might hold a portion of this timing information.
+
+Table 56, referenced as "Electrical Characteristics and AC Operating Conditions (Continued)," implies that this data is part of a larger set of timing parameters and operating conditions for DDR3 memory. The note stating that "Notes 1–8 apply to the entire table" suggests that there are additional qualifiers or environmental factors that might influence these timing specifications, such as voltage, temperature, or signal integrity considerations.
+
+The overall significance of these tables lies in defining and illustrating the timing constraints for memory operations. The tFAW parameter specifically governs the minimum time interval between consecutive "Activate" commands within a specific four-bank group of DDR3 memory. Proper adherence to these timing parameters is essential for reliable memory operation, preventing data corruption and ensuring the integrity of memory accesses, especially at higher frequencies and denser memory configurations. The variation of tFAW with memory speed and page size highlights the intricate interplay between memory controller design, memory module capabilities, and the electrical characteristics of the DDR3 standard.

@@ -1,0 +1,53 @@
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+24 0x18 (LSB) Min. Refresh Recovery Delay 0x00 160ns
+25 0x19 (MSB) (trrcmin) 0x05
+
+Byte 24: Minimum Refresh Recovery Delay Time (tRFCmin), Least
+Significant Byte
+
+Byte 25: Minimum Refresh Recovery Delay Time (tRFCmin), Most
+Significant Byte
+
+The contents of Byte 24 and the contents of Byte 25 combined create a 16-bit
+value that defines the minimum SDRAM Refresh Recovery Time Delay in
+Medium Timebase (MTB) units. The most significant bit is Bit 7 of Byte 25,
+and the least significant bit is Bit 0 of Byte 24. These values come from the
+DDR3 SDRAM datasheet.
+
+Byte 25 Bits 7-0, Byte 24 Bits 7-0
+Minimum Refresh Recover Time Delay (tRFC) MTB Units
+Values defined from 1 to 65535
+
+Examples:
+
+tRFC (MTB units) Timebase (ns) tRFC Result (ns) Use
+720 0x=2D0 0.125 90 512 Mb
+88{ Ox 370 0.125 110 1 Gb
+1280 Ox 500 0.125 160 2 Gb
+2400} Dx9G0 0.125 3040 4 Gb
+28040 O=AFD 0.125 350 8 Gb
+
+SPD Field #24 and #25: “Minimum Refresh Recovery Delay Time
+(trpcmin), LSB” Definition from JEDEC DDR3 SPD Specification
+The table shows a breakdown of two bytes related to minimum refresh recovery delay. Byte twenty four, represented as hexadecimal eighteen in the least significant bit, is defined as the Minimum Refresh Recovery Delay Time, t R F C min. Its typical value is hexadecimal 00, and its definition is one hundred sixty nanoseconds. Byte twenty five, represented as hexadecimal nineteen in the most significant bit, also pertains to the Minimum Refresh Recovery Delay Time, t R F C min. Its typical value is hexadecimal 05.
+
+Byte twenty four: Minimum Refresh Recovery Delay Time (t R F C min), Least Significant Byte.
+Byte twenty five: Minimum Refresh Recovery Delay Time (t R F C min), Most Significant Byte.
+
+The contents of Byte twenty four and the contents of Byte twenty five combined create a sixteen bit value that defines the minimum S D Ram Refresh Recovery Time Delay in Medium Timebase or M T B units. The most significant bit is Bit seven of Byte twenty five, and the least significant bit is Bit zero of Byte twenty four. These values come from the D D R three S D Ram datasheet.
+
+Byte twenty five Bits seven to zero, Byte twenty four Bits seven to zero: Minimum Refresh Recover Time Delay (t R F C) M T B Units. Values defined from one to sixty five thousand five hundred thirty five.
+
+Examples are provided in a table. The first column lists t R F C in M T B units: seven hundred twenty, eight hundred eighty, one thousand two hundred eighty, two thousand four hundred, and two thousand eight hundred. The second column shows the Timebase in nanoseconds, all of which are zero point one two five nanoseconds. The third column indicates the t R F C Result in nanoseconds: ninety, one hundred ten, one hundred sixty, three hundred, and three hundred fifty. The fourth column, labeled Use, shows corresponding storage capacities: five hundred twelve megabytes, one gigabyte, two gigabytes, four gigabytes, and eight gigabytes.
+
+S P D Field Number twenty four and Number twenty five: "Minimum Refresh Recovery Delay Time (t R F C min), L S B" Definition from J E D E C D D R three S P D Specification.
+The provided content delves into the specifications of SDRAM, specifically focusing on the timing parameters related to refresh operations. The core concept being explained is the "Minimum Refresh Recovery Time" (tRFCmin), a critical parameter for Double Data Rate Three Synchronous Dynamic Random Access Memory, or D D R three S D Ram. This parameter dictates the minimum time that must elapse between issuing a refresh command and being able to access the memory device again.
+
+The data is presented in a tabular format, which is a common method for enumerating bit fields within a memory map or configuration register. Specifically, it details two bytes, designated as Byte 24 and Byte 25, which collectively define the tRFCmin value. Byte 24 is identified as containing the Least Significant Byte, or L S B, of the tRFCmin parameter, while Byte 25 holds the Most Significant Byte, or M S B. This combination creates a 16-bit value, allowing for a wider range of timing configurations. The source of this information is attributed to the JEDEC D D R three S P D Specification, which is a standard body that defines memory module parameters to ensure interoperability.
+
+The tabular data illustrates how these bytes are structured. Byte 24, at a decimal address of twenty four, is shown in hexadecimal as zero x one eight. Its field name is "Min. Refresh Recovery Delay (tRFCmin), Least Significant Byte". The typical value for this byte is zero x zero zero, and its definition in the context of the specification is one hundred sixty nanoseconds. This implies that the lower byte, when zero, contributes a base value or signifies a particular state within the overall timing parameter.
+
+Byte 25, at a decimal address of twenty five, is represented in hexadecimal as zero x one nine. Its field name is "Min. Refresh Recovery Delay (tRFCmin), Most Significant Byte". The typical value here is zero x zero five. The description clarifies that Byte 25 bits seven through zero, and Byte 24 bits seven through zero, combine to form the tRFCmin value in Medium Timebase, or M T B, units. The most significant bit of the 16-bit value is bit seven of Byte 25, and the least significant bit is bit zero of Byte 24. The range of values for tRFCmin in M T B units is from one to sixty five thousand five hundred thirty five.
+
+An example section further clarifies the relationship between the tRFC in M T B units, the corresponding timebase in nanoseconds, and the resulting tRFC value in nanoseconds, along with its typical use case, such as memory density. For instance, a tRFC of seven hundred twenty M T B units, with a timebase of zero point one two five nanoseconds, results in a tRFC of ninety nanoseconds and is typically used with five hundred twelve megabyte memory modules. As the tRFC in M T B units increases, the corresponding tRFC in nanoseconds also increases, and this correlates with larger memory capacities, up to eight gigabytes in the examples provided. This demonstrates a linear or near linear relationship between the encoded value and the actual timing, modulated by the timebase. Understanding these timing parameters is crucial for memory controller design and ensuring stable operation of memory subsystems.

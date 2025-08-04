@@ -1,0 +1,50 @@
+NAND stands for “Not AND” technology. NAND flash, which
+resembles traditional NAND gates, has become prevalent with the advent of
+USB sticks in the market and flash cards for cameras. Now they have grown
+up into full-blown solid-state drives. NAND flash requires a controller to be
+located between the bus and the memory itself. The controller manages and
+maintains the NAND flash, which is a black art unto itself. That controller
+must be configured before accessing the memory behind it. A database and
+maintenance algorithms must be loaded before accessing memory behind it.
+The flash cells are good only for so many read/write cycles, so there are
+wear- leveling algorithms to keep things “good.” If you keep asking experts
+questions, eventually someone says, “I don’t know how it works.” While the
+technology is more metastable than magnetic media, it is so fast, and so big
+for the price, that nobody notices. Chances are you will upgrade your drives
+long before the NAND flash drive decides to wear out.
+
+NOR stands for “Not OR” technology. Firmware hubs and SPI devices
+are examples of NOR flash.
+
+Besides the NAND controller initialization, the two technologies differ
+
+in two main ways that we care about as firmware developers:
+
+1. Access: NAND reads require access in pages of data, while NOR can be
+read by byte. If you are reading pages of data, you will have to have
+somewhere to store that (SRAM or cache). NOR can be executed in
+place, which makes it slower and cheaper to implement for little tasks.
+
+2. Size: NAND tends to be much larger than NOR. While NOR flash is in
+the order of megabytes, NAND is on the order of gigabytes.
+
+Other platform design considerations need to be handled because of the
+differences between the technologies, but that could fill another book.
+
+Several types of memory are used in system firmware: processor cache,
+N A N D stands for “Not And” technology. N A N D flash, which resembles traditional N A N D gates, has become prevalent with the advent of U S B sticks in the market and flash cards for cameras. Now they have grown up into full blown solid state drives. N A N D flash requires a controller to be located between the bus and the memory itself. The controller manages and maintains the N A N D flash, which is a black art unto itself. That controller must be configured before accessing the memory behind it. A database and maintenance algorithms must be loaded before accessing memory behind it. The flash cells are good only for so many read write cycles, so there are wear leveling algorithms to keep things “good.” If you keep asking experts questions, eventually someone says, “I don’t know how it works.” While the technology is more metastable than magnetic media, it is so fast, and so big for the price, that nobody notices. Chances are you will upgrade your drives long before the N A N D flash drive decides to wear out.
+
+N O R stands for “Not Or” technology. Firmware hubs and S P I devices are examples of N O R flash.
+
+Besides the N A N D controller initialization, the two technologies differ in two main ways that we care about as firmware developers. Firstly, regarding access, N A N D reads require access in pages of data, while N O R can be read by byte. If you are reading pages of data, you will have to have somewhere to store that, such as S Ram or cache. N O R can be executed in place, which makes it slower and cheaper to implement for little tasks. Secondly, concerning size, N A N D tends to be much larger than N O R. While N O R flash is in the order of megabytes, N A N D is on the order of gigabytes.
+
+Other platform design considerations need to be handled because of the differences between the technologies, but that could fill another book. Several types of memory are used in system firmware, including processor cache,
+Flash memory technologies, particularly N A N D and N O R, represent distinct architectural paradigms optimized for different application requirements within the memory hierarchy of computing systems. N A N D flash, derived from "Not And" logic gate structures, has become ubiquitous in mass storage solutions, powering U S B sticks, digital camera flash cards, and high-performance solid state drives. The fundamental principle behind N A N D flash storage is its high density and low cost per bit, achieved by arranging memory cells in series, resembling a string of N A N D gates. This serial arrangement facilitates compact storage but necessitates block-level or page-level access, meaning that data must be read or written in larger contiguous chunks, typically pages.
+
+A critical component in N A N D flash systems is the flash controller, an embedded processor that acts as an intermediary between the host system's bus and the raw N A N D memory array. This controller is not merely a data transfer agent; it is responsible for sophisticated management tasks essential to the reliable operation and longevity of N A N D flash. These tasks include error correction coding, garbage collection, and crucially, wear leveling. Flash memory cells inherently degrade with each program or erase cycle, limiting their total endurance. Without intelligent management, frequently written logical addresses would quickly exhaust the endurance of their corresponding physical flash blocks, leading to premature device failure. Wear leveling algorithms distribute writes evenly across all physical blocks within the N A N D array, transparently mapping logical block addresses to different physical blocks over time. This extends the overall lifespan of the device by maximizing the utility of every memory cell. The complex interplay of low-level memory operations, error management, and wear leveling algorithms loaded into the controller's firmware is indeed an intricate domain, often referred to as "black art" due to its complexity and proprietary optimizations. While N A N D flash offers compelling speed and capacity advantages over traditional magnetic media, its finite endurance necessitates these advanced control mechanisms to maintain data integrity and device longevity, lest the drive wears out without user awareness.
+
+In contrast, N O R flash, based on "Not Or" logic gate structures, offers different performance characteristics and is suited for distinct applications. Its cells are arranged in parallel, allowing for direct, random access to individual bytes. This byte addressability enables a critical capability known as Execute In Place, or X I P, where a C P U can fetch instructions directly from the N O R flash without first having to copy them into R A M. This characteristic makes N O R flash ideal for storing boot code, firmware, and embedded system applications that require instant execution upon power-on. Common examples include basic input output systems in P C s, often housed in firmware hubs, and configuration storage in S P I devices.
+
+The primary differences between N A N D and N O R flash, particularly from a firmware developer's perspective, revolve around their access granularity and storage capacity. N A N D flash necessitates accessing data in pages, which are typically several kilobytes in size. If only a few bytes of data are required, the entire page containing those bytes must first be read into a buffer, often S Ram or a cache, before the specific bytes can be extracted. This block-oriented access pattern simplifies the underlying circuitry and enables higher densities but introduces latency for small, random reads. Conversely, N O R flash supports true byte level access, enabling direct memory access similar to R A M, making it suitable for executable code. From a capacity standpoint, N A N D flash is optimized for high density, routinely available in capacities ranging from gigabytes to terabytes, making it cost effective for mass storage. N O R flash, due to its parallel structure and individual cell addressability, is inherently less dense and more expensive per bit, typically found in capacities measured in megabytes.
+
+Beyond these fundamental memory technologies, the broader landscape of system firmware design incorporates various types of memory, including processor cache, S Ram, and D Ram, each chosen for its specific performance, cost, and endurance characteristics to form a complete, optimized memory subsystem. The selection and integration of these memory types are critical platform design considerations, impacting overall system performance, power consumption, and bill of materials.

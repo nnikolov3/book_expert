@@ -1,0 +1,71 @@
+SPD Field 0x3C: (Unbuffered): Module Nominal Height
+
+Down-on-board memory designs should set this field to 0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+60 0=3C (Unbuffered): Module Nominal Height 0x00 Height<15 mm
+
+Byte 60 (Unbuffered): Module Nominal Height
+
+This byte defines the nominal height (A dimension) in millimeters of the
+fully assembled module, including heat spreaders or other added components.
+Refer to the relevant JEDEC JC-11 module outline (MO) documents for
+
+dimension definitions.
+
+Bits 7-5 Bits 4-0
+Reserved Module Nominal Height max in mm (baseline height = 15 mm)
+Reserved 00000 = height<15 mm
+
+00001 = 15 < height<16 mm
+
+00010 = 16 < height<17 mm
+
+00011 = 17 < height<18 mm
+
+00100 = 18 < height<19 mm
+
+01010 = 24 < height<25 mm
+01011 = 25 < height<26 mm
+
+01111 = 29 < height<30 mm
+10000 = 30 < height<31 mm
+
+11111 = 45 mm<height
+
+SPD Field 0x3D: (Unbuffered): Module Max. Thickness
+S P D Field zeroxC3C: Unbuffered Module Nominal Height.
+
+Down on board memory designs should set this field to zerox zero zero.
+
+The table shows byte information with columns for Byte Decimal, Byte Hex, Field Name, Typ. Value, and Definition.
+
+Byte Decimal sixty, Byte Hex zeroxC3, Field Name Unbuffered Module Nominal Height, Typ. Value zerox zero zero, Definition Height less than fifteen mm.
+
+Byte sixty Unbuffered: Module Nominal Height. This byte defines the nominal height, a dimension in millimeters of the fully assembled module, including heat spreaders or other added components. Refer to the relevant J E D E C J C eleven module outline M O documents for dimension definitions.
+
+Bits seven dash four, Bits four dash zero. Reserved Module Nominal Height max in m m baseline height is fifteen mm.
+
+Reserved zero zero zero zero zero is height less than or equal to fifteen mm.
+zero zero zero zero one is fifteen mm less than height less than or equal to sixteen mm.
+zero zero zero one zero is sixteen mm less than height less than or equal to seventeen mm.
+zero zero zero one one is seventeen mm less than height less than or equal to eighteen mm.
+zero zero one zero zero is eighteen mm less than height less than or equal to nineteen mm.
+...
+zero one zero one zero is twenty four mm less than height less than or equal to twenty five mm.
+zero one zero one one is twenty five mm less than height less than or equal to twenty six mm.
+...
+zero one one one one is twenty nine mm less than height less than or equal to thirty mm.
+one zero zero zero zero is thirty mm less than height less than or equal to thirty one mm.
+...
+one one one one one is forty five mm less than height.
+
+S P D Field zeroxD3D: Unbuffered Module Max. Thickness.
+The content describes the Serial Presence Detect, or S P D, field zero X three C, which pertains to the unbuffered module nominal height. This field is crucial for down on board memory designs, with a typical value of zero X zero zero being specified. A table is presented, delineating byte information. Byte sixty, represented in hexadecimal as zero X three C, is designated as the 'Field Name: (Unbuffered): Module Nominal Height'. The 'Typ. Value' is zero X zero zero, and the 'Definition' is 'Height less than fifteen millimeters'.
+
+Following this, an explanation of Byte sixty (Unbuffered): Module Nominal Height is provided. This byte serves to define the nominal height of a fully assembled memory module, measured in millimeters. This measurement encompasses components such as heat spreaders. For precise definitions, reference is made to the relevant J E D E C J C eleven module outline documents.
+
+Subsequently, the focus shifts to specific bit fields, namely bits seven through five and bits four through zero. The 'Reserved Module Nominal Height max in millimeters (baseline height is fifteen millimeters)' indicates that bits seven through five are reserved. The subsequent lines detail the encoding for module heights: a binary value of five zeros represents a height less than or equal to fifteen millimeters. A binary one followed by four zeros represents a height greater than fifteen millimeters and less than or equal to sixteen millimeters. Continuing this pattern, binary one zero followed by three zeros signifies a height greater than sixteen millimeters and less than or equal to seventeen millimeters, and so on. Specifically, binary zero one zero one zero, which is decimal ten, corresponds to a height less than or equal to twenty five millimeters. Binary zero one zero one one, decimal eleven, signifies a height greater than twenty five millimeters and less than or equal to twenty six millimeters. A sequence of binary one one one one one, decimal fifteen, denotes a height greater than forty five millimeters. This table effectively maps encoded binary values within a specific bit range to corresponding physical height measurements, facilitating the communication of module dimensions.
+
+The document then introduces S P D Field zero X three D, which pertains to the unbuffered module maximum thickness.

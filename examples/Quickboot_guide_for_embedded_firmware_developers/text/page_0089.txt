@@ -1,0 +1,44 @@
+PCI IRQ Routing with ACPI Methods
+
+As multiprocessor systems introduced APICs, starting with ACPI
+Specification, Revision 1.0b, Multiprocessor Specification, Version 1.4, was
+superseded. The table information contained in the MP specification was
+carried over into the ACPI Specification. The interrupt routing to IOxAPICs
+is now described in the ACPI namespace using ASL. For details, please refer
+
+to the latest ACPI specification online.
+
+PCI Recommendation
+
+As the PCI specifications have progressed, the PCI Express Specification and
+the PCI Firmware Specification have become supersets of previous PCI local
+bus specification and PCI BIOS specifications. The PCI Express
+Specification is similar and has backward compatibility to the PCI Bus
+Specification. For this reason, developers should implement section 7 of the
+latest PCle Specification. Several implementation notes are also included in
+
+the PCle specification to avoid common pitfalls.
+
+PCI Power Management
+
+PCle ASPM — Active State Power Management
+a. PCI Express Base Specification
+b. PCI Local Bus Specification
+
+c. PCI-to-PCI Bridge Architecture Specification
+P C I I R Q Routing with A C P I Methods
+
+As multiprocessor systems introduced A P I C s, starting with A C P I Multiprocessor Specification, Revision one point zero b, Multiprocessor Specification, Version one point four, was superseded. The table information contained in the M P specification was carried over into the A C P I Specification. The interrupt routing to I O X A P I C s is now described in the A C P I namespace using A S L. For details, please refer to the latest A C P I specification online.
+
+P C I Recommendation
+
+As the P C I specifications have progressed, the P C I Express Specification and the P C I Firmware Specification have become supersets of previous P C I local bus specification and P C I B I O S specifications. The P C I Express Specification is similar and has backward compatibility to the P C I Bus Specification. For this reason, developers should implement section seven of the latest P C I E Specification. Several implementation notes are also included in the P C I E specification to avoid common pitfalls.
+
+P C I Power Management
+
+P C I E A S P M, which stands for Active State Power Management, defines three key specifications. These include the P C I Express Base Specification, the P C I Local Bus Specification, and the P C I to P C I Bridge Architecture Specification.
+The management of interrupt requests, or I R Q s, within P C I based systems using A C P I methods is a fundamental aspect of modern multiprocessor system architecture. Early multiprocessor systems introduced the concept of A P I C S, or Advanced Programmable Interrupt Controllers, which are hardware components responsible for distributing interrupt signals among multiple C P U s. Initially, the mechanisms for interrupt routing were outlined in specifications such as the A C P I Multiprorocessor Specification, Revision one point zero b. Over time, these specifications evolved, and the A C P I Multiprocessor Specification, Version one point four, superseded its predecessors. Critically, the information pertaining to interrupt routing that was previously contained within the M P specification was seamlessly migrated into the A C P I Specification. This consolidation signifies a shift towards a more unified and standardized approach to system configuration and power management. Specifically, the routing of interrupts to I O X A P I C S, which are dedicated interrupt controllers for input and output devices, is now formally described within the A C P I namespace, leveraging A S L, the A C P I Source Language. This structured approach, using A S L, allows the O S to dynamically configure interrupt pathways, ensuring efficient and correct interrupt delivery in complex, heterogeneous computing environments.
+
+The evolution of P C I technology is a testament to the continuous drive for higher performance and greater efficiency in computer systems. The P C I Express Specification, along with the P C I Firmware Specification, represent a significant advancement, effectively acting as supersets to the earlier P C I local bus and P C I B I O S specifications. This means that P C I Express encompasses and extends the capabilities defined in its predecessors, providing a broader and more robust framework. A crucial design principle guiding this evolution is backward compatibility. The P C I Express Specification is engineered to maintain compatibility with the legacy P C I Bus Specification. This ensures that hardware and software components designed for earlier P C I interfaces can still function, albeit potentially with limitations, on P C I Express based systems. This compatibility is vital for protecting past investments in hardware and facilitating smoother transitions during system upgrades. For developers, adherence to the latest P C I E Specification, particularly section seven, is paramount. This section outlines critical implementation details, and consulting the accompanying implementation notes is essential to circumvent common engineering pitfalls related to interoperability, performance, and stability.
+
+Power management is an indispensable consideration in contemporary computer system design, particularly for peripheral interfaces where dynamic power consumption can significantly impact overall system efficiency and thermal performance. P C I E Active State Power Management, commonly referred to as A S P M, is a key mechanism for optimizing power usage in P C I Express devices. A S P M enables the P C I E link to enter lower power states when it is not actively transmitting data, thereby reducing energy consumption. This capability relies on a sophisticated interplay among several foundational specifications. The P C I Express Base Specification defines the core communication protocols and electrical characteristics, including the power state transitions integral to A S P M. The older P C I Local Bus Specification provides the fundamental bus architecture upon which P C I Express builds its compatibility framework, and some power management concepts from P C I are carried forward or adapted. Finally, the P C I-to-P C I Bridge Architecture Specification is critical for power management across complex hierarchical bus topologies. P C I-to-P C I bridges connect different segments of the P C I or P C I E bus, and their proper implementation of power management protocols is essential to ensure that power state changes propagate correctly throughout the system, allowing an entire branch of the device tree to enter a lower power state when idle.

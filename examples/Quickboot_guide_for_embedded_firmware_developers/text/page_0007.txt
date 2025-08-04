@@ -1,0 +1,46 @@
+For the three elements to communicate effectively, they share a common set
+of interfaces. The interfaces have undergone a dramatic change in the past
+decade. This conversion from legacy BIOS interfaces to UEFI interfaces has
+not been without some major challenges. During the past ten years, much has
+been said in industry forums about the platform innovation Framework for
+EFI, also known as the Tiano code base. When selecting a starting point for
+development it is important to know the legacy, limitations, and benefits of
+
+various solutions.
+
+Tiano Benefits
+
+There are several benefits to UEFI over legacy BIOS:
+
+—Location of option ROMs. Legacy option ROMs have been constrained
+for many years by having to reside below the 1-MB boundary of
+16- bit code. Between C0000h and FFFFFh in system memory, all
+option ROMs including required components like Video BIOS,
+LAN, SCSI/RAID, manageability, and the system firmware
+runtime code all had to coexist. In server platforms, this limited the
+number of add-in cards that could be plugged in. Each of the legacy
+option ROMs had to do unnatural things to keep their code sizes
+minimized. A native UEFI system can move the option ROMs
+above 1 MB, enhancing their capabilities and size. The benefit has
+
+real value, especially in larger systems with many add-in devices.
+
+—UEFI option ROMs themselves have many benefits over legacy option
+ROMs. They can be created without the 16-bit code interface,
+which adds substantial overhead to a legacy option ROM. There is
+
+also a UEFI-defined interface to allow for a cohesive user interface
+For the three elements to communicate effectively, they share a common set of interfaces. The interfaces have undergone a dramatic change in the past decade. This conversion from legacy B I O S interfaces to U E F I interfaces has not been without some major challenges. During the past ten years, much has been said in industry forums about the platform innovation Framework for E F I, also known as the Tiano code base. When selecting a starting point for development it is important to know the legacy, limitations, and benefits of various solutions.
+
+Tiano Benefits
+
+There are several benefits to U E F I over legacy B I O S. One benefit relates to the location of option R O Ms. Legacy option R O Ms have been constrained for many years by having to reside below the one M B boundary of sixteen bit code. Between hexadecimal C zero zero zero zero and hexadecimal F F F F F F in system memory, all option R O Ms including required components like Video B I O S, L A N, S C S I slash R A I D, manageability, and the system firmware runtime code all had to coexist. In server platforms, this limited the number of add in cards that could be plugged in. Each of the legacy option R O Ms had to do unnatural things to keep their code sizes minimized. A native U E F I system can move the option R O Ms above one M B, enhancing their capabilities and size. The benefit has real value, especially in larger systems with many add in devices.
+
+Another benefit is that U E F I option R O Ms themselves have many advantages over legacy option R O Ms. They can be created without the sixteen bit code interface, which adds substantial overhead to a legacy option R O M. There is also a U E F I defined interface to allow for a cohesive user interface.
+The foundational communication interfaces within computing systems have undergone a profound architectural shift, transitioning from the legacy B I O S to the more advanced U E F I. This evolution, significantly influenced by the E F I framework and its Tiano code base implementation, was not merely an incremental change but a necessary paradigm shift to address inherent limitations of the prior art. Understanding the intricacies of this transition, particularly concerning system firmware and add-in device interfaces, is crucial for appreciating modern platform design.
+
+One of the most significant constraints of legacy B I O S systems pertained to the *location of option R O Ms*. For decades, these Read Only Memory modules, which contain firmware for peripherals such as video adapters, L A N controllers, and S C S I or R A I D arrays, were rigidly confined to a specific memory region below the one M B boundary. Specifically, the system memory address space between hexadecimal C zero zero zero zero H and hexadecimal F F F F F H was designated for these option R O Ms and other system firmware components. This tight sixteen bit addressable space, a relic of the original I B M P C architecture and its real mode operation, forced developers to employ highly optimized, often complex, programming techniques to keep code sizes minimal. All necessary components, including the core B I O S itself, peripheral firmware, and essential runtime code for system functions like direct memory access and interrupt handling, had to coexist within this extremely limited segment. This constraint severely restricted the number and functionality of add-in cards that could be physically plugged into a system, particularly in high-density server platforms where I O capacity is paramount. The very design of these legacy option R O Ms demanded unnatural code compression and intricate memory management strategies, often at the expense of maintainability and feature richness.
+
+In stark contrast, a native U E F I system provides a fundamental architectural advantage by liberating these option R O Ms from the one M B memory barrier. U E F I's ability to operate in protected mode or long mode much earlier in the boot process allows option R O Ms to be loaded into memory regions *above* the one M B address. This relocation exponentially expands the available address space for device firmware, enabling significantly larger and more capable option R O Ms. The practical benefit of this expanded memory is immense, especially in complex systems with numerous add-in devices, where each device can now host more sophisticated firmware without encroaching upon precious low memory resources or requiring intricate code overlays.
+
+Furthermore, the *U E F I option R O Ms themselves* offer substantial benefits over their legacy counterparts. They are no longer bound by the restrictive sixteen bit code interface of B I O S. This means U E F I based option R O Ms can be developed using modern thirty two bit or sixty four bit instruction sets, leveraging the full capabilities of contemporary C P U architectures. This capability removes a significant overhead associated with legacy option R O Ms, which often required complex thunks or mode switches to interact with the underlying system or to perform operations that inherently required thirty two bit addressing. The U E F I framework provides a well defined, standardized A P I for interaction, fostering a more cohesive and extensible environment for device firmware and system level user interfaces, ultimately enhancing platform manageability and overall system robustness.

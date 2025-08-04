@@ -1,0 +1,42 @@
+Analyzing the Design’s Memory Architecture
+
+The first step in creating the SPD data is to carefully analyze the design’s
+
+schematics to determine the overall memory architecture.
+
+Calculating DIMM Equivalents
+
+The used memory channels must be identified, and the number of “DIMM
+Equivalents” must be calculated by carefully noting which chip select pins on
+the DRAM controller are routed to the SDRAM chips.
+
+Each “DIMM Equivalent” will require its own block of SPD data. The
+specific chip select pins, CS#[7:0] (the actual number of chip select pins can
+vary depending on the specific memory controller being used), have to be
+carefully analyzed to see which are being used by the SDRAM chips. It’s
+possible for designs to support single-rank, dual-rank, and quad-rank DIMM
+equivalents.
+
+As an example, Figure A.1 shows an abstract view of DIMMs located
+
+on a single memory channel. Since each DIMM has only two CS# pins
+routed to the connector, this design supports two dual-rank DIMMs. If all
+four chip select pins were routed to a single DIMM, then the design would
+
+support a single, quad-rank DIMM.
+Analyzing the Design's Memory Architecture
+
+The first step in creating the S P D data is to carefully analyze the design's schematics to determine the overall memory architecture.
+
+Calculating D I M M Equivalents
+
+The used memory channels must be identified, and the number of D I M M Equivalents must be calculated by carefully noting which chip select pins on the D R A M controller are routed to the S D R A M chips.
+
+Each D I M M Equivalent will require its own block of S P D data. The specific chip select pins, C S#[seven to zero], the actual number of chip select pins can vary depending on the specific memory controller being used, have to be carefully analyzed to see which are being used by the S D R A M chips. It's possible for designs to support single rank, dual rank, and quad rank D I M M equivalents.
+
+As an example, Figure A. one shows an abstract view of D I M Ms located on a single memory channel. Since each D I M M has only two C S# pins routed to the connector, this design supports two dual rank D I M Ms. If all four chip select pins were routed to a single D I M M, then the design would support a single, quad rank D I M M.
+The analysis of a system's memory architecture commences with a thorough examination of its Serial Presence Detect, or S P D, data. This diagnostic information is paramount for understanding the underlying electrical and logical configuration of the memory subsystem, ultimately informing the design's overall memory architecture.
+
+A key aspect of this analysis involves calculating what are termed "D I M M Equivalents." This process necessitates the identification of active memory channels within the system. Subsequently, the number of D I M M Equivalents is determined by carefully observing which chip select pins are connected to the D R A M chips. Each D I M M Equivalent fundamentally requires a dedicated block of S P D data for proper enumeration and configuration. The chip select pins, typically denoted as C S hash seven through zero, represent the actual number of these selection signals available and their utilization is highly dependent on the specific memory controller being employed. This mapping of chip select pins to D R A M chips must be meticulously analyzed to ascertain which signals are actively being used by the S D R A M chips. This information is critical because it dictates the system's capability to support various memory configurations such as single rank, dual rank, and quad rank D I M Ms.
+
+For illustrative purposes, consider a scenario where a particular design supports a single memory channel. If each D I M M on this channel possesses two chip select pins routed to the connector, and the design is configured to support dual rank D I M Ms, then two distinct dual rank D I M Ms can be accommodated. Conversely, if all four chip select pins are routed to a single D I M M, this configuration would enable the support of a single, quad rank D I M M. This demonstrates how the routing and utilization of chip select signals directly influence the memory density and rank configuration achievable by the system.

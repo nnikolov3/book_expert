@@ -1,0 +1,56 @@
+paged references. Example: data at 0x12345678 physical may now
+be mapped by Linux to 0xD2345678, and the UEFI system should
+
+reference the new address, not the old.
+
+In order to achieve this agreement between a paging kernel and the UEFI
+Runtime Services, the UEFI standard defines the function
+SetVirtual AddressMap(). After mapping UEFI runtime data/code to a set of
+virtual addresses, the OS kernel will make this callback to EFI, before
+
+making any further UEFI Runtime Service calls.
+
+Neither Option
+
+This option should be reserved for an RTOS or modified Linux kernel. The
+OS loader (if there is one) must not rely on any BIOS boot services or legacy
+BIOS calls. The OS must not rely on any BIOS legacy or runtime services.
+The system should be a closed box with a single permanent boot path. This is
+an ideal case if this is an SPI-based (flash-based) operating system, such as a
+microkernel or free RTOS.
+
+In a UEFI-based solution, a developer may choose to have the OS as a
+DXE payload where the operating system is loaded and jumped to as part of
+the initial BIOS driver load.
+
+In a legacy-based solution, it is possible to do something similar with a
+DMA of the OS kernel in a known memory location and a jump to start the
+kernel.
+
+While this may prove limiting to the boot solution on the platform, there
+is an alternative OS-loading model via this solution where the UEFI-based
+firmware is bifurcated and DXE and later is placed on removable media. A
+
+jumper or other physical access is likely required to trigger the alternate boot
+paged references. Example: data at hex F F one two three four five six seven eight physical may now be mapped by Linux to hex D two three four five six seven eight, and the U E F I system should reference the new address, not the old.
+
+In order to achieve this agreement between a paging kernel and the U E F I Runtime Services, the U E F I standard defines the function SetVirtualAddressMap. After mapping U E F I runtime data or code to a set of virtual addresses, the O S kernel will make this callback to E F I, before making any further U E F I Runtime Service calls.
+
+Neither Option
+
+This option should be reserved for an R T O S or modified Linux kernel. The O S loader (if there is one) must not rely on any B I O S boot services or legacy B I O S calls. The O S must not rely on any B I O S legacy or runtime services. The system should be a closed box with a single permanent boot path. This is an ideal case if this is an S P I based (flash based) operating system, such as a microkernel or free R T O S.
+
+In a U E F I based solution, a developer may choose to have the O S as a D X E payload where the operating system is loaded and jumped to as part of the initial B I O S driver load.
+
+In a legacy based solution, it is possible to do something similar with a D M A of the O S kernel in a known memory location and a jump to start the kernel.
+
+While this may prove limiting to the boot solution on the platform, there is an alternative O S loading model via this solution where the U E F I based firmware is bifurcated and D X E and later is placed on removable media. A jumper or other physical access is likely required to trigger the alternate boot
+The text elaborates on operating system boot processes, specifically focusing on the interaction between the operating system kernel and the Universal Extensible Firmware Interface, or U E F I. A key technical concept discussed is memory mapping and address translation. When data is paged, it implies a memory management scheme where physical memory is divided into fixed-size blocks, and logical addresses used by programs are mapped to these physical locations. The example "data at hex one two three four five six seven eight" being mapped by Linux to "hex D two three four five six seven eight" illustrates this dynamic address re-assignment. This process is often managed by a Memory Management Unit, or M M U, which handles the translation from virtual addresses to physical addresses. The text highlights that the U E F I system should reference the new address, indicating a need for the operating system and firmware to maintain a consistent view of memory.
+
+A critical function mentioned is "SetVirtualAddressMap," a U E F I Runtime Service call. This function is part of the U E F I standard, which defines interfaces for operating systems to interact with system firmware. Specifically, this service allows the U E F I runtime environment to manage virtual address mappings, providing a way for the U E F I system to communicate with the operating system kernel about memory configurations. After the U E F I runtime data and code are mapped to a set of virtual addresses, the operating system kernel can then invoke this service to establish or modify these mappings, ensuring that memory access is correctly handled. This interaction is vital for features like memory protection and efficient memory utilization.
+
+The document then introduces "Neither Option," suggesting an alternative boot strategy. This option mandates that the operating system loader, whether it's for a Real Time Operating System, or R T O S, or a modified Linux kernel, must not depend on legacy B I O S boot services or legacy B I O S calls. Instead, it should operate within a "closed box" with a singular, permanent boot path. This design principle is presented as ideal for systems where the operating system is integrated into the firmware, such as on a flash-based or S P I based system, which may also be a microkernel or a free R T O S.
+
+Within a U E F I based boot scenario, a developer might choose to load the operating system as a D X E payload. D X E, or Driver Execution Environment, is a phase within the U E F I boot process where drivers are executed to initialize hardware and load the operating system. In this context, the operating system is loaded and then control is transferred to the operating system kernel, effectively becoming part of the initial B I O S driver loading process.
+
+The text also discusses a "legacy based solution" which involves performing a direct memory access, or D M A, of the operating system kernel into a known memory location, followed by a jump instruction to initiate the kernel's execution. This approach bypasses some of the more structured boot processes. Furthermore, it mentions an alternative operating system loading model where the U E F I based firmware is bifurcated, and the loader and D X E are placed on removable media. This suggests a flexible booting mechanism where different boot configurations can be managed on external storage, and a jumper or other physical access method might be used to select an alternate boot device.

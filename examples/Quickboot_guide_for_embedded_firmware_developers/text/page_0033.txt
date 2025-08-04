@@ -1,0 +1,42 @@
+The link between the north and south bridges has been updated from the Hub
+link to the DMI link. Now with up to 2 GB/s concurrent bandwidth, DMI
+provides up to 4x faster I/O bandwidth compared with the previous Intel
+proprietary Hub link I/O interface. A similar enterprise south bridge
+interconnect (ESI) is available that supports speeds of 2.5 Gb/s and connects
+to an Intel ICH south bridge or be configured as a x4 PCle Gen 1 port. In the
+past, these links have been referred to as virtual bridges because they are
+transparent to any PCI transactions that may be sent across them. With PCI
+bus 0 devices both in the north and south complexes, there is no change in
+PCI bus numbers when you cross the border between chips. So, the software
+doesn’t need to know that it is dealing with a two-chip or a one-chip (SoC)
+solution. The link not only handles PCI transitions, but also several
+
+proprietary chip-to-chip messages, or die-to-die messages if on a SoC.
+
+The South Bridge, Also Known as the PIIX, I/O Controller
+Hub (ICH), I/O Hub (IOH), Enterprise South Bridge (ESB),
+and Platform Controller Hub (PCH)
+
+The south bridge in the past has taken on various forms, including the PIIX,
+the ICH, the ESB (enterprise south bridge), the SCH (system controller hub),
+the IOH (I/O controller hub), and now the PCH. All basically equate to the
+main I/O channels to the outside world. If you want full documentation on
+the older corners of the newest integrated component, you may want to go all
+the way back to the PIIX documentation, which can still be downloaded from
+
+www.intel.com. While you may be able to avoid the terror of threading
+
+through fifteen years of change to a particular interface to build a holistic I/0
+“driver” for your firmware, you may need to make changes to some very old
+
+code and wonder “why did they do this; it doesn’t say it in the this
+The link between the north and south bridges has been updated from the Hub link to the D M I link. Now with up to two gigabytes per second concurrent bandwidth, D M I provides up to four times faster I O bandwidth compared with the previous Intel proprietary Hub link I O interface. A similar enterprise south bridge interconnect, E S I, is available that supports speeds of two point five gigabits per second and connects to an Intel I C H south bridge Or be configured as a by four P C I E Generation one port. In the past, these links have been referred to as virtual bridges because they are transparent to any P C I transactions that may be sent across them. With P C I bus zero devices both in the north and south complexes, there is no change in P C I bus numbers when you cross the border between chips. So, the software doesn't need to know that it is dealing with a two-chip Or a one-chip, S o C, solution. The link not only handles P C I transitions, but also several proprietary chip-to-chip messages, Or die-to-die messages if on a S o C.
+
+The South Bridge, Also Known as the P I I X, I O Controller Hub, I C H, I O Hub, I O H, Enterprise South Bridge, E S B, And Platform Controller Hub, P C H.
+
+The south bridge in the past has taken on various forms, including the P I I X, the I C H, the E S B, enterprise south bridge, the S C H, system controller hub, the I O H, I O controller hub, and now the P C H. All basically equate to the main I O channels to the outside world. If you want full documentation on the older corners of the newest integrated component, you may want to go all the way back to the P I I X documentation, which can still be downloaded from W W W dot Intel dot com. While you may be able to avoid the terror of threading through fifteen years of change to a particular interface to build a holistic I O "driver" for your firmware, you may need to make changes to some very old code and wonder "why did they do this; it doesn’t say it in the this".
+The architecture of a typical computer system traditionally partitions its core functionalities between a North Bridge and a South Bridge, each serving distinct yet interconnected roles. The North Bridge primarily handles high speed components such as the Central Processing Unit, main memory, and graphics processing units, necessitating low latency and high bandwidth connections. Conversely, the South Bridge is responsible for managing slower input output devices, including peripheral component interconnect express slots, universal serial bus ports, and storage interfaces. The link between these two crucial components, specifically the Direct Media Interface, or D M I link, has undergone significant updates. This latest iteration offers a concurrent bandwidth of up to two gigabytes per second, representing a four times improvement in input output bandwidth when compared to previous proprietary Hub link interfaces.
+
+A notable evolution in this interconnect paradigm is the introduction of the Enterprise South Bridge Interconnect, or E S I. This interface is capable of supporting data transfer speeds of two point five gigabits per second and can be configured as a four lane P C I E Generation one port. Historically, the internal links between the North and South Bridges were often abstracted as virtual bridges. This architectural design ensures transparency to P C I transactions, regardless of whether they originate or terminate within the North or South Bridge complexes. Consequently, P C I bus numbers remain consistent across these chip boundaries, meaning that the underlying software, such as the operating system or device drivers, does not need to explicitly differentiate between a two chip or a single chip System on Chip solution. This D M I link is engineered to not only facilitate standard P C I transitions but also to handle various proprietary chip to chip or die to die messages, which is particularly relevant in highly integrated System on Chip designs where multiple functional blocks reside on a single piece of silicon.
+
+The South Bridge component itself has evolved through a series of architectural iterations and nomenclature changes over time. It has been known by various designations, including the P I I X, the Input Output Controller Hub, or I C H, the Input Output Hub, or I O H, the Enterprise South Bridge, or E S B, and most recently, the Platform Controller Hub, or P C H. Fundamentally, all these iterations serve the same core purpose: to provide the main input output channels that connect the central processing system to the external world and its peripherals. For engineers and developers requiring comprehensive understanding or seeking to delve into the historical context of these designs, documentation from older generations, such as the P I I X series, remains relevant and often accessible. This lineage underscores a significant challenge in the field of firmware development and systems programming: the immense complexity of maintaining and evolving input output drivers. The prospect of integrating fifteen years of interface changes into a singular, holistic input output driver for firmware is a daunting task, highlighting the critical importance of robust abstraction layers and backward compatibility in hardware design to mitigate software development overhead. The continuous evolution often necessitates a deep dive into historical architectural decisions to comprehend current design principles and the intrinsic reasons behind specific implementations, even when contemporary documentation may not explicitly detail the entire progression.

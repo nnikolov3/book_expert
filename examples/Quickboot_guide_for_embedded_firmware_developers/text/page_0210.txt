@@ -1,0 +1,54 @@
+that someone in the universe who buys this motherboard may install some
+legacy application, and we may want to make sure it is a very robust solution.
+Some devices will need to comprehend all the baggage because there will
+continue to be that part of the market. In all cases for fast boot, however,
+developers are encouraged to reduce, reduce, reduce.
+
+For instance, since a user can connect anything from a record player to a
+RAID chassis via USB, users might think they can boot from a USB-
+connected device. Though this is physically possible, it is within the purview
+of the platform design to enable or disable this feature.
+
+A good general performance optimization statement would be: If you
+can put off doing something in BIOS that the OS can do, then put it off! Look
+at the whole boot chain between bootloader, potential second-stage agents,
+the OS, and shutdown. You need to be examining the concept of moving the
+finish line closer to the ball, understanding there are tradeoffs between
+firmware and OS initialization. This is advanced because you need to have
+control and insight into each of the phases of the boot flows for a platform.
+
+Ask the second part of the question: why is it here? If it is for a
+keyboard or mouse input during runtime, or to a USB stick to copy files
+locally to and from the system during runtime, then we probably will not
+need to fully enumerate the bus during boot time or incorporate a full USB
+firmware stack.
+
+In Example 1 below, the decision was made to not support booting from
+USB media and to not support the user interrupting the boot process via
+keyboard/mouse. This means that during the DXE/BDS phase, the BIOS can
+avoid initializing the USB infrastructure to get keystrokes and save 0.5
+seconds of boot time.
+
+It should be noted that PCI resources were assigned to the USB
+
+controllers on the platform, but by eliminating BIOS USB enumeration we
+That someone in the universe who buys this motherboard may install some legacy application, and we may want to make sure it is a very robust solution. Some devices will need to comprehend all the baggage because there will continue to be that part of the market. In all cases for fast boot, however, developers are encouraged to reduce, reduce, reduce.
+
+For instance, since a user can connect anything from a record player to a R A I D chassis via U S B, users might think they can boot from a U S B connected device. Though this is physically possible, it is within the purview of the platform design to enable or disable this feature.
+
+A good general performance optimization statement would be: If you can put off doing something in B I O S that the O S can do, then put it off! Look at the whole boot chain between bootloader, potential second stage agents, the O S, and shutdown. You need to be examining the concept of moving the finish line closer to the ball, understanding there are tradeoffs between firmware and O S initialization. This is advanced because you need to have control and insight into each of the phases of the boot flows for a platform.
+
+Ask the second part of the question: why is it here? If it is for a keyboard or mouse input during runtime, or to a U S B stick to copy files locally to and from the system during runtime, then we probably will not need to fully enumerate the bus during boot time or incorporate a full U S B firmware stack.
+
+In Example one below, the decision was made to not support booting from U S B media and to not support the user interrupting the boot process via keyboard slash mouse. This means that during the D X E slash B D S phase, the B I O S can avoid initializing the U S B infrastructure to get keystrokes and save zero point five seconds of boot time.
+
+It should be noted that P C I resources were assigned to the U S B controllers on the platform, but by eliminating B I O S U S B enumeration we
+The text discusses the challenges and considerations in designing robust and versatile motherboard firmware, particularly concerning compatibility with legacy applications and optimizing the boot process. A key theme is the balance between providing extensive functionality, such as booting from a Universal Serial Bus or U S B device like a R A I D chassis, and achieving fast boot times.
+
+The author emphasizes that developers must comprehend the entire "baggage" associated with a platform, which encompasses the bootloader, potential second stage agents, the operating system, and shutdown procedures. This holistic understanding is crucial for making informed optimization decisions. The principle of "If you can put off doing something in B I O S that the O S can do, then put it off" highlights a fundamental trade-off in system design: offloading tasks from firmware to the operating system can simplify firmware and potentially speed up the boot process, but it requires the operating system to be capable of handling those tasks.
+
+The text probes a pertinent question regarding the purpose of U S B input during runtime: Is it for keyboard and mouse input, or for U S B stick file copying? The distinction is critical because the latter requires full U S B enumeration during the boot time or within the firmware stack. This enumeration process involves initializing the Universal Serial Bus infrastructure to detect and communicate with connected devices.
+
+Example one illustrates a design decision to disallow user interruption of the boot process from U S B media. This decision was motivated by the desire to avoid initializing the U S B infrastructure, thereby saving an estimated zero point five seconds of boot time. This exemplifies a common optimization strategy where a feature with a perceived minimal user benefit, like interrupting a U S B boot, is disabled to achieve a tangible performance improvement.
+
+Furthermore, the text touches upon the management of peripheral component interconnect or P C I resources. It notes that these resources were assigned to U S B controllers on the platform. By eliminating B I O S U S B enumeration, developers can potentially reallocate or reduce the overhead associated with these resources, further contributing to optimization. This implies a strategic allocation of system resources, where the firmware's interaction with hardware components is carefully managed to achieve desired performance characteristics. The overarching concept is one of managing complexity and resource utilization within the firmware layer to enhance overall system performance and user experience, especially in the context of rapid system initialization.

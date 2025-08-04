@@ -1,0 +1,53 @@
+(see Figure 11.1).
+
+Four decades later, another psychologist, Steven Seow, authored a book
+with a similar set of experimental results in his responsiveness chapter.
+While Seow’s experiments were geared toward a software UI instead of
+simple input device responses, the results are strikingly similar to Miller’s, as
+illustrated in Figure 11.2.
+
+Instant Immediate Continuous Captive
+100-200 ms 0.5-1 second 2-5 seconds seconds
+
+Figure 11.2: Seow’s Responsiveness Time Definitions
+Seow broke up responsiveness into four categories:
+
+—Instantaneous was measured in the range 100-200 ms, where the
+maximum was 100 ms for a key press and a maximum of 200 ms
+
+for a menu draw.
+
+—Immediate implied 500-1000 ms, where the end user perceives
+
+information is available and being displayed.
+
+—Continuous was coined for the range of 2000-5000 ms, where the
+machine is reacting, but the user expects feedback on progress at
+
+longer durations.
+
+—Captive lasted from 7000 through 10000 ms, the maximum time a user
+(see Figure eleven point one). Four decades later, another psychologist, Steven Seow, authored a book with a similar set of experimental results in his responsiveness chapter. While Seow’s experiments were geared toward a software U I instead of simple input device responses, the results are strikingly similar to Miller’s, as illustrated in Figure eleven point two.
+
+The image displays a diagram illustrating four categories of responsiveness. The categories are presented as overlapping circles, each with a label and a time range. The first circle, labeled "Instant," covers the time range of one hundred to two hundred milliseconds. The second circle, labeled "Immediate," covers the range of zero point five to one second. The third circle, labeled "Continuous," covers two to five seconds. The fourth circle, labeled "Captive," has no specific time range mentioned, but is positioned to the right of the "Continuous" circle.
+
+Figure eleven point two: Seow’s Responsiveness Time Definitions
+
+Seow broke up responsiveness into four categories:
+
+Instantaneous was measured in the range one hundred to two hundred milliseconds, where the maximum was one hundred milliseconds for a key press and a maximum of two hundred milliseconds for a menu draw.
+
+Immediate implied five hundred to one thousand milliseconds, where the end user perceives information is available and being displayed.
+
+Continuous was coined for the range of two thousand to five thousand milliseconds, where the machine is reacting, but the user expects feedback on progress at longer durations.
+
+Captive lasted from seven thousand through ten thousand milliseconds, the maximum time a user
+The text describes the categorization of system responsiveness based on temporal delays in user interaction. Steven Seow, building upon prior work, proposed a framework that divides responsiveness into four distinct temporal bands, mirroring earlier findings, particularly those of Miller. These categories are visualized in a diagram, presented as a series of overlapping ellipses, each representing a different range of perceptible time delays.
+
+The first category, "Instantaneous," encompasses response times from one hundred to two hundred milliseconds. This temporal window is critical for interactions where the user expects immediate feedback, such as a key press or a menu draw action. The system's response within this brief interval is perceived as seamless and directly attributable to the user's input.
+
+Following "Instantaneous" is "Immediate," which spans a duration of five hundred milliseconds to one second. This category signifies a slightly longer delay, where the system is processing the input and preparing to display the relevant information. While a perceptible lag exists, it remains within a range that users generally find acceptable, where the system's action is still clearly associated with the preceding input.
+
+The third category, "Continuous," covers response times from two to five seconds. This band is characterized by a noticeable delay, during which the user anticipates feedback on the progress of an ongoing operation. The system's ability to provide continuous updates within this timeframe is essential for maintaining user engagement and conveying that the task is proceeding as expected, even if it requires a longer duration.
+
+Finally, "Captive" describes response times ranging from seven thousand to ten thousand milliseconds, or seven to ten seconds. This represents the longest temporal delay, where the system's operation is so prolonged that the user may feel their interaction is "captured" or held in suspense. In such scenarios, providing clear progress indicators becomes paramount to manage user expectations and prevent frustration. The underlying principle here is the psychophysics of human perception, specifically how varying time delays between an action and its consequence influence user satisfaction and the perceived quality of a system's interface. This categorization provides a quantifiable basis for designing user experiences that align with human cognitive processing and expectations.

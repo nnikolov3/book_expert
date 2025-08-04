@@ -1,0 +1,42 @@
+to take advantage of all the latest and greatest technologies coming from
+Intel. It however doesn’t have enough platform support to be considered
+
+universal.
+
+Just Add Silicon Initialization
+
+The Intel® Firmware Support Package (FSP) provides chipset and processor
+initialization in a format that can easily be incorporated into many existing
+boot loaders. FSP will perform all the base initialization steps for Intel
+silicon, including initialization of the CPU, memory controller, chipset and
+certain bus interfaces, if necessary. The initialization will enable enough
+hardware to allow the boot loader to load an operating system. FSP is not a
+stand-alone boot loader as it does not initialize non-Intel components,
+conduct broad bus enumeration, discover devices in the system, or support all
+industry standard initialization. FSP must be integrated into a host boot
+loader, such as those open-source solutions mentioned above, to carry out full
+
+boot loader functions.
+
+Summary
+
+Booting Intel architecture should be easy. While open source provides many
+advances in case you need to know the nuts and bolts, this book provides that
+background. Most of the basics in the system firmware space are not
+something taught in college; they are learned through on-the-job training.
+Options are available when choosing a firmware solution as a starting
+point. The more that you know about them, as well as about the key players,
+
+their history, and the variables, the better decision you can make for your
+To take advantage of all the latest and greatest technologies coming from Intel, it however does not have enough platform support to be considered universal.
+
+Just Add Silicon Initialization. The Intel Firmware Support Package, or F S P, provides chipset and processor initialization in a format that can easily be incorporated into many existing boot loaders. F S P will perform all the base initialization steps for Intel silicon, including initialization of the C P U, memory controller, chipset, and certain bus interfaces, if necessary. The initialization will enable enough hardware to allow the boot loader to load an operating system. F S P is not a stand alone boot loader as it does not initialize non Intel components, conduct broad bus enumeration, discover devices in the system, or support all industry standard initialization. F S P must be integrated into a host boot loader, such as those open source solutions mentioned above, to carry out full boot loader functions.
+
+Summary. Booting Intel architecture should be easy. While open source provides many advances, in case you need to know the nuts and bolts, this book provides that background. Most of the basics in the system firmware space are not something taught in college; they are learned through on the job training. Options are available when choosing a firmware solution as a starting point. The more that you know about them, as well as about the key players, their history, and the variables, the better decision you can make for your.
+The process of system initialization is a fundamental aspect of modern computing architectures, bridging the gap between raw hardware and a fully operational software environment. The Intel Firmware Support Package, or F S P, represents a modular and standardized approach to this critical phase. It functions as a pre-packaged binary blob, essentially a compiled code library, that encapsulates the complex, low level initialization routines specific to Intel chipsets and processors. This modularity allows the F S P to be seamlessly integrated into various boot loaders, which are software components responsible for loading an operating system.
+
+During the boot sequence, once the initial R O M based code, such as the B I O S or U E F I firmware, gains control, it transfers execution to a boot loader. This boot loader then leverages the F S P to perform essential hardware initialization steps. These steps encompass the configuration of the central processing unit, or C P U, including its core registers, internal caches, and power management units. Concurrently, the memory controller undergoes rigorous initialization, which involves setting up the D Ram timings, determining memory sizes and configurations, and enabling multi channel memory access, all critical for stable and efficient system operation. Furthermore, the F S P handles the setup of the chipset, which acts as the communication hub connecting the C P U to various peripherals. This includes configuring crucial bus interfaces like P C I E for high speed device communication, as well as enabling and enumerating other essential I O components.
+
+It is important to note that the F S P focuses on initializing Intel specific components. It typically does not extend its scope to non Intel hardware, necessitating that a comprehensive boot loader environment perform broader system enumeration and device discovery. To achieve full boot loader functionality, the F S P is designed to be integrated into a host boot loader, which can be a proprietary solution or, increasingly, an open source project. This hybrid approach allows for the benefits of vendor optimized, low level silicon initialization to be combined with the flexibility and community support of open source firmware. Such integration enables a boot loader to perform all necessary tasks, from initial hardware setup to the eventual loading of the operating system.
+
+Booting systems based on Intel architecture, especially with the growing prominence of open source contributions in the firmware space, is becoming more accessible. This transparency, however, does not diminish the underlying complexity. The field of system firmware development often delves into intricate details of hardware registers, timing constraints, and undocumented silicon behaviors that are typically not covered in standard computer science or engineering curricula. Consequently, much of the requisite knowledge in this domain is acquired through specialized, on the job training and practical experience. Understanding the historical evolution of firmware, the interplay of different key players in the ecosystem, and the various technical and strategic variables involved are paramount when selecting or developing a firmware solution. This comprehensive understanding enables informed decisions regarding the platform's stability, security, performance, and long term maintainability.

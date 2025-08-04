@@ -1,0 +1,53 @@
+microcontroller firmware components are moving forward in ways
+that they didn’t in years past, or didn’t need to. Silicon vendors
+often provide sample boot code that works to enable the platform
+through initialization. What is needed is more responsive silicon
+
+reference code.
+
+—Operating system. Intel has been working with OS vendors to optimize
+the user experience. For developers, it is easy to see where a very
+modular and diverse mix of components can work if architected
+correctly, but many solutions are not fully optimized. Linux teams
+in the Intel Open Source Technology Center (OTC) are engaged to
+speed up the experience from kernel load and driver startup times.
+
+And other operating systems are not being ignored.
+
+—Driver optimizations. Intel OS drivers are measured using various
+tools, depending on the OS. Intel is reducing the load and execution
+times for all of our drivers. We are continually investigating any
+optimizations possible to improve the responsiveness of our
+
+ingredients, including the graphics and wireless device drivers.
+
+—Middleware. This is a topic that you will have to consider: the
+applications that use it and how it can be altered to take advantage
+
+of offload engines on the system.
+
+—Applications. Like other companies, Intel is investing in its application
+store, as well as working with others in the industry to streamline
+their applications with various tools from the Intel tools suites.
+There are a variety of applications we provide which assist in the
+debug and monitoring of the system that we provide to all of our
+
+customers.
+Microcontroller firmware components are moving forward in ways that they didn't in years past, or didn't need to. Silicon vendors often provide sample boot code that works to enable the platform through initialization. What is needed is more responsive silicon reference code.
+
+Operating system. Intel has been working with O S vendors to optimize the user experience. For developers, it is easy to see where a very modular and diverse mix of components can work if architected correctly, but many solutions are not fully optimized. Linux teams in the Intel Open Source Technology Center (O T C) are engaged to speed up the experience from kernel load and driver startup times. And other operating systems are not being ignored.
+
+Driver optimizations. Intel O S drivers are measured using various tools, depending on the O S. Intel is reducing the load and execution times for all of our drivers. We are continually investigating any optimizations possible to improve the responsiveness of our ingredients, including the graphics and wireless device drivers.
+
+Middleware. This is a topic that you will have to consider: the applications that use it and how it can be altered to take advantage of offload engines on the system.
+
+Applications. Like other companies, Intel is investing in its application store, as well as working with others in the industry to streamline their applications with various tools from the Intel tools suites. There are a variety of applications we provide which assist in the debug and monitoring of the system that we provide to all of our customers.
+The discourse highlights the evolving landscape of microcontroller firmware, emphasizing a shift from legacy approaches to a requirement for more responsive silicon. This evolution necessitates advancements beyond basic reference code provided by silicon vendors.
+
+Several key areas are identified as crucial for achieving this responsiveness. Firstly, **Operating System** optimization is paramount. Intel, for instance, is actively collaborating with OS vendors to enhance the user experience. This involves addressing challenges in architecting modular and diverse software components, particularly within the context of the Linux ecosystem. Efforts are underway at the Intel Open Source Technology Center, or O T C, to optimize kernel load and driver startup times, recognizing that other operating systems are not being overlooked in these improvements.
+
+Secondly, **Driver Optimizations** are a critical focus. Intel's OS drivers are continuously measured to assess load and execution times. The company is actively investigating opportunities to improve driver responsiveness by optimizing various components, including graphics and wireless device drivers.
+
+Thirdly, the concept of **Middleware** is introduced as a significant factor. Middleware acts as an intermediary layer, influencing how applications interact with the system and potentially altering the performance characteristics of offload engines. Understanding and optimizing this layer is vital for leveraging system capabilities effectively.
+
+Finally, the section on **Applications** underscores Intel's investment in its application store and its collaborative approach with other industry players. The goal is to streamline application development and deployment through various Intel tools suites. These tools are designed to assist in the debugging and monitoring of systems, ultimately benefiting the end customer by providing enhanced functionality and performance.

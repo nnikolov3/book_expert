@@ -1,0 +1,49 @@
+The Intel® 64 and IA-32 Architectures Software Developer’s Manual,
+Volume 3A section “Typical AP Initialization Sequence” illustrates what is
+
+typically done in by the APs after receiving the SIPI.
+
+Caching Considerations
+
+Because of the different types of processor combinations and different
+attributes of shared processing registers between threads, care must be taken
+to ensure that the caching layout of all processors in the entire system remain
+consistent such that there are no caching conflicts.
+
+The Intel® 64 and IA-32 Architectures Software Developer’s Manual,
+Volume 3A section “MTRR Considerations in MP Systems” outlines a safe
+mechanism for changing the cache configuration in all systems that contain
+more than one processor. It is recommended that this be used for any system
+
+with more than one processor present.
+
+AP Idle State
+
+Behavior of APs during firmware initialization depends on the firmware
+implementation, but is most commonly restricted to short durations of
+initialization, followed by entering a halt state with a HLT instruction,
+awaiting direction from the BSP for another operation.
+
+Once the firmware is ready to attempt to boot an OS, all AP processors
+must be placed back in their power-on state (WAIT for SIPI), which can be
+accomplished by the BSP sending an INIT ASSERT IPI followed by an INIT
+DEASSERT IPI to all APs in the system (all except self). See the Intel® 64
+and IA-32 Architectures Software Developer’s Manual, Volume 3A for
+details on the INIT IPI, and the MultiProcessor Specification 1.4 for details
+on BIOS AP requirements.
+The Intel six four and I A thirty two Architectures Software Developer’s Manual, Volume three A section “Typical A P Initialization Sequence” illustrates what is typically done in by the A Ps after receiving the S I P I.
+
+Caching Considerations
+
+Because of the different types of processor combinations and different attributes of shared processing registers between threads, care must be taken to ensure that the caching layout of all processors in the entire system remain consistent such that there are no caching conflicts. The Intel six four and I A thirty two Architectures Software Developer’s Manual, Volume three A section “M T R R Considerations in M P Systems” outlines a safe mechanism for changing the cache configuration in all systems that contain more than one processor. It is recommended that this be used for any system with more than one processor present.
+
+A P Idle State
+
+Behavior of A Ps during firmware initialization depends on the firmware implementation, but is most commonly restricted to short durations of initialization, followed by entering a halt state with a H L T instruction, awaiting direction from the B S P for another operation. Once the firmware is ready to attempt to boot an O S, all A P processors must be placed back in their power on state (W A I T for S I P I), which can be accomplished by the B S P sending an I N I T A S S E R T I P I followed by an I N I T D E A S S E R T I P I to all A Ps in the system (all except self). See the Intel six four and I A thirty two Architectures Software Developer’s Manual, Volume three A for details on the I N I T I P I, and the M P S Specification one point four for details on B I O S A P requirements.
+The text describes aspects of multiprocessor system initialization, specifically focusing on the role of Application Processors (APs) and the management of caching. It references the Intel 64 and IA-32 Architectures Software Developer's Manual, Volume 3A, as a source for detailed information.
+
+The initial section, "Typical AP Initialization Sequence," outlines the process of APs being activated after receiving a System Management Interrupt (SMI), referred to as SIPI. This implies a mechanism where the system's main processor, the Bootstrap Processor (BSP), initiates the startup of other processors.
+
+The "Caching Considerations" section highlights the importance of managing cache coherence and consistency in multiprocessor systems. It states that different processor combinations and sharing attributes of processing registers between threads necessitate careful attention to cache layout. The goal is to ensure that the caching arrangement across all processors remains consistent, thus avoiding caching conflicts. The manual is again cited for mechanisms like the MTRR, or Memory Type Range Registers, which provide a way to configure caching behavior across different memory regions. This is crucial for systems with multiple processors to maintain data integrity and prevent performance degradation due to cache coherency issues. The recommendation is to apply these configurations to any system with more than one processor.
+
+The "AP Idle State" section elaborates on the behavior of APs during the firmware initialization phase. It explains that APs are typically in a restricted state, often entering a halt state using a HLT instruction, and await further directives from the BSP. The process involves the BSP sending an INIT ASSERT IPI, which is an Interprocessor Interrupt, to awaken the APs from their power on state, referred to as WAIT for SIPI. This activation is further described as being accomplished by the BSP sending an INIT ASSERT IPI followed by an INIT DEASSERT IPI to all APs except itself. This sequence of interrupts is a fundamental mechanism for inter-processor communication and synchronization in multiprocessor architectures. The text points to the Intel 64 and IA-32 Architectures Software Developer's Manual, Volume 3A, and the MultiProcessor Specification 1.4 for more in-depth details on these initialization procedures and BIOS AP requirements. These specifications define the precise sequence of events and communication protocols necessary for bringing up multiple processors in a coordinated manner, ensuring that each processor begins execution in a predictable and synchronized state.

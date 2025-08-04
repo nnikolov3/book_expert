@@ -1,0 +1,64 @@
+encoded as follows: the first byte is the number of continuation bytes
+indicated in JEP-106; the second byte is the last non-zero byte of the
+
+manufacturer’s ID code, again as indicated in JEP-106.
+
+Byte 149, Bits 7-0 Byte 148 Bit7 Byte 148 Bits 6-0
+
+Last Nonzero Byte, Odd Parity for Number of Continuation
+DRAM Manufacturer Byte 148 bits 6-0 Codes DRAM Manufacturer
+
+See JEP-106 See JEP-106
+
+SPD Field 0x96—-0xAF: Manufacturer’s Specific Data
+
+Down-on-board memory designs should set these bytes to 0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+150-175 Ox P6=0xAF Manufacturer's Specific Data 0x00
+
+Bytes 150-175: Manufacturer’s Specific Data
+The module manufacturer may include any additional information desired
+
+into the module within these locations.
+
+SPD Field 0xB0—-0%FF: Open for Customer Use
+
+Down-on-board memory designs should set these bytes to 0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+176-255 0xBO-0xFF Open for Customer Use 0x00
+
+Bytes 176-255: Open for Customer Use
+encoded as follows: the first byte is the number of continuation bytes indicated in J E P hyphen one zero six; the second byte is the last non zero byte of the manufacturer's ID code, again as indicated in J E P hyphen one zero six.
+
+Byte one four nine, Bits seven to zero. Last Nonzero Byte, D Ram Manufacturer. See J E P hyphen one zero six.
+
+Byte one four eight Bit seven. Odd Parity for.
+
+Byte one four eight Bits six to zero. Number of Continuation Codes D Ram Manufacturer. See J E P hyphen one zero six.
+
+S P D Field zero x nine six to zero x A F: Manufacturer's Specific Data.
+
+Down on board memory designs should set these bytes to zero x zero zero.
+
+The table shows byte ranges, their hexadecimal representation, field names, typical values, and definitions. The first row covers bytes one five zero to one seven five, with the hexadecimal range zero x nine six to zero x A F, identified as Manufacturer's Specific Data, with a typical value of zero x zero zero and a dash for the definition.
+
+Bytes one five zero to one seven five: Manufacturer's Specific Data. The module manufacturer may include any additional information desired into the module within these locations.
+
+S P D Field zero x B zero to zero x F F: Open for Customer Use.
+
+Down on board memory designs should set these bytes to zero x zero zero.
+
+The table shows byte ranges, their hexadecimal representation, field names, typical values, and definitions. The row covering bytes one seven six to two five five has the hexadecimal range zero x B zero to zero x F F, and is designated as Open for Customer Use with a typical value of zero x zero zero and a dash for the definition.
+
+Bytes one seven six to two five five: Open for Customer Use.
+The document describes specific fields within a Serial Presence Detect, or S P D, data structure, which is fundamental for configuring memory modules in computer systems. The S P D data is typically stored in a serial erasable programmable read only memory, or Eeprom, chip on the memory module itself. The system's memory controller reads this data during initialization to understand the capabilities and configuration of the installed memory.
+
+The initial description details how certain bytes are encoded. Specifically, it explains that the first byte indicates the number of continuation bytes that follow, and the second byte represents the last non zero byte of the manufacturer's I D code, as defined by J E P dash one O six. This continuation byte mechanism is a common technique for handling variable length data or expanding the addressable space within a fixed data structure. Byte one hundred forty nine, bits seven to zero, is designated as the Last Nonzero Byte, crucial for identifying the manufacturer, along with Byte one hundred forty eight, bits six to zero, which encodes Codes for the D Ram Manufacturer. Both these fields reference J E P dash one O six for their precise definitions, indicating adherence to a standardized specification for memory module identification.
+
+The document then specifies the function of S P D Field zero times ninety six to zero times AF, labeled as Manufacturer's Specific Data. The accompanying table shows that bytes in the decimal range one hundred fifty to one hundred seventy five, corresponding to hexadecimal range zero times ninety six to zero times AF, are reserved for Manufacturer's Specific Data. The typical value for this field is zero times zero zero, with the definition indicated by ellipses, suggesting that this space is intended for proprietary information that a specific manufacturer might embed to convey module characteristics beyond the standard specifications. The text elaborates that bytes one hundred fifty to one hundred seventy five allow the module manufacturer to include any additional information desired for the module within these locations, highlighting the extensibility of the S P D format.
+
+Following this, the document defines S P D Field zero times B zero to zero times FF as Open for Customer Use. The table indicates that bytes in the decimal range one hundred seventy six to two hundred fifty five, corresponding to hexadecimal range zero times B zero to zero times FF, are allocated for Open for Customer Use. The typical value for this range is also zero times zero zero, signifying that this segment of the S P D data is unassigned by the standard and can be utilized by customers or system integrators for their own purposes, such as storing custom configurations, serial numbers, or other module specific metadata. This provision allows for customization and advanced feature implementation at the module level, offering flexibility beyond the core memory parameters.

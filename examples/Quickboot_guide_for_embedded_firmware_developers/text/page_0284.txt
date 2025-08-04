@@ -1,0 +1,50 @@
+General Public License (GPL)
+
+With GPL, software is considered free speech. It is free to use ... but it has
+hooks in that you have to pass on that freedom of any derivative work or
+changes. The different versions of GPL spell out how free and how evasive
+that freedom level is on the rest of the system. For details, please see:
+
+http://www.gnu.org/licenses/gpl.html.
+
+One of the chief complaints about the GPL third version is the “viral”
+like nature of the code base. If someone takes GPLv3 code and reuses it, the
+code base that it was used on may be considered to be GPLv3 as well,
+
+depending on one’s interpretation. For that reason, some prefer GPLv2.
+
+Lesser GPL (LGPL)
+
+The main difference between lesser GPL and GPLvV3 is the ability to link to
+LGPL libraries by proprietary code bases without the “spider plant” effect of
+GPLv3 code. In nature, a spider plant is very easy to propagate from one
+place to another with just a small piece being transplanted. There are multiple
+versions of LPGL, which for the sake of time, I leave to the reader to research
+
+online.
+
+Separating and Segregating Code
+
+Mixing code covered by different legal agreements presents a challenge.
+For example, linking between the GPL code and non-GPL code has
+been hotly contested. The concepts of dynamically linked versus statically
+
+linked versus not linked and the licensing hooks that then tie linked code to
+General Public License (GPL)
+
+With G P L software is considered free speech. It is free to use but it has hooks in that you have to pass on that freedom of any derivative work or changes. The different versions of G P L spell out how free and how evasive that freedom level is on the rest of the system. For details, please see: http://www.gnu.org/licenses/gpl.html.
+
+One of the chief complaints about the G P L third version is the "viral" like nature of the code base. If someone takes G P L v three code and reuses it, the code base that it was used on may be considered to be G P L v three as well, depending on one's interpretation. For that reason, some prefer G P L v two.
+
+Lesser G P L (LGPL)
+
+The main difference between lesser G P L and G P L v three is the ability to link to L G P L libraries by proprietary code bases without the "spider plant" effect of G P L v three code. In nature, a spider plant is very easy to propagate from one place to another with just a small piece being transplanted. There are multiple versions of L P G L, which for the sake of time, I leave to the reader to research online.
+
+Separating and Segregating Code
+
+Mixing code covered by different legal agreements presents a challenge. For example, linking between the G P L code and non G P L code has been hotly contested. The concepts of dynamically linked versus statically linked versus not linked and the licensing hooks that then tie linked code to
+The General Public License, or G P L, is a fundamental concept in software licensing, embodying the principles of free speech and open access. It grants users the freedom to use, study, share, and modify software. The licensing agreement stipulates that any derivative work created from G P L licensed software must also be distributed under the same G P L terms, a concept often referred to as "viral" licensing. This ensures that the freedoms originally granted are preserved throughout the software's lifecycle and in all subsequent modifications or distributions. The text highlights a common point of contention surrounding the G P L, specifically the third version, or G P L three, concerning its interpretation when code is reused or incorporated into other projects. This interpretation can influence whether the combined codebase is considered subject to G P L three, leading some developers to prefer earlier versions like G P L two due to perceived clarity or flexibility.
+
+The Lesser General Public License, or L G P L, represents a more permissive variant of the G P L. Its primary distinction lies in its ability to be linked to proprietary code bases without imposing the same stringent viral licensing conditions. This characteristic is likened to a "spider plant" effect, where a small portion can propagate, but the core license does not necessarily extend to the entire linked ecosystem. The L G P L thus allows for greater interoperability and integration with closed-source software, offering a different set of trade-offs for developers seeking to balance openness with commercial considerations. The text notes that there are multiple versions of the L P G L and suggests further research for specific details.
+
+The practice of "Separating and Segregating Code" addresses the complex legal challenges that arise when mixing software components licensed under different agreements. This is particularly relevant when integrating code governed by the G P L with software operating under non G P L licenses. The core of this challenge lies in the distinction between "dynamically linked" and "statically linked" code. Dynamically linked libraries are loaded by an application at runtime, whereas statically linked code is incorporated directly into the executable at compile time. The licensing implications differ significantly: dynamically linking to a G P L library generally requires only the library itself to be G P L compliant, while statically linking might necessitate the entire combined work to adhere to the G P L. This distinction is critical for maintaining legal compliance and understanding the extent to which licensing obligations propagate through software architectures. The document refers to "licensing hooks," which are mechanisms or clauses within a license that define how and to what extent the license's terms apply to linked code.

@@ -1,0 +1,59 @@
+—CAP register, Host Capabilities register (ABAR + 00h).
+
+o Set SSS (ABAR 00h[27]) to enable SATA controller supports
+
+staggered spin-up on its ports, for use in balancing power spikes.
+—Clear ABAR AOh [2]]0] to Ob
+—Clear ABAR 24h [1] to Ob
+—PxCMD register (ABAR 118h, 198h, 218h, 298h, 318h, 398h).
+
+After the BIOS issues the initial write to AHCI Ports Implemented (PI),
+ABAR 0Ch, register (after any PLTRST#), there is a request for the BIOS to
+issue two reads to the AHCI Ports Implemented (PI) register.
+
+Some of the bits in these registers are platform specific and must be
+programmed in accordance with the requirements of the platform. The details
+regarding how these registers must be programmed can be found in the Serial
+ATA Advanced Host Controller Interface (AHCI) specification.
+
+Some of the bits in these registers are implemented as read/write-once
+(R/WO). It is a requirement that the system BIOS programs each bit at least
+once, even if the default setting of the bit is the desired value (that is, system
+BIOS must write 0 to a bit, even if the hardware reset value is 0). Doing so
+will ensure that the bit is unchangeable by software that is not system BIOS.
+Please refer to the PCH EDS to determine which bits are R/WO.
+
+Registers containing multiple R/WQO bits must be programmed in a
+
+single atomic write. Failure to do so will result in nonprogrammable bits.
+
+RAID Mode Initialization
+
+When the SATA controller is initialized in RAID mode, the system BIOS
+The document outlines programming steps related to the C A P register, which is the Host Capabilities register, located at A B A R plus hexadecimal zero zero. One instruction is to set the S S S bit in the A B A R hexadecimal zero zero register at index twenty seven. This action enables the S A T A controller to support staggered spin up on its ports, which is useful for balancing power spikes. Another step is to clear the A B A R hexadecimal A zero register at index two index zero, setting it to the value zero. Additionally, the A B A R hexadecimal two four register at index one must be cleared to the value zero. The P X C M D register is also mentioned, located at A B A R addresses hexadecimal one one eight, hexadecimal one nine eight, hexadecimal two one eight, hexadecimal two nine eight, hexadecimal three one eight, and hexadecimal three nine eight.
+
+After the B I O S issues the initial write to the A H C I Ports Implemented, or P I, A B A R hexadecimal zero C H register, specifically after any P L T R S T hash, there is a request for the B I O S to perform two reads to the A H C I Ports Implemented, P I, register.
+
+Some of the bits in these registers are platform specific and must be programmed in accordance with the requirements of the platform. The details regarding how these registers must be programmed can be found in the Serial A T A Advanced Host Controller Interface, A H C I, specification.
+
+Some of the bits in these registers are implemented as read slash write once, or R slash W O. It is a requirement that the system B I O S programs each bit at least once, even if the default setting of the bit is the desired value. That is, the system B I O S must write zero to a bit, even if the hardware reset value is zero. Doing so will ensure that the bit is unchangeable by software that is not the system B I O S. Please refer to the P C H E D S to determine which bits are R slash W O.
+
+Registers containing multiple R slash W O bits must be programmed in a single atomic write. Failure to do so will result in nonprogrammable bits.
+
+R A I D Mode Initialization.
+When the S A T A controller is initialized in R A I D mode, the system B I O S.
+The initialization of a hardware subsystem, such as a Serial A T A controller, during a computer system's boot sequence involves a meticulous process of programming various control registers. This procedure is typically orchestrated by the system's B I O S, which acts as the foundational software layer enabling the operating system to interact with underlying hardware. The goal is to establish the correct operational parameters and capabilities for the controller before storage devices, like H D D s or S S D s, can be properly enumerated and utilized.
+
+Central to this configuration are specific hardware registers, which are essentially small, high-speed memory locations within the hardware component itself, used to control its behavior and report its status. For instance, the `C A P` register, or Host Capabilities register, located at an offset of hexadecimal zero zero from the `A B A R` (Address Base Address Register) for the `S A T A` controller, contains flags that define the controller's features. Within this `C A P` register, bit twenty seven, known as `S S S` for "Staggered Spin-up Supported," must be set. The concept of staggered spin-up is a power management technique where multiple storage drives connected to the controller are powered on sequentially, rather than simultaneously. This prevents large, transient current demands, or "power spikes," that could overload the power supply unit when many drives, especially mechanical ones, attempt to accelerate their platters from rest.
+
+Further configuration involves clearing specific bits in other `A B A R`-relative registers. For example, bits at indices two and zero within the register at `A B A R` plus hexadecimal A zero `h` are cleared to binary zero. Similarly, bit one in the register located at `A B A R` plus hexadecimal two four `h` is also cleared to binary zero. These bit manipulations are crucial for disabling certain functionalities or setting particular modes, depending on the controller's design and the desired operational state.
+
+Beyond these initial capability and mode settings, a series of `Px C M D` registers, found at specific offsets like hexadecimal one one eight `h`, hexadecimal one nine eight `h`, and so forth from the `A B A R`, are also targeted. These registers are command and status registers for individual `S A T A` ports.
+
+A fundamental aspect of `S A T A` controller initialization, particularly following a hardware reset asserted by the system's `P L T R S T` signal, is the interaction with the `A H C I` Ports Implemented, or `P I`, register. The `B I O S` must perform an initial write to this register to indicate which ports are active. Crucially, after this write, the specification mandates two subsequent read operations from the `A H C I` `P I` register. This double read is not merely for verification; it is a critical synchronization mechanism. In complex hardware systems, especially those with multiple execution agents or caching layers, a write operation may not immediately propagate and become visible to subsequent reads. Performing two reads ensures that the hardware's internal state has stabilized and that the value read truly reflects the updated state, mitigating potential race conditions or stale data issues that could lead to an incorrect system configuration.
+
+It is important to recognize that while the `A H C I` specification provides a standardized framework for `S A T A` controller interactions, certain bits within these registers can be "platform specific." This means their interpretation and required programming values are dependent on the particular chipset or system on a chip (`S o C`) implementation from a specific vendor. Accurate programming necessitates consulting the detailed hardware documentation, such as the `P C H E D S` (Platform Controller Hub Electrical Design Specification), to understand the exact requirements for a given platform.
+
+A significant constraint in register programming is the concept of "read slash write once" (`R/WO`) bits. These bits, once written, cannot be changed by subsequent software operations, even if the hardware reset value for that bit is binary zero. This immutability ensures system stability and prevents unintended or malicious modification of critical configuration parameters after initial setup. The implication is that the system `B I O S` must explicitly program each `R/WO` bit to its desired value during the initial boot phase, regardless of its default. Failing to perform this singular, decisive write will render those specific bits nonprogrammable, potentially leaving the hardware in an unrecoverable or suboptimal state. Therefore, when programming multiple `R/WO` bits, it is paramount that the entire write operation is atomic. An atomic write guarantees that all the bits within the register are updated simultaneously and coherently, preventing any intermediate, inconsistent state that could arise if the write operation were interrupted or partially applied. This principle of atomicity is foundational in concurrent systems to maintain data integrity.
+
+The culmination of these precise register manipulations is the proper initialization of the `S A T A` controller, particularly when configuring it for `R A I D` mode. `R A I D`, or Redundant Array of Independent Disks, is a data storage virtualization technology that combines multiple physical disk drive components into one or more logical units for the purposes of data redundancy, performance improvement, or both. The `B I O S`'s ability to correctly initialize the `S A T A` controller into `R A I D` mode is a prerequisite for the operating system to then create and manage `R A I D` volumes, thereby providing advanced storage capabilities to the user.

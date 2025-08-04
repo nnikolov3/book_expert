@@ -1,0 +1,62 @@
+Express)
+0 Program Subsystem Vendor and Device IDs
+
+0 Assign PCI IRQ)s and INTA, INTB, INTC, or INTD lines. Care should
+be taken to read the schematics on down PCI devices and PCI slots,
+as the IRQs are board-specific. Internal PCI controller devices in
+
+the PCH or CPU have programmable IRQs assignments as well.
+
+o Flag any PCI Expansion option ROMs (or UEFI driver) that needs to
+be executed for initialization or shadowed and programming the
+Expansion ROM BAR. These may not be executed during PCI
+
+enumeration, but will likely be dealt with in a later stage of the
+BIOS.
+
+o Program any Error registers to trigger the proper error handler
+
+response
+
+—For Type 1 Headers, when a PCI bridge is found, several registers’
+programming is similar to that of any other device, but there are
+
+marked differences:
+o Local Memory BARS for the bridge device itself
+o Configuration register for the bridge
+o Primary and secondary bus latency timers
+o Cache line size
+
+o Primary bus register, secondary bus register, subordinate bus
+
+assignments must be made, and then the devices behind the
+Express.
+
+Program Subsystem Vendor and Device I Ds.
+
+Assign P C I I R Qs and I N T A, I N T B, I N T C, or I N T D lines. Care should be taken to read the schematics on down P C I devices and P C I slots, as the I R Qs are board specific. Internal P C I controller devices in the P C H or C P U have programmable I R Qs assignments as well.
+
+Flag any P C I Expansion option R O Ms or U E F I driver that needs to be executed for initialization or shadowed and programming the Expansion R O M B A R. These may not be executed during P C I enumeration, but will likely be dealt with in a later stage of the B I O S.
+
+Program any Error registers to trigger the proper error handler response.
+
+For Type one Headers, when a P C I bridge is found, several registers' programming is similar to that of any other device, but there are marked differences. These differences include: Local Memory B A Rs for the bridge device itself; Configuration register for the bridge; Primary and secondary bus latency timers; Cache line size; and Primary bus register, secondary bus register, and subordinate bus assignments must be made for the devices behind the bridge.
+System initialization and device management within a complex computing architecture, particularly concerning the P C I and P C I Express interconnects, involve a meticulous sequence of hardware and firmware interactions. A foundational step is the identification of each peripheral through its Subsystem Vendor and Device I D s. These unique identifiers, located within a device's configuration space, are paramount for the system's Basic Input Output System, or B I O S, or Unified Extensible Firmware Interface, U E F I, to properly recognize the device and load appropriate drivers or initialization routines. Without precise identification, system software cannot correctly ascertain the functionality or capabilities of connected hardware.
+
+Following device identification, the critical process of interrupt assignment must occur. For legacy P C I, this involves allocating I R Q lines, specifically the I N T A, I N T B, I N T C, and I N T D signals. These are edge triggered or level triggered signals used by devices to request attention from the C P U. While P C I Express largely leverages Message Signaled Interrupts, M S I, or extended M S I-X, which are more scalable and avoid physical signal lines, compatibility considerations or specific hardware implementations may still rely on these virtualized I N T lines. The assignment process is inherently board specific, meaning the physical routing of these interrupt lines on a given motherboard or their internal mapping within a platform controller hub, P C H, or integrated C P U controller, must be meticulously understood from hardware schematics. Modern P C H and C P U P C I controllers often offer programmable I R Q assignments, providing flexibility for system configuration and resource management by the B I O S or operating system.
+
+Another vital aspect of device initialization pertains to P C I Expansion Option R O Ms or U E F I drivers. These are firmware modules embedded on P C I peripherals that contain code necessary for initializing the device before the main operating system boots. The system firmware must identify these R O Ms, potentially "shadow" their contents into faster main system Ram for quicker execution, and then correctly program the associated Base Address Register, B A R, that defines where the R O M's executable code resides in the system's memory-mapped I O space. It is common for the execution of these R O Ms to be deferred to a later stage of the B I O S or U E F I boot process, ensuring that critical core system components are initialized first.
+
+Robust error handling is also a fundamental requirement for system stability. Peripheral devices, especially those conforming to the P C I Express specification, possess dedicated error registers within their configuration space. These registers capture and report various types of errors, ranging from correctable data errors to uncorrectable fatal system errors. The system firmware or operating system must explicitly program these registers to enable error reporting, define the severity of errors, and specify the appropriate responses, such as logging the error, asserting an interrupt, or initiating a system reset. This proactive configuration of error registers is essential for diagnostic capabilities and for maintaining system reliability in the face of hardware anomalies.
+
+When a P C I bridge is encountered, distinguished by its Type one configuration header, its programming diverges from that of a standard endpoint device. While common registers like Vendor I D and Device I D are present, bridges require distinct configurations to manage the hierarchical structure of the P C I bus. Key differences in bridge programming include:
+
+Firstly, the presence of Local Memory B A Rs specifically for the bridge device itself. These B A Rs delineate memory or I O address spaces utilized by the bridge's internal control logic, diagnostic registers, or embedded buffers, separate from the address ranges it forwards to its downstream bus.
+
+Secondly, dedicated Configuration registers govern the bridge's operational parameters. These include settings for enabling bus master capabilities on the secondary side, configuring memory and I O address windows for transactions passed through the bridge, and managing power states. Precise configuration of these registers is paramount for ensuring correct data flow and resource allocation across the bridge.
+
+Thirdly, the primary and secondary bus latency timers come into play. In traditional P C I, these timers regulate how long a bus master can own the bus after gaining arbitration. The primary bus latency timer applies to the upstream P C I segment, while the secondary bus latency timer governs the downstream P C I segment. Proper setting of these timers is crucial for managing bus bandwidth and ensuring fair access for all devices in a multi-master environment, thereby preventing a single device from monopolizing bus cycles. While P C I Express transitions to a packet-based, switched fabric, bridges often maintain legacy P C I components, making these timers relevant for interoperability.
+
+Fourthly, the Cache Line Size register is significant. This register communicates the host C P U's cache line granularity to the P C I device. Devices performing Direct Memory Access, D M A, transfers, particularly burst transfers, can leverage this information to align their memory operations to cache line boundaries. This alignment is critical for optimizing memory access performance and maintaining cache coherence between the C P U and peripheral devices, preventing unnecessary cache invalidations and improving overall system throughput.
+
+Finally, the hierarchical nature of P C I bus numbering necessitates careful assignment of primary, secondary, and subordinate bus registers within a bridge's configuration space. The primary bus register indicates the bus number of the upstream side of the bridge. The secondary bus register specifies the bus number assigned to the first downstream bus segment controlled by the bridge. The subordinate bus register defines the highest numbered bus segment residing under that bridge. During the system enumeration phase, the B I O S or U E F I programs these registers to establish a unique bus number for every P C I segment in the system. This comprehensive numbering scheme creates a logical topology, enabling the system to unambiguously locate and communicate with all P C I devices, including those cascaded deep within the P C I hierarchy behind multiple bridges.

@@ -1,0 +1,55 @@
+ROM that adds the Int13h services and provides a pre-OS user interface for
+the RAID implementation. The option ROM’s Int13h services are used up to
+the point where the PCH RAID OS driver takes over.
+
+The RAID option ROM is delivered as a single uncompressed binary
+image compiled for the 16-bit real mode environment. To conserve system
+flash space, the integrator may compress the image for inclusion into the
+system BIOS. System memory is taken from conventional DOS memory,
+attached to the EBDA, and is not returned.
+
+The RAID option ROM will first attempt to rely on the interrupt-driven
+mechanism handled by system BIOS and then will fall back to the polling
+mechanism if the system BIOS does not support the interrupt-driven
+mechanism. The determination is made via a memory semaphore at location
+40:8E in the BIOS Data Area (BDA).
+
+Initialization
+RAID mode initialization occurs as follows:
+
+—System BIOS configures the SATA controller for RAID mode,
+initializes I0 BARs and ABAR, and assigns an IRQ to the
+controller. System BIOS optionally sets up an ISR for the SATA
+
+controller and enables interrupts for the SATA controller.
+—System BIOS loads the RAID option ROM (OROM).
+
+Int13h Drive Access to an ATA Device. System BIOS control flow: if the
+system BIOS uses the interrupt mechanism, then the system BIOS ISR gets
+
+control.
+
+—If this is an unexpected interrupt, the system BIOS assumes this is a
+R O M that adds the Interrupt thirteen H services and provides a pre O S user interface for the R A I D implementation. The option R O M’s Interrupt thirteen H services are used up to the point where the P C H R A I D O S driver takes over.
+
+The R A I D option R O M is delivered as a single uncompressed binary image compiled for the sixteen bit real mode environment. To conserve system flash space, the integrator may compress the image for inclusion into the system B I O S. System memory is taken from conventional D O S memory, attached to the E B D A, and is not returned.
+
+The R A I D option R O M will first attempt to rely on the interrupt driven mechanism handled by system B I O S and then will fall back to the polling mechanism if the system B I O S does not support the interrupt driven mechanism. The determination is made via a memory semaphore at location forty colon eight E in the B I O S Data Area, B D A.
+
+Initialization
+
+R A I D mode initialization occurs as follows:
+System B I O S configures the S A T A controller for R A I D mode, initializes I O B A R S and A B A R, and assigns an I R Q to the controller. System B I O S optionally sets up an I S R for the S A T A controller and enables interrupts for the S A T A controller. System B I O S loads the R A I D option R O M, O R O M.
+
+Interrupt thirteen H Drive Access to an A T A Device. System B I O S control flow: if the system B I O S uses the interrupt mechanism, then the system B I O S I S R gets control.
+
+If this is an unexpected interrupt, the system B I O S assumes this is a
+The fundamental architectural principles governing the initialization and control of peripheral devices during the system's early boot phases are encapsulated in the role of the R O M and its associated services. Specifically, a R O M provides Int13h services, which are legacy B I O S routines designed to offer a pre-O S user interface for disk operations. This allows the system to interact with storage devices, such as those configured for R A I D, before a full operating system driver has been loaded and initialized. The control over disk I O subsequently transitions from these B I O S Int13h services to the more sophisticated P C H R A I D O S driver once the operating system takes over, demonstrating a layered approach to hardware abstraction.
+
+The R A I D option R O M itself is delivered as a singular, uncompressed binary image. This image is meticulously compiled for the sixteen bit real mode computing environment, a foundational operational mode of x eight six processors characterized by its direct memory access and a segmented memory architecture. To optimize the utilization of the constrained system flash space, which is typically a non-volatile memory with limited write endurance, a system integrator may apply compression to this binary image for its ultimate inclusion within the main system B I O S. During its execution, the option R O M appropriates a segment of conventional D O S memory, specifically from the first six hundred forty kilobyte region, which is a historical artifact of early P C architecture. This memory allocation is then persistently attached to the E B D A, or Extended B I O S Data Area, a designated region for B I O S related data structures and configurations, and importantly, this memory segment is not subsequently relinquished to the system for other uses.
+
+The mechanism by which the R A I D option R O M exerts control is primarily interrupt driven, relying on the system B I O S to manage these asynchronous hardware events. If, however, the system B I O S lacks support for an interrupt driven mechanism, the R A I D option R O M will gracefully fall back to a polling mechanism. This latter approach involves the system continuously checking the status of the device, which is inherently less efficient and consumes more C P U cycles than an interrupt driven model. The decision to employ either the interrupt driven or polling mechanism is dynamically determined by inspecting a specific memory semaphore located at the segment:offset address hexadecimal forty colon eight E within the B I O S Data Area. This semaphore acts as a flag, signaling the B I O S's capability or preference for interrupt handling for the R A I D controller.
+
+The initialization sequence for R A I D mode is a well-defined process. First, the system B I O S configures the S A T A controller, a standard interface for connecting mass storage devices, to operate in R A I D mode. This configuration involves initializing the I O B A Rs, which are Base Address Registers used by P C I E devices to map their control and data registers into the C P U's memory or I O space, and the A B A R, the A H C I Base Address Register specifically for the S A T A controller. Concurrently, an I R Q, or Interrupt Request, line is assigned to the S A T A controller, providing a dedicated hardware signal path for the device to request attention from the C P U. The system B I O S then has the option to establish a dedicated I S R, or Interrupt Service Routine, for the S A T A controller and to enable interrupts, allowing the C P U to respond to disk I O events generated by the controller in an asynchronous manner. Following these configuration steps, the system B I O S proceeds to load the R A I D option R O M, often abbreviated as O R O M, into system memory for execution.
+
+When accessing an A T A device via Int13h services, the system B I O S initially leverages the interrupt mechanism for efficient data transfer. Upon an interrupt signal from the A T A device, the system B I O S I S R gains control, processing the I O request. If the system encounters an interrupt that is not expected or recognized within its defined interrupt vector table, the system B I O S typically assumes this indicates an anomalous condition or an error, initiating a specific error handling routine or a diagnostic sequence to determine the cause of the unexpected event.

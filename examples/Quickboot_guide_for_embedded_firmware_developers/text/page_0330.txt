@@ -1,0 +1,70 @@
+1. See SPD byte 36.
+
+Refer to device datasheet for downbin support details.
+
+SPD Field #18: “Minimum RAS# to CAS# Delay Time (tg cpmin)”
+Definition from JEDEC DDR3 SPD Specification
+
+Table 1 Key Timing Parameters
+
+Speed Grade Data Rate (MTs) Target tRCD- tRP- CL  tRCD tRP CL (ns)
+(ns) (ns)
+-125%¢ 1600 11-11-11 13.75 13.75 13.75
+-125E? 1600 10-10-10 12.5 12.5 12.5
+153 1333 10-10-10 15 15 15
+-15E1 1333 G-9-9 13.5 13.5 13.5
+187 1066 8-8-8 15 15 15
+-187E 1066 7-7-7 13.1 13.1 13.1
+Notes:
+
+1. Backward compatible to 1066, CL = 7 (-187E).
+2. Backward compatible to 1333, CL = 9 (-15E).
+3. Backward compatible to 1066, CL = 8 (-187).
+
+SPD Field #18: “Minimum RAS# to CAS# Delay Time (ty pmin)”
+Example from Micron MT41J256M8 Datasheet
+
+SPD Field 0x13: Min. Row Active to Row Active Delay (tgrpmin)
+One. See S P D byte thirty six.
+
+Two. Refer to device datasheet for downbin support details.
+
+S P D Field eighteen: "Minimum R A S hash to C A S hash Delay Time t R C D min" Definition from J E D E C D D R three S P D Specification.
+
+Table one Key Timing Parameters.
+
+The table shows key timing parameters for different speed grades. The columns are Speed Grade, Data Rate (M T per second), Target t R C D hyphen t R P hyphen C L, t R C D (nanoseconds), t R P (nanoseconds), and C L (nanoseconds).
+
+For speed grade minus one twenty five superscript one, two, the Data Rate is sixteen hundred, Target t R C D hyphen t R P hyphen C L is eleven hyphen eleven hyphen eleven, t R C D is thirteen point seven five, t R P is thirteen point seven five, and C L is thirteen point seven five.
+
+For speed grade minus one twenty five E superscript one, two, the Data Rate is sixteen hundred, Target t R C D hyphen t R P hyphen C L is ten hyphen ten hyphen ten, t R C D is twelve point five, t R P is twelve point five, and C L is twelve point five.
+
+For speed grade minus one fifty three, the Data Rate is one thousand three hundred thirty three, Target t R C D hyphen t R P hyphen C L is ten hyphen ten hyphen ten, t R C D is fifteen, t R P is fifteen, and C L is fifteen.
+
+For speed grade minus fifteen E one, the Data Rate is one thousand three hundred thirty three, Target t R C D hyphen t R P hyphen C L is nine hyphen nine hyphen nine, t R C D is thirteen point five, t R P is thirteen point five, and C L is thirteen point five.
+
+For speed grade minus one eighty seven, the Data Rate is one thousand sixty six, Target t R C D hyphen t R P hyphen C L is eight hyphen eight hyphen eight, t R C D is fifteen, t R P is fifteen, and C L is fifteen.
+
+For speed grade minus one eighty seven E, the Data Rate is one thousand sixty six, Target t R C D hyphen t R P hyphen C L is seven hyphen seven hyphen seven, t R C D is thirteen point one, t R P is thirteen point one, and C L is thirteen point one.
+
+Notes:
+One. Backward compatible to one thousand sixty six, C L is seven (minus one eighty seven E).
+Two. Backward compatible to one thousand three hundred thirty three, C L is nine (minus fifteen E one).
+Three. Backward compatible to one thousand sixty six, C L is eight (minus one eighty seven).
+
+S P D Field eighteen: "Minimum R A S hash to C A S hash Delay Time t R C D min" Example from Micron M T forty one J two hundred fifty six M eight Datasheet.
+
+S P D Field zero x thirteen: Min. Row Active to Row Active Delay t R R D min.
+This document details specific timing parameters for Double Data Rate 3 Synchronous Dynamic Random Access Memory, commonly known as D D R three S D Ram. The information is derived from the J E D E C D D R three S P D specification, with a specific focus on S P D Field number eighteen, which defines the minimum R A S hash to C A S hash delay time, denoted as t R C D min. This parameter is crucial for the efficient operation of memory systems, dictating the minimum time required between activating a row in the memory array and issuing a column read or write command.
+
+The provided table, "Table one Key Timing Parameters," presents a correlation between different speed grades of D D R three memory, their data rates, and key timing values, including t R C D, t R P, and C L. The data rates are measured in Mega Transfers per second, abbreviated as M T slash s. The timing parameters t R C D, t R P, and C L are expressed in nanoseconds, denoted as n s.
+
+Let us examine the table's contents. The "Speed Grade" column lists various performance tiers, such as minus one two five, minus one two five E, minus one five three, minus one five E one, minus one eight seven, and minus one eight seven E. Corresponding to these speed grades are data rates. For instance, the minus one two five speed grade operates at sixteen hundred M T slash s, as does the minus one two five E speed grade. The minus one five three speed grade has a data rate of one thousand three hundred thirty three M T slash s, and the minus one five E one also operates at one thousand three hundred thirty three M T slash s. The minus one eight seven and minus one eight seven E speed grades both function at one thousand sixty six M T slash s.
+
+The "Target t R C D hyphen t R P hyphen C L" column provides a triplet of values representing the target timing for t R C D, t R P, and C L. For the sixteen hundred M T slash s speed grades, the target values are eleven dash eleven dash eleven. For the one thousand three hundred thirty three M T slash s grades, they are ten dash ten dash ten and nine dash nine dash nine respectively. For the one thousand sixty six M T slash s grades, the targets are eight dash eight dash eight and seven dash seven dash seven.
+
+The subsequent columns explicitly list the timing values in nanoseconds: "t R C D (n s)", "t R P (n s)", and "C L (n s)". For the sixteen hundred M T slash s speed grade with eleven dash eleven dash eleven targets, the actual timings are thirteen point seven five n s for t R C D, thirteen point seven five n s for t R P, and thirteen point seven five n s for C L. For the one thousand three hundred thirty three M T slash s speed grade with ten dash ten dash ten targets, the timings are twelve point five n s for t R C D, twelve point five n s for t R P, and twelve point five n s for C L. For the grade with nine dash nine dash nine targets, the timings are fifteen n s for t R C D, fifteen n s for t R P, and fifteen n s for C L. Finally, for the one thousand sixty six M T slash s speed grades, the timings are fifteen n s, fifteen n s, and fifteen n s for the eight dash eight dash eight target, and thirteen point one n s, thirteen point one n s, and thirteen point one n s for the seven dash seven dash seven target.
+
+The notes provide important context regarding backward compatibility. Note one states that the minus one eight seven E speed grade is backward compatible to one thousand sixty six M T slash s with a C L of seven. Note two indicates that the minus one five E one speed grade is backward compatible to one thousand three hundred thirty three M T slash s with a C L of nine. Note three clarifies that the minus one eight seven speed grade is backward compatible to one thousand sixty six M T slash s with a C L of eight. These notes are essential for understanding how different speed grades can be interchanged within a system, ensuring interoperability and flexibility in memory module configurations.
+
+The document also references S P D Field zero x thirteen, which pertains to the minimum Row Active to Row Active Delay time, represented as t R R D min. This timing parameter is critical for managing concurrent operations within the memory array, specifically defining the minimum interval between activating two different rows. Understanding these timing parameters collectively is fundamental to memory system design, enabling precise control over data access and ensuring optimal performance and stability. The example provided, taken from the Micron M T four one J two five six M eight datasheet, underscores the practical application of these specifications in real-world memory components.

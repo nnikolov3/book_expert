@@ -1,0 +1,59 @@
+'CK, both CL and CWL requirement settings need to be fulfilled.
+3. Reserved settings are not allowed.
+SPD Field #20: “Minimum Row Precharge Delay Time (tzpmin)” Micron
+
+MT41J256M8 Datasheet
+
+SPD Field 0x15: Upper Nibble of tgag & tg
+
+This field is the Most Significant nibble (4 bits) for both the Active to
+Precharge Delay (tRASmin) and Active to Active/Refresh delay (tRCmin).
+See the next two sections for how to determine the tRASmin and tRCmin
+
+values and put the upper nibble of those results into this field.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+21 0x15 Upper Nibhle of tras & te 0x11
+
+Byte 21: Upper Nibbles for tRAS and tRC
+This byte defines the most significant nibbles for the values of tRAS (byte
+
+22) and tRC (byte 23). These values come from the DDR3 SDRAM
+datasheet.
+
+Bits 7-4 Bits 3-0
+tRC Most Significant Nibble tRAS Most Significant Nibble
+See Byte 23 description See Byte 22 description
+
+SPD Field #21: “Upper Nibbles for ty 5g and tg” Definition from JEDEC
+DDR3 SPD Specification
+t C K, both C L and C W L requirement settings need to be fulfilled.
+three. Reserved settings are not allowed.
+S P D Field number twenty: "Minimum Row Precharge Delay Time (t R P min)" Micron M T forty one J two five six M eight Datasheet
+S P D Field zero through fifteen: Upper Nibble of t R A S and t R C
+This field is the Most Significant nibble, which consists of four bits, for both the Active to Precharge Delay (t R A S min) and Active to Active Refresh Delay (t R C min). See the next two sections for how to determine the t R A S min and t R C min values and put the upper nibble of those results into this field.
+
+The table shows Byte (Dec), Byte (Hex), Field Name, Typ. Value, and Definition.
+Byte (Dec) is twenty one. Byte (Hex) is zero hexadecimal fifteen. Field Name is Upper Nibble of t R A S and t R C. Typ. Value is zero hexadecimal eleven. Definition is three dots.
+
+Byte twenty one: Upper Nibbles for t R A S and t R C
+This byte defines the most significant nibbles for the values of t R A S (byte twenty two) and t R C (byte twenty three). These values come from the D D R three S D R A M datasheet.
+
+Bits seven through four are t R C Most Significant Nibble. See Byte twenty three description.
+Bits three through zero are t R A S Most Significant Nibble. See Byte twenty two description.
+
+S P D Field number twenty one: "Upper Nibbles for t R A S and t R C" Definition from J E D E C D D R three S P D Specification
+This page delves into the Serial Presence Detect, or S P D, standard, specifically focusing on fields related to DRAM timing parameters. It highlights the requirement that certain timing parameters, denoted by the Greek letter tau, such as CAS Latency, or C L, and C W L, Column Write Latency, must be met. A note indicates that reserved settings are not permitted.
+
+The discussion then moves to S P D Field number twenty, which is designated for the "Minimum Row Precharge Delay Time," represented as t RP min. This field is derived from a Micron MT41J256M8 Datasheet.
+
+A significant portion of the page is dedicated to S P D Field zero through fifteen, which defines the "Upper Nibble of t RAS and t RC." This field, comprising four bits, serves as the most significant nibble for both the Active to Precharge Delay, t RAS min, and the Active to Active/Refresh Delay, t RC min. The document directs the reader to subsequent sections for determining the precise values of t RAS min and t RC min, and then instructs to place the upper nibble of these results into this specific S P D field.
+
+A table is presented that maps a decimal byte index to its hexadecimal representation, a field name, a typical value, and a definition. Byte index twenty one, represented in hexadecimal as zero x fifteen, is associated with the field name "Upper Nibble of t RAS & t RC." The typical value for this field is shown as zero x eleven, with the definition indicating a placeholder for the actual definition.
+
+Following the table, a clarification is provided for Byte twenty one, which specifically pertains to the "Upper Nibbles for t RAS and t RC." This byte is crucial as it defines the most significant nibbles for the t RAS timing parameter, which corresponds to Byte twenty two, and the t RC timing parameter, associated with Byte twenty three. The values for these parameters are sourced from the DDR3 S D R A M Datasheet.
+
+The page further details the bit allocation within these nibbles. Bits seven through four are designated for "t RC Most Significant Nibble," and the description for this portion can be found by referring to Byte twenty two. Conversely, bits three through zero are allocated for the "t RAS Most Significant Nibble," with its description available by referencing Byte twenty three.
+
+Finally, S P D Field number twenty one is identified as defining the "Upper Nibbles for t RAS and t RC," with its definition originating from the J E D E C DDR3 S P D Specification. This systematic breakdown illustrates how critical timing information for memory operation is encoded within the S P D structure, enabling system initialization and configuration of memory controllers.

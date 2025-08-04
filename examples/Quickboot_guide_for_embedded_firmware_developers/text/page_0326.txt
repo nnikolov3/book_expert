@@ -1,0 +1,80 @@
+sequential, so the next higher supported WR value must be used in some
+cases. Usage example for DDR3-1333G operating at DDR3-1333:
+
+tCKactual = 1.5 ns
+
+WRdesired = 15/1.5 = 10
+
+WRactual = max(10, 10) = 10
+
+Table 56 Electrical Characteristics and AC Operating Conditions
+
+(Continued) Notes 1-8 apply to the entire table
+
+DDR3-800 DDR3-1066
+
+DDR3-1333 DDR3-1600
+
+Parameter Symbol Units
+Min Max Min Max Min Max Min Max
+C05, DOS differential READ "BRST 0.3 Mate 0.3 Mote 0.3 Mote 0.3 Mote CK
+postamble 27 27 27 27
+Command and Address Timings
+LFLL locking tame "OLLK 512 - 512 - 512 - 512 _ Ll
+CTEL, CMD, Base 15 200 - i125 - 65 - 45 - ps
+ABDR=etup  Lpecliication) ACI7S 375 300 240 220
+to CK, CK# Vess@1 V/s > » i "HPP
+CTRL, CMD, Base ns 350 - - - - ps
+ADDR setup [Specification] AC150 0h 4 40 20
+to CK, CK# Visr@1 ¥/ ns . } 22 = 3 - 3 } H
+CTRL, CMD, Hase ” 275 - 200 - 140 - 120 - ps
+ADDR setup [Specification]
+DC100 175 - BO - 240 - 330 - i}
+to CK, CK# Var 1 Vins
+Minimum CTRL, CMD, ADDR
+: 1 Qe - F840 - CELE - S60 - ps
+pulse width
+ACTIVATE to int | READ
+shale w ‘RCD See Speed Bin Tables (page 72) for "RCD ns
+
+WEITE delay
+Sequential, so the next higher supported W R value must be used in some cases. Usage example for D D R three-one three three three G operating at D D R three-one three three three:
+
+t C K actual is equal to one point five nanoseconds.
+
+W Rdesired is equal to fifteen divided by one point five is equal to ten.
+
+W Ractual is equal to max, open parenthesis, ten, comma, ten, close parenthesis, is equal to ten.
+
+Table fifty six Electrical Characteristics and A C Operating Conditions (Continued) Notes one through eight apply to the entire table.
+
+The table shows parameters, symbols, and electrical characteristics and A C operating conditions for D D R three-eight hundred, D D R three-one zero six six, D D R three-one three three three, and D D R three-one six hundred, with corresponding units.
+
+For the parameter D Q S, D Q S#, differential R E A D postamble, the symbol is R P S T. For D D R three-eight hundred, the minimum value is zero point three, and the maximum is note twenty seven. For D D R three-one zero six six, the minimum is zero point three, and the maximum is note twenty seven. For D D R three-one three three three, the minimum is zero point three, and the maximum is note twenty seven. For D D R three-one six hundred, the maximum unit is C K.
+
+Under Command and Address Timings:
+
+For D L L locking time, the symbol is D L L K. For D D R three-eight hundred, the value is five hundred twelve. For D D R three-one zero six six, the value is five hundred twelve. For D D R three-one three three three, the value is five hundred twelve. For D D R three-one six hundred, the unit is C K.
+
+For C T R L, C M D, A D D R setup to C K, C K hash, the base value is specification. The voltage reference is V r e f at one V per nanosecond. For D D R three-eight hundred, the parameter is I S, and the value is two hundred. For D D R three-one zero six six, the value is one hundred twenty five. For D D R three-one three three three, the value is sixty five. For D D R three-one six hundred, the value is forty five, and the unit is P S.
+
+For C T R L, C M D, A D D R setup to C K, C K hash, the base value is specification. The voltage reference is V r e f at one V per nanosecond. For D D R three-eight hundred, the parameter is A C one hundred seventy five, and the minimum value is three hundred seventy five, and the maximum is three hundred. For D D R three-one zero six six, the minimum is two hundred forty. For D D R three-one three three three, the minimum is two hundred twenty, and the unit is P S.
+
+For C T R L, C M D, A D D R setup to C K, C K hash, the base value is specification. The voltage reference is V r e f at one V per nanosecond. For D D R three-eight hundred, the parameter is I S, and the value is three hundred fifty. For D D R three-one zero six six, the value is absent. For D D R three-one three three three, the value is absent. For D D R three-one six hundred, the unit is P S.
+
+For C T R L, C M D, A D D R setup to C K, C K hash, the base value is specification. The voltage reference is V r e f at one V per nanosecond. For D D R three-eight hundred, the parameter is A C one hundred fifty, and the minimum value is five hundred, and the maximum is four hundred twenty five. For D D R three-one zero six six, the minimum is three hundred forty. For D D R three-one three three three, the minimum is three hundred twenty, and the unit is P.
+
+For C T R L, C M D, A D D R setup to C K, C K hash, the base value is specification. The voltage reference is V r e f at one V per nanosecond. For D D R three-eight hundred, the parameter is I H, and the value is two hundred seventy five. For D D R three-one zero six six, the value is two hundred. For D D R three-one three three three, the value is one hundred forty. For D D R three-one six hundred, the unit is P S.
+
+For C T R L, C M D, A D D R setup to C K, C K hash, the base value is specification. The voltage reference is V r e f at one V per nanosecond. For D D R three-eight hundred, the parameter is D C one hundred, and the minimum value is three hundred seventy five, and the maximum is three hundred. For D D R three-one zero six six, the minimum is two hundred forty. For D D R three-one three three three, the minimum is two hundred twenty, and the unit is P S.
+
+For Minimum C T R L, C M D, A D D R pulse width, the parameter is I P W. For D D R three-eight hundred, the minimum value is nine hundred, and the maximum is seven hundred eighty. For D D R three-one zero six six, the minimum is six hundred twenty. For D D R three-one three three three, the minimum is five hundred sixty, and the unit is P S.
+
+For A C T I V A T E to internal R E A D or W R I T E delay, the parameter is R C D. See Speed Bin Tables, page seventy two, for R C D. The unit is N S.
+The provided text discusses a timing calculation scenario in the context of DDR memory. It explains that a sequential operation necessitates the selection of the next higher supported WR value. An example is given for DDR3-1333G operating at DDR3-1333 speeds, where the actual clock cycle time, tCKactual, is one point five nanoseconds. This leads to a calculation of WRdesired, which is derived by dividing fifteen by one point five, resulting in ten. Subsequently, WRactual is determined by taking the maximum of ten and ten, yielding ten.
+
+The subsequent table, titled "Table Fifty-six Electrical Characteristics and AC Operating Conditions (Continued)", presents a detailed breakdown of timing parameters for various DDR3 memory speeds, specifically DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600. The table includes parameters such as DQS, DQS# differential READ postamble, identified by the symbol 'RPST', with minimum and maximum values specified in nanoseconds, or as notes indicating other dependencies. For instance, the minimum value for 'RPST' is zero point three nanoseconds, and the maximum is noted as twenty-seven, implying a dependency on other factors or speed bins for this parameter.
+
+Under the "Command and Address Timings" section, several critical timing parameters are enumerated. The DLL locking time is shown to be five hundred twelve clock cycles across all specified DDR3 speeds. Following this, we see timing specifications for the setup and hold times of control, command, and address signals relative to the clock and its complement. For example, the 'IS' parameter, representing the setup time for address and command signals to the clock, exhibits variations across the different DDR3 standards. For DDR3-1066, the minimum 'IS' is one hundred twenty-five picoseconds, while for DDR3-1333, it is sixty-five picoseconds. Similarly, the 'IH' parameter, representing the hold time, also varies. The minimum 'IH' for DDR3-1066 is two hundred picoseconds, and for DDR3-1333, it is one hundred forty picoseconds.
+
+The table also details the minimum pulse width for control, command, and address signals, denoted by 'IPW', and the delay from an ACTIVATE command to an internal READ or WRITE command, referred to as 'RCD'. The 'IPW' parameter shows minimum values ranging from nine hundred picoseconds for DDR3-800 down to six hundred twenty picoseconds for DDR3-1333. For the 'RCD' parameter, the table indicates that users should refer to Speed Bin Tables, with a unit of nanoseconds. These parameters are fundamental to ensuring reliable data transfer and signal integrity in high-speed memory systems, reflecting the complex interplay between clocking, data strobes, command signals, and memory controller operations. The variations in these timings across different memory speeds highlight the design trade-offs and engineering challenges involved in achieving higher data rates.

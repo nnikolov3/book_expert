@@ -1,0 +1,52 @@
+unable to cover all the PEI modules. Through further reduction in size of PEI,
+
+more improvement is possible.
+
+Intel SpeedStep® Technology Enabled Early
+
+Intel SpeedStep® technology is a power savings technology used to limit the
+processor speed based on current software demand on the system. When the
+system is in heavy use, the processor is run at full speed. At idle and near
+idle, the system is run at slower speed “steps.”
+
+The BIOS role in initialization of Intel SpeedStep technology includes
+detection of Intel SpeedStep technology capabilities, initialization of the
+processor speed for all processor threads, and advertisement of Intel
+SpeedStep capabilities for the operating system. The above “initialization of
+all processor threads” is typically to the “power on” speed, which is normally
+equal to the lowest supported speed. This is to ensure increased stability
+during the boot process. The operating system will then enable the faster
+steps.
+
+To increase boot speed, the BIOS, instead of enabling the “power on”
+feature of Intel SpeedStep® technology, can enable the highest speed setting.
+This not only increases the speed of the processor during a BIOS post, but
+
+also increases the speed of loading the operating system.
+
+BDS Phase Optimization
+
+The framework BIOS BDS phase normally looks for potential boot devices
+from hard drives, CD-ROM drives, floppy drives, and network. On the
+
+investigation platform, the requirements were for boot from hard disk. This
+unable to cover all the P E I modules. Through further reduction in size of P E I, more improvement is possible.
+
+Intel SpeedStep Technology Enabled Early
+
+Intel SpeedStep technology is a power savings technology used to limit the processor speed based on current software demand on the system. When the system is in heavy use, the processor is run at full speed. At idle and near idle, the system is run at slower speed "steps."
+
+The B I O S role in initialization of Intel SpeedStep technology includes detection of Intel SpeedStep technology capabilities, initialization of the processor speed for all processor threads, and advertisement of Intel SpeedStep capabilities for the operating system. The above "initialization of all processor threads" is typically to the "power on" speed, which is normally equal to the lowest supported speed. This is to ensure increased stability during the boot process. The operating system will then enable the faster steps.
+
+To increase boot speed, the B I O S, instead of enabling the "power on" feature of Intel SpeedStep technology, can enable the highest speed setting. This not only increases the speed of the processor during a B I O S post, but also increases the speed of loading the operating system.
+
+BDS Phase Optimization
+
+The framework B I O S BDS phase normally looks for potential boot devices from hard drives, C D R O M drives, floppy drives, and network. On the investigation platform, the requirements were for boot from hard disk. This
+Intel SpeedStep technology is a dynamic power management feature designed to conserve energy by adjusting processor clock speeds and voltage in response to the system's workload. The core principle is to reduce power consumption during periods of low demand by lowering the processor's operating frequency and voltage, and conversely, to increase performance by boosting these parameters when the system is under heavy load. This adaptive approach enhances energy efficiency, leading to extended battery life in mobile devices and reduced heat generation in all systems.
+
+The integration of Intel SpeedStep into the system's initialization process, specifically within the Basic Input Output System or B I O S, plays a crucial role in optimizing performance from the earliest stages of the computing cycle. During the B I O S initialization, the system performs a sequence of checks and configurations known as the Power On Self Test, or P O S T. Intel SpeedStep capabilities are detected and initialized during this phase to ensure that all processor threads are properly accounted for and that the operating system can effectively leverage this power management feature. The initial state set during B I O S initialization typically defaults to the lowest supported processor speed for maximum stability during the boot process. Subsequently, the operating system takes over, dynamically managing the processor speed based on the real-time demands of running applications and the user's current activity.
+
+The B I O S also has the capability to directly enable the "power on" feature of Intel SpeedStep technology. This allows the processor to operate at its highest speed setting immediately after the B I O S post, rather than waiting for the operating system to load and take control. This mechanism is employed to accelerate the boot process, as a higher processor clock speed can expedite the loading of the operating system. Therefore, by enabling Intel SpeedStep at the B I O S level, the system can achieve faster boot times while still retaining the underlying power management capabilities for subsequent operation.
+
+The B I O S initialization sequence includes a phase known as the B D S phase, which stands for Boot Device Selection. During this phase, the B I O S systematically searches for a bootable device to load the operating system. The process typically involves scanning various storage interfaces and devices, such as hard drives, C D R O M drives, floppy drives, and network interfaces. The specific order and methods of device investigation are configurable, allowing the system to prioritize certain boot media. In the context described, the investigation platform's requirements specified booting from a hard disk, indicating that the B D S phase was configured to prioritize the hard disk drive as the primary boot device. This systematic approach ensures that the system can successfully locate and initiate the operating system's loading sequence, thereby completing the boot process.

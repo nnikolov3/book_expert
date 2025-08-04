@@ -1,0 +1,51 @@
+system itself.
+
+Master Boot Record
+
+Booting a legacy OS (non-EFI) consists of locating the right master boot
+record (MBR) on one of a potentially large number of bootable media.
+
+On each disk an MBR may be sought by looking at LBA Sector 0 for
+signature OxAAS55 in the last two of the 512 bytes. In the master boot record,
+there are four 16-byte partition tables specifying whether there are any
+partitions and, if so, which are active.
+
+The BIOS can choose any of the active primary partitions in the table for
+the drive and discover whether any of them are bootable. This bootable
+partition would then be listed in the boot target list, which can then be
+
+prioritized.
+
+Loading the Legacy OS Loader
+
+There are 440 bytes of executable code in the winning MBR that can be
+loaded into 0x7CO00. Depending on the next step, that code can load the
+volume boot record (VBR) code from that partition into location 0x7CO00
+again and execute it. At some point down the chain a real OS loader is
+loaded, jumping to that location while the processor is in 16-bit Real Mode,
+
+and starts executing the OS loader.
+
+Legacy BIOS to OS Handoff Requirements
+
+The legacy OS loader relies on legacy BIOS services, including but not
+system itself.
+
+Master Boot Record
+
+Booting a legacy O S (non E F I) consists of locating the right master boot record M B R on one of a potentially large number of bootable media. On each disk an M B R may be sought by looking at L B A Sector zero for signature zero X A A five five in the last two of the five hundred twelve bytes. In the master boot record, there are four sixteen byte partition tables specifying whether there are any partitions, and if so, which are active. The B I O S can choose any of the active primary partitions in the table for the drive and discover whether any of them are bootable. This bootable partition would then be listed in the boot target list, which can then be prioritized.
+
+Loading the Legacy OS Loader
+
+There are four hundred forty bytes of executable code in the winning M B R that can be loaded into zero X seven C zero zero. Depending on the next step, that code can load the volume boot record V B R code from that partition into location zero X seven C zero zero again and execute it. At some point down the chain a real O S loader is loaded, jumping to that location while the processor is in sixteen bit Real Mode, and starts executing the O S loader.
+
+Legacy BIOS to OS Handoff Requirements
+
+The legacy O S loader relies on legacy B I O S services, including but not
+The fundamental process of initializing an operating system, particularly in legacy architectures, is broken down into distinct stages. The initial phase, often referred to as the system itself, involves the basic operational readiness of the hardware and firmware.
+
+The Master Boot Record, or M B R, is a critical component in the boot process of legacy operating systems. It resides at the very beginning of a bootable storage device, typically on the first sector, which is L B A Sector zero. The M B R contains the primary boot loader, partition table information, and a boot signature. Specifically, this signature is hexadecimal A A five five, which the system checks to validate the M B R's integrity. The partition table within the M B R is structured to describe up to four primary partitions on the disk. For each partition, it specifies whether it is active or not, meaning it can be designated as the bootable partition. The basic input output system, or B I O S, plays a crucial role here; it scans these partitions to identify bootable ones. The user or the system configuration can then select a preferred bootable partition, which is added to a boot target list and prioritized for execution.
+
+Following the identification of a bootable partition, the next stage is Loading the Legacy O S Loader. A specific amount of executable code, amounting to four hundred forty bytes in this context, is loaded from the bootable partition into a memory address designated as zero X C zero zero. This code is part of what's known as the volume boot record, or V B R. Once loaded, this V B R code is executed. The execution flow then continues, potentially calling a real O S loader. This loader might reside at a different location on the disk, typically within the selected partition. The processor, initially operating in sixteen bit R E A L Mode, begins executing this loader, initiating the transition towards the operating system's full initialization.
+
+The Legacy B I O S to O S Handoff Requirements detail the crucial transition from the firmware's control to the operating system's control. The legacy O S loader relies on services provided by the legacy B I O S. This handoff involves the B I O S transferring control and system resources to the O S loader, which then takes over the responsibility for further system setup, such as initializing hardware devices and loading the core operating system kernel.

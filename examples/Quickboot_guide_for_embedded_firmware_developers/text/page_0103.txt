@@ -1,0 +1,50 @@
+needs to initialize the SATA controller and attached SATA devices as stated
+
+in the previous sections, with the following exceptions:
+
+—The system BIOS does not need to initialize DMA mode for hard disk
+drives (HDDs) discovered behind the SATA controller when in
+RAID mode. The RAID option ROM will provide the initialization.
+
+—SATA HDDs discovered by the system BIOS behind the SATA
+controller in RAID mode must not be added to the hard drive count
+at 40h:75h. The RAID option ROM will enumerate those drives
+and update the 40h:75h value accordingly. Updating the drive
+count at 40h:75h by the BIOS will make it appear that more drives
+
+are attached to the system than are actually available.
+
+—System BIOS must not install INT 13h support for the SATA HDD
+devices discovered, nor may it treat such devices as BAID (BIOS-
+Aware Initial Program Load) devices, as the RAID option ROM
+implements the necessary INT 13h support for them.
+
+—ATAPI devices attached to the SATA controller must be under the full
+control of the system BIOS and treated as BAID as they are in non-
+RAID mode.
+
+—The system BIOS must load the RAID option ROM when the
+controller’s SCC (D31:F2:0Ah) returns 04h and
+VenderID/DevicelD match that of PCHR RAID SKU (refer to the
+PCH EDS or EDS specification update for DID/VID information).
+
+RAID Option ROM
+The Intel® Rapid Storage Technology RAID option ROM is a PnP option
+Needs to initialize the S A T A controller and attached S A T A devices as stated in the previous sections, with the following exceptions.
+
+The system B I O S does not need to initialize D M A mode for hard disk drives, H D Ds, discovered behind the S A T A controller when in R A I D mode. The R A I D option R O M will provide the initialization. S A T A H D Ds discovered by the system B I O S behind the S A T A controller in R A I D mode must not be added to the hard drive count at hexadecimal forty colon seventy five. The R A I D option R O M will enumerate those drives and update the hexadecimal forty colon seventy five value accordingly. Updating the drive count at hexadecimal forty colon seventy five by the B I O S will make it appear that more drives are attached to the system than are actually available.
+
+The system B I O S must not install interrupt thirteen H support for the S A T A H D D devices discovered, nor may it treat such devices as B A I D, B I O S Aware Initial Program Load, devices, as the R A I D option R O M implements the necessary interrupt thirteen H support for them. A T A P I devices attached to the S A T A controller must be under the full control of the system B I O S and treated as B A I D as they are in non R A I D mode. The system B I O S must load the R A I D option R O M when the controller’s S C C, D thirty one colon F two colon hexadecimal zero A, returns hexadecimal zero four and Vendor I D slash Device I D match that of P C H R R A I D S K U. Refer to the P C H E D S or E D S specification update for D I D slash V I D information.
+
+R A I D Option R O M. The Intel Rapid Storage Technology R A I D option R O M is a P n P option.
+The foundational principles elucidated here pertain to the intricate dance between the system B I O S, or Basic Input Output System, and peripheral controllers, specifically S A T A, particularly when operating within a R A I D, or Redundant Array of Independent Disks, configuration. The overarching theme is the delegation of control and responsibility from the general-purpose B I O S to specialized firmware, embodied in a R A I D option R O M, or Read Only Memory, for complex hardware subsystems.
+
+Firstly, a fundamental principle of system initialization involves the B I O S configuring attached S A T A controllers and their associated devices. However, a significant deviation occurs when H D Ds, or Hard Disk Drives, are configured for R A I D operation. In this scenario, the B I O S explicitly abstains from initializing D M A, or Direct Memory Access, mode for these R A I D member drives. The rationale for this lies in efficiency and functional separation. D M A allows direct data transfers between peripherals and system Ram, bypassing the C P U, thereby enhancing throughput. For R A I D arrays, this D M A initialization responsibility is entirely shifted to the R A I D option R O M. This reflects a design where the R A I D controller, driven by its specialized R O M, possesses a more granular and optimized understanding of the array's data pathways, making it the authoritative entity for D M A setup to ensure coherent and high performance data access across the array's constituent drives.
+
+Secondly, the enumeration of S A T A H D Ds also undergoes a critical reassignment of duties in R A I D mode. The system B I O S must consciously avoid adding R A I D-managed H D Ds to its conventional hard drive count, typically stored at a specific B I O S data area memory location such as hexadecimal forty seventy five. Instead, the R A I D option R O M assumes sole responsibility for enumerating these drives and subsequently updating the count at that same memory address. This is crucial for maintaining data consistency and preventing logical conflicts within the system's hardware inventory. If the B I O S were to independently enumerate the physical drives within a R A I D array, it would lead to an inflated or incorrect drive count from the perspective of the operating system, which expects to see the logical R A I D volumes presented by the controller, not the underlying physical components. This separation ensures that the system presents a unified and accurate view of available storage resources.
+
+Thirdly, the principle of legacy interface support is also subject to modification. The B I O S is explicitly instructed not to install or provide I N T thirteen h support for S A T A H D Ds operating under R A I D. Furthermore, these drives should not be classified or treated as B A I D, which stands for B I O S Aware Initial Program Load, devices. I N T thirteen h is a historical B I O S service used for basic disk I O operations, particularly relevant during the initial boot phase before the operating system takes full control. In a R A I D context, relying on the generic B I O S I N T thirteen h handler would bypass the R A I D array's logical structure, potentially leading to data corruption or an inability to access the R A I D volume. Therefore, the R A I D option R O M is mandated to provide its own I N T thirteen h implementation, which understands and manages the complexities of the R A I D array, translating I O requests to the physical drives while upholding the R A I D data organization and integrity. By not treating them as B A I D, the system explicitly acknowledges that the R A I D option R O M is the primary boot-aware interface for these aggregated storage devices.
+
+A distinct treatment is reserved for A T A P I, or A T A Packet Interface, devices connected to the S A T A controller. These devices, which typically include optical drives, are to remain under the full control of the system B I O S and are indeed treated as B A I D devices, but only when they are not participating in a R A I D array. This emphasizes a clear delineation: the specialized R A I D management provided by the option R O M applies exclusively to the R A I D member drives, while other compatible S A T A peripherals revert to standard B I O S management. This modularity ensures that the unique requirements of R A I D are met without disrupting the conventional operation of other devices on the same bus.
+
+Finally, the loading mechanism for the R A I D option R O M itself is governed by a stringent set of conditions, illustrating robust hardware detection and feature enablement. The system B I O S will only load this R O M if two specific criteria are met: first, the controller's S C C, or Sub Class Code, register located at the P C I E, or Peripheral Component Interconnect Express, configuration space address D thirty one colon F two colon zero A h, returns a value of hexadecimal zero four h, which typically signifies an A H C I controller operating in R A I D mode. Second, the device's Vendor I D and Device I D must precisely match those associated with the P C H R A I D S K U, or Stock Keeping Unit, indicating compatibility with the Platform Controller Hub's specific R A I D capabilities. This meticulous validation process is paramount for system stability, ensuring that the R A I D firmware is loaded only when the underlying hardware is present and correctly configured to avoid system conflicts, improper resource allocation, or boot failures. The designation of Intel's Rapid Storage Technology R A I D option R O M as a P n P, or Plug and Play, option signifies its ability to be automatically discovered and configured by the system, streamlining the setup and management of R A I D arrays within a modern computing environment.

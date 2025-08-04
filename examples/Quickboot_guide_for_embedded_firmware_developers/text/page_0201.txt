@@ -1,0 +1,49 @@
+IDE Mode
+
+IDE mode is selected by programming the SMS field, D31:F2:Reg 90h[7:6]
+to 00. In this mode, the SATA controller is set up to use the ATA/IDE
+programming interface. In this mode, the 6/4 SATA ports are controlled by
+two SATA functions. One function routes up to four SATA ports, D31:F2,
+and the other routes up to two SATA ports, D31:F5 (Desktop SKUs only). In
+IDE mode, the Sub Class Code, D31:F2:Reg OAh and D31:F5:Reg OAh will
+be set to 01h. This mode may also be referred to as compatibility mode as it
+
+does not have any special OS driver requirements.
+
+AHCI Mode
+
+AHCI mode is selected by programming the SMS field, D31:F2:Reg
+90h[7:6], to 01b. In this mode, the SATA controller is set up to use the AHCI
+programming interface. The six SATA ports are controlled by a single SATA
+function, D31:F2. In AHCI mode the Sub Class Code, D31:F2:Reg 0Ah, will
+
+be set to 06h. This mode does require specific OS driver support.
+
+RAID Mode
+
+RAID mode is selected by programming the SMS field, D31:F2:Reg 90h[7:6]
+to 10b. In this mode, the SATA controller is set up to use the AHCI
+programming interface. The 6/4 SATA ports are controlled by a single SATA
+function, D31:F2. In RAID mode, the Sub Class Code, D31:F2:Reg 0Ah, will
+be set to 04h. This mode does require specific OS driver support.
+
+In order for the RAID option ROM to access all 6/4 SATA ports, the
+RAID option ROM enables and uses the AHCI programming interface by
+setting the AE bit, ABAR 04h[31]. One consequence is that all register
+settings applicable to AHCI mode set by the BIOS must be set in RAID as
+well. The other consequence is that the BIOS is required to provide AHCI
+I D E Mode
+I D E mode is selected by programming the S M S field, D thirty one F two Colon R e g ninety h brackets seven Colon six to zero zero. In this mode, the S A T A controller is set up to use the A T A slash I D E programming interface. In this mode, the six slash four S A T A ports are controlled by two S A T A functions. One function routes up to four S A T A ports, D thirty one F two, And the other routes up to two S A T A ports, D thirty one F five ( D e s k t o p S K U s only). In I D E mode, the S u b C l a s s C o d e, D thirty one F two Colon R e g zero A h and D thirty one F five Colon R e g zero A h will be set to zero one h. This mode may also be referred to as compatibility mode as it does not have any special O S driver requirements.
+
+A H C I Mode
+A H C I mode is selected by programming the S M S field, D thirty one F two Colon R e g ninety h brackets seven Colon six to zero one b. In this mode, the S A T A controller is set up to use the A H C I programming interface. The six S A T A ports are controlled by a single S A T A function, D thirty one F two. In A H C I mode the S u b C l a s s C o d e, D thirty one F two Colon R e g zero A h, will be set to zero six h. This mode does require specific O S driver support.
+
+R A I D Mode
+R A I D mode is selected by programming the S M S field, D thirty one F two Colon R e g ninety h brackets seven Colon six to ten b. In this mode, the S A T A controller is set up to use the A H C I programming interface. The six slash four S A T A ports are controlled by a single S A T A function, D thirty one F two. In R A I D mode, the S u b C l a s s C o d e, D thirty one F two Colon R e g zero A h, will be set to zero four h. This mode does require specific O S driver support. In order for the R A I D option R O M to access all six S A T A ports, the R A I D option R O M enables And uses the A H C I programming interface by setting the A E bit, A B A R zero four h brackets thirty one. One consequence is that all register settings applicable to A H C I mode set by the B I O S must be set in R A I D as well. The other consequence is that the B I O S is required to provide A H C I
+The page details configuration modes for a SATA controller, specifically focusing on IDE, AHCI, and RAID modes. Each mode is characterized by how the controller is programmed, particularly through specific register fields and their corresponding values, which dictate the controller's functionality and how it presents storage devices to the system.
+
+In IDE mode, the SATA controller is configured by programming the S M S field, identified as D three one F two R eg nine zero h seven through six, to the value zero zero. This mode enables the controller to operate using the A T A I D E programming interface. Under this configuration, the controller supports six or four S A T A ports. A key distinction of IDE mode is its functional routing: one function path accommodates up to four S A T A ports, identified as D three one F two, and another path, specific to D E S K T O P S K U s only, handles two S A T A ports, D three one F two. Furthermore, in IDE mode, the Sub Class Code, accessed via D three one F two R eg zero A h, is set to zero one h. A significant characteristic of this mode is its relaxed compatibility requirements, meaning it does not necessitate specialized operating system driver support.
+
+AHCI mode, in contrast, is selected by programming the same S M S field, D three one F two R eg nine zero h seven through six, to the value zero one b. This mode configures the S A T A controller to utilize the AHCI programming interface. Here, the controller manages six S A T A ports, all controlled by a single S A T A function, identified as D three one F two. The Sub Class Code for AHCI mode, found at D three one F two R eg zero A h, is set to zero six h. Crucially, AHCI mode requires specific operating system driver support to function correctly.
+
+RAID mode offers advanced storage management capabilities. This mode is activated by programming the S M S field, D three one F two R eg nine zero h seven through six, to the value one zero b. In RAID mode, the S A T A controller is configured to use the AHCI programming interface, managing either six or four S A T A ports, which are controlled by a single S A T A function, D three one F two. The Sub Class Code for RAID mode, at D three one F two R eg zero A h, is set to zero four h, and this mode also demands specific operating system driver support. An additional consideration for RAID mode is its interaction with the R A I D option R O M. To enable access to all six S A T A ports, the R A I D option R O M must be utilized, and this involves setting the A E bit and configuring the A B A R zero four h bracket thirty one. One consequence of this setup is that all register settings, which are inherently configured for AHCI mode by the BIOS, must be subsequently adjusted to operate in R A I D configuration. Therefore, the BIOS is a prerequisite for providing AHCI functionality, which then serves as the foundation for RAID operations. This implies a hierarchical dependency where the fundamental AHCI interface is established first, and then R A I D specific configurations are layered upon it.

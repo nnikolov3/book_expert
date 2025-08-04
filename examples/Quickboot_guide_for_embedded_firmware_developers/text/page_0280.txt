@@ -1,0 +1,38 @@
+Chapter 13
+Legal Decisions
+
+I go to jail one time for no driver license.
+—Bob Marley
+
+When creating new works of firmware, it is important to consider both the
+incoming license terms (if not starting from scratch), and the distribution
+license terms and conditions. Examples include proprietary BSD and GPL. If
+creating a derivative work, it is important to consider all of this before
+starting the work so that time isn’t wasted developing something that
+someone else may claim later to be his or her private intellectual property
+(IP) or public IP based on association with the original license of the code
+used. As the work progresses, there cannot be ambiguity on the path or
+strategy used; code hygiene and discipline is key.
+
+Often it is difficult for new software to be considered an island, and
+when it is not original, it is important to consider how and if the new software
+is statically or dynamically linked to older code in the final design. Beyond
+the technical challenge of combining old and new code, legally it can be very
+confusing. Developers are highly encouraged to get professional legal
+assistance from a quality source that has experience in software and patents.
+
+Of course, if someone is in the business for a long time and the
+
+organization or team is steeped in either proprietary or general public license
+Chapter thirteen Legal Decisions
+
+I go to jail one time for no driver license. —Bob Marley
+
+When creating new works of firmware, it is important to consider both the incoming license terms (if not starting from scratch) and the distribution license terms and conditions. Examples include proprietary B S D and G P L. If creating a derivative work, it is important to consider all of this before starting the work so that time isn't wasted developing something that someone else may claim later to be his or her private intellectual property (I P) or public I P based on association with the original license of the code used. As the work progresses, there cannot be ambiguity on the path or strategy used; code hygiene and discipline is key.
+
+Often it is difficult for new software to be considered an island, and when it is not original, it is important to consider how and if the new software is statically or dynamically linked to older code in the final design. Beyond the technical challenge of combining old and new code, legally it can be very confusing. Developers are highly encouraged to get professional legal assistance from a quality source that has experience in software and patents. Of course, if someone is in the business for a long time and the organization or team is steeped in either proprietary or general public license
+This chapter delves into the critical aspect of legal decisions when developing new firmware. A foundational principle discussed is the paramount importance of thoroughly understanding and adhering to incoming license terms, especially when not building from scratch. The text highlights various license types, citing proprietary licenses, the B S D license, and the G P L as examples.
+
+A key technical and legal consideration is the concept of derivative works. When creating a derivative work, developers must meticulously assess all existing code before commencing new development. This diligence prevents wasted effort on features or functionalities that may already be covered by someone else's intellectual property, specifically their private intellectual property or public I P secured by an associated original license. The text emphasizes that as development progresses, maintaining clarity on the lineage and licensing of integrated code is crucial to avoid ambiguity. Therefore, code hygiene and disciplined tracking of code origins are identified as essential practices.
+
+The text also addresses the challenges associated with assessing new software, particularly when it's not an entirely novel creation. It stresses the need to evaluate how existing code, whether statically or dynamically linked, influences the design of new software. The technical complexity arises from merging older and newer codebases, which can lead to legal entanglements. Consequently, developers are strongly advised to seek professional legal assistance from sources with expertise in software and patent law to navigate these complexities effectively. This is particularly relevant for organizations or teams with extensive experience in proprietary or general public license environments, as their history can significantly impact the legal landscape of new projects.

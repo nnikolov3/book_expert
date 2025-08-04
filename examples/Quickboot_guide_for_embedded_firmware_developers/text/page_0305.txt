@@ -1,0 +1,34 @@
+SPD Field 0x06: Nominal Voltage, VDD
+
+Below is an example of a 1.5V part; this will be modified per the components
+
+used in the design.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+6 0x06 Nominal Voltage, Voo C= (0 1.5V only
+
+Byte 6: Module Nominal Voltage, VDD
+
+This byte describes the Voltage Level for DRAM and other components on
+the module such as the register if applicable. Note that SPDs or thermal
+sensor components are on the VDDSPD supply and are not affected by this
+byte. “Operable” is defined as the VDD voltage at which module operation is
+allowed using the performance values programmed in the SPD. “Endurant” is
+defined as the VDD voltage at which the module may be powered without
+adversely affecting the life expectancy or reliability. Further specifications
+will exist to define the amount of time that the “Endurant” voltage can be
+
+applied to the module. Operation is not supported at this voltage.
+S P D Field hex zero six: Nominal Voltage, V D D
+
+Below is an example of a one point five volt part; this will be modified per the components used in the design.
+
+The table shows information about a specific S P D field. The first column, 'Byte (Dec)', indicates the byte number in decimal, which is six. The second column, 'Byte (Hex)', shows the hexadecimal representation of this byte, which is hex zero six. The third column, 'Field Name', labels this field as 'Nominal Voltage, V D D'. The fourth column, 'Typ. Value', provides a typical value of hex zero zero. Finally, the fifth column, 'Definition', states 'one point five volt only'.
+
+Byte six: Module Nominal Voltage, V D D
+
+This byte describes the Voltage Level for D Ram and other components on the module such as the register if applicable. Note that S P Ds or thermal sensor components are on the V D D S P D supply and are not affected by this byte. "Operable" is defined as the V D D voltage at which module operation is allowed using the performance values programmed in the S P D. "Endurant" is defined as the V D D voltage at which the module may be powered without adversely affecting the life expectancy or reliability. Further specifications will exist to define the amount of time that the "Endurant" voltage can be applied to the module. Operation is not supported at this voltage.
+The document details a specific field within the Serial Presence Detect, or S P D, data structure, which is a standard mechanism for memory modules to self-describe their capabilities to a host system. This particular section focuses on S P D Field zero x zero six, designated for the Nominal Voltage, V D D, of the memory component. The table presented illustrates a single byte of data, Byte six, which corresponds to hexadecimal zero x zero six. This byte is identified by the field name "Nominal Voltage, V D D" and has a typical value of zero x zero zero, with a definition indicating "1.5 Volt only".
+
+The accompanying text elaborates on the significance of Byte six. It serves to describe the voltage level, V D D, which is fundamental for the operation of components like D Ram. This information might be stored in a register, if applicable. The text clarifies that the S P D supply and thermal sensor components are not directly affected by this specific byte's content. A critical concept introduced here is "Operable" voltage, defined as the V D D voltage at which the module's operation is permitted, based on the performance values programmed within the S P D. Furthermore, an "Endurant" voltage is defined as the V D D voltage at which the module can be powered without negatively impacting its operational lifespan or overall reliability. The document implies that further specifications would detail the duration for which this "Endurant" voltage can be applied. Importantly, operation at voltages outside these defined parameters is not supported by the module. This byte, therefore, is crucial for system initialization and ensuring the memory module operates within its specified electrical parameters, preventing potential damage or malfunction.

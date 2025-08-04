@@ -1,0 +1,73 @@
+OSD: Weak margin (5.76) for 484 blob text block, but using orientation anyway: 0
+tRP MTB tRP Offset (FTE FTB tRP Use
+(MTB units) (ns) units) (ns) Result (ns)
+105 ETA 0.125 0 0 0.001 13.125 DOR3-1333H
+downbin;
+120 Ox78 0.125 0 0 0.001 15 UDDR3-1333)
+80 Dw 50 0.125 0 0 0.001 10 DDR3-16006
+0 D=5A 0.125 0 0 0.00] 11.25 DDR3-1600H
+10:0 Duh 0.125 0 0 0.001 12.5 DDR3-1600]
+110 O=6E 0.125 0 0 0.00] 13.75 DOR3-1600K;
+105 Duh Sd 0.125 1] 0 0,00] 13.125 DOR3-1600K
+downbin;
+Bh Dx 56 0.125 =a DxCE 0,001 10.7 DDR3-1866]
+95 Dx SF 0.125 105 O97 0.00] 11.77 DDR3I-1B66K
+103 Duby 0.125 -3% 0xDD 0.001 12.84 DDE3-1866L
+112 De 70 0.125 G0 Dub 0.00] 13.91 DORE3I-1866M;
+105 WET 0.125 0 0 0.001 13.125 DDE3-1866M
+downhing
+83 0x53 0.125 “20 Dx 0.001 10.285 DDE3-2133K
+a0 OxGA 0.125 - 30 OxE2 0.001 11.22 DOR3-2133L
+o8 Dé 2 0.125 “9% Dail 0.001 12.155 CDE3-2133M
+105 Dx&T 0.125 -35 0x=DD 0.001 13.09 DOR3-2133N
+Notes:
+
+1. See SPD byte 37.
+
+2. Refer to device datasheet for downbin support details.
+
+Table 53 DDR3-1066 Speed Bins
+The table shows DDR3-1066 Speed Bins with the following columns: tRP (MTB units), MTB (ns), tRP Offset (FTB units)1, FTB (ns), tRP Result (ns), and Use.
+
+The first row has a tRP of one hundred five, MTB units of zero hexadecimal six nine, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of thirteen point one two five nanoseconds, and the Use is D D R three dash one three three three H downbin.
+
+The second row has a tRP of one hundred twenty, MTB units of zero hexadecimal seven eight, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of fifteen nanoseconds, and the Use is D D R three dash one three three three J.
+
+The third row has a tRP of eighty, MTB units of zero hexadecimal five zero, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of ten point five nanoseconds, and the Use is D D R three dash one six zero zero G.
+
+The fourth row has a tRP of ninety, MTB units of zero hexadecimal five A, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of eleven point two five nanoseconds, and the Use is D D R three dash one six zero zero H.
+
+The fifth row has a tRP of one hundred, MTB units of zero hexadecimal six four, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of twelve point five nanoseconds, and the Use is D D R three dash one six zero zero J.
+
+The sixth row has a tRP of one hundred ten, MTB units of zero hexadecimal six E, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of thirteen point seven five nanoseconds, and the Use is D D R three dash one six zero zero K with a subscript two.
+
+The seventh row has a tRP of one hundred five, MTB units of zero hexadecimal six nine, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of thirteen point one two five nanoseconds, and the Use is D D R three dash one six zero zero K downbin.
+
+The eighth row has a tRP of eighty six, MTB units of zero hexadecimal five six, MTB of zero point one two five nanoseconds, tRP Offset of minus fifty, zero hexadecimal C E, FTB of zero point zero zero one nanoseconds, tRP Result of ten point seven nanoseconds, and the Use is D D R three dash one eight six six J.
+
+The ninth row has a tRP of ninety five, MTB units of zero hexadecimal five F, MTB of zero point one two five nanoseconds, tRP Offset of minus one hundred five, zero hexadecimal nine seven, FTB of zero point zero zero one nanoseconds, tRP Result of eleven point seven seven nanoseconds, and the Use is D D R three dash one eight six six K.
+
+The tenth row has a tRP of one hundred three, MTB units of zero hexadecimal six seven, MTB of zero point one two five nanoseconds, tRP Offset of minus thirty five, zero hexadecimal D D, FTB of zero point zero zero one nanoseconds, tRP Result of twelve point eight four nanoseconds, and the Use is D D R three dash one eight six six L.
+
+The eleventh row has a tRP of one hundred twelve, MTB units of zero hexadecimal seven zero, MTB of zero point one two five nanoseconds, tRP Offset of minus ninety, zero hexadecimal A six, FTB of zero point zero zero one nanoseconds, tRP Result of thirteen point nine one nanoseconds, and the Use is D D R three dash one eight six six M with a subscript two.
+
+The twelfth row has a tRP of one hundred five, MTB units of zero hexadecimal six nine, MTB of zero point one two five nanoseconds, tRP Offset of zero, zero, FTB of zero point zero zero one nanoseconds, tRP Result of thirteen point one two five nanoseconds, and the Use is D D R three dash one eight six six M downbin.
+
+The thirteenth row has a tRP of eighty three, MTB units of zero hexadecimal five three, MTB of zero point one two five nanoseconds, tRP Offset of minus ninety, zero hexadecimal A six, FTB of zero point zero zero one nanoseconds, tRP Result of ten point two eight five nanoseconds, and the Use is D D R three dash two one three three K.
+
+The fourteenth row has a tRP of ninety, MTB units of zero hexadecimal five A, MTB of zero point one two five nanoseconds, tRP Offset of minus thirty, zero hexadecimal E two, FTB of zero point zero zero one nanoseconds, tRP Result of eleven point two two nanoseconds, and the Use is D D R three dash two one three three L.
+
+The fifteenth row has a tRP of ninety eight, MTB units of zero hexadecimal six two, MTB of zero point one two five nanoseconds, tRP Offset of minus ninety five, zero hexadecimal A one, FTB of zero point zero zero one nanoseconds, tRP Result of twelve point one five five nanoseconds, and the Use is D D R three dash two one three three M.
+
+The sixteenth row has a tRP of one hundred five, MTB units of zero hexadecimal six nine, MTB of zero point one two five nanoseconds, tRP Offset of minus thirty five, zero hexadecimal D D, FTB of zero point zero zero one nanoseconds, tRP Result of thirteen point zero nine nanoseconds, and the Use is D D R three dash two one three three N.
+
+Notes: One. See S P D byte thirty seven. Two. Refer to device datasheet for downbin support details.
+The table presented details the timing parameters for DDR3 memory modules, specifically focusing on tRP (Precharge Time), MTB (Mean Time Between failures, though often used colloquially for timing measurements in this context), tRP Offset, and FTB (First Touch Burst) latency, along with a calculated tRP Result and its corresponding "Use" classification. These parameters are critical for determining the operational speed and stability of the memory.
+
+Let us dissect the columns. The first column, "tRP (MTB units)", likely refers to the precharge time measured in some units related to the system's base clock or a derived timing metric, possibly representing a count of clock cycles. The adjacent column, "MTB (ns)", indicates the Mean Time Between failures, expressed in nanoseconds. While "MTB" typically denotes reliability metrics, in the context of memory timings, it might be a shorthand or a specific metric used by the manufacturer, perhaps related to signal integrity or timing margins. However, the data shows values like 0.125, which is a common base unit for memory timing measurements, suggesting it could represent a clock period or a fundamental unit of time.
+
+The "tRP Offset (FTB units)" column provides an offset value, also in units potentially tied to the system's timing, which modifies the base tRP. The "FTB (ns)" column specifies the First Touch Burst latency in nanoseconds, representing the delay from when a memory request is initiated until the first bit of data is available. The "tRP Result (ns)" column likely presents the calculated or actual precharge time in nanoseconds, derived from the base tRP, the offset, and potentially the FTB, along with other unstated factors. Finally, the "Use" column categorizes the DDR3 module based on its speed bin, such as DDR3-1333, DDR3-1600, DDR3-1866, and DDR3-2133, with suffixes like H, J, G, K, L, M, N indicating specific performance or feature variations within those speed bins. The "downbin" notation suggests that a module may be rated for a higher speed but is being operated or tested at a lower speed.
+
+The notes provide crucial context. Note 1, "See SPD byte 37", directs the reader to the Serial Presence Detect (SPD) data stored on the memory module. SPD is a small memory chip on a DDR module that holds configuration and timing information. Byte 37 specifically contains encoded timing parameters, and its value is critical for the system's BIOS or firmware to correctly configure the memory. Note 2, "Refer to device datasheet for downbin support details", indicates that the downbin classifications require consulting the specific device's datasheet. This is because downbinning, which is the practice of operating a memory module at a speed lower than its maximum rated speed for improved stability or compatibility, involves specific voltage, timing, and configuration settings outlined in the manufacturer's documentation.
+
+The table, titled "Table 53 DDR3-1066 Speed Bins", presents data points that illustrate the relationship between these timing parameters and the resulting memory speed classification. For instance, a tRP of 105 with an MTB unit of 0.125 nanoseconds and a tRP offset of 0, combined with an FTB of 0.001 nanoseconds, results in a tRP of 13.125 nanoseconds and is used for DDR3-1333H downbin. This highlights how precise timing measurements are mapped to standardized memory speed designations. The variations in tRP offset, such as the negative values seen in later rows (e.g., -50, -105, -35, -90, -35), demonstrate how offsets can fine-tune the timing to meet specific speed bin requirements or to account for variations in manufacturing or operating conditions. The presence of hexadecimal values (e.g., 0x69, 0x78, 0x56, 0x5F, 0x67, 0x70, 0x53, 0x62) for the tRP and tRP Offset columns suggests these values are often stored and interpreted as raw register values or encoded parameters within the memory controller or SPD data. The differing tRP results, ranging from 10.285 nanoseconds for DDR3-2133K up to 13.75 nanoseconds for DDR3-1600K2, underscore the performance scaling achieved by manipulating these fundamental timing parameters. The underlying principle is that faster memory requires shorter, more precisely controlled timing intervals between operations.

@@ -1,0 +1,51 @@
+For JEDEC SPD Specification v1.0, these fields are reserved and should be
+set to 0x00.
+For JEDEC SPD Specification v1.1, some of these fields are defined.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+34-59 Ox22-0x3B Reserved Dx 00 V1.0
+
+For v1.1 of the specification, the following bytes may be programmed.
+
+Byte 34: Fine Offset for SDRAM Minimum Cycle Time (tCKmin)
+
+This byte modifies the calculation of SPD Byte 12 (MTB units) with a fine
+correction using FTB units. The value of tCKmin comes from the SDRAM
+datasheet. This value is a Two’s Complement multiplier for FTB units,
+ranging from +127 to -128. Examples: See SPD byte 12. For Two’s
+Complement encoding, see Relating the MTB and FTB.
+
+Byte 35: Fine Offset for Minimum CAS Latency Time (tAAmin)
+
+This byte modifies the calculation of SPD Byte 16 (MTB units) with a fine
+correction using FTB units. The value of tAAmin comes from the SDRAM
+datasheet. This value is a Two’s Complement multiplier for FTB units,
+ranging from +127 to -128. Examples: See SPD Byte 16. For Two’s
+Complement encoding, see Relating the MTB and FTB.
+
+Byte 36: Fine Offset for Minimum RAS# to CAS# Delay Time (tRCDmin)
+This byte modifies the calculation of SPD Byte 18 (MTB units) with a fine
+correction using FTB units. The value of tRCDmin comes from the SDRAM
+
+datasheet. This value is a Two’s Complement multiplier for FTB units,
+For J E D E C S P D Specification v one point zero, these fields are reserved and should be set to hexadecimal zero zero. For J E D E C S P D Specification v one point one, some of these fields are defined.
+
+The table shows byte ranges, their hexadecimal representations, field names, typical values, and definitions. Specifically, bytes thirty four through fifty nine are represented by hexadecimal twenty two through hexadecimal three B. This range is marked as Reserved with a typical value of hexadecimal zero zero, and its definition is v one point zero.
+
+For v one point one of the specification, the following bytes may be programmed.
+
+Byte thirty four, Fine Offset for S D R A M Minimum Cycle Time, t C K min. This byte modifies the calculation of S P D Byte twelve, M T B units, with a fine correction using F T B units. The value of t C K min comes from the S D R A M datasheet. This value is a Two's Complement multiplier for F T B units, ranging from plus one hundred twenty seven to minus one hundred twenty eight. Examples: See S P D byte twelve. For Two's Complement encoding, see Relating the M T B and F T B.
+
+Byte thirty five, Fine Offset for Minimum C A S Latency Time, t A A min. This byte modifies the calculation of S P D Byte sixteen, M T B units, with a fine correction using F T B units. The value of t A A min comes from the S D R A M datasheet. This value is a Two's Complement multiplier for F T B units, ranging from plus one hundred twenty seven to minus one hundred twenty eight. Examples: See S P D Byte sixteen. For Two's Complement encoding, see Relating the M T B and F T B.
+
+Byte thirty six, Fine Offset for Minimum R A S hash to C A S hash Delay Time, t R C D min. This byte modifies the calculation of S P D Byte eighteen, M T B units, with a fine correction using F T B units. The value of t R C D min comes from the S D R A M datasheet. This value is a Two's Complement multiplier for F T B units.
+The JEDEC Serial Presence Detect, or S P D, specification is a critical mechanism for enabling system memory configuration and initialization. For version one point oh of the specification, certain fields are designated as reserved and are expected to be set to a value of zero, represented numerically as hex zero zero. However, for JEDEC S P D version one point one, a subset of these fields has been defined for specific purposes.
+
+A table presented outlines the mapping of byte ranges to their corresponding fields, typical values, and definitions. Specifically, bytes thirty four through fifty nine are designated as reserved in the context of version one point oh, with a typical value of hex zero zero. For version one point one, these bytes are programmed differently.
+
+Byte thirty four provides a fine offset for the S D R A M Minimum Cycle Time, denoted as t C K min. This byte functions as a modifier for the calculation of S P D byte twelve, often referred to as the Master Timing Bank, or M T B, units. The value of t C K min is sourced from the S D R A M datasheet and is represented as a Two's Complement multiplier for F T B units. This encoding ranges from plus one hundred twenty seven to minus one hundred twenty eight. Further details on this Two's Complement encoding can be found by referencing the section on relating the M T B and F T B.
+
+Similarly, byte thirty five is defined as a fine offset for the Minimum C A S Latency Time, or t A A min. This byte influences the calculation of S P D byte sixteen, which is also part of the M T B units. The value of t A A min is obtained from the S D R A M datasheet and serves as a Two's Complement multiplier for F T B units, with a range similar to t C K min, from plus one hundred twenty seven to minus one hundred twenty eight. Examples and further context for this encoding are available in S P D byte sixteen, under the discussion of relating the M T B and F T B.
+
+Byte thirty six addresses the fine offset for the Minimum R A S hash to C A S hash Delay Time, also known as t R C D min. This byte is instrumental in modifying the calculation of S P D byte eighteen, which is part of the M T B units. The value of t R C D min is derived from the S D R A M datasheet and, like the previous examples, acts as a Two's Complement multiplier for F T B units. This representation facilitates fine-grained adjustments to timing parameters within the memory system.

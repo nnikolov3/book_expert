@@ -1,0 +1,48 @@
+ROM: 0x10. The boot loader must always contain a jump to the initialization
+
+code in these top 16 bytes.
+
+Programmable Interrupt Controller
+
+The Programmable Interrupt Controller (PIC), or 8259, contains two
+cascaded 8259s with sixteen available IRQs. The PIC provides ISA-
+compatible interrupts and can support PCI-based interrupts by mapping the
+PCI interrupt onto the compatible ISA interrupt line. Table 3.2 shows the ISA
+
+compatible IRQ) assignments.
+
+The priority of the interrupts available in the 8259 is defined by the IRQ
+number itself, with 0 being the highest priority. The timer interrupt, or IRQO,
+has the highest.
+
+Advanced Programmable Interrupt Controller
+
+There are two types of Advanced Programmable Interrupt Controllers
+(APIC), the I/OxAPIC, and the Local APIC.
+
+The I/OxAPIC
+
+The I/OxAPIC is contained in the south bridge, or ICH. It expands the
+number of IRQs available and allows an interrupt priority scheme that is
+independent of the interrupt number. For example, interrupt 9 can have a
+higher priority than interrupt 4.
+
+Each IRQ has an associated redirection table entry that can be enabled or
+R O M: hexadecimal one zero. The boot loader must always contain a jump to the initialization code in these top sixteen bytes.
+
+Programmable Interrupt Controller
+
+The Programmable Interrupt Controller, P I C, or eight two five nine, contains two cascaded eight two five nine s with sixteen available I R Qs. The P I C provides I S A compatible interrupts and can support P C I based interrupts by mapping the P C I interrupt onto the compatible I S A interrupt line. Table three point two shows the I S A compatible I R Q assignments. The priority of the interrupts available in the eight two five nine is defined by the I R Q number itself, with zero being the highest priority. The timer interrupt, or I R Q zero, has the highest.
+
+Advanced Programmable Interrupt Controller
+
+There are two types of Advanced Programmable Interrupt Controllers, A P I C, the I O X A P I C, and the Local A P I C.
+
+The I O X A P I C is contained in the south bridge, or I C H. It expands the number of I R Qs available and allows an interrupt priority scheme that is independent of the interrupt number. For example, interrupt nine can have a higher priority than interrupt four. Each I R Q has an associated redirection table entry that can be enabled or
+The content describes the fundamental role of interrupt controllers in modern computer architectures, focusing on the transition from simpler Programmable Interrupt Controllers, or P I Cs, to more advanced architectures like the Advanced Programmable Interrupt Controller, or A P I C.
+
+Initially, it mentions the boot loader residing in R O M at a specific address, hexadecimal zero X ten. The critical function of this boot loader is to contain an initialization routine, a jump instruction to commence program execution, located within the top sixteen bytes of the R O M. This segment of memory is typically reserved for critical startup code, ensuring the system can transition from a powered-off state to a functional operating environment.
+
+The Programmable Interrupt Controller, often abbreviated as P I C, is introduced as a component responsible for managing interrupts from various peripheral devices. The text references cascaded eight two five nine devices, which collectively provide sixteen interrupt request lines, or I R Qs. These I R Qs are mechanisms through which hardware signals the C P U that an event requires immediate attention. The P I C plays a crucial role in arbitrating these requests, ensuring that the most critical ones are serviced first. Furthermore, it highlights the P I C's capability to support P C I based interrupts by mapping them onto the system's I S A compatible interrupt lines. Table three point two, referenced in the text, would detail these specific I S A compatible I R Q assignments. The priority scheme within the eight two five nine is determined by the I R Q number itself, with a lower number signifying a higher priority. For instance, the timer interrupt, often assigned to I R Q zero, is considered to have the highest priority, meaning it will preempt other less critical interrupt requests.
+
+The discussion then progresses to the Advanced Programmable Interrupt Controller, or A P I C. This represents an evolution of interrupt handling, offering more sophisticated features and scalability. Two primary types of A P I C are mentioned: the I O x A P I C and the Local A P I C. The I O x A P I C, specifically, is described as being integrated into the south bridge of the system, also known as the I C H or Input/Output Controller Hub. Its primary function is to expand the number of available I R Qs and implement a more flexible interrupt priority scheme. Unlike the P I C where priority is strictly tied to the I R Q number, the I O x A P I C allows for dynamic assignment of priorities, meaning an interrupt with a higher number, such as interrupt nine, can be assigned a higher priority than an interrupt with a lower number, like interrupt four. This flexibility is achieved through an associated redirection table entry for each I R Q, which can be individually configured and enabled or disabled. This per interrupt configuration capability is a hallmark of advanced interrupt controllers, enabling finer-grained control over system responsiveness and resource allocation.

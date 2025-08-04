@@ -1,0 +1,48 @@
+memory.
+
+—Also, there is a way to recover the physical memory, which used to
+hide behind the former virtual ranges lost to PCI memory by
+remapping that physical memory above the top of upper memory.
+
+This is done with a trick in the memory-controller addressing.
+
+= 0p of Memory Map - Vanable
+Depends conspecific CPU
+
+and Chipset (DHAM limit)
+
+and O35
+
+4 GB
+
+LEGACY
+
+Ee pine
+
+Memory Address Space
+
+Figure 2.3: Classic IA32 Memory Map
+
+I/0 Address Range
+
+The Intel architecture full I/O range is 0-64 KB and is intended for register
+mapping of hardware devices. Just as legacy hardware and software was
+handled years ago—and for the universal good—you have to keep
+
+maintaining backward compatibility if you want to ensure the hardware and
+memory.
+
+Also, there is a way to recover the physical memory, which used to hide behind the former virtual ranges lost to P C I memory by remapping that physical memory above the top of upper memory. This is done with a trick in the memory controller addressing.
+
+Figure two point three presents the Classic I A thirty two Memory Map, illustrating the Memory Address Space as a vertical block diagram. At the top, the "Top of Memory Map" is indicated as "Variable", its size depending on the specific C P U, chipset D Ram limit, and O S. Below this, the memory space includes a section for B I O S and Other components. Further down, there is a block where P N P devices' memory is mapped. An arrow extends from the boundary above the B I O S and Other block, indicating the four gigabyte mark. A dashed arrow originates from the three gigabyte mark, labeled T O M, pointing to a legacy section. Below the P N P devices' mapped memory, a significant portion is dedicated to D Ram. At the very bottom, at the one megabyte mark, an arrow points to "Lots of B I O S and Legacy Junk," which is also associated with the overall legacy memory allocation. The diagram visually represents the segmented layout of memory within the I A thirty two architecture.
+
+I O Address Range
+
+The Intel architecture full I O range is zero to sixty four kilobyte and is intended for register mapping of hardware devices. Just as legacy hardware and software was handled years ago, and for the universal good, you have to keep maintaining backward compatibility if you want to ensure the hardware and
+The fundamental challenge in computer architecture, particularly with historical systems like the I A thirty two, involves efficient management of the physical memory address space. A significant problem arose from a portion of physical memory becoming effectively inaccessible, often termed "lost," due to the mapping requirements of P C I devices and legacy system components. This specific issue is resolved through a sophisticated technique known as memory remapping, where the memory controller intervenes to relocate the physical addresses of D Ram modules that would otherwise reside within these reserved legacy virtual ranges. By applying this "trick" in the memory controller's addressing logic, physical memory that might otherwise be overshadowed by P C I or B I O S allocations is shifted to higher memory addresses, typically beyond the four gigabyte boundary, thereby making it available for system use.
+
+To fully grasp this concept, consider the classical I A thirty two memory map. Imagine a vertical representation of the system's memory address space, starting from the lowest addresses at the bottom and extending upwards. At the base, occupying the largest continuous segment of lower memory, resides the main D Ram, the primary working memory of the system. Immediately above this D Ram, around the one megabyte mark, we encounter a region traditionally designated for legacy system components, often referred to as "B I O S and Legacy Junk." Moving further up the address space, there is a distinct block dedicated to P N P, or Plug and Play, devices. These are peripherals whose memory-mapped registers and buffers occupy specific addresses within this range. Above the P N P device mappings, a section is typically reserved for the B I O S firmware itself, alongside other system-level functions. The upper boundary of this entire memory map is designated as "Top of Memory Map," which is variable and contingent upon the specific C P U, chipset D Ram limits, and the operating system's configuration.
+
+A critical historical demarcation exists at the three gigabyte and four gigabyte boundaries, specifically labeled as "T O M," or Top Of Memory. This region marks a logical division. Below the four gigabyte boundary, the system historically placed memory-mapped I O devices, B I O S, and other fixed address components, creating what amounts to a "hole" or "gap" in the physical address space that D Ram could not readily occupy, even if physical D Ram modules were installed there. The "L E G A C Y" designation underscores that this arrangement was maintained for backward compatibility with older software and hardware. The aforementioned remapping trick leverages the memory controller's ability to intercept address requests to this "hole" and redirect them to physical D Ram modules that are actually located at higher addresses, effectively recovering the D Ram that physically existed but was logically shadowed. This remapping is crucial for fully utilizing installed D Ram in modern systems that retain aspects of the I A thirty two architecture, especially those supporting greater than four gigabytes of D Ram.
+
+Separately, the Intel architecture defines a distinct I O address range, spanning from address zero to sixty four kilobytes. This dedicated address space is fundamentally different from the memory address space. Its primary purpose is for the register mapping of hardware devices, enabling the C P U to communicate with peripherals through specific I O ports rather than memory locations. While modern high-speed peripherals increasingly utilize memory-mapped I O for greater flexibility and bandwidth, this traditional I O port-based communication remains an integral part of the architecture. This persistence is a direct consequence of the paramount importance of maintaining backward compatibility, ensuring that legacy hardware and software components continue to function seamlessly within contemporary systems.

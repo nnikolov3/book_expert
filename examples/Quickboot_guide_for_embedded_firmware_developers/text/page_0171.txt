@@ -1,0 +1,40 @@
+normal operating mode before performing the first long jump. The processor
+also invalidates the internal caches and translation lookaside buffers (TLBs).
+
+The processor continues to boot in real mode today, for no particular
+technical requirement. While some speculate it is to ensure that the platform
+can boot legacy code (example DOS OS) written many years ago, it is more
+an issue of introducing and needing to validate the change into a broad
+ecosystem of players and developers. The backward compatibility issues it
+would create in test and manufacturing environments and other natural
+upgrade hurdles will continue to keep the boot mode and Intel reset vector
+“real” until a high return-on-investment feature requires it to be otherwise.
+
+The first power-on mode is a special subset of the real mode. The top 12
+address lines are held high, allowing aliasing, where the processor can
+execute code from the nonvolatile storage (such as flash) located within the
+lowest one megabyte as if from the top of memory. Normal operation of the
+firmware (such as BIOS) is to switch modes to flat-protected mode as early in
+the boot sequence as is possible. Once the processor is running in protected
+mode, it usually is not necessary to switch back to real mode unless executing
+a legacy option ROM, which makes certain legacy software interrupt calls.
+The flat mode runs 32-bit code and the physical address are mapped on to
+one with the logical addresses (paging off). The Interrupt Descriptor Table is
+used for interrupt handling. This is the recommended mode for all BIOS/boot
+loaders to operate in. The segmented protected mode is not used for the
+initialization code as part of the BIOS sequence.
+
+Intel produces BIOS specifications or BIOS writer’s guides that go into
+some details about chip-specific and technology-specific initialization
+sequences. These documents hold fine-grain details of every bit that needs to
+be set, but not necessarily the high-level sequence in which to set them. The
+
+following flows for early initialization and advanced initialization outline that
+The processor continues to boot in normal operating mode before performing the first long jump. The processor also invalidates the internal caches and translation lookaside buffers, or T L Bs. The processor continues to boot in real mode today, for no particular technical requirement. While some speculate it is to ensure that the platform can boot legacy code, for example D O S, written many years ago, it is more an issue of introducing and needing to validate the change into a broad ecosystem of players and developers. The backward compatibility issues it would create in test and manufacturing environments and other natural upgrade hurdles will continue to keep the boot mode and Intel reset vector, or real, until a high return on investment feature requires it to be otherwise. The first power on mode is a special subset of the real mode. The top twelve address lines are held high, allowing aliasing, where the processor can execute code from the nonvolatile storage, or flash, located within the lowest one megabyte as if from the top of memory. Normal operation of the firmware, or B I O S, is to switch modes to flat protected mode as early in the boot sequence as possible. Once the processor is running in protected mode, it usually is not necessary to switch back to real mode unless executing a legacy option R O M, which makes certain legacy software interrupt calls. The flat mode runs thirty two bit code and the physical address are mapped on to one with the logical addresses, or paging off. The Interrupt Descriptor Table is used for interrupt handling. This is the recommended mode for all B I O S, or boot loaders to operate in. The segmented protected mode is not used for the initialization code as part of the B I O S sequence. Intel produces B I O S specifications or B I O S writer's guides that go into some details about chip specific and technology specific initialization sequences. These documents hold fine grain details of every bit that needs to be set, but not necessarily the high level sequence in which to set them. The following flows for early initialization and advanced initialization outline that
+The discussion delves into processor operational modes and their implications during the boot sequence, specifically focusing on transitions between states and the underlying mechanisms.  When a processor transitions to normal operating mode, it invalidates its internal caches and translation lookaside buffers, or T L B s. This action is crucial for ensuring data integrity and consistent state management after a significant operational change.  The text highlights that processors continue to boot in real mode for compatibility reasons, enabling legacy code execution, citing D O S as an example. This legacy support is a critical design consideration for maintaining backward compatibility within the broader ecosystem of hardware and software. The challenge arises from potential conflicts or inefficiencies introduced by older operating paradigms when interacting with newer hardware features, which can necessitate careful validation and testing.
+
+The "first power on" mode is described as a specialized subset of real mode. In this mode, the top twelve address lines are held high, which facilitates memory aliasing. This allows the processor to execute code from nonvolatile storage, such as flash memory, as if it were located at the top of the addressable memory space. Normal operation of the firmware, typically implemented in B I O S, involves switching between real mode and flat protected mode, as required by the boot sequence. It is not always necessary to revert to real mode unless specific legacy software interrupts are being serviced.
+
+The concept of "flat mode" is introduced, indicating a processor state where the entire addressable memory space is mapped linearly. This mode operates with a thirty two bit address space and maps physical addresses directly to logical addresses, effectively disabling paging. This configuration is particularly relevant for interrupt handling. The Interrupt Descriptor Table, or I D T, plays a pivotal role here, serving as the lookup mechanism for interrupt handlers. Segmented protected mode is the recommended mode for B I O S and boot loaders, as it is not employed during the initial phases of the B I O S sequence.
+
+The text further elaborates on the documentation provided by manufacturers like Intel. These B I O S specifications and writer's guides offer detailed, chip specific, and technology specific information regarding initialization sequences. These documents provide fine grained details necessary for configuring hardware components at a very low level. The content implicitly refers to the critical nature of these low level settings, ensuring that the system initializes correctly, and suggests that while some aspects of initialization are high level, others require meticulous attention to individual bit settings. This meticulousness is essential for the successful execution of both early and advanced initialization routines.

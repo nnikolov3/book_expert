@@ -1,0 +1,55 @@
+UEFI Runtime Services
+
+Operating system kernels such as those used in Windows and Linux systems
+assume and require the second-stage boot loader to have called
+ExitBootServices() before handing control over.
+
+In order to support calling UEFI services from a virtual-memory-
+enabled kernel, however, it is necessary for the kernel and UEFI callback
+mechanism to agree on a new address structure. Recall UEFI systems operate
+in protected unpaged mode, whereas Windows and Linux systems are fully
+fledged paged OS environments. The UEFI runtime subsystem operates in
+protected unpaged mode, whereas the kernel has switched execution over to
+paged mode; therefore, when a kernel makes a runtime call to UEFI one of
+
+two things must logically happen.
+1.
+
+Each callback to UEFI could switch the processor back to UEFI’s
+default mode of protected unpaged mode. This is undesirable,
+
+however, for a number of reasons:
+—Slow to switch modes back and forth
+—Complex to enable/disable paging between the two modes
+
+—Considered unsafe security-wise as the UEFI callback has unfettered
+
+access to memory.
+
+The UEFI callback must now itself operate in paged mode, replacing
+
+function and data references/pointers to physical addresses with
+U E F I Runtime Services
+
+Operating system kernels such as those used in Windows and Linux systems assume and require the second stage boot loader to have called Exit Boot Services () before handing control over.
+
+In order to support calling U E F I services from a virtual memory enabled kernel, however, it is necessary for the kernel and U E F I callback mechanism to agree on a new address structure. Recall U E F I systems operate in protected unpaged mode, whereas Windows and Linux systems are fully fledged O S environments. The U E F I runtime subsystem operates in protected unpaged mode, whereas the kernel has switched execution over to paged mode; therefore, when a kernel makes a runtime call to U E F I one of two things must logically happen.
+
+One.
+
+Each callback to U E F I could switch the processor back to U E F I's default mode of protected unpaged mode. This is undesirable, however, for a number of reasons:
+
+* Slow to switch modes back and forth
+* Complex to enable disable paging between the two modes
+* Considered unsafe security wise as the U E F I callback has unfettered access to memory.
+
+Two.
+
+The U E F I callback must now itself operate in paged mode, replacing function and data references pointers to physical addresses with
+The discussion centers on the operation of UEFI runtime services within the context of modern operating systems, specifically Windows and Linux. A fundamental aspect is the transition of control from the boot loader to the operating system kernel. This handover typically occurs after a call to the ExitBootServices() function, signaling the completion of the initial system setup.
+
+A critical technical consideration arises when operating systems need to utilize UEFI services from a virtual memory enabled kernel. This requires a common understanding of the address structure between the kernel and UEFI callbacks. UEFI systems, in general, operate in a protected unpaged mode. Conversely, Windows and Linux kernels, once fully initialized, operate within a paged OS environment. The UEFI runtime subsystem, however, must maintain its operation in a protected unpaged mode, even when the kernel has switched to a paged execution environment. Consequently, when a kernel makes a runtime call to a UEFI service, two key issues emerge.
+
+Firstly, each callback to UEFI could potentially switch the processor back to UEFI's default protected unpaged mode. This mode switching is undesirable for several reasons. It can be slow, involving overhead in transitioning between different memory management states. It is also complex to manage the enabling and disabling of paging between the two distinct modes. Furthermore, from a security perspective, allowing unfettered access to memory for UEFI callbacks in this manner is considered unsafe, as it bypasses the memory protection mechanisms typically enforced by the operating system kernel.
+
+Secondly, the UEFI callback must now operate within the paged mode of the operating system. This implies that the callback mechanism needs to handle data references and pointers, which are typically virtual addresses, and correctly translate them to physical addresses. This translation is a core responsibility of the Memory Management Unit, or M M U, and requires the UEFI runtime to interact with or mimic the paging structures established by the operating system kernel. The challenge lies in ensuring that the UEFI runtime's understanding of memory addresses aligns with the kernel's current memory mapping state, especially when the kernel itself is managing virtual to physical address translation through its paging mechanisms.

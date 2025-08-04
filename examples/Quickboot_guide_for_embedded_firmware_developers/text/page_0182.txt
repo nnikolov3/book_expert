@@ -1,0 +1,49 @@
+located below 1 MB.
+
+There is a tradeoff between the size of data to be shadowed and the act
+of decompression. The decompression algorithm may take much longer to
+load and execute than it would be for the image to remain uncompressed.
+Prefetchers in the processor, if enabled, may also speed up execution in place,
+and some SOCs have internal NVRAM cache buffers to assist in pipelining
+the data from the flash to the processor.
+
+Figure 9.3 shows the memory map at initialization in real mode. Real
+
+mode has an accessibility limit of 1 MB.
+
+Exit from No-Eviction Mode and Transfer to DRAM
+
+Before memory was initialized, the data and code stacks were held in the
+processor cache. With memory now initialized that special and temporary
+caching mode must be exited and the cache flushed. The stack will be
+transferred to a new location in system main memory and cache reconfigured
+as part of AP initialization.
+
+The stack must be set up before jumping into the shadowed portion of
+the BIOS that now is in memory. A memory location must be chosen for
+stack space. The stack will count down so the top of the stack must be
+entered and enough memory must be allocated for the maximum stack.
+
+If protected mode is used, which is likely following MRC execution,
+
+then SS:ESP must be set to the correct memory location.
+
+Transfer to DRAM
+
+This is where the code makes the jump into memory. As mentioned before, if
+
+a memory test has not been performed up until this point, the jump could very
+located below one megabyte. There is a trade off between the size of data to be shadowed and the act of decompression. The decompression algorithm may take much longer to load and execute than it would be for the image to remain uncompressed. Prefetchers in the processor, if enabled, may also speed up execution in place, and some S o Cs have internal N V R A M cache buffers to assist in pipelining the data from the flash to the processor. Figure nine point three shows the memory map at initialization in real mode. Real mode has an accessibility limit of one megabyte.
+
+Exit from No Eviction Mode and Transfer to D Ram
+
+Before memory was initialized, the data and code stacks were held in the processor cache. With memory now initialized that special and temporary caching mode must be exited and the cache flushed. The stack will be transferred to a new location in system main memory and cache reconfigured as part of A P initialization. The stack must be set up before jumping into the shadowed portion of the B I O S that now is in memory. A memory location must be chosen for stack space. The stack will count down so the top of the stack must be entered and enough memory must be allocated for the maximum stack. If protected mode is used, which is likely following M R C execution, then S S colon E S P must be set to the correct memory location.
+
+Transfer to D Ram
+
+This is where the code makes the jump into memory. As mentioned before, if a memory test has not been performed up until this point, the jump could very
+The text discusses a trade-off in memory management, specifically concerning data shadowing and decompression. When data is shadowed, it implies that a copy of the original data is being held in a more accessible location, such as processor cache, while the primary data might reside elsewhere. Decompression, on the other hand, involves expanding compressed data into its original form. The efficiency of decompression is directly related to the complexity of the compression algorithm; more complex algorithms generally yield higher compression ratios but require more computational resources and time to decompress. This creates a performance bottleneck, as the time taken for decompression might exceed the benefits gained from reduced data size, especially when prefetchers and internal N V R A M cache buffers are employed by a S o C to pipeline data from flash memory to the processor. A specific figure, referenced as Figure 9.3, illustrates the memory map during initialization in real mode, indicating an accessibility limit of one megabyte.
+
+The subsequent section details the process of exiting a "No Eviction Mode" and transferring data to D R A M. Initially, both data and code reside in processor cache. To transition, a special or temporary caching mode must be exited, and the cache contents flushed. The data is then transferred to a new location within the system's main memory and the cache is reconfigured, typically as part of the Application Processor initialization. The stack, a crucial data structure for function calls and local variable storage, needs to be established before transitioning execution to the newly allocated space. This involves setting up the stack pointer and stack segment registers. The stack operates in a last in, first out (L I F O) manner, meaning the most recently added item is the first to be removed. Memory for the stack must be allocated, and in a protected mode of operation, the stack segment register (S S) and stack pointer register (E S P) must be correctly set to point to this allocated memory. This ensures proper stack operation and prevents memory access violations.
+
+The final section focuses on the transfer to D R A M. This is the point where the execution flow jumps into the newly prepared memory. The text highlights that if a memory test has not been performed prior to this jump, there could be significant issues. The implication is that an unverified memory region might contain errors, leading to unpredictable program behavior or system crashes. This emphasizes the critical importance of memory integrity checks, especially when transitioning critical code and data to a new memory space during system startup or reconfiguration.

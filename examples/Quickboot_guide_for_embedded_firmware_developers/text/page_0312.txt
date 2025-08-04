@@ -1,0 +1,53 @@
+SPD Field 0x09: Fine Timebase Dividend/Divisor
+
+Setting this value to 0x52 (2.5ps) works well for implementing the other
+timing fields based on this value. Most DDR3 DIMMs use 0x52 for this field.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+9 0x09 Fine Timebase Dividend Divisor 0x52 2.5ps
+
+Per JEDEC Specification, Byte 9: Fine Timebase (FTB) Dividend / Divisor
+This byte defines a value in picoseconds that represents the fundamental
+timebase for fine grain timing calculations. This value is used as a multiplier
+for formulating subsequent timing parameters. The fine timebase (FTB) is
+defined as the fine timebase dividend, bits 7—4, divided by the fine timebase
+divisor, bits 3-0.
+
+Bits 7:4 Bits 2:0
+Fine Timebase (FTB) Dividend Fine Timebase (FTB) Divisor
+Values defined from 1 to 15 Values defined from 1 to 15
+
+Examples:
+
+Dividend Divisor Timebase (pS) Use
+
+3 1 5 aps
+
+5 2 2.5 2.5ps
+1 1 1 1ps
+
+SPD Field 0x0A and 0x0B: Medium Timebase Dividend/Divisor
+S P D Field zero x zero nine: Fine Timebase Dividend Divisor. Setting this value to zero x fifty two, which is two point five picoseconds, works well for implementing the other timing fields based on this value. Most D D R three D I M M s use zero x fifty two for this field.
+
+The table shows the following: Byte Dec is nine, Byte Hex is zero x zero nine, Field Name is Fine Timebase Dividend Divisor, Typ Value is zero x fifty two, and Definition is two point five picoseconds.
+
+Per J E D E C Specification, Byte nine: Fine Timebase F T B Dividend Divisor. This byte defines a value in picoseconds that represents the fundamental timebase for fine grain timing calculations. This value is used as a multiplier for formulating subsequent timing parameters. The fine timebase F T B is defined as the fine timebase dividend, bits seven to four, divided by the fine timebase divisor, bits three to zero.
+
+Bits seven to four: Fine Timebase F T B Dividend. Values defined from one to fifteen.
+Bits two to zero: Fine Timebase F T B Divisor. Values defined from one to fifteen.
+
+Examples:
+The table shows examples of Dividend, Divisor, Timebase in picoseconds, and Use.
+When Dividend is five and Divisor is one, the Timebase is five picoseconds, and the Use is five picoseconds.
+When Dividend is five and Divisor is two, the Timebase is two point five picoseconds, and the Use is two point five picoseconds.
+When Dividend is one and Divisor is one, the Timebase is one picosecond, and the Use is one picosecond.
+
+S P D Field zero x zero A and zero x zero B: Medium Timebase Dividend Divisor.
+This document details SPD Field Zero x zero nine, which defines the Fine Timebase Dividend/Divisor. This value is instrumental in calibrating memory timing parameters, particularly for Double Data Rate three, or D D R three, Random Access Memory, or Ram, modules. The primary function of this field is to establish a fundamental timebase, expressed in picoseconds, which serves as a multiplier for calculating more granular timing specifications.
+
+The field itself is comprised of two main parts as per the JEDEC Specification. The most significant nibble, occupying bits seven through four, defines the Fine Timebase Dividend. This dividend is a numerical value, with defined values ranging from one to fifteen. The least significant nibble, occupying bits two through zero, defines the Fine Timebase Divisor. This divisor also has defined values spanning from one to fifteen. The actual fundamental timebase is derived by dividing the dividend by the divisor.
+
+For instance, a common configuration is to use the hexadecimal value zero x fifty two for this field. When decoded, this hexadecimal value corresponds to decimal thirty two. In this setup, the dividend would be hexadecimal five, or decimal five, and the divisor would be hexadecimal two, or decimal two. This results in a fundamental timebase of five divided by two, which equals two point five picoseconds. This two point five picosecond granularity is crucial for achieving precise timing in high speed memory interfaces. The table of examples further illustrates this, showing scenarios where a dividend of five and a divisor of one yields a timebase of five picoseconds, and a dividend of one with a divisor of one yields a timebase of one picosecond. These precise time intervals are essential for the synchronized operation of memory controllers and Ram modules, ensuring data integrity and performance.
+
+The subsequent section of the document refers to SPD Field Zero x zero A and Zero x zero B, which are designated for the Medium Timebase Dividend/Divisor, indicating a hierarchical structure in how timing parameters are defined within the SPD data.

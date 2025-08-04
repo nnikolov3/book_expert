@@ -1,0 +1,50 @@
+boot media can be a significant element in the boot time when you consider
+that some drives require 1 to 5 seconds (or much more) to spin up. The
+characteristics of the boot media are very important since, regardless of
+whatever else you might do to optimize the boot process, the platform still
+has to read from the boot media, and there are some inherent tasks associated
+with doing that. Spin-up delays are among those tasks that are unavoidable in
+today’s rotating magnetic media.
+
+For the proof of concept, the boot media of choice was one that incurs
+no spin-up penalty; thus, a solid-state drive (SSD) was chosen. This saved
+
+about two seconds from the boot time.
+
+What Is the BIOS Recovery/Update Strategy?
+
+How a platform handles a BIOS update or recovery can affect the
+performance of a platform. Since this task can be accomplished in many
+ways, this may inevitably be one of those mechanisms with lots of platform
+variability. There are a few very common cases on how a BIOS update is
+
+achieved from a user’s perspective:
+
+1. A user executes an OS application, which he or she likely downloaded
+from the OEM’s Web site. This will eventually cause the machine to
+reboot.
+
+2. A user downloads a special file from an OEM's website and puts it on a
+USB dongle and reboots the platform with the USB dongle connected.
+
+3. A user receives or creates a CD or flash drive with a special file and
+reboots the platform to launch the BIOS update utility contained within
+that special file.
+
+These user scenarios usually resolve into the BIOS, during the initialization
+Boot media can be a significant element in the boot time when you consider that some drives require one to five seconds, or much more, to spin up. The characteristics of the boot media are very important since, regardless of whatever else you might do to optimize the boot process, the platform still has to read from the boot media, and there are some inherent tasks associated with doing that. Spin up delays are among those tasks that are unavoidable in today's rotating magnetic media. For the proof of concept, the boot media of choice was one that incurs no spin up penalty; thus, a solid state drive S S D was chosen. This saved about two seconds from the boot time.
+
+What Is the BIOS Recovery/Update Strategy?
+
+How a platform handles a BIOS update or recovery can affect the performance of a platform. Since this task can be accomplished in many ways, this may inevitably be one of those mechanisms with lots of platform variability. There are a few very common cases on how a BIOS update is achieved from a user's perspective:
+
+One. A user executes an O S application, which he or she likely downloaded from the O E M's Web site. This will eventually cause the machine to reboot.
+
+Two. A user downloads a special file from an O E M's website and puts it on a U S B dongle and reboots the platform with the U S B dongle connected.
+
+Three. A user receives or creates a C D or flash drive with a special file and reboots the platform to launch the BIOS update utility contained within that special file.
+
+These user scenarios usually resolve into the BIOS, during the initialization.
+The boot time of a computing platform is significantly influenced by the characteristics of its boot media. Rotating magnetic media, such as traditional hard disk drives, introduce latency due to the mechanical requirement for spindle spin up, which can range from one to five seconds or even longer. This spin-up delay is an inherent task that contributes to the overall boot process duration. In contrast, solid-state drives, or S S D's, eliminate this mechanical spin-up requirement, resulting in substantially reduced boot times. The choice of boot media, therefore, is a critical factor in optimizing system startup performance, as demonstrated by the estimated two-second saving achieved by using an S S D over a spinning drive.
+
+The system's basic input output system, or B I O S, plays a crucial role in platform initialization and can be a point for recovery or updates. A B I O S update or recovery process can impact overall platform performance, and the specific mechanisms employed are often designed with consideration for variability. Understanding how a B I O S update is achieved from a user's perspective involves examining common scenarios. One such scenario is a user initiating an operating system application that downloads an update from the original equipment manufacturer's, or O E M's, website, which subsequently triggers a system reboot. Another common method involves a user downloading a specific file from an O E M website, placing it onto a Universal Serial Bus, or U S B, dongle, and then rebooting the platform with the U S B dongle attached. A third scenario describes a user obtaining a special file via a compact disc, or C D, or a flash drive, and then using this media to initiate the B I O S update utility upon system reboot. These distinct user-initiated pathways typically converge during the platform's initialization phase, specifically within the B I O S, to execute the update or recovery operation.

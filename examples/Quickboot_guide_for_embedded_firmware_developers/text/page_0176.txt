@@ -1,0 +1,53 @@
+Programming Guide, Chapter 8.
+
+Switch to Protected Mode. Before the processor can be switched to
+protected mode, the software initialization code must load a minimum
+number of protected mode data structures and code modules into memory to
+support reliable operation of the processor in protected mode. These data
+
+structures include the following:
+—An IDT
+—A GDT
+—A TSS
+—(Optional) An LDT
+—If paging is to be used, at least one page directory and one page table
+
+—A code segment that contains the code to be executed when the
+
+processor switches to protected mode
+
+—One or more code modules that contain the necessary interrupt and
+
+exception handlers
+
+Initialization code must also initialize the following system registers before
+
+the processor can be switched to protected mode:
+—The GDTR
+
+—Optionally the IDTR. This register can also be initialized immediately
+
+after switching to protected mode, prior to enabling interrupts.
+Programming Guide, Chapter eight.
+
+Switch to Protected Mode. Before the processor can be switched to protected mode, the software initialization code must load a minimum number of protected mode data structures and code modules into memory to support reliable operation of the processor in protected mode. These data structures include the following:
+
+* An I D T
+* A G D T
+* A T S S
+* (Optional) An L D T
+* If paging is to be used, at least one page directory and one page table
+* A code segment that contains the code to be executed when the processor switches to protected mode
+* One or more code modules that contain the necessary interrupt and exception handlers
+
+Initialization code must also initialize the following system registers before the processor can be switched to protected mode:
+
+* The G D T R
+* Optionally the I D T R. This register can also be initialized immediately after switching to protected mode, prior to enabling interrupts.
+The document outlines the critical steps and data structures required for transitioning a processor into protected mode, a fundamental concept in operating system design that enables advanced memory management, multitasking, and hardware access controls. This transition is not instantaneous; it necessitates careful initialization of specific processor control structures and system registers to ensure stable and secure operation in the new execution environment.
+
+The process begins with the software initialization code loading a set of essential data structures into memory. These structures are paramount for defining the processor's capabilities and memory access policies in protected mode. The primary components include an Interrupt Descriptor Table, or I D T, which is a lookup table mapping interrupt vectors to their corresponding interrupt service routines. Following this is a Global Descriptor Table, or G D T, which contains segment descriptors that define the properties of memory segments, such as their base address, limit, and access rights. A Task State Segment, or T S S, is also crucial; it holds the processor's context, including register values, stack pointers, and other information necessary for task switching. Optionally, a Local Descriptor Table, or L D T, can be utilized for per task specific segment definitions, providing finer-grained access control.
+
+Furthermore, if the system employs paging for memory management, the initialization process must also prepare a page directory and at least one page table. The page directory acts as the top-level structure in a multi level page table hierarchy, mapping virtual addresses to physical memory locations, thereby facilitating virtual memory operations and memory protection. The code also mandates the presence of a code segment containing the executable instructions that will run when the processor is in protected mode. Additionally, one or more code modules are needed to manage interrupts and exceptions, which are essential for handling events that deviate from the normal program flow.
+
+Beyond these data structures, the initialization code must configure specific system registers. The Global Descriptor Table Register, or G D T R, must be loaded with the base address and limit of the G D T. Optionally, the I D T R, which points to the Interrupt Descriptor Table, can also be initialized at this stage, or more commonly, it is initialized immediately after switching to protected mode and prior to enabling interrupts, ensuring that interrupt handling mechanisms are properly set up before they can be invoked. This meticulous setup of data structures and registers is the bedrock for achieving the enhanced functionality and security offered by protected mode.

@@ -1,0 +1,63 @@
+reasonable amount of BIOS improvement is going to be lost anyway (even a
+
+zero-second boot is too long if the OS takes more than ten seconds to boot).
+
+Reducing Replication of Enumeration Between Firmware and
+OS
+
+The OS often repeats enumeration of buses in the post-boot space that the
+BIOS firmware has performed in the pre-boot. Ideally this would be a source
+of timing savings. However, upon further inspection, there are multiple
+
+reasons for this replication, including but not limited to the following:
+
+1. Firmware may not have done a complete job of enumerating the entire
+enumerable subsystem, expecting software to repeat the enumeration
+when the OS level drivers load. This may be due to the BIOS not
+requiring use of that portion of the system in the pre-boot space.
+
+2. Virtualization: the firmware can perform a full enumeration of a bus,
+then expose a different set or a subset of hardware to the operating
+system through virtualization technology.
+
+3. The firmware may not have done an accurate job.
+
+4. The initial enumeration may not work well with the kernel or device
+
+driver stack designed by the operating system developers.
+
+At the end of the day, the BIOS must enumerate the portions of the design
+only just enough to boot the operating system. Assuming the operating
+system has the proper enumeration support for the system hardware, the
+enumeration will be repeated and in a more complete manner than in the
+BIOS. Standard enumerable bus architecture allows for this replication and
+
+the system may require it. Examples include PCI and USB enumeration. The
+A reasonable amount of B I O S improvement is going to be lost anyway, even a zero second boot is too long if the O S takes more than ten seconds to boot.
+
+Reducing Replication of Enumeration Between Firmware and O S
+
+The O S often repeats enumeration of buses in the post boot space that the B I O S firmware has performed in the pre boot. Ideally this would be a source of timing savings. However, upon further inspection, there are multiple reasons for this replication, including but not limited to the following:
+
+One, firmware may not have done a complete job of enumerating the entire enumerable subsystem, expecting software to repeat the enumeration when the O S level drivers load. This may be due to the B I O S not requiring use of that portion of the system in the pre boot space.
+
+Two, virtualization: the firmware can perform a full enumeration of a bus, then expose a different set or a subset of hardware to the operating system through virtualization technology.
+
+Three, the firmware may not have done an accurate job.
+
+Four, the initial enumeration may not work well with the kernel or device driver stack designed by the operating system developers.
+
+At the end of the day, the B I O S must enumerate the portions of the design only just enough to boot the operating system. Assuming the operating system has the proper enumeration support for the system hardware, the enumeration will be repeated and in a more complete manner than in the B I O S. Standard enumerable bus architecture allows for this replication and the system may require it. Examples include P C I and U S B enumeration. The
+The concept of a zero-second boot refers to an idealized state where an operating system becomes immediately responsive upon system power-on. However, achieving this is contingent upon the time taken by the initial boot firmware, such as the Basic Input Output System or BIOS, to initialize hardware and load the operating system. If the operating system's own boot process, which includes device enumeration and driver loading, exceeds a certain threshold, the perceived benefit of firmware improvements aimed at faster booting can be negated.
+
+The document then delves into the challenges of reducing replication in bus enumeration between firmware and the operating system. Enumeration is the process by which the system identifies and initializes hardware devices connected to various buses. The operating system typically performs this enumeration during its startup sequence. However, it is observed that the BIOS firmware often reiterates or replicates this enumeration process in the post-boot phase. This redundancy in enumeration can be attributed to several underlying technical reasons.
+
+Firstly, the firmware's enumeration might be incomplete. This means that the firmware may not fully discover or correctly identify all enumerated subsystems, expecting the operating system's device drivers to rectify or complete this process upon loading. This can occur due to limitations or specific design choices within the firmware's enumeration logic, particularly concerning the management of the system's hardware landscape.
+
+Secondly, virtualization technology can introduce complexities. In a virtualized environment, the firmware might present a virtualized view of the hardware to the operating system. This virtualization layer can result in the firmware performing its own enumeration, which may differ from the actual underlying hardware, necessitating a separate enumeration by the operating system.
+
+Thirdly, the firmware's enumeration might simply be inaccurate. Errors or omissions in the firmware's device discovery process can lead to an incomplete or incorrect representation of the system's hardware.
+
+Fourthly, the initial enumeration performed by the firmware may not be compatible or integrate well with the kernel or the device driver stack designed by the operating system developers. This lack of compatibility often mandates a re-enumeration or a more robust enumeration by the operating system to ensure proper hardware functioning.
+
+Ultimately, the operating system must enumerate all necessary hardware components to function correctly. While standard bus architectures, such as Peripheral Component Interconnect or P C I, and Universal Serial Bus or U S B, allow for replication of enumeration by both firmware and the operating system, optimizing this process to avoid redundant enumeration is crucial for reducing boot times and improving system efficiency. This implies a need for tighter integration and shared understanding of hardware enumeration between the firmware and the operating system.

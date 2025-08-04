@@ -1,0 +1,68 @@
+34.SD Card
+35.1Pv4, IPv6, and TCP
+
+36.PC SDRAM Serial Presence Detect (SPD) Specification 37. RFC
+791, 792, 768, 793, 862, 1122, 1122, 1323, 1350,
+
+37.1531, 1783, 1784, 2090, 2131, 2581, 2988, 3782
+38.38. AC’97
+
+Let’s take a high-level look at the four most important industry specifications
+
+beyond UEFI from a system firmware and BIOS perspective:
+
+PCI
+
+SATA (formerly known as ATA, IDE)
+USB
+
+ACPI
+
+al
+
+PCI
+
+PCI is the single strongest hardware standard of the Intel-architecture-based
+platform. All the key I/O controllers on the platform, including the embedded
+memory controllers, system agents, and the graphics ports on Intel CPUs, are
+either PCI or PCI Express (PCle) devices.
+
+The PCI standard is divided into several generations of key
+specifications. The latter generations are, for the most part, backward
+compatible with previous generations. If you join the PCI Special Interest
+
+Group (SIG) at www.pcisig.com, you will have access to all the latest PCI
+
+industry standard specifications. The following paragraphs highlight some of
+thirty four. S D Card.
+
+thirty five. I P V four, I P V six, And T C P.
+
+thirty six. P C S D Ram Serial Presence Detect (S P D) Specification thirty seven. R F C seven hundred ninety one, seven hundred ninety two, seven hundred sixty eight, seven hundred ninety three, eight hundred sixty two, one thousand one hundred twenty two, one thousand one hundred twenty two, one thousand three hundred twenty three, one thousand three hundred fifty.
+
+thirty seven. one thousand five hundred thirty one, one thousand seven hundred eighty three, one thousand seven hundred eighty four, two thousand ninety, two thousand one hundred thirty one, two thousand five hundred eighty one, two thousand nine hundred eighty eight, three thousand seven hundred eighty two.
+
+thirty eight. thirty eight. A C ninety seven.
+
+Let's take a high-level look at the four most important industry specifications beyond U E F I from a system firmware And B I O S perspective: These include P C I, S A T A, formerly known as A T A and I D E, U S B, And A C P I.
+
+P C I.
+
+P C I is the single strongest hardware standard of the Intel architecture based platform. All the key I O controllers on the platform, including the embedded memory controllers, system agents, And the graphics ports on Intel C P U s, are either P C I Or P C I E devices. The P C I standard is divided into several generations of key specifications. The latter generations are, for the most part, backward compatible with previous generations. If you join the P C I Special Interest Group (S I G) at www.pcisig.com, you will have access to all the latest P C I industry standard specifications. The following paragraphs highlight some of
+The document outlines several fundamental technical specifications crucial to the architecture and operation of modern computing systems, moving from core hardware components to essential networking protocols and peripheral interfaces.
+
+Beginning with storage, the S D Card refers to the Secure Digital memory card standard, a widely adopted form of non volatile flash memory. These cards are engineered primarily using N A N D flash technology, where data is stored by trapping electrons in floating gates within transistor structures. The physical organization of N A N D flash typically involves blocks and pages, with data written page by page and erased block by block. Its non volatile nature means it retains data without power, making it ideal for portable devices. The performance of S D cards is characterized by read and write speeds, which depend on the internal controller, the type of N A N D, and the bus interface, evolving through various speed classes.
+
+Moving into networking, I P v four, I P v six, and T C P represent foundational protocols of the internet's layered architecture. I P v four, or Internet Protocol version four, operates at the network layer and uses thirty two bit addresses, supporting approximately four point three billion unique addresses. It is responsible for logical addressing and packet routing, enabling data to traverse interconnected networks. I P v six, Internet Protocol version six, addresses the scarcity of I P v four addresses by employing one hundred twenty eight bit addresses, vastly expanding the address space and incorporating features like simplified header format, improved support for mobile I P, and enhanced security via built in I P S E C. Both versions provide connectionless datagram delivery. Complementing I P at the transport layer is T C P, or Transmission Control Protocol. T C P provides reliable, ordered, and error checked delivery of a stream of octets between applications. It establishes a connection via a three way handshake, employs sequence numbers and acknowledgments for ordered delivery, uses checksums for error detection, and implements flow control (preventing a fast sender from overwhelming a slow receiver) and congestion control (managing network traffic to avoid collapses).
+
+The P C S D Ram Serial Presence Detect, commonly abbreviated as S P D, specification pertains to memory modules. S D Ram, or Synchronous D Ram, is a type of D Ram that synchronizes its operation with the C P U clock, allowing for pipelining of instructions and higher throughput compared to asynchronous D Ram. The S P D mechanism involves a small E E P R O M, or Electrically Erasable Programmable R O M, chip located on each memory module. This E E P R O M stores crucial configuration parameters, such as the memory type, capacity, voltage requirements, number of rows and columns, and critical timing parameters like C A S latency and R A S to C A S delay. Upon system power up, the system firmware, typically the B I O S or U E F I, reads this S P D data to correctly configure the memory controller on the C P U or chipset, ensuring the memory operates at optimal and compatible settings. The reference to R F C documents, such as R F C seven hundred ninety one, seven hundred ninety two, and so forth, highlights the formalized nature of these specifications. R F C, or Request For Comments, documents are a series of publications that define the technical and organizational specifications for the Internet. These numbers specifically identify various protocols and standards, including I P v four, I P v six, T C P, and other foundational internet protocols, outlining their design, behavior, and implementation details.
+
+A C ninety seven, or Audio Codec ninety seven, is an audio standard developed by Intel for personal computer audio systems. It defines the architecture for an audio system interface, enabling software control of audio functions. This standard specifies how an audio controller, often integrated into the chipset, communicates with an external audio codec chip to manage analog to digital and digital to analog conversions for sound input and output. While largely superseded by H D Audio, it was significant in driving widespread integration of audio capabilities into motherboards, abstracting the complex analog audio circuitry from the digital host.
+
+Beyond system firmware like U E F I and B I O S, which manage initial hardware configuration, several other industry specifications dictate how components interact. P C I, or Peripheral Component Interconnect, is a cornerstone of Intel-architecture based platforms. Initially conceived as a shared parallel bus operating at thirty three or sixty six megahertz, P C I provides a standardized pathway for connecting various peripheral components, including network interfaces, sound cards, and storage controllers, directly to the C P U via the chipset. Its evolution into P C I Express, or P C I E, represents a fundamental shift from a shared bus to a point to point serial interconnect. P C I E offers significantly higher bandwidth per lane and scales by aggregating multiple lanes, making it ideal for high performance devices like G P U s and N V M e S S D s. Both P C I and P C I E define how devices enumerate, configure, and communicate with the system's C P U and memory, ensuring interoperability. The P C I standard is divided into generations, and importantly, later generations of P C I E are largely backward compatible, meaning newer P C I E slots can accommodate older P C I E cards, though they will operate at the speed of the older generation. The P C I Special Interest Group, or S I G, is the organization responsible for developing and maintaining these specifications, offering a centralized resource for industry participants.
+
+S A T A, or Serial A T A, is a serial interface primarily designed for connecting mass storage devices such as H D D s and S S D s. It succeeded P A T A, or Parallel A T A, which was formerly known as A T A or I D E. The transition from parallel to serial communication offered several advantages, including thinner cables, simplified cable management, improved signal integrity over longer distances, and higher transfer speeds. S A T A defines the physical and electrical characteristics of the interface, as well as the command set for communication with storage devices, enabling faster boot times and more efficient data transfers.
+
+U S B, or Universal Serial Bus, is a widely adopted external peripheral interface standard. Its design principles emphasize simplicity, versatility, and hot plugging capability, allowing devices to be connected and disconnected while the system is running. U S B has evolved through multiple versions, each offering progressively higher data transfer rates and increased power delivery capabilities, enabling it to support a vast array of devices, from keyboards and mice to external storage and high bandwidth cameras.
+
+Finally, A C P I, or Advanced Configuration and Power Interface, is an open industry standard that defines common interfaces for O S directed configuration and power management of motherboard devices. Unlike older power management schemes where the B I O S had primary control, A C P I shifts power management responsibilities to the operating system. This allows the O S to precisely control the power states of the C P U, memory, and peripheral devices, enabling features like advanced sleep modes, C P U throttling, and dynamic power management. A C P I provides a standardized way for the O S to discover system hardware and control its power states, leading to more efficient energy consumption and greater system stability.

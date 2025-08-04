@@ -1,0 +1,42 @@
+The general guidelines for initializing the SATA controller during POST
+(S4/S5) and S3 resume are described below. Upon resuming from S3, System
+
+BIOS is responsible for restoring all registers that it initialized during POST.
+
+Setting the SATA Controller Mode
+
+The system BIOS must program the SATA controller mode prior to
+beginning any other initialization steps or attempting to communicate to the
+drives. The SATA controller mode is set on mainstream PCHs by
+programming the SATA Mode Select (SMS) field of the Port Mapping
+register (Device31: Function 2: offset 90h, bit[7:6]).
+
+There are three modes that software could be operating in:
+—AHCI
+—RAID
+—IDE (compatible) modes
+
+Not every mode is supported on every component. Depending on which
+version of the component (mobile or desktop, RAID or non-RAID), the
+allowed configurations vary.
+
+RAID and AHCI modes require specific OS driver support and are
+identical except for differences in PI and CC.SCC values. IDE mode does not
+have any special OS requirements and is sometimes termed compatible mode.
+In addition to the three operation modes above, software can choose to
+operate SATA ports under a single controller mode or dual controller mode.
+
+Software, typically the BIOS, decides up front which controller mode
+The general guidelines for initializing the S A T A controller during P O S T, S four slash S five, and S three resume are described below. Upon resuming from S three, System B I O S is responsible for restoring all registers that it initialized during P O S T.
+
+Setting the S A T A Controller Mode:
+The system B I O S must program the S A T A controller mode prior to beginning any other initialization steps or attempting to communicate with the drives. The S A T A controller mode is set on mainstream P C H s by programming the S A T A Mode Select, or S M S, field of the Port Mapping register. This register is located at Device thirty one, Function two, with an offset of hexadecimal nine zero, and the relevant bits are from index seven through six.
+
+There are three modes that software could be operating in. These are A H C I, R A I D, and I D E compatible modes. Not every mode is supported on every component. Depending on the version of the component, whether it is mobile or desktop, and whether it is R A I D or non-R A I D, the allowed configurations vary. R A I D and A H C I modes require specific O S driver support and are identical except for differences in P I and C C dot S C C values. I D E mode does not have any special O S requirements and is sometimes termed compatible mode. In addition to the three operation modes mentioned, software can choose to operate S A T A ports under a single controller mode or dual controller mode. Software, typically the B I O S, decides up front which controller mode.
+The foundational process of initializing a Serial Advanced Technology Attachment, or S A T A, controller during the Power On Self Test, or P O S T, phase is critical for system stability and functionality. This initialization extends to resuming from deep power states, specifically System four slash System five, which represents a soft off or mechanical off state, and System three, which signifies suspend to Ram. Upon waking from a suspend to Ram state, the system's Basic I O System, or B I O S, assumes the crucial responsibility of meticulously restoring all S A T A controller registers to the exact states they held when the system initially booted and the controller was initialized during P O S T. This ensures seamless continuation of storage operations without data corruption or device recognition issues.
+
+The critical step in configuring the S A T A subsystem involves setting the S A T A controller mode. The B I O S must program this mode meticulously *before* any other initialization steps commence, or prior to any attempt to communicate with the attached storage drives. This prerequisite underscores the hierarchical nature of system boot, where lower level hardware configurations must be established before higher level software components can interact with the hardware. The S A T A controller mode is typically configured within mainstream Platform Controller Hubs, or P C H S. This is achieved by manipulating the S A T A Mode Select, or S M S, field located within a specific P C I configuration space register. For instance, the instruction indicates accessing Device thirty one, Function two, at offset hexadecimal nine zero, specifically targeting bits seven and six of that register. This precise addressing scheme is fundamental to the P C I Express, or P C I E, architecture, where each peripheral device has a designated configuration space allowing the B I O S or operating system to discover, identify, and configure its operational parameters.
+
+Software can operate the S A T A controller in one of three primary modes: Advanced Host Controller Interface, or A H C I; Redundant Array of Independent Disks, or R A I D; and Integrated Drive Electronics, or I D E compatible modes. The A H C I mode represents the modern standard, offering advanced features such as Native Command Queuing, or N C Q, which significantly improves performance by optimizing the order of read slash write commands. It also supports hot plugging and sophisticated power management capabilities. R A I D mode, on the other hand, enables the controller to manage multiple physical drives as a single logical unit, providing benefits like data redundancy, enhanced performance, or both, depending on the specific R A I D level implemented. The I D E compatible mode is a legacy option, primarily provided for backwards compatibility with older operating systems that may lack native A H C I or R A I D driver support. It simplifies the S A T A interface to emulate the older Parallel A T A, or P A T A, behavior, often at the cost of performance and advanced feature sets.
+
+It is important to note that not every S A T A controller mode is universally supported across all system components. The availability and specific configurations permitted can vary based on whether the component is designed for mobile or desktop platforms, or if it is part of a R A I D array or a non R A I D configuration. For optimal functionality, both R A I D and A H C I modes necessitate specific operating system, or O S, driver support. Without the appropriate drivers, the operating system would be unable to properly interface with the controller in these advanced modes. In contrast, the I D E mode typically requires no special O S requirements, hence its alternative designation as "compatible mode." This simplicity is often why it is the default fallback or a common choice for older systems. The distinction between these modes is further reflected in their respective Programming Interface, or P I, and C C dot S C C values within the P C I configuration space. These values identify the controller's capabilities and mode to the operating system, allowing it to load the correct device driver. Beyond these three primary operational modes, systems can also be configured to operate S A T A ports under a single controller mode or a dual controller mode, depending on the system's architecture and the number of S A T A channels available. Ultimately, it is the B I O S that makes the initial, upfront decision regarding which controller mode will be used, setting the stage for the operating system to take control and manage the S A T A storage devices.

@@ -1,0 +1,37 @@
+closing policy, and power management. Given that most embedded systems
+populate soldered down DRAM on the board, the firmware may not need to
+discover the configuration at boot time. These configurations are known as
+memory-down. The firmware is specifically built for the target configuration.
+This is the case for the Intel reference platform from the Embedded
+Computing Group. At current DRAM speeds, the wires between the memory
+controllers behave like transmission lines; the SOC may provide automatic
+calibration and runtime control of resistive compensation (RCOMP) and
+delay locked look (DLL) capabilities. These capabilities allow the memory
+controller to change elements such as the drive strength to ensure error- free
+operation over time and temperature variations.
+
+If the platform supports add-in-modules for memory, there are a number
+of standardized form factors for such memory. The small outline dual in-line
+memory module (SODIMM) is one such form factor often found in
+embedded systems. The DIMMs provide a serial EPROM. The serial
+EPROM devices contain the DRAM configuration data. The data is known as
+serial presence detect data (SPD data). The firmware reads the SPD data to
+identify the device configuration and subsequently configures the device. The
+serial EPROM is connected via SMBUS, thus the device must be available in
+this early initialization phase, so the software can establish the memory
+devices on board. It is possible for memory-down motherboards to also
+incorporate serial presence detect EEPROMs to allow for multiple and
+updatable memory configurations to be handled efficiently by a single BIOS
+algorithm. It is also possible to provide a hard-coded table in one of the MRC
+files to allow for an EEPROM-less design. In order to derive that table for
+SPD, please see Appendix A.
+
+Post-Memory
+closing policy, and power management. Given that most embedded systems populate soldered down D Ram on the board, the firmware may not need to discover the configuration at boot time. These configurations are known as memory down. The firmware is specifically built for the target configuration. This is the case for the Intel reference platform from the Embedded Computing Group. At current D Ram speeds, the wires between the memory controllers behave like transmission lines; the S o C may provide automatic calibration and runtime control of resistive compensation R C O M P and delay locked look D L L capabilities. These capabilities allow the memory controller to change elements such as the drive strength to ensure error free operation over time and temperature variations.
+
+If the platform supports add in modules for memory, there are a number of standardized form factors for such memory. The small outline dual in line memory module S O D I M M is one such form factor often found in embedded systems. The D I M M s provide a serial E P R O M. The serial E P R O M devices contain the D Ram configuration data. The data is known as serial presence detect data S P D data. The firmware reads the S P D data to identify the device configuration and subsequently configures the device. The serial E P R O M is connected via S M B U S, thus the device must be available in this early initialization phase, so the software can establish the memory devices on board. It is possible for memory down motherboards to also incorporate serial presence detect E E P R O M s to allow for multiple and updatable memory configurations to be handled efficiently by a single B I O S algorithm. It is also possible to provide a hard coded table in one of the M R C files to allow for an E E P R O M less design. In order to derive that table for S P D, please see Appendix A.
+
+Post Memory
+The system's firmware plays a crucial role in managing memory configurations, particularly for embedded systems that utilize soldered down Ram. During the boot process, this firmware is responsible for discovering and populating the necessary configurations, a process often referred to as memory down. This behavior is exemplified in platforms like those from the Intel Computing Group, where the System on Chip, or S O C, interfaces with memory controllers. These controllers, operating at current Ram speeds, must manage the physical transmission lines connecting to the memory modules. To ensure reliable operation over varying environmental conditions such as temperature and drive strength variations, the S O C employs capabilities like resistive compensation, often managed by a delay locked loop, or D L L.
+
+When a platform supports add in modules for memory, such as dual in line memory modules, or D I M M S, standardized form factor parameters are used. Each D I M M typically includes a serial E P R O M containing Serial Presence Detect, or S P D, data. This S P D data provides essential configuration information for the memory device. The firmware reads this S P D data to subsequently configure the memory subsystem. A serial E P R O M is often connected via the System Management Bus, or S M B U S, enabling the device to be accessible during the early initialization phases of the system. This allows the software to properly establish memory parameters. For memory down motherboards, this mechanism can also be extended to incorporate serial presence detect E E P R O M S, facilitating efficient handling of multiple and updatable memory configurations through a unified Basic Input Output System, or B I O S, algorithm. An alternative approach involves providing a hard coded table within the M R C, or Memory Reference Code, which can be derived from information that might otherwise be sourced from an E E P R O M less design, as further detailed in Appendix A. Following these initialization steps, the system progresses into the Post Memory phase.

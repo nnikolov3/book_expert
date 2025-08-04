@@ -1,0 +1,54 @@
+Whether or not to launch a legacy option ROM depends on several possible
+
+variables:
+
+—Does the motherboard have any devices built-in that have a legacy
+option ROM?
+
+—Does the platform support adding a device that requires the launch of a
+
+legacy option ROM?
+
+—If any of the first two are true, does the platform need to initialize the
+
+device associated with that option ROM?
+
+Trick: To save an additional 0.5 second or more of boot time when booting a
+UEFI-compliant OS, the BDS could analyze the target BOOT#### variable
+to determine if the target was associated with an OS loader—thus it is a UEFI
+target. The platform in this case at least has the option to avoid some of the
+
+overhead associated with the legacy compatibility support infrastructure.
+
+One reason why launching legacy option ROMs is fraught with peril for boot
+performance is that there are no rules associated with what a legacy option
+ROM will do while it has control of the system. In some cases, the
+option ROM may be rather innocuous regarding boot performance, but in
+other instances that is not the case. For example, the legacy option ROM
+could attempt to interact with the user during launch. This normally involves
+advertising a hot key or two for the user to press, which would delay the
+BIOS in finishing its job for however long the option ROM pauses waiting
+
+for a keystroke.
+
+Trick: For this particular situation, we avoided launching all the drivers in a
+
+particular BIOS and instead opted to launch only the drivers necessary for
+Whether or not to launch a legacy option R O M depends on several possible variables:
+
+Does the motherboard have any devices built-in that have a legacy option R O M?
+
+If any of the first two are true, does the platform need to initialize the device associated with that option R O M?
+
+Trick: To save an additional zero point five second or more of boot time when booting a U E F I compliant O S, the B D S could analyze the target B O O T hashtag hashtag hashtag hashtag variable to determine if the target was associated with an O S loader—thus it is a U E F I target. The platform in this case at least has the option to avoid some of the overhead associated with the legacy compatibility support infrastructure.
+
+One reason why launching legacy option R O M s is fraught with peril for boot performance is that there are no rules associated with what a legacy option R O M will do while it has control of the system. In some cases, the option R O M may be rather innocuous regarding boot performance, but in other instances that is not the case. For example, the legacy option R O M could attempt to interact with the user during launch. This normally involves advertising a hot key or two for the user to press, which would delay the B I O S in finishing its job for however long the option R O M pauses waiting for a keystroke.
+
+Trick: For this particular situation, we avoided launching all the drivers in a particular B I O S and instead opted to launch only the drivers necessary for
+The decision to initiate a legacy option R O M during the boot process is contingent upon a set of variables that inform system behavior. Foremost, the presence of built-in devices on the motherboard that necessitate a legacy option R O M is a critical determinant. Secondly, the platform's support for adding a device that itself requires the execution of a legacy option R O M is examined. If both of these conditions are met, a further consideration arises: whether the platform needs to initialize the specific device associated with that option R O M.
+
+A practical optimization, referred to as a "trick," can be employed to mitigate boot time overhead. Specifically, to save approximately zero point five seconds or more during boot, a Universal E F I (Unified E F I) compliant O S can leverage the B I O S's boot options data s e t, or B D S, to analyze the target boot variable. This analysis aims to ascertain if the target is associated with an O S loader that is U E F I compliant. By determining this, the platform can potentially bypass certain legacy initialization routines, thereby reducing the overhead incurred by legacy compatibility support infrastructure.
+
+The rationale behind launching legacy option R O M s often presents performance challenges because there are no standardized rules dictating their behavior. Consequently, when a legacy option R O M assumes control of the system, its actions can range from relatively benign to significantly disruptive. In certain scenarios, while the option R O M might appear to have minimal impact on boot performance, in other instances, it can actively interfere. For example, a legacy option R O M could attempt to interact with the user during its launch sequence. This interaction typically manifests as the R O M advertising a specific hot key combination, or perhaps two, which the user can press. The R O M then pauses, awaiting this keystroke, effectively delaying the B I O S in completing its boot sequence.
+
+In a specific situation that necessitated an optimization, the approach adopted was to forgo launching all drivers associated with a particular B I O S. Instead, the system was configured to launch only those drivers that were essential for the core functionality, thereby streamlining the boot process and avoiding potential delays introduced by unnecessary legacy driver initialization.

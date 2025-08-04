@@ -1,0 +1,53 @@
+Most DDR3 DIMM’s SPD data use 0x01h (0.125 ns) for this value.
+
+Byte (Dec) Byte(Hex) Field Name Typ.Value Definition
+10 Dx 0A Medium Timebase Dividend Ox] 0.12505
+11 0x0B Medium Timebase Divisor ETRE 0.125ns
+
+Byte 10: Medium Timebase (MTB) Dividend
+
+Byte 11: Medium Timebase (MTB) Divisor
+
+These bytes define a value in nanoseconds that represents the fundamental
+timebase for medium grain timing calculations. This value is typically the
+greatest common divisor for the range of clock frequencies (clock periods)
+supported by a particular SDRAM. This value is used as a multiplier for
+formulating subsequent timing parameters. The Medium Timebase (MTB) is
+defined as the Medium Timebase Dividend (byte 10) divided by the medium
+timebase divisor (byte 11).
+
+Byte 10, Bits 7:0 Byte 11, Bits 7:0
+
+Medium Timebase (MTB) Dividend Medium Timebase (MTB) Divisor
+Values defined from 1 to 255 Values defined from 1 to 255
+Examples:
+
+Dividend Divisor Timebase (nS) Use
+
+1 8 0.125 For clock frequencies 400-1066 MHz
+
+To simplify BIOS implementation, DIMMs associated with a given key byte
+value may differ in MTB value only by a factor of two. For DDR3 modules,
+the defined MTB values are:
+Most D D R three DIMM's SPD data use hexadecimal zero one, zero point one two five nanoseconds for this value.
+
+The table shows the breakdown of byte values for SPD data. Byte ten, represented in decimal as ten and in hexadecimal as zero zero A, is defined as the Medium Timebase Dividend. Its typical value is zero zero one, with a definition of zero point one two five nanoseconds. Byte eleven, represented in decimal as eleven and in hexadecimal as zero zero B, is defined as the Medium Timebase Divisor. Its typical value is zero zero eight, also with a definition of zero point one two five nanoseconds.
+
+Byte ten: Medium Timebase Dividend, Byte eleven: Medium Timebase Divisor. These bytes define a value in nanoseconds that represents the fundamental timebase for medium grain timing calculations. This value is typically the greatest common divisor for the range of clock frequencies, clock periods, supported by a particular S D Ram. This value is used as a multiplier for formulating subsequent timing parameters. The Medium Timebase Dividend, byte ten, is divided by the medium timebase divisor, byte eleven.
+
+Byte ten, Bits seven to zero: Medium Timebase Dividend. Values defined from one to two hundred fifty five. Byte eleven, Bits seven to zero: Medium Timebase Divisor. Values defined from one to two hundred fifty five.
+
+Examples: The table shows an example for dividend, divisor, timebase in nanoseconds, and use. In the example provided, the dividend is one, the divisor is eight, the timebase is zero point one two five nanoseconds, and the use is for clock frequencies four hundred to one thousand sixty six megahertz.
+
+To simplify BIOS implementation, DIMM's associated with a given key byte value may differ in M T B value only by a factor of two. For D D R three modules, the defined M T B values are:
+The provided content details the utilization of specific bytes within the Serial Presence Detect, or S P D, data structure of DDR3 Dual In line Memory Modules, or D I M M s. These bytes are critical for defining the timing characteristics of the memory, specifically relating to what is termed the Medium Timebase, or M T B. The S P D data is typically accessed by the system's basic input output system, or B I O S, during the initialization phase to configure the memory controller.
+
+The core concept revolves around byte ten and byte eleven, which together encode the M T B. Byte ten, identified as the Medium Timebase Dividend, and byte eleven, the Medium Timebase Divisor, are instrumental in establishing a fundamental time unit for calculating memory timings. This M T B value, expressed in nanoseconds, represents a reference point, often the greatest common divisor of clock periods for the supported range of Synchronous Dynamic Random Access Memory, or S D Ram, frequencies. This allows for a more flexible and granular representation of timing parameters, which are themselves crucial for ensuring stable and efficient memory operation. The M T B is used as a multiplier or divisor in conjunction with other timing values to derive specific delays and pulse widths required by the memory interface.
+
+The table delineates the S P D fields. Byte ten, with a decimal value of ten and hexadecimal representation of zero X zero A, is the Medium Timebase Dividend. Its typical value is shown as zero point one two five nanoseconds. Concurrently, byte eleven, decimal eleven and hexadecimal zero X zero B, serves as the Medium Timebase Divisor, also with a typical value of zero point one two five nanoseconds. The definition for both indicates this value.
+
+Further elaboration clarifies that byte ten, bits seven through zero, represents the Medium Timebase Dividend, with its value defined from one to two hundred fifty five. Similarly, byte eleven, bits seven through zero, represents the Medium Timebase Divisor, also with values defined from one to two hundred fifty five. This range of values for the divisor allows for the representation of a wide spectrum of clock frequencies by adjusting the fundamental timebase.
+
+An example is provided illustrating the calculation of the Timebase in nanoseconds, or n S, using a Dividend and Divisor. In this specific instance, a Dividend of one and a Divisor of eight result in a Timebase of zero point one two five nanoseconds. This corresponds to an application use case for clock frequencies ranging from four hundred megahertz to one thousand and sixty six megahertz. The formula implicitly applied here would be Timebase nS = (Dividend / Divisor) * Reference Period, where the Reference Period is derived from the typical value of zero point one two five nanoseconds. In this case, it appears the Dividend and Divisor directly relate to the M T B, implying Timebase nS = M T B, which is defined as zero point one two five nanoseconds. A more accurate interpretation might be that the M T B itself is zero point one two five nanoseconds, and the Dividend and Divisor are used to scale this base unit for specific clock frequencies. The example with a Dividend of one and Divisor of eight yielding zero point one two five nS suggests that the M T B itself is the result of some internal calculation or a fixed value, and the Dividend and Divisor are used to derive other timing values from it, or perhaps the example is illustrating a specific clock period derived from the M T B.
+
+The final paragraph addresses a simplification in B I O S implementation for D I M M s. It notes that D I M M s associated with a given key byte might exhibit variations in their M T B values by a factor of two. For DDR3 modules, the defined M T B values are presented as: a Dividend of one and a Divisor of eight, leading to a Timebase of zero point one two five nanoseconds for clock frequencies between four hundred and one thousand and sixty six megahertz. This suggests that the M T B is a base timing unit that can be scaled using the Dividend and Divisor to accommodate different clock speeds. The factor of two variation likely pertains to different speed grades or configurations of DDR3 memory modules.

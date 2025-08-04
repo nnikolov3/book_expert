@@ -1,0 +1,47 @@
+information to understand what components of the platform need to be
+initialized to launch the boot target.
+
+Below is an example of just such a boot target:
+
+Acpi (PNPOAO3,0) /Pci(1F|1) /Ata (Primary, Master) /
+HD (Part3,S5ig00110011) /"\EFI\Boot”/"0SLoader.efi”
+
+Connect PCI root bridges and
+Fired VA denvicn InstalCoR
+| |
+|
+| Enumsarate BootOpticn
+For a normal boat, th figure on th
+belt illustrates a common set of
+oparations during the boot. Tha figure
+above shows an optimized boot. Both
+Boot are accomplishing the sama basic goal
+= launching the boot target
+
+Figure 10.2: Functional Boot Flow
+
+Steps Taken in a Normal and Optimized Boot
+
+Figure 10.1 indicates that between the normal boot and an optimized boot,
+
+there are no design differences from a high level (UEFI) architecture point of
+
+view. So optimizing a platform’s boot performance does not mean that one
+information to understand what components of the platform need to be initialized to launch the boot target. Below is an example of just such a boot target: Acpi (PNP A zero three, zero) / Pci (one F one) / Ata (Primary, Master) / H D (Part three, Sig zero zero one one zero zero one one) /"\ E F I \ Boot"/" O S Loader.efi"
+
+The diagram illustrates two boot paths. The left path, for a normal boot, includes the steps: Find VGA device, Connect Consoles, Connect All drivers, Diagnostics, FrontPage, Enumerate BootOption, and finally Boot. The right path, for an optimized boot, includes: Connect P C I root bridge and Install Op Rom, Connect Consoles, Diagnostics, and Boot. For a normal boot, the figure on the left illustrates a common set of operations during the boot. The figure above shows an optimized boot. Both are accomplishing the same basic goal - launching the boot target.
+
+Figure 10.2: Functional Boot Flow
+
+Steps Taken in a Normal and Optimized Boot
+
+Figure 10.1 indicates that between the normal boot and an optimized boot, there are no design differences from a high level (U E F I) architecture point of view. So optimizing a platform's boot performance does not mean that one
+The presented information discusses the process of initializing a platform to launch a boot target, specifically illustrating a boot flow. This involves understanding the sequence of operations required to bring a system from an unpowered state to a functional operating environment. The example provided, `Acpi (PNP0A03,0)/Pci(1F||1)/Ata(Primary,Master)/HD(Part3,Sig00110011,'\Efi\Boot'/'OSLoader.efi'`, is a representation of a boot path, often found in systems utilizing the Unified Extensible Firmware Interface or U E F I. This path specifies a series of device and partition identifiers leading to the operating system loader.
+
+The accompanying diagram, labeled Figure 10.2, visually depicts a functional boot flow, contrasting a "Normal Boot" on the left with an "Optimized Boot" on the right. Both flows share the ultimate goal of launching the boot target, but they differ in their intermediate steps.
+
+On the left, representing a normal boot, the process begins with "Find VGA device". This is followed by "Connect Consoles", then "Connect All drivers", "Diagnostics", "FrontPage", "Enumerate BootOption", and finally "Boot". This sequence highlights a more comprehensive initialization, likely involving broader hardware enumeration and driver loading.
+
+The right side of the diagram illustrates an optimized boot. It commences with "Connect PCI root bridge and InstallOpRom". From there, it proceeds to "Connect Consoles", "Diagnostics", and then directly to "Boot". The note accompanying the diagram clarifies that the left figure shows a common set of operations during a normal boot, while the right demonstrates an optimized boot. Crucially, it states that both are accomplishing the same basic goal: launching the boot target. This implies that optimization in boot processes often involves streamlining or consolidating steps, potentially by leveraging pre-existing configurations or by omitting certain non-critical initializations.
+
+The text further elaborates on "Steps Taken in a Normal and Optimized Boot", referencing Figure 10.1, which is not provided but presumably details further comparisons. It suggests that from a high-level U E F I architecture point of view, there may be no fundamental design differences between a normal and an optimized boot. This implies that the optimization might be a matter of configuration or conditional execution of steps within the U E F I framework, rather than a complete architectural divergence. The statement, "So optimizing a platform's boot performance does not mean that one...", suggests that performance gains are achieved by modifying the existing boot sequence, rather than by fundamentally altering the underlying boot architecture. This underscores the importance of understanding the modularity and configurability of firmware interfaces like U E F I for achieving efficient system startup.

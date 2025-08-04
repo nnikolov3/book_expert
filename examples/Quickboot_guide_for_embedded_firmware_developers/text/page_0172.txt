@@ -1,0 +1,44 @@
+from a hardware architecture point of view.
+
+Early Initialization
+
+The early phase of the BIOS/bootloader will do the minimum to get the
+memory and processor cores initialized.
+
+In an UEFI-based system BIOS, the Security (SEC) and the pre-EFI
+initialization (PEI) phases are normally synonymous with “early
+initialization.” It doesn’t matter if legacy or UEFI BIOS is used; from a
+hardware point of view, the early initialization sequence is the same for a
+
+given system.
+
+Single-Threaded Operation
+
+In a multicore system, the bootstrap processor is the CPU core/thread that is
+chosen to boot the normally single-threaded system firmware. At RESET, all
+of the processors race for a semaphore flag bit in the chipset. The first finds it
+clear and in the process of reading it sets the flag; the other processors find
+the flag set and enter a WAIT for SIPI or halt state. The first processor
+initializes main memory and the application processors (APs) and continues
+with the rest of boot. A multiprocessor (MP) system does not truly enter MP
+operation until the OS takes over. While it is possible to do a limited amount
+of parallel processing during the UEFI boot phase, such as during memory
+initialization with multiple socket designs, any true multithreading activity
+would require changes to be made to the DXE phase of the UEFI solutions to
+allow for this. In order to have broad adoption, some obvious benefits would
+
+need to arise.
+From a hardware architecture point of view.
+
+Early Initialization
+
+The early phase of the BIOS/bootloader will do the minimum to get the memory and processor cores initialized. In a U E F I based system BIOS, the Security, or S E C, and the pre E F I initialization, or P E I, phases are normally synonymous with "early initialization." It doesn't matter if legacy or U E F I BIOS is used; from a hardware point of view, the early initialization sequence is the same for a given system.
+
+Single-Threaded Operation
+
+In a multicore system, the bootstrap processor is the C P U core/thread that is chosen to boot the normally single-threaded system firmware. At R E S E T, all of the processors race for a semaphore flag bit in the chipset. The first finds it clear and in the process of reading it sets the flag; the other processors find the flag set and enter a W A I T for S I P I or halt state. The first processor initializes main memory and the application processors, or A P S, and continues with the rest of boot. A multiprocessor, or M P, system does not truly enter M P operation until the O S takes over. While it is possible to do a limited amount of parallel processing during the U E F I boot phase, such as during memory initialization with multiple socket designs, any true multithreading activity would require changes to be made to the D X E phase of the U E F I solutions to allow for this. In order to have broad adoption, some obvious benefits would need to arise.
+The system initialization process begins with an early phase executed by the BIOS or bootloader, the primary objective of which is to bring the memory and processor cores into a functional state. This early initialization is often associated with the Unified Extensible Firmware Interface, or U E F I, and its constituent phases, namely the Security phase, also known as S E C, and the Pre E F I Initialization phase, or P E I. These phases are generally considered synonymous with the term "early initialization," irrespective of whether a legacy BIOS or a U E F I BIOS is employed, indicating a consistent initialization sequence from a hardware architecture perspective.
+
+Transitioning to the dynamics of multicore systems, the concept of single threaded operation during the boot process is fundamental. In a multicore environment, one specific C P U core, designated as the bootstrap processor, assumes the responsibility of initiating the system firmware. This bootstrap processor is typically chosen from the available cores. Upon a system R E S E T event, all processors are brought to a known quiescent state. The bootstrap processor's initial task involves accessing a semaphore flag bit within the chipset. It reads this flag to determine its readiness and, upon successful ascertainment, sets the flag, signaling its status to other processors. Subsequently, it may enter a W A I T state, awaiting a S I P I, or Start I P I, signal, or a halt state, depending on the specific boot protocol. Following this, the bootstrap processor proceeds to initialize the main memory subsystem and then activates the remaining application processors, referred to as A P s, to join the system.
+
+In a multiprocessor, or M P, system context, the bootstrap processor does not typically engage in full multithreaded operation until the operating system, or O S, assumes control. While some limited parallel processing can occur during the U E F I boot phase, especially in configurations with multiple socket designs and advanced multithreading capabilities, this necessitates modifications to the D X E phase of the U E F I firmware. For widespread adoption of such multithreaded boot processes, the advantages they offer would need to outweigh the complexity introduced by these modifications.

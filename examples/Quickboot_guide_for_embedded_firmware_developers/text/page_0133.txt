@@ -1,0 +1,44 @@
+The other effect that this reduction in the size of the feature set can have
+is security. If the end user of the platform is not expected to use the shell, it is
+possible to restrict the features available to eliminate some risk that they can
+harm the system, but still leave enough features that the limited shell could be
+used to initiate a platform debug session. It is even possible to have a limited
+built-in-shell (with a correspondingly small binary image footprint) launch a
+large and feature-rich shell from a peripheral storage device, such as USB,
+DVD, or even over the network.
+
+When in early testing of a new platform, a common use of the shell is as
+a boot target, normally before the hardware can boot to a full modern
+operating system. This allows for lots of hardware testing via the internal
+commands and custom-designed shell applications. Since custom
+applications have access to the full system, they can easily test memory, run
+new assembly instructions, test a new peripheral media device, or simply
+examine the contents of the ACPI table.
+
+Since the EFI and UEFI shells have built-in commands to examine
+memory, examine drive contents, verify device configuration, use the
+network, and output logs of what was found, much early testing can be
+accomplished in this environment. When this is combined with the ability of
+a shell to run itself with minimal features from the underlying system, it is a
+clear advantage to use the shell to test and debug new hardware of unknown
+quality.
+
+The logical continuation of this is that in a system where the hardware is
+expected to be of high quality, but the side effect of the usage model dictates
+that testing be done still (such as a manufacturing line), it makes a lot of
+sense to first boot to the shell to do some level of testing and then “continue”
+the boot onto the operating system. This is easily done from any EFI or UEFI
+
+Shell since in both of these cases the operating system loader is just another
+The other effect that this reduction in the size of the feature set can have is security. If the end user of the platform is not expected to use the shell, it is possible to restrict the features available to eliminate some risk that they can harm the system, but still leave enough features that the limited shell could be used to initiate a platform debug session. It is even possible to have a limited built in shell (with a correspondingly small binary image footprint) launch a large and feature rich shell from a peripheral storage device, such as U S B, D V D, or even over the network.
+
+When in early testing of a new platform, a common use of the shell is as a boot target, normally before the hardware can boot to a full modern operating system. This allows for lots of hardware testing via the internal commands and custom designed shell applications. Since custom applications have access to the full system, they can easily test memory, run new assembly instructions, test a new peripheral media device, or simply examine the contents of the A C P I table.
+
+Since the E F I and U E F I shells have built in commands to examine memory, examine drive contents, verify device configuration, use the network, and output logs of what was found, much early testing can be accomplished in this environment. When this is combined with the ability of a shell to run itself with minimal features from the underlying system, it is a clear advantage to use the shell to test and debug new hardware of unknown quality.
+
+The logical continuation of this is that in a system where the hardware is expected to be of high quality, but the side effect of the usage model dictates that testing be done still (such as a manufacturing line), it makes a lot of sense to first boot to the shell to do some level of testing and then continue the boot onto the operating system. This is easily done from any E F I or U E F I Shell since in both of these cases the operating system loader is just another
+The discussion centers on the security implications and practical applications of employing a minimal, built-in shell environment for system testing and debugging, particularly during the early stages of platform development. This approach enhances security by potentially restricting the feature set available to the end user, thereby reducing the attack surface and the risk of unauthorized system modifications. The concept of a "small binary image footprint" is key here, as it implies a highly optimized and resource-constrained execution environment, often capable of launching from peripheral storage devices such as Universal Serial Bus drives or even over a network, without needing a full operating system.
+
+In the context of new platform testing, a common practice involves booting a minimal shell to a full modern operating system. This shell provides the necessary low-level access to hardware, enabling direct interaction with the system's internal commands and the execution of custom-designed shell applications. Such applications can perform critical diagnostics like memory testing, peripheral device validation, and system configuration checks, all before a complete operating system is loaded. This granular control is particularly valuable for examining configuration details, reviewing output logs, and debugging hardware behavior in an isolated environment. The EFI and UEFI shells, as mentioned, are prime examples of such environments, offering built-in capabilities for these diagnostic tasks, thus presenting a clear advantage for testing and debugging new hardware.
+
+The strategic advantage of this methodology is further amplified when considering the hardware's expected quality, especially in scenarios like manufacturing. The usage model dictates that initial system testing, which can occur during the manufacturing line, should be as comprehensive as possible. Utilizing a shell that can perform a level of testing before the operating system loads, and then smoothly transition to the full operating system, streamlines this process. This is readily achievable with environments like the Extensible Firmware Interface or the Unified Extensible Firmware Interface. The operating system loader in such cases effectively becomes an extension of this initial testing phase, seamlessly integrating the loaded operating system with the pre-boot diagnostics. This integrated approach ensures that hardware issues are identified and addressed early in the development or manufacturing lifecycle, contributing to overall system reliability and quality.

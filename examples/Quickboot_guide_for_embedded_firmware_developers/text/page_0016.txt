@@ -1,0 +1,59 @@
+Beyond the four commercial BIOS companies mentioned above, it is possible
+that many name-brand computer manufacturers have teams that can and/or do
+write their own proprietary BIOS. Over the years, many have created their
+own BIOS, starting with IBM and the IBM PC. In some cases, separate
+business units within very large companies have even created their own
+
+solutions.
+
+—At IBM, a team of developers created a boot firmware for its new
+desktop machine in August, 1981, which became known as a BIOS.
+Today, IBM has a choice of who they use for which product,
+
+internal or external.
+
+—In 1982, Compaq wrote the first BIOS specification by reverse-
+engineering the IBM BIOS with one team that wrote the
+specification and then handing the specification to another team,
+which in turn wrote the Compaq portable PC firmware from
+
+scratch.
+
+—Today, HP does their own BIOS and utilizes BIOS vendors depending
+
+on the product lines.
+
+—While Intel currently employs the maintainers of the UEFI solutions at
+www.tianocore.org, it does not produce commercially available
+BIOS, not counting Intel-branded motherboards.
+
+—Other large computer and motherboard manufacturers around the world
+have the capability to develop their own solutions, and often opt to
+
+employ their favorite BIOS vendors for core and tool maintenance.
+
+—Apart from front-end system firmware, server manufacturers in
+Beyond the four commercial B I O S companies mentioned above, it is possible that many name brand computer manufacturers have teams that can and or do write their own proprietary B I O S. Over the years, many have created their own B I O S, starting with I B M and the I B M P C. In some cases, separate business units within very large companies have even created their own solutions.
+
+At I B M, a team of developers created a boot firmware for its new desktop machine in August, nineteen eighty one, which became known as a B I O S. Today, I B M has a choice of who they use for which product, internal or external.
+
+In nineteen eighty two, Compaq wrote the first B I O S specification by reverse engineering the I B M B I O S with one team that wrote the specification and then handing the specification to another team, which in turn wrote the Compaq portable P C firmware from scratch.
+
+Today, H P does their own B I O S and utilizes B I O S vendors depending on the product lines.
+
+While Intel currently employs the maintainers of the U E F I solutions at W W W dot tiano core dot org, it does not produce commercially available B I O S, not counting Intel branded motherboards.
+
+Other large computer and motherboard manufacturers around the world have the capability to develop their own solutions, and often opt to employ their favorite B I O S vendors for core and tool maintenance.
+
+Apart from front end system firmware, server manufacturers in
+The fundamental component discussed here is the B I O S, or Basic Input Output System, a critical piece of firmware embedded on a computer's motherboard. Its primary function is to initialize the system hardware components immediately upon power-on, executing what is known as the P O S T, or Power On Self Test. This initial sequence ensures that essential hardware, such as the C P U, Ram, video card, and keyboard, are correctly detected and configured before handing control over to the operating system's boot loader. The architecture of this boot process establishes the foundational layer upon which all higher-level software operates.
+
+Historically, the development of this low-level firmware was a distinguishing characteristic of computer manufacturers. I B M, for example, developed its proprietary boot firmware in August, one nine eight one, for its new desktop P C. This strategic decision to maintain control over the initial system bootstrapping process allowed I B M to dictate the hardware environment and ensure compatibility with its chosen operating systems. The choice between developing firmware internally or sourcing it externally is a recurring dilemma in system design, balancing cost, intellectual property control, and the degree of customization required for a unique product offering.
+
+The landscape of firmware development saw significant evolution, as exemplified by Compaq's actions in one nine eight two. Their approach of reverse engineering the I B M B I O S to create their own portable P C firmware highlights the complexities of interoperability and intellectual property in the nascent personal computer market. Reverse engineering, in this context, involves deconstructing the existing firmware to understand its functional specifications and then reimplementing compatible functionality from scratch, often employing clean room design methodologies to avoid direct intellectual property infringement. This practice was crucial in enabling the broader P C compatible market by establishing a de facto standard for system initialization.
+
+In the contemporary computing environment, manufacturers like H P continue to engage in B I O S development, often adopting a hybrid model where they develop their core B I O S while also leveraging specialized B I O S vendors for certain product lines or functionalities. This diversified approach allows them to benefit from vendor expertise and resources while retaining core intellectual property and design control for strategic products.
+
+The shift from the legacy B I O S to the more modern U E F I, or Unified Extensible Firmware Interface, represents a significant architectural advancement. Intel's involvement in maintaining U E F I solutions, particularly through the tianocore dot org project, underscores the industry's move towards more open and collaborative firmware development paradigms. While Intel directly contributes to and maintains U E F I for broad adoption, it typically does not commercialize B I O S or U E F I solutions for third-party motherboards not under its direct branding. This distinction highlights the role of foundational technology providers in fostering an ecosystem versus direct commercial productization. The U E F I standard provides a more extensible, modular, and feature-rich environment compared to B I O S, supporting larger storage devices through G P T partition tables, network capabilities during pre-boot, and a more robust application environment.
+
+Broadly, across the global computing landscape, large computer and motherboard manufacturers continue to invest in developing their own firmware solutions. This commitment stems from the recognition that firmware is not merely a utility but a critical enabler of system performance, security, and unique features. The capability to tailor the boot process and hardware initialization deeply affects a system's overall behavior and its ability to support advanced operating system features. Alternatively, many opt to utilize specialized B I O S vendors, who provide the expertise and tools necessary for firmware development and maintenance, allowing manufacturers to focus their R and D efforts on higher-level system design and software integration. This strategic decision-making around firmware ownership and development is equally pertinent for server manufacturers, where custom low-level system firmware is essential for optimizing performance, managing complex hardware configurations, and ensuring reliability in data center environments.

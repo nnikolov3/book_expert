@@ -1,0 +1,45 @@
+—Intel® SCH US15W chipset (D1 stepping)
+—-512 MB DDR2 memory at 400 MHz
+—2 MB flash
+
+Table 10.2: Performance Measurements for Example 2
+
+Normal Boot Optimized Boot Percentage Reduc-
+Boot Phase Time Time Delta tion in Boot Times
+Total (s) 11.66 1.65 10.01 85.85%
+
+While a different combination of techniques was used between these two
+teams in these examples, it should be noted that the second trial was more
+focused on the embedded market scenarios and striving to simply reduce boot
+times as much as possible without regard to the broad market. The difference,
+
+while noticeable, would not be that great.
+
+Example 1 Details
+
+Some of the details are listed in Table 10.3.
+
+Table 10.3: Example 1 Details
+
+Boot Time Incremental boot time
+
+Change (in seconds) improvement (in seconds)
+Initial configuration 9.65 —_—
+Eliminate SMBIOS tables 9.25 0.4
+Booting to UEFI target 8.75 0.5
+
+Using UEFI drivers instead of
+
+option ROMs 2-73 30
+Minus Intel SCH U S fifteen chipset D one stepping.
+Minus five hundred twelve megabyte D D R two memory at four hundred megahertz.
+Minus two megabyte flash.
+Table ten point two: Performance Measurements for Example two. The table shows boot phase data across normal boot time, optimized boot time, delta, and percentage reduction in boot times. For the total s row, the normal boot time is eleven point six six, the optimized boot time is one point six five, the delta is ten point zero one, and the percentage reduction in boot times is eighty five point eight five percent.
+While a different combination of techniques was used between these two teams in these examples, it should be noted that the second trial was more focused on the embedded market scenarios and striving to simply reduce boot times as much as possible without regard to the broad market. The difference, while noticeable, would not be that great.
+Example one Details. Some of the details are listed in Table ten point three.
+Table ten point three: Example one Details. The table details changes in boot time and incremental boot time improvement. For the initial configuration, the boot time is nine point six five seconds and there is no incremental improvement indicated. Eliminating S M B I O S tables results in a boot time of nine point two five seconds, with an incremental improvement of zero point four seconds. Booting to U E F I target shows a boot time of eight point seven five seconds and an incremental improvement of zero point five seconds. Using U E F I drivers instead of option R O M s leads to a boot time of five point seven five seconds and an incremental improvement of three point zero seconds.
+The presented information outlines the system configuration and performance measurements related to system boot times. The system under consideration utilizes an Intel SCH US15W chipset with a D1 stepping, indicating a specific revision of the chipset's integrated platform controller hub. This chipset manages various I/O functions, communication between components, and power management. The system is equipped with five hundred twelve megabyte of D Ram, operating at four hundred megahertz, a standard for DDR2 memory, which provides the primary working memory for the C P U. Additionally, two megabyte of flash memory is present, typically used for storing firmware such as the basic input/output system, or BIOS, or the Unified Extensible Firmware Interface, UEFI, and potentially other non-volatile configuration data.
+
+Table ten dot two presents a comparative analysis of system boot performance, detailing a "Normal Boot Time" and an "Optimized Boot Time," along with the "Delta" or difference between them and the "Percentage Reduction in Boot Times." The total boot time under normal conditions is eleven point sixty six seconds. Through optimization, this time is reduced to one point sixty five seconds, resulting in a delta of ten point zero one seconds. This significant reduction translates to an eighty five point eight five percent improvement. The accompanying text notes that while a diverse set of techniques were employed, the optimization effort was particularly focused on embedded market scenarios, aiming for substantial boot time reduction. The difference observed, while notable, is not described as dramatically impactful in a broader market context.
+
+Table ten dot three further elaborates on these boot time improvements by breaking down the effects of specific changes. The "Initial configuration" serves as the baseline, with a boot time of nine point sixty five seconds and no incremental improvement recorded. Eliminating SMBios tables, a process that involves removing or simplifying the system management BIOS data structure, reduces the boot time by zero point four seconds, bringing the total to nine point twenty five seconds. Booting to a UEFI target, which signifies a transition from legacy BIOS to the more modern UEFI firmware, further decreases the boot time by zero point five seconds, achieving a total of eight point seventy five seconds. The most substantial improvement is observed when using UEFI drivers instead of option R O M s, which are typically legacy code drivers for hardware devices. This change results in an incremental improvement of three point zero seconds, leading to a significantly faster boot time of five point seventy five seconds. These granular measurements demonstrate the cumulative impact of each optimization step on the overall system startup performance, highlighting the benefits of adopting UEFI and optimizing firmware configurations. The concept of "boot time" itself refers to the sequence of operations executed by the system's firmware and operating system to initialize hardware, load the OS kernel, and bring the system to an operational state. Each phase of this process, from power on to user interaction readiness, contributes to the total boot duration. The optimizations shown are typical techniques employed to streamline this critical initialization sequence, particularly in embedded systems where rapid startup is often a key requirement.

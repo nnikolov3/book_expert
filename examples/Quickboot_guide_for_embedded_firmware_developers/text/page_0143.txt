@@ -1,0 +1,56 @@
+Customizing the UEFI Shell
+
+The UEFI Shell was both specified and designed with the goal of allowing
+lots of customization. We already covered the 64 possible combinations of
+shell levels and shell profiles. For initial silicon bring-up and debugging, it
+would be best to try to use a level 3 shell with all the profiles installed. This
+would mean that the binary size would be the biggest of all the combinations,
+but also that the feature set would be the biggest. There is a defined method
+for adding additional (custom) profiles into the shell that include any custom
+shell commands you have developed.
+
+In Figure 7.2 you can see how the UEFI Shell runs on top of the UEFI
+
+drivers. You can also see the separation of required and optional components
+of the shell, which is what allows for the easy customization and modification
+of the shell.
+
+To add a command set to the UEFI Shell 2.0, located in the UDK?2010
+
+available at www.tianocore.org, add a NULL-Named-Library to the shell via
+
+your DSC file. This new library must then use the API from
+UefiShell CommandLib to register its commands with the shell core. The
+shell core will then call into this new library when the registered commands
+are invoked from the command line of the shell. This registration will include
+the name of the command (don’t overlap with existing commands in the
+shell), a function pointer (of a specific prototype) to be called when the
+command is run, a required level (zero in this case), the name of this profile,
+and the identifier for the help content in HII. This information is used to
+
+populate required shell features:
+—The name is used for the required environment variable profiles.
+
+—The help content is used if the help command is invoked.
+Customizing the U E F I Shell.
+
+The U E F I Shell was both specified and designed with the goal of allowing lots of customization. We already covered the sixty four possible combinations of shell levels and shell profiles. For initial silicon bring up and debugging, it would be best to try to use a level three shell with all the profiles installed. This would mean that the binary size would be the biggest of all the combinations, but also that the feature set would be the biggest. There is a defined method for adding additional custom profiles into the shell that include any custom shell commands you have developed.
+
+In Figure seven point two you can see how the U E F I Shell runs on top of the U E F I drivers. You can also see the separation of required and optional components of the shell, which is what allows for the easy customization and modification of the shell.
+
+To add a command set to the U E F I Shell two point zero, located in the U D K two thousand and ten available at www dot tianocore dot org, add a N U L L Named Library to the shell via your D S C file. This new library must then use the A P I from UefiShellCommandLib to register its commands with the shell core. The shell core will then call into this new library when the registered commands are invoked from the command line of the shell. This registration will include the name of the command, don't overlap with existing commands in the shell, a function pointer of a specific prototype to be called when the command is run, a required level, zero in this case, the name of this profile, and the identifier for the help content in H I I. This information is used to populate required shell features.
+
+The name is used for the required environment variable profiles.
+
+The help content is used if the help command is invoked.
+The Unified Extensible Firmware Interface, or U E F I, Shell is a command line interface designed to provide a highly customizable environment within the U E F I system. This customization extends to various shell levels and profiles, allowing for a significant degree of flexibility in system configuration and operation. The inherent combinatorial nature of these profiles, potentially reaching sixty four distinct combinations, implies a sophisticated mechanism for managing and activating specific feature sets.
+
+For initial silicon bring up and debugging, a strategy of employing a level three shell, which encompasses all available profiles, is suggested. This approach serves a dual purpose: it maximizes the available functionality for testing and analysis, and it also results in the largest possible binary size for the shell itself. The rationale is that this configuration offers the most comprehensive feature set, allowing developers to explore the full capabilities of the U E F I Shell. A defined method exists for incorporating additional, or custom, profiles into the shell, which are essential for tailoring the environment to specific hardware or software requirements.
+
+The document references a figure, Figure 7.2, which illustrates how the U E F I Shell operates on top of U E F I drivers. This figure is crucial for understanding the hierarchical layering of the shell's functionality. It also highlights the separation between required and optional components of the shell, a key design principle that facilitates easy customization and modification of the shell's behavior.
+
+To integrate custom commands, the process involves adding a NULL Named Library to the U E F I Shell 2.0, as described as being available from www dot tianocore dot org. This library must be linked into the U E F I Shell 2.0 build process, and it utilizes an Application Programming Interface, or A P I, from the shell core. The shell core is responsible for managing registered commands. When a command is invoked from the command line, the shell core references a table that maps command names to their respective implementations.
+
+Each command registration includes several pieces of information. Firstly, it involves the name of the command itself, ensuring that it does not conflict with existing commands within the shell. Secondly, it specifies a function pointer, which is essentially an address pointing to the executable code for that command. This pointer adheres to a specific prototype, defining the expected signature of the command's execution function. The registration also includes a required level, indicated as zero in this context, which likely pertains to the privilege or security level at which the command can be executed. Finally, an identifier for the profile associated with the command is provided. This profile identifier is used to populate required shell features.
+
+The information gathered during this registration process serves specific purposes. The command name is utilized to associate the command with required environment variable profiles, enabling context-aware execution. The help content, which is typically associated with a command, is referenced and displayed when a help command is invoked for that specific command. This structured approach to command registration and management is fundamental to the U E F I Shell's extensibility and user-defined functionality.

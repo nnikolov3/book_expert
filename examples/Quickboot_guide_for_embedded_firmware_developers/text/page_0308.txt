@@ -1,0 +1,26 @@
+In extreme cases, it might be necessary to analyze the chipset’s datasheet
+and design guide to discern exactly which DIMM equivalent(s) are being
+used in the down-on-board memory design.
+
+As an example, let’s assume that an Intel® 5100 chipset based design
+has SDRAM chips connected using all four rank signals (CS[3:0]#). This
+implementation could either be a single quad-rank DIMM equivalent, or two
+dual-rank DIMM equivalent. As shown in the two figures below, taken from
+this document: Intel® Xeon® Processor 5000 Sequence with Intel® 5100
+Memory Controller Hub Chipset for Communications, Embedded, and
+Storage Applications Platform Design Guide (PDG) April 2009 Revision 2.3
+Document Number: 352108-2.3.
+
+All other memory interface signals have to be analyzed. For example, if
+the design is routing a SINGLE clock to all of the SDRAM chips (DCLKP/N
+[0]), then the implementation is similar to that in Figure 37; it’s a single
+quad-rank DIMM implementation. However, if half of the SDRAM chips are
+connected to DCLKP/N[0], and the other half are connected to DCLKP/NJ[1],
+then the design is implementing two DIMM equivalents of dual-rank
+DIMMs.
+In extreme cases, it might be necessary to analyze the chipset's datasheet and design guide to discern exactly which DIMM equivalent(s) are being used in the down-on-board memory design. As an example, let's assume that an Intel Xeon Processor 5000 Sequence with Intel Memory Controller Hub Chipset for Communications, Embedded, and Storage Applications Platform Design Guide, April 2009 Revision 2.3, Document Number: 352108 dash 2.3, has S D Ram chips connected using all four rank signals C S three zero hash. This implementation could either be a single quad rank D I M M equivalent, or two dual rank D I M M equivalent. As shown in the two figures below, taken from this document: All other memory interface signals have to be analyzed. For example, if the design is routing a single clock to all of the S D Ram chips D C L K P slash N zero, then the implementation is similar to that in Figure 37; it's a single quad rank D I M M implementation. However, if half of the S D Ram chips are connected to D C L K P slash N one, and the other half are connected to D C L K P slash N one, then the design is implementing two D I M M equivalents of dual rank D I M Ms.
+In intricate system designs, precisely identifying memory configurations, such as whether a memory module comprises a single quad rank or two dual ranks, can necessitate a deep dive into chipset datasheets and design guides.  This granular analysis is fundamental to understanding memory architecture and ensuring proper system functionality.
+
+Consider an example scenario involving the Intel® Xeon® Processor 5000 Sequence. When a chipset, like the Intel® 5100, is configured to utilize all four rank signals, denoted as C S [ three : zero ]#, the resultant memory implementation could manifest as a single quad rank D I M M equivalent. Alternatively, it could be implemented as two dual rank D I M M equivalents. This distinction is crucial and is elaborated upon in documents such as the "Intel® Xeon® Processor 5000 Sequence with Intel® 5100 Memory Controller Hub Chipset for Communications, Embedded, and Storage Applications Platform Design Guide (PDG) April 2009 Revision 2.3," specifically under Document Number: three hundred fifty two thousand one hundred eight dash two point three.
+
+Further complicating the analysis are the memory interface signals. For instance, if a design routes a single clock signal to all S D Ram chips, specifically those designated as D C L K P / N [ zero ], this configuration implies a single quad rank D I M M implementation. However, if half of the S D Ram chips are connected to D C L K P / N [ zero ] and the remaining half are connected to D C L K P / N [ one ], this bifurcated clocking scheme indicates the design is implementing two D I M M equivalents, each functioning as a dual rank. This signal routing and connectivity directly impact how the memory controller perceives and accesses the memory subsystem, dictating whether it operates as a single, wider memory bank or as two independent, narrower banks. Understanding these signal assignments and their implications for memory rank configuration is paramount for optimal performance tuning and debugging in high-performance computing environments.

@@ -1,0 +1,56 @@
+limited to:
+—Int 13h for disk including RAID option ROMs
+—Int 16h for PS/2 keyboard
+—Int 10h for video output from video BIOS
+
+—BIOS’s SMI handler providing legacy USB keyboard support via port
+60/64 emulation.
+
+Depending on the desired features enabled by the boot loader, the OS needs
+different tables. The following is a list of those tables:
+
+—Memory Map (INT15h / Function E820h)
+—Programmable Interrupt Routing ($PIR)
+—Multi-Processor Specification (_MP_)
+
+—Minimal Boot Loader for Intel® Architecture
+—Advanced Configuration and Power Interface (ACPI)
+
+ACPI tables are needed only if those features are enabled by the boot loader
+and required by the OS. Most modern operating systems, including RTOS,
+are ACPI aware.
+
+The _MP_ table is needed if there is more than one Intel processing
+agent (more than one thread or core) in the system. Details on the _MP__ table
+may be found in the Multi-Processor Specification.
+
+The $PIR table and interrupt-based memory map are almost always
+needed. Details on the $PIR table may be found in the $PIR Specification.
+limited to: Int thirteen h for disk including R A I D option R O M s, Int sixteen h for P S slash two keyboard, Int ten h for video output from video B I O S, B I O S 's S M I handler providing legacy U S B keyboard support via port sixty four emulation.
+
+Depending on the desired features enabled by the boot loader, the O S needs different tables. The following is a list of those tables: Memory Map ( I N T fifteen h / Function E eight twenty h ), Programmable Interrupt Routing ( $ P I R ), Multi Processor Specification ( _ M P_ ), Minimal Boot Loader for Intel R Architecture, Advanced Configuration and Power Interface ( A C P I ).
+
+A C P I tables are needed only if those features are enabled by the boot loader and required by the O S. Most modern operating systems, including R T O S, are A C P I aware.
+
+The _ M P_ table is needed if there is more than one Intel processing agent (more than one thread or core) in the system. Details on the _ M P_ table may be found in the Multi Processor Specification. The $ P I R table and interrupt based memory map are almost always needed. Details on the $ P I R table may be found in the $ P I R Specification.
+The text discusses hardware abstraction and system configuration, focusing on the roles of the Basic Input/Output System, or B I O S, and specific configuration tables that an operating system, or O S, might utilize.
+
+It begins by enumerating certain B I O S functions, specifically interrupt calls. "Interrupt thirteen H" is noted for disk operations, which would include handling data read or write requests, potentially in conjunction with Redundant Array of Independent Disks, or R A I D, option Read Only Memory, or R O M s. These R O M s store firmware for storage controllers, enabling direct hardware interaction for disk management before the main O S drivers are loaded. "Interrupt sixteen H" is specified for the P S/two keyboard interface, a legacy standard for input devices that involves polling or interrupt-driven communication to receive keystroke data. "Interrupt ten H" is associated with video output from the video B I O S, which handles the initial display initialization and rendering before the graphics drivers within the O S take over.
+
+Further, the B I O S is described as having an S M I, or System Management Interrupt, handler that provides support for legacy U S B keyboard functionality through a port emulation scheme, specifically mentioning sixty forty emulation. S M I s are a critical mechanism for power management and other system-level tasks, often invoked by dedicated hardware. The legacy U S B support indicates a need to bridge newer hardware interfaces with older software expectations, common during transitional periods in computing architecture.
+
+The operational flow then shifts to how the O S depends on configuration information determined by the boot loader. The boot loader's role is to initialize the hardware and load the operating system kernel. If certain features are enabled, the O S requires access to different configuration tables. The text lists these tables:
+
+The "Memory Map" table, potentially associated with "Interrupt fifteen H" and "Function E eight twenty H," would define the layout of the system's memory, including address ranges for various devices, main memory, and potentially memory-mapped input/output, or M M I O, regions.
+
+The "Programmable Interrupt Routing," or $ P I R, table, details how hardware interrupts are routed to specific processors or interrupt controllers within the system. This is crucial for efficient interrupt handling, especially in multi-processor or multi-core environments, ensuring that interrupt requests are serviced by the appropriate processing unit.
+
+The "Multi Processor Specification," or $ M P _, table, provides information necessary for initializing and managing multiple processors or processor cores. This includes details on the number of processors, their architecture, cache coherency protocols, and inter-processor communication mechanisms, essential for symmetric multi-processing, or S M P, systems.
+
+The "Minimal Boot Loader" for the Intel architecture specifies a baseline configuration required for the boot process on Intel processors. This often includes essential hardware detection and initialization routines.
+
+Finally, the "Advanced Configuration and Power Interface," or A C P I, tables are mentioned. A C P I is a standardized interface that allows the operating system to manage hardware power states, thermal management, and configuration settings. It replaces older, proprietary methods like the Plug and Play, or P n P, standards.
+
+The text clarifies that A C P I tables are particularly important if the system features are enabled by the boot loader and are required by the O S. Modern operating systems, including real-time operating systems, or R T O S, generally expect A C P I compliance.
+
+The $ M P _ table is needed when there is more than one Intel processing agent, which could refer to multiple physical CPUs or multiple cores within a single CPU package. Details regarding this table can be found in the Multi Processor Specification documentation. Similarly, the $ P I R table, which describes interrupt-based memory mapping, is almost always needed. Further information on the $ P I R table is available in the $ P I R Specification. This highlights a layered approach to system configuration, where a boot loader provides foundational information, and more detailed, standardized tables like A C P I offer richer control and management capabilities for the operating system.

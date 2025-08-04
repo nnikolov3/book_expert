@@ -1,0 +1,65 @@
+overwriting of the image in memory. See the example in Table 9.1.
+
+Table 9.1: Reading and Writing the Same Address
+
+PAM Registers Register Address
+
+PAM 0 OFO0000-OFFFFFh
+PAM 1 0C0000—0C7FFFh
+PAM 2 0C8000—0CFFFFh
+PAM 3 0D0000-0D7FFFh
+PAM 4 0D8000-0DFFFFh
+PAM 5 OEOO0O00—OE7/FFFh
+PAM 6 OE8000—OEFFFFh
+
+Consult the chipset datasheet for details on the memory redirection feature
+
+controls applicable to the target platform.
+
+Application Processor (AP) Initialization
+
+Even in SOCs, there is the likelihood of having multiple CPU cores, which
+are considered BSP 1 AP to system initialization. While the BSP starts and
+initializes the system, the application processors (APs) must also be
+initialized with identical features enabled to the BSP. Prior to memory, the
+APs are left uninitialized. After memory is started, the remaining processors
+are initialized and left in a WAIT {for SIPI state. To do this, the system
+
+firmware must:
+
+1. Find microcode and then copy it to memory.
+2. Find the CPU code in SPI and copy to memory. This is an important
+step to avoid execution-in-place penalties for the remainder of the boot
+
+sequence.
+overwriting of the image in memory. See the example in Table 9.1.
+
+Table 9.1: Reading and Writing the Same Address
+
+PAM Registers Register Address
+
+P A M zero is zero F zero zero zero zero through zero F F F F hexadecimalf
+
+P A M one is zero C zero zero zero through zero C seven F F F hexadecimalf
+
+P A M two is zero C eight zero zero zero through zero C F F F F hexadecimalf
+
+P A M three is zero D zero zero zero through zero D seven F F F hexadecimalf
+
+P A M four is zero D eight zero zero zero through zero D F F F F hexadecimalf
+
+P A M five is zero E zero zero zero through zero E seven F F F hexadecimalf
+
+P A M six is zero E eight zero zero zero through zero E F F F F hexadecimalf
+
+Consult the chipset datasheet for details on the memory redirection feature controls applicable to the target platform.
+
+Application Processor (AP) Initialization
+
+Even in S o Cs, there is the likelihood of having multiple C P U cores, which are considered B S P one A P to system initialization. While the B S P starts and initializes the system, the application processors (A Ps) must also be initialized with identical features enabled to the B S P. Prior to memory, the A Ps are left uninitialized. After memory is started, the remaining processors are initialized and left in a W A I T for S I P I state. To do this, the system firmware must:
+
+One: Find microcode and then copy it to memory.
+Two: Find the C P U code in S P I and copy to memory. This is an important step to avoid execution in place penalties for the remainder of the boot sequence.
+The text discusses register mapping and the initialization process for Application Processors (APs) within a System on Chip (SoC). Table 9.1, titled "Reading and Writing the Same Address," presents a mapping of "PAM Registers" to specific memory address ranges. These ranges are specified in hexadecimal notation, starting with "hexadecimal F zero zero zero zero zero to hexadecimal F F F F F F" for PAM zero, and continuing with contiguous or near-contiguous blocks for subsequent PAM registers up to PAM six, which spans from "hexadecimal E eight zero zero zero zero to hexadecimal E F F F F F". This tabular data exemplifies memory-mapped I O, where hardware registers are accessed as if they were memory locations. The contiguous nature of these address ranges suggests a potential block allocation for peripheral access or control registers. The reference to consulting a chipset datasheet for details on memory redirection features implies a sophisticated memory management unit (M M U) or similar hardware mechanism that can dynamically remap or control access to these physical address spaces, often for security or resource allocation purposes.
+
+The section on "Application Processor (AP) Initialization" delves into the critical startup sequence in multi core processors, especially within SoCs. It highlights the distinction between the Boot Strap Processor (BSP) and other Application Processors (APs). The BSP is responsible for the initial system setup, including memory initialization. APs, upon system reset, are typically left in an uninitialized state, often waiting in a specific low power or waiting state, here referred to as a "WAIT for S I P I state." S I P I likely refers to a specific inter processor communication protocol or state relevant to the processor architecture, possibly a standardized interface like System Processor Interconnect. For the system to become fully operational, these APs must be brought online. This involves a firmware process that typically follows two main steps. First, the firmware needs to locate and transfer microcode, which contains essential instructions or data for the processor's operation, into the main system memory. Second, the processor's executable code, particularly the CPU code for initialization, must be copied from its initial boot source, such as Serial Peripheral Interface (S P I) flash memory, into faster system memory, such as D Ram. This copying process is crucial to avoid "execution in place" penalties, which would occur if the processor attempted to execute code directly from a slower storage medium, significantly impacting performance during the critical boot sequence. The objective is to ensure the efficient and correct startup of all processing cores.

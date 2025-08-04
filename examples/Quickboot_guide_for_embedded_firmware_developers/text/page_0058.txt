@@ -1,0 +1,50 @@
+executed. This method helps the developer determine where the failure
+occurred, regardless of whether it was caused in the hardware or in the
+firmware.
+
+POST codes are typically displayed on two seven-segment displays. The
+displays are written to I/O port 0x80. Almost all BIOS or boot loaders use
+this method for debugging. Debug methods will be covered in depth in a later
+chapter.
+
+Master Boot Record
+
+The Master Boot Record (MBR) is on the first sector of a partitioned mass
+storage device. It contains the partition table, as well as boot code. The boot
+code is OS-dependent code whose primary purpose is to load the OS into
+memory. Once the BIOS, firmware, or boot loader reads the MBR, it will
+
+verify that “OxAA55”, the MBR signature, is present, as shown in Table 3.1.
+
+The BIOS or boot loader will then load the boot code to memory location
+
+0x7C0:0 and will jump to that location.
+Table 3.1: Master Boot Record
+
+Address (in hex) Description
+
+0 Boot code
+
+0x1B8 Optional signature
+0x1BC 0x0
+
+Ox1BE Partition table
+Ox1FE OxAADSS
+
+GUID Partition Table
+executed. This method helps the developer determine where the failure occurred, regardless of whether it was caused in the hardware or in the firmware. P O S T codes are typically displayed on two seven segment displays. The displays are written to I O port hexadecimal eighty. Almost all B I O S or boot loaders use this method for debugging. Debug methods will be covered in depth in a later chapter.
+
+Master Boot Record
+
+The Master Boot Record, M B R, is on the first sector of a partitioned mass storage device. It contains the partition table, as well as boot code. The boot code is O S dependent code whose primary purpose is to load the O S into memory. Once the B I O S, firmware, or boot loader reads the M B R, it will verify that hexadecimal A A five five, the M B R signature, is present, as shown in Table three point one. The B I O S or boot loader will then load the boot code to memory location hexadecimal seven C zero colon zero and will jump to that location.
+
+Table three point one: Master Boot Record. The table shows the structure of the Master Boot Record, detailing the address in hexadecimal and its corresponding description. Address zero contains the boot code. Address hexadecimal one B eight contains an optional signature. Address hexadecimal one B C contains hexadecimal zero. Address hexadecimal one B E contains the partition table. Address hexadecimal one F E contains hexadecimal A A five five.
+
+G U I D Partition Table
+During the initial phase of system startup, known as the Power On Self Test, or P O S T, the firmware executes a series of diagnostic routines to verify the fundamental integrity and operability of the hardware. The method employed helps precisely pinpoint the location of any failures, whether attributable to hardware malfunctions or issues within the firmware itself. A key mechanism for conveying the status of these tests involves P O S T codes, which are typically outputted to a specialized I O port, specifically hexadecimal eight zero. These codes are then decoded and displayed on two seven segment displays, providing a rapid visual indication of the system's initialization progress or the specific point of failure. Virtually all B I O S and subsequent boot loaders leverage this diagnostic technique, which represents a critical low level debugging primitive for system bring up and initial fault isolation, preceding any higher level operating system intervention.
+
+Beyond the P O S T phase, the system proceeds to load the operating system, a process critically dependent on the Master Boot Record, or M B R. The M B R is a fundamental data structure residing in the very first sector of a partitioned mass storage device, typically a hard disk drive or solid state drive. Its architecture is meticulously designed to contain two primary components: a small, executable boot code segment and the disk's primary partition table. The boot code embedded within the M B R is inherently operating system dependent, serving the singular purpose of loading the operating system into random access memory, or Ram, to initiate the boot sequence. Upon system power on, the B I O S, or the more modern Unified Extensible Firmware Interface, reads this M B R sector. A crucial validation step follows, where the firmware verifies the presence of a specific signature: the hexadecimal A A five five magic number, located at the very end of the M B R sector. This signature acts as a robust integrity check, confirming that the sector contains a valid M B R structure and is ready for boot processing. If this signature is validated, the B I O S or boot loader then loads the boot code from the M B R into a predetermined memory location, specifically hexadecimal seven C zero zero, and transfers control by performing a jump instruction to that address. This transfer of control marks the handover from the firmware to the operating system's initial bootloader, beginning the process of loading the operating system kernel.
+
+The internal structure and specific offsets of the Master Boot Record are precisely defined to ensure interoperability across different systems and operating systems. Examining its layout, as represented in table three point one, reveals key components and their byte offsets relative to the start of the M B R sector. At offset zero, spanning a substantial portion of the M B R, resides the boot code itself. This segment contains the executable instructions responsible for initiating the next stage of the boot process, such as locating and loading the operating system's primary loader from an active partition. Moving further into the sector, at hexadecimal offset one B eight, an optional signature field is present. A value of hexadecimal zero in this position typically indicates the absence of a specific optional boot code signature, although its interpretation can vary depending on the specific bootloader implementation. Immediately following this, at hexadecimal offset one B C, another field typically holds hexadecimal zero, often serving as a reserved area or for specific flags, depending on the M B R variant. The critical partition table begins at hexadecimal offset one B E. This table consists of four fixed-size entries, each describing a primary partition on the disk, including its starting sector, size, and type. This structure allows the boot code to identify which partition contains the operating system to be loaded. Finally, at hexadecimal offset one F E, precisely two bytes from the very end of the five hundred twelve byte M B R sector, is the vital M B R signature, which is hexadecimal A A five five. This is the aforementioned magic number, indispensable for the B I O S to confirm the validity and readiness of the M B R for the boot process. The rigid adherence to these offset definitions is what enables the standardized boot sequence across a vast array of computing platforms.
+
+Beyond the traditional M B R, modern systems often employ a more advanced disk partitioning scheme known as the G U I D Partition Table.

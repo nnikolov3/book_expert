@@ -1,0 +1,53 @@
+Bit 7 Bits 6-5 Bits 4-0
+
+Reference Raw Card Reference Raw Card Reference Raw Card
+Extension Revision
+
+11001 = Reference raw card BU
+11010 = Reference raw card BY
+11011 = Reference raw card BW
+11100 = Reference raw card BY
+11101 = Reference raw card CA
+11110 = Reference raw card CB
+11111 = 77 (no |JEDEC reference
+raw card design used)
+
+SPD Field #62: “(Unbuffered): Reference Card Used” Definition from
+JEDEC DDR3 SPD Specification
+
+SPD Field 0x3F: Unbuff Addr. Mapping from Edge Connector to
+DRAM
+
+If the motherboard has mirrored the address lines, set to 1. The typical values
+
+assume the board address mapping is standard.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+63 0x3F Unbuff Addr. Mapping from ELH Standard
+Edge Connector to DRAM
+
+Byte 63: Address Mapping from Edge Connector to DRAM
+
+This byte describes the connection of edge connector pins for address bits to
+the corresponding input pins of the DDR3 SDRAMs for rank 1 only; rank 0
+is always assumed to use standard mapping. Only two connection types are
+supported, standard or mirrored, as described in the mapping table below.
+
+System software must compensate for this mapping when issuing mode
+The table describes the Risc Five Reference Card Extension and Revision. Bit seven is for the Reference Card Extension. Bits six to five are for the Reference Card Revision. Bits four to zero are for the Reference Card Revision. On the right, there is a list of binary codes and their corresponding definitions: binary one one zero zero one is for Reference raw card B U, binary one one zero one zero is for Reference raw card B V, binary one one zero one one is for Reference raw card B W, binary one one one zero zero is for Reference raw card B Y, binary one one one zero one is for Reference raw card C A, binary one one one one zero is for Reference raw card C B, and binary one one one one one is for Z Z, which indicates no Risc Five reference card design was used.
+
+S P D Field number sixty two, specifically the definition from the J E D E C D D R three S P D Specification, states "Unbuffered: Reference Card Used".
+
+S P D Field zero times three F describes Unbuffered Address Mapping from the Edge Connector to D Ram. If the motherboard has mirrored the address lines, set to one. The typical values assume the board address mapping is standard.
+
+The table shows Byte sixty three, which is hexadecimal zero times three F. The Field Name is "Unbuff Addr. Mapping from Edge Connector to D Ram". The Typ. Value is zero times zero zero, and the Definition is "Standard".
+
+Byte sixty three describes the connection of edge connector pins for address bits to the corresponding input pins of the D D R three S D Rams for rank one only. Rank zero is always assumed to use standard mapping. Only two connection types are supported, standard or mirrored, as described in the mapping table below. System software must compensate for this mapping when issuing mode.
+The presented information details aspects of Synchronous Dynamic Random Access Memory (DRAM) configuration, specifically focusing on the Serial Presence Detect (S P D) standard, likely within the context of DDR3 SDRAM modules. The initial table segment illustrates the bit allocation for fields within the S P D data. Bit seven is designated for "Reference Raw Card Extension," while bits six to five are used for "Reference Raw Card Revision." Bits four to zero define "Reference Raw Card" attributes, with a list of binary codes mapping to specific reference card types such as "Reference raw card B U" for binary one one zero zero one, "Reference raw card B V" for binary one one zero one zero, and so forth, culminating in binary one one one one one for "Reference raw card C B" and binary one one one one one one for "ZZ (no J E D E C reference raw card design used)." This bit-field organization is a fundamental aspect of embedded system configuration, allowing compact storage of module characteristics.
+
+Following this, the document highlights S P D Field sixty two, which pertains to the "Reference Card Used" definition, as per the J E D E C DDR3 S P D Specification. This indicates a mechanism to identify the type of reference design employed for the DRAM module.
+
+A significant section then delves into S P D Field zero to hexadecimal F three, specifically concerning "Unbuffered Address Mapping from Edge Connector to D R A M." This field dictates how address signals are routed from the module's edge connector to the D R A M chips. The accompanying text notes that if the motherboard has mirrored address lines, the typical values in this field are set to one, implying a standard address mapping. This highlights a critical interaction between motherboard design and memory module configuration to ensure correct address decoding.
+
+The table below this explanation provides a concrete example of this field. Byte sixty three, represented in hexadecimal as zero times three F, is defined as "Unbuffered Addr. Mapping from Edge Connector to D R A M." The "Typ. Value" is hexadecimal zero zero, and the "Definition" is "Standard." This signifies that for unbuffered memory modules, a standard mapping is generally used, where the address signals from the edge connector directly correspond to the address inputs on the D R A M chips. The "Byte 63: Address Mapping from Edge Connector to D R A M" description further clarifies that this byte indicates the connection of edge connector pins for address bits to the corresponding input pins of the D D R three S D R A M devices. It explicitly mentions that rank zero is always assumed to use standard mapping, and only two connection types exist: supported (standard) or mirrored. The presence of this field and its values is crucial for system software to correctly interpret and utilize the memory addresses, especially in systems where mirrored address lines might be employed, requiring compensatory logic in the software's memory management.

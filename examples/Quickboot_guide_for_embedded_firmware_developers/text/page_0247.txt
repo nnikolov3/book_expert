@@ -1,0 +1,50 @@
+waived otherwise.
+
+—DXE module that issues proper delay to allow other module to run will
+
+not have the delay time counts against it.
+—CPU DXE, PCH DXE each has extended time budget — 100 ms.
+—ME DXE budget — 10 ms (no MEBx during Bn).
+—Option ROM - 0 ms, no legacy option ROMs are allowed.
+
+—Raid Storage Technology ROM - 0 ms as AHCI mode does not need
+RST option ROM.
+
+BDS phase budget — 500 ms — only one boot target:
+—GOP does not display dynamic text — 100 ms.
+4.
+
+TSL (transient layer), — 500 ms:
+
+—OS bootloader time is after the BIOS boot ended. However, it does
+
+affect the overall end-to-end boot time.
+
+Fallback Mechanisms
+
+There are several events that could cause a full boot to transpire following the
+
+next system reset, including hardware, BIOS, or software level changes.
+waived otherwise.
+DXE module that issues proper delay to allow other module to run will not have the delay time counts against it.
+C P U DXE, PCH DXE each has extended time budget is one hundred milliseconds.
+M E DXE budget is ten milliseconds, no M E B x during B n.
+Option R O M is zero milliseconds, no legacy option R O Ms are allowed.
+Raid Storage Technology R O M is zero milliseconds as A H C I mode does not need R S T option R O M.
+3.
+B D S phase budget is five hundred milliseconds, only one boot target.
+G O P does not display dynamic text is one hundred milliseconds.
+4.
+T S L transient layer, is five hundred milliseconds.
+O S bootloader time is after the B I O S boot ended. However, it does affect the overall end-to-end boot time.
+Fallback Mechanisms
+There are several events that could cause a full boot to transpire following the next system reset, including hardware, B I O S, or software level changes.
+The document details time budgets allocated for various modules during the system boot process, with a focus on ensuring proper sequential execution and preventing interference. The concept of a "DXE module" is introduced, which is a firmware component that executes during the driver execution environment phase of the Extensible Firmware Interface, or E F I. These modules are designed to be executed with specific time constraints to allow other modules to run without undue delay.
+
+For instance, the "DXE module" logic requires proper delay provisioning to permit other modules to execute concurrently or sequentially. Specifically, "CPU DXE" and "PCH DXE" modules are each allocated an "extended time budget" of one hundred milliseconds. The "ME DXE budget" is set at ten milliseconds, with a clarification that this budget excludes "MEBx" during the "Bn" state, likely referring to specific operating modes or sequences within the Management Engine subsystem. "Option ROM"s, which are legacy firmware extensions, are permitted zero milliseconds of execution time, indicating they are either disabled or not expected to contribute to the boot time in this configuration. Similarly, "Raid Storage Technology ROM" is also allocated zero milliseconds when operating in "AHCI mode", implying that in this specific storage controller configuration, the RAID functionality provided by the ROM is bypassed or handled by a more integrated driver.
+
+A "BDS phase budget" is specified as five hundred milliseconds, designated as the time for "only one boot target" to complete its initialization. The "GOP" (Graphics Output Protocol) module is constrained to a one hundred millisecond budget for displaying dynamic text, which is a critical element of user feedback during the boot sequence.
+
+The "TSL" or transient layer is allocated a five hundred millisecond budget. The "OS bootloader time" is considered to be after the "B I O S" boot has concluded. The phrasing suggests that the OS bootloader's execution time contributes to the overall end-to-end boot duration, implying that optimization of the bootloader is important for overall system performance.
+
+The section on "Fallback Mechanisms" introduces a broader concept of system recovery. It states that several events can trigger a "full boot" following a system reset. These events are categorized as encompassing hardware, "B I O S", or software level changes, indicating that the system is designed to revert to a default or known good state when anomalies are detected across any of these layers. This implies a robust error handling and recovery strategy is in place to ensure system stability and bootability.

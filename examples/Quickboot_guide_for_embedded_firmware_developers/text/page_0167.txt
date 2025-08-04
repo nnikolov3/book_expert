@@ -1,0 +1,44 @@
+Starting at the Host Reset Vector
+
+Once the processor reset line has been de-asserted, newer processors may
+automatically load a microcode update as part of its secure startup sequence.
+Any correctable errata will be fixed before any executable code kicks off and
+it ensures security of the system. After the patch is loaded, the processor then
+begins fetching instructions. The location of these initial processor
+instructions is known as the reset vector. The reset vector may contain
+instructions or a pointer to the actual starting instruction sequence in the flash
+memory. The location of the vector is architecture-specific and usually in a
+fixed location, depending on the processor. The initial address must be a
+physical address as the MMU (if it exists) has not yet been enabled. For Intel
+architecture, the first fetching instructions start from OxFFFF, FFFF0. Only
+16 bytes are left to the top of memory, so these 16 bytes must contain a far
+jump to the remainder of the initialization code.
+
+This code is always written in assembly at this point as (to date) there is
+no software stack or cache as RAM available.
+
+Because the processor cache is not enabled by default, it is not
+uncommon to flush cache in this step with a WBINV instruction. The
+WBINYV instruction is not needed on newer processors, but it doesn’t hurt
+
+anything.
+
+Mode Selection
+
+IA-32 supports three operating modes and one quasi-operating mode:
+
+—Protected mode is considered the native operating mode of the
+
+processor. It provides a rich set of architectural features, flexibility,
+Starting at the Host Reset Vector.
+
+Once the processor reset line has been de-asserted, newer processors may automatically load a microcode update as part of its secure startup sequence. Any correctable errata will be fixed before any executable code kicks off and it ensures security of the system. After the patch is loaded, the processor then begins fetching instructions. The location of these initial processor instructions is known as the reset vector. The reset vector may contain instructions or a pointer to the actual starting instruction sequence in the flash memory. The location of the vector is architecture-specific and usually in a fixed location, depending on the processor. The initial address must be a physical address as the M M U (if it exists) has not yet been enabled. For Intel architecture, the first fetching instructions start from hex F F F F, F F F F zero. Only sixteen bytes are left to the top of memory, so these sixteen bytes must contain a far jump to the remainder of the initialization code. This code is always written in assembly at this point as (to date) there is no software stack or C Ram available. Because the processor cache is not enabled by default, it is not uncommon to flush cache in this step with a W B I N V instruction. The W B I N V instruction is not needed on newer processors, but it doesn't hurt anything.
+
+Mode Selection.
+
+I A-32 supports three operating modes and one quasi-operating mode: Protected mode is considered the native operating mode of the processor. It provides a rich set of architectural features, flexibility,
+The initiation sequence of a processor commences with the de-assertion of the reset line. Following this event, newer processors may initiate a microcode update as a part of their secure startup sequence. Any correctable errata discovered are rectified before the execution of any user code, thereby enhancing system security. Upon successful patching, the processor proceeds to fetch its initial instructions. The location from which these initial instructions are fetched is termed the reset vector. This reset vector can either contain the actual starting instruction sequence directly or serve as a pointer to it, typically residing in flash memory. The specific address of this vector is architecture dependent, usually fixed within the processor's design. The initial address must be a physical address, particularly relevant if the M M U, or memory management unit, has not yet been enabled. For Intel architecture, for instance, the initial fetching instructions commence at hexadecimal FFFF FFFF FFF F0. Only the first sixteen bytes are allocated at the top of memory, and these bytes are expected to contain a far jump instruction to the remainder of the initialization code. This particular code segment is invariably written in assembly language and, at the time of writing, there is no provision for a software stack or the utilization of cash as Ram.
+
+The text further explains that processor cache is not enabled by default at this stage. Consequently, it is uncommon to flush the cache in this initial phase using a W B I N V instruction. While this instruction is not necessary on more recent processors, its inclusion does not negatively impact functionality.
+
+The document then transitions to discuss "Mode Selection," specifically within the context of I A thirty two architecture. It states that I A thirty two processors support three primary operating modes, in addition to one quasi operating mode. Among these, "Protected mode" is identified as the native operating mode. This mode provides a rich set of architectural features and a high degree of flexibility to the processor.

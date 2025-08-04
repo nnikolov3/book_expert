@@ -1,0 +1,47 @@
+GPL are not clear at times, and this is a matter for the courts. Be extremely
+careful if you are shipping products based on GPL code, thinking through
+what you can/should/will do with that code and its availability to others after
+that ship date. Of course, it may be possible to never ship the software
+derived from GPL and to only use that code internally; then you would not
+have to reissue the code changes or make it available afterwards. Various
+manufacturers and their legal representatives have a varied view of GPL
+needs. Consult your lawyer.
+
+It can be legally questionable to link GPL code to proprietary code,
+depending on the version of GPL and the terms of the proprietary code. This
+is exacerbated by terms in GPL v3, which has been referred to as “viral.”
+While that may or may not be friendly, GPL v3 does present challenges in
+that the attachment of GPL v3 code to a proprietary source code base puts the
+proprietary nature of the other agreement in question.
+
+If the code is not linked dynamically or statically at build time, but
+executed through standalone interfaces as part of an operating system or shell
+or other industry standard, then clearly defined partitions between code
+entities can be maintained. One could have a proprietary first-stage boot
+loader, a GPL OS loader, and a BSD OS; and combinations of these.
+
+Unlike the GPL-to-proprietary-code combination, it is much more
+plausible to link BSD code to proprietary code in that the BSD license allows
+for derivative works free of entanglements, and proprietary license would
+tend to govern the end solution.
+
+While BSD seems like it would be a neutral option, linking BSD code to
+GPL code will bind the developer to hand back the GPL code if it ships. And
+if it is GPL v3, then the BSD code could be forced to act as if it were
+governed by the GPL.
+GPL are not clear at times, and this is a matter for the courts. Be extremely careful if you are shipping products based on GPL code, thinking through what you can or should do with that code and its availability to others after that ship date. Of course, it may be possible to never ship the software derived from GPL and to only use that code internally; then you would not have to reissue the code changes or make it available afterwards. Various manufacturers and their legal representatives have a varied view of GPL needs. Consult your lawyer.
+
+It can be legally questionable to link GPL code to proprietary code, depending on the version of GPL and the terms of the proprietary code. This is exacerbated by terms in GPL version three, which has been referred to as "viral." While that may or may not be friendly, GPL version three does present challenges in that the attachment of GPL version three code to a proprietary source code base puts the proprietary nature of the other agreement in question.
+
+If the code is not linked dynamically or statically at build time, but executed through standalone interfaces as part of an operating system or shell or other industry standard, then clearly defined partitions between code entities can be maintained. One could have a proprietary first stage boot loader, a GPL O S loader, and a BSD O S; and combinations of these.
+
+Unlike the GPL to proprietary code combination, it is much more plausible to link BSD code to proprietary code in that the BSD license allows for derivative works free of entanglements, and proprietary license would tend to govern the end solution.
+
+While BSD seems like it would be a neutral option, linking BSD code to GPL code will bind the developer to hand back the GPL code if it ships. And if it is GPL version three, then the BSD code could be forced to act as if it were governed by the GPL.
+The text delves into the intricate legal and technical considerations of software licensing, specifically focusing on the General Public License, or G P L, and its implications when combined with proprietary code. The core issue revolves around the concept of "viral licensing," where the terms of the G P L can propagate to other code linked with G P L licensed software.
+
+When software is derived from G P L code, the terms of the G P L dictate how that derived work can be distributed. If a developer ships software that includes or is linked with G P L code, they must make the source code of their entire product available under the G P L as well. This is particularly true for versions like G P L version three, which is explicitly noted as being potentially problematic in this regard. The "viral" nature stems from the copyleft provisions, which aim to ensure that any modifications or extensions of G P L code remain under the same open-source terms.
+
+The text distinguishes between different ways code can be combined. Linking G P L code dynamically or statically, or even including it as part of a larger system like an operating system or shell, can trigger the G P L's copyleft requirements. For instance, if a proprietary first stage boot loader, a G P L O S loader, or combinations thereof are used, the entire system might fall under the G P L's purview. This raises significant legal questions for manufacturers and developers who wish to retain proprietary control over their codebases.
+
+The discussion then contrasts this with licenses like the B S D license. The B S D license is presented as being much more permissive. It allows for linking B S D licensed code with proprietary code without the same copyleft implications. This means that derivative works incorporating B S D licensed components do not necessarily have to be released under the B S D license themselves. The B S D license is described as a more neutral option, allowing developers to "hand back" the code if it ships, implying that the original licensing terms do not inherently extend to the entire combined work. In contrast, if G P L version three code is used, the B S D code could potentially be forced to act as if it were governed by the G P L. This highlights a fundamental difference in the philosophy and enforceability of these different open-source licensing models, with the G P L emphasizing the preservation of freedom for end-users and the B S D license prioritizing flexibility for developers.

@@ -1,0 +1,53 @@
+d. PCI Hot-Plug Specification
+
+e. PCI Bus Power Management Interface Specification
+
+f. PCI BIOS Specification
+
+g. PCI Firmware Specification
+
+h. PCI Standard Hot-Plug Controller and Subsystem Specification
+i. PCI-X Addendum to the PCI Local Bus Specification
+
+j. PCI Express to PCI/PCI-X Bridge Specification
+
+USB Enumeration and Initialization
+
+In the USB world, there has been a progression from UHCI to ECHI to XHCI
+as speeds have gotten faster, smarter, and USB devices are now ubiquitous.
+OHCI exists but is not widely supported on Intel architecture. There are
+
+varying degrees of support to handle USB pre-OS. In order, the BIOS must:
+
+1. Supply PCI resources for onboard USB controllers and wait for the OS
+drivers to load and enumerate the USB devices before they are usable.
+The USB controllers or devices may also be armed to wake the system
+via ACPI.
+
+2. Add a USB stack in the firmware to enumerate the USB bus and allow
+for limited functionality pre-OS for such things as HID devices
+(keyboard/mouse) or storage devices (boot to USB).
+
+3. Add an SMI handler to allow for OS Bootloader and OS runtime support
+
+on OSes that do not have a native USB driver stack. This is also known
+P C I Hot Plug Specification. P C I Bus Power Management Interface Specification. P C I B I O S Specification. P C I Firmware Specification. P C I Standard Hot Plug Controller and Subsystem Specification. P C I X Addendum to the P C I Local Bus Specification. P C I Express to P C I slash P C I X Bridge Specification.
+
+U S B Enumeration and Initialization.
+
+In the U S B world, there has been a progression from U H C I to E C H I to X H C I as speeds have gotten faster, smarter, and U S B devices are now ubiquitous. O H C I exists but is not widely supported on Intel architecture. There are varying degrees of support to handle U S B pre O S. In order, the B I O S must: First, supply P C I resources for onboard U S B controllers and wait for the O S drivers to load and enumerate the U S B devices before they are usable. The U S B controllers or devices may also be armed to wake the system via A C P I. Second, add a U S B stack in the firmware to enumerate the U S B bus and allow for limited functionality pre O S for such things as H I D devices, like keyboard or mouse, or storage devices that boot to U S B. Third, add an S M I handler to allow for O S Bootloader and O S runtime support on O Ses that do not have a native U S B driver stack. This is also known.
+The P C I, or Peripheral Component Interconnect, architecture forms a foundational element in modern computing systems, providing a standard bus for connecting various hardware components. The listed specifications delineate critical aspects of this bus and its evolution. The P C I Hot-Plug Specification defines the protocols and electrical requirements for inserting or removing P C I devices while the system remains powered on and operational. This capability is paramount in server environments, enabling dynamic hardware upgrades or replacements without requiring system downtime. Closely related, the P C I Bus Power Management Interface Specification outlines mechanisms for P C I devices to manage their power consumption, supporting various low power states to optimize energy efficiency. This involves coordinated signaling between the P C I device, the host controller, and the operating system or system firmware, typically leveraging the Advanced Configuration and Power Interface for comprehensive power state transitions.
+
+The P C I B I O S Specification details the interface between the Basic Input Output System firmware and P C I devices. During system initialization, the B I O S is responsible for enumerating all P C I devices present on the bus, reading their configuration space registers, and allocating system resources such as memory mapped I O ranges, I O port addresses, and interrupt request lines. This initial resource assignment is crucial for the operating system to later detect and utilize these devices. Extending this concept, the P C I Firmware Specification encompasses a broader scope of firmware responsibilities, beyond just the traditional B I O S, ensuring proper initialization and communication with P C I devices. The P C I Standard Hot-Plug Controller and Subsystem Specification provides detailed definitions for the hardware controllers and associated subsystems that implement the hot-plug functionality, outlining the necessary electrical and logical interfaces to manage device insertion, removal, and bus re-enumeration events.
+
+The P C I-X Addendum to the P C I Local Bus Specification describes P C I-X, an evolutionary step from the original P C I bus, offering increased clock speeds and improved bus arbitration mechanisms to achieve higher data throughput, particularly beneficial for high bandwidth network interfaces and storage controllers. While P C I and P C I-X utilize a shared, parallel bus architecture, the P C I Express to P C I/P C I-X Bridge Specification addresses the interoperability between these legacy parallel buses and the modern serial P C I Express architecture. Bridges are crucial components that translate transactions between disparate bus protocols, enabling P C I Express-based root complexes to communicate with and support older P C I or P C I-X devices or vice versa, ensuring backwards compatibility and flexibility in system designs.
+
+Shifting focus to Universal Serial Bus, or U S B, the process of U S B Enumeration and Initialization is fundamental for any peripheral to become functional. The evolution of U S B host controller interfaces represents a progression towards greater efficiency and higher data rates. Initially, there were specifications like U H C I, or Universal Host Controller Interface, often associated with Intel architectures, and O H C I, or Open Host Controller Interface, developed by Compaq. These early interfaces, primarily for U S B one point zero and one point one, involved significant C P U overhead for managing data transfers. The text notes that O H C I is not widely supported on Intel architectures, highlighting an industry-specific divergence in implementation. This was followed by E C H I, or Enhanced Host Controller Interface, which provided hardware support for U S B two point zero's high speed mode, significantly reducing C P U utilization. The most recent and widely adopted standard is X H C I, or eXtensible Host Controller Interface, which supports U S B three point zero and later specifications, offering vastly increased bandwidth and further offloading of transfer management from the C P U.
+
+For a system to effectively handle U S B devices, especially during the crucial pre-operating system phase, the B I O S or firmware must fulfill several critical requirements. First, it must supply the necessary P C I resources to the onboard U S B controllers. This involves configuring the U S B host controller, which itself is a P C I or P C I Express device, by allocating memory mapped registers and interrupt lines. The B I O S then waits for the operating system to load and assume control, at which point the O S will load its dedicated U S B drivers to manage the full functionality of connected devices.
+
+Second, U S B controllers and their connected devices are often "armed" to trigger a wake event for the system via A C P I, or Advanced Configuration and Power Interface. This means that an action on a U S B device, such as moving a mouse or pressing a key on a keyboard, can bring the system out of a low power sleep state. This seamless interaction between hardware and power management policies is essential for user experience.
+
+Third, to provide limited functionality pre-operating system, such as supporting H I D devices like keyboards and mice for B I O S setup, or enabling booting from U S B storage devices, the B I O S itself must incorporate a basic U S B driver stack. This embedded firmware-level U S B stack is capable of performing essential U S B enumeration, device recognition, and control transfers to facilitate basic I O operations before the full operating system takes over.
+
+Finally, to support operating system bootloaders or operating systems that might not possess a native U S B driver stack, the B I O S may include an S M I, or System Management Interrupt, handler. An S M I is a non-maskable, high-priority interrupt that transfers control to the system management mode of the C P U, allowing firmware to execute privileged operations. In this context, an S M I handler enables the B I O S to intercept U S B related requests from a rudimentary operating system or bootloader, providing U S B I O support through firmware routines. This mechanism ensures that even in constrained environments lacking comprehensive U S B drivers, essential U S B functionality can be maintained, a concept sometimes referred to as 'keyboard emulation' or 'legacy U S B support'.

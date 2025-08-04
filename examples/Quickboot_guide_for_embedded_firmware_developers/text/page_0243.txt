@@ -1,0 +1,55 @@
+hundred milliseconds versus tens of seconds, some people choose to use
+this state as their low-power fast boot option.
+
+4. The TSC or HPET timers may not be set up by default at power on. The
+firmware will have to initialize them and some tens of milliseconds may
+
+be lost in the setup before the first logging can occur.
+
+One way to overcome the software logging issue is to have the hardware
+instrumented with a logic analyzer. Depending on the motherboard layout
+and test points available, you should be able to probe the motherboard for
+different signals that will respond to the initialization as it happens. If no
+known good test point exists, a GPIO can be set up as the start and end point.
+Sending the I/O commands takes some time, so it is not ideal.
+
+Using hardware measuring techniques brings further complications. It is
+likely that the hardware power sequencing takes upwards of 100 ms alone to
+execute before the processor is taken out of reset and the BIOS or bootloader
+code can begin to execute. From a user’s perspective, it should be considered
+as they “pushed the button” and their eyes are expecting a response in less
+than a few seconds. So from a BIOS point of view, this hardware power
+sequencing is a required handicap.
+
+With the addition of any large number of experimental test points, it is
+possible to incur an observer effect or to change the boot environment,
+slowing it down with the extra cycles being added. Example: if you turn on
+debug mode, or if you do an excessive number of I/Os, the performance can
+be heavily affected by up to 30 percent in some cases. Be aware of this effect
+and don’t chase ghosts. This concept is outlined in Mytkowicz et al. (2008).
+
+Once we have the data, then the fun truly begins. A quick Pareto chart,
+where summarizing the timing data per block may quickly help developers
+focus on the top 20 percent of the longer latency, which may total up to 80
+
+percent of the boot time. These items can be reduced first; then dig into the
+hundred milliseconds versus tens of seconds, some people choose to use this state as their low power fast boot option.
+
+Four. The T S C or H P E T timers may not be set up by default at power on. The firmware will have to initialize them and some tens of milliseconds may be lost in the setup before the first logging can occur.
+
+One way to overcome the software logging issue is to have the hardware instrumented with a logic analyzer. Depending on the motherboard layout and test points available, you should be able to probe the motherboard for different signals that will respond to the initialization as it happens. If no known good test point exists, a G P I O can be set up as the start and end point. Sending the I O commands takes some time, so it is not ideal.
+
+Using hardware measuring techniques brings further complications. It is likely that the hardware power sequencing takes upwards of one hundred milliseconds alone to execute before the processor is taken out of reset and the B I O S or bootloader code can begin to execute. From a user's perspective, it should be considered as they "pushed the button" and their eyes are expecting a response in less than a few seconds. So from a B I O S point of view, this hardware power sequencing is a required handicap.
+
+With the addition of any large number of experimental test points, it is possible to incur an observer effect or to change the boot environment, slowing it down with the extra cycles being added. For example, if you turn on debug mode, or if you do an excessive number of I O s, the performance can be heavily affected by up to thirty percent in some cases. Be aware of this effect and don't chase ghosts. This concept is outlined in Mytkowicz et al. (2008).
+
+Once we have the data, then the fun truly begins. A quick Pareto chart, where summarizing the timing data per block may quickly help developers focus on the top twenty percent of the longer latency, which may total up to eighty percent of the boot time. These items can be reduced first; then dig into the
+The text discusses optimizing system boot times, particularly concerning the trade-offs between low-power modes and faster initialization. It highlights that some systems may opt for a low-power fast boot option, which can be measured in hundreds of milliseconds versus tens of seconds for a full boot.  A critical aspect of debugging or analyzing boot processes involves ensuring that timing mechanisms, such as the Time Stamp Counter or High Precision Event Timers, are correctly initialized by the firmware. If these timers are not set up by default at power on, or if their initialization is delayed by milliseconds, it can prevent accurate logging until they are properly configured.
+
+To address software logging issues, particularly when hardware is involved, employing a logic analyzer is a common approach. This allows for the direct probing of motherboard layouts and test points to observe hardware responses to initialization signals. A General Purpose Input Output, or G P I O, pin can be configured as a test point to signal the start and end of an operation. However, sending I O commands to acquire this data introduces its own latency, making it not always ideal for precise timing measurements.
+
+Hardware power sequencing, which involves the controlled activation of various power rails and components, can also introduce complexities. If the hardware power sequencing takes approximately one hundred milliseconds to execute, especially after the C P U has been taken out of reset and the B I O S or bootloader code begins execution, it can be perceived by a user as a slow response, potentially taking a few seconds. This hardware power sequencing is a critical factor that can be a handicap if not managed efficiently.
+
+The act of adding numerous experimental test points or the process of slowing down the system for debugging, for instance, by enabling debug mode or performing an excessive number of I O operations, can introduce an "observer effect." This effect can alter the boot environment and the overall timing of the boot process. The performance can be significantly impacted, sometimes by as much as thirty percent in certain scenarios. This phenomenon is elaborated upon in the work by Mytkowicz et al. in two thousand eight.
+
+Analyzing timing data, especially using techniques like a Pareto chart, can be highly beneficial for developers. Such analysis helps in identifying the most time-consuming portions of the boot process. By focusing on the top twenty percent of the longer latency components, which may collectively account for up to eighty percent of the total boot time, developers can prioritize optimization efforts. These identified critical items can be addressed first, followed by a deeper investigation into other aspects of the boot sequence.

@@ -1,0 +1,48 @@
+some type of feedback as soon as they turn on the system. A set-top box is an
+example of this; if users do not get visual feedback almost immediately, they
+
+would assume that something was wrong.
+
+HOST/SYSTEM VIEW PHYSICAL MEMORY
+iG (FAY CONTROLLER VIEW)
+
+7% 7 7
+
+I ER I TESA
+32 TOUUD BASE RECLAIM LIMIT
+- RECLAIM LIMIT
+
+RECLAIM BASE
+
+Figure 3.3: System Memory Map for the Intel® 4 Series Chipset Family
+
+Status and Error Messages
+
+The following are types of status and error messages that provide information
+some type of feedback as soon as they turn on the system. A set top box is an example of this; if users do not get visual feedback almost immediately, they would assume that something was wrong.
+
+Figure three point three presents a system memory map for the Intel four Series Chipset Family. The diagram is divided into two main views: the Host System View on the left and the Physical Memory, or Draw Controller View, on the right.
+
+In the Host System View, the top portion includes a P C I Memory Address Range, followed by a T O U U D Base Reclaim Limit plus, and then a Reclaim Base, which is sixty four megabyte aligned. Below this, another T O U U D Base, sixty four megabyte aligned, is shown, with several unspecified blocks connected to it. Further down, there is a P C I Memory Address Range, followed by a Main Memory Address Range. The lowest portion of the Host System View indicates memory starting from zero up to one megabyte, encompassing the Legacy Address Range.
+
+The Physical Memory, or Draw Controller View, starts at zero and extends upwards. The bottom section, from zero up to four gigabytes, is labeled O S Visible. Above the four gigabyte mark, there is another O S Visible region, for memory greater than four gigabytes. Between these two O S Visible regions, labeled 'X', is an unknown size segment. Several specific memory blocks are allocated above the four gigabyte line. These include:
+An O S Invisible Reclaim area, which is sixty four megabyte aligned and used for reclaim. This area corresponds to G F X Stolen memory, ranging from zero to two hundred fifty five megabytes, which is one megabyte aligned.
+A G F X G T T Stolen Base, ranging from zero to two megabytes, also one megabyte aligned.
+A T S E G region, ranging from zero to eight megabytes, which is one megabyte aligned. This T S E G region is associated with a T S E G Base block.
+An E P U M A region, spanning one to sixty four megabytes and sixty four megabyte aligned. Below this is a region from zero megabyte to sixty three megabytes, labeled Winland, which is also sixty four megabyte aligned.
+Near the top, a T O M, or Top Of Memory, point is shown, which is sixty four megabyte aligned and associated with an E P Stolen Base.
+
+Arrows indicate relationships between the two views. The Host System View's Main Memory Address Range corresponds to the O S Visible region less than four gigabytes in the Physical Memory View. The Host System View's P C I Memory Address Range corresponds to the T O M region in the Physical Memory View. The Host System View's Main Memory Reclaim Address Range points to the O S Invisible Reclaim and G F X Stolen regions in the Physical Memory View. The Host System View's T O U U D Base, sixty four megabyte aligned, corresponds to the T S E G Base in the Physical Memory View.
+
+Status and Error Messages
+
+The following are types of status and error messages that provide information.
+This diagram, titled "System Memory Map for the Intel four Series Chipset Family," illustrates the complex organization of physical memory within a computer system from two distinct perspectives: the Host slash System View and the Physical Memory, or Draw Controller View. This dual representation is crucial for understanding how the C P U and other system components perceive and manage memory, versus how the underlying hardware, specifically the memory controller and integrated graphics controller, physically allocate and utilize these resources.
+
+On the left, the "Host slash System View" depicts the logical address space visible to the central processing unit and the operating system. It shows a hierarchical breakdown of memory ranges. At the highest level, indicated by "sixty four G," there are various P C I Memory Address Ranges and Main Memory Reclaim Address Ranges. These sections, marked with question marks, represent regions whose exact size or allocation might be dynamically determined or system dependent, hinting at flexible memory management capabilities within the chipset. The concept of "Reclaim Base sixty four M B aligned" suggests that portions of memory can be dynamically re purposed, often for system use or by specialized hardware like integrated graphics, and that these re allocations occur on sixty four megabyte boundaries for efficiency. Further down the address space, around the "four G" mark, we observe a critical boundary. This four gigabyte point is historically significant as it represents the maximum directly addressable memory for a thirty two bit system. Modern sixty four bit architectures extend beyond this, but compatibility and specific hardware designs, such as the Intel four Series Chipset, still define distinct behaviors and allocations around this threshold. Below this, another "P C I Memory Address Range" and "Main Memory Address Range" are defined. The "one M B" marker further clarifies the lower end of the address space, segmenting it into a "Legacy Address Range" that typically encompasses the first one megabyte of memory. This legacy area often houses the B I O S, V G A memory, and other historical system components, a design remnant from earlier P C architectures.
+
+Transitioning to the right side of the diagram, the "Physical Memory (Draw Controller View)" provides the actual physical layout and assignment of memory blocks as seen by the memory controller, which is the hardware component responsible for managing D Ram. The "T O M," or Top Of Memory, indicates the highest physical address available in the system. Below T O M, various memory regions are specifically delineated. "E P U M A," or Expansion Peripheral Uniform Memory Access, is shown as a one to sixty four megabyte region, aligned to sixty four megabyte boundaries. This is often an area reserved for U M A access by expansion peripherals, allowing direct memory access without C P U intervention. A "zero M B to sixty three M B Winland" region, also sixty four megabyte aligned, suggests a specialized memory area, potentially for a specific platform feature or a proprietary technology within the Intel architecture that requires a contiguous block of memory.
+
+Crucially, the diagram differentiates between "O S Visible greater than four G B" and "O S Visible less than four G B" memory. This distinction directly addresses the memory mapping complexities in systems that support more than four gigabytes of physical R A M. Memory above four gigabytes is typically only visible to a sixty four bit operating system, while memory below four gigabytes is generally accessible by both thirty two bit and sixty four bit operating systems. Between these visible regions, we find the concept of "O S Invisible Reclaim G F X for reclaim," a sixty four megabyte aligned block of memory. This highlights a common design pattern in integrated graphics solutions where physical R A M is dynamically allocated for graphics processing unit usage but then can be "reclaimed" by the O S if no longer needed, effectively making it "invisible" to the O S during periods of graphics utilization.
+
+Further down, the diagram details specific allocations for integrated graphics and security features. "G F X Stolen" memory, ranging from zero to two hundred fifty five megabytes and one megabyte aligned, represents the portion of main system memory that is permanently or semi permanently allocated for the integrated graphics processing unit's frame buffer and texture storage. This memory is "stolen" from the total system R A M available to the O S, meaning a system advertised with four gigabytes of R A M might only provide, for example, three point five gigabytes to the O S if five hundred twelve megabytes are stolen by the G P U. Similarly, the "G F X G T T," or Graphics Translation Table, ranging from zero to two megabytes and one megabyte aligned, is a critical data structure used by the G P U to manage its virtual to physical memory translations, analogous to the C P U's page tables. Finally, the "T S E G," or Trusted Security Environment G, a zero to eight megabyte region, one megabyte aligned, denotes a hardware protected memory region used for secure computing environments. This area is isolated from the main O S to protect sensitive data and cryptographic operations, a fundamental component of trusted computing platforms. The explicit alignment requirements for these various regions (e.g., one megabyte aligned, sixty four megabyte aligned) underscore the hardware constraints and performance optimizations in memory addressing, ensuring efficient data access by various system components.

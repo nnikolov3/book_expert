@@ -1,0 +1,49 @@
+requirements on the investigation platform, initialization of USB was
+completely removed from boot flow. USB is still available from the operating
+
+system once the driver is loaded but not during the BIOS or OS loader.
+
+Divide Long Lead Pieces into Functional Blocks and Distribute
+Across the Boot Flow
+
+While BIOS today is not multithreaded, there are some things that can still be
+done in parallel. Not waiting around for long timeouts or scans and breaking
+up the activities between multiple functions across the boot flow are two
+good ways to eliminate idle delay times. Example: command the hard drives
+to spin up early in the boot flow. It should be noted that even solid-state
+drives have a firmware readiness time minimum before data can be retrieved.
+This can be mitigated by warming up the drives. Similarly, newer LCD
+displays may have a minimum time required to turn on the backlight, or
+perform a costly 900 ms reset on each power cycle.
+
+Keeping the CPU fully occupied as well as any DMA engine during OS
+loading or BIOS shadow is another method of running some of the longer
+lead activity in parallel. One can start to load the data from the storage to
+memory at the same time you are executing other items. Bottom line: don’t
+stand around whistling while you wait for hardware or timeouts when you
+
+can be doing real work.
+
+Summary
+
+This chapter covers several potential optimizations that can be implemented
+
+on a broad array of embedded platforms, depending on the policy decisions
+requirements on the investigation platform, initialization of U S B was completely removed from boot flow. U S B is still available from the operating system once the driver is loaded but not during the B I O S or O S loader.
+
+Divide Long Lead Pieces into Functional Blocks and Distribute Across the Boot Flow
+
+While B I O S today is not multithreaded, there are some things that can still be done in parallel. Not waiting around for long timeouts or scans and breaking up the activities between multiple functions across the boot flow are two good ways to eliminate idle delay times. Example: command the hard drives to spin up early in the boot flow. It should be noted that even solid state drives have a firmware readiness time minimum before data can be retrieved. This can be mitigated by warming up the drives. Similarly, newer L C D displays may have a minimum time required to turn on the backlight, or perform a costly nine hundred milliseconds reset on each power cycle. Keeping the C P U fully occupied as well as any D M A engine during O S loading or B I O S shadow is another method of running some of the longer lead activity in parallel. One can start to load the data from the storage to memory at the same time you are executing other items. Bottom line: don't stand around whistling while you wait for hardware or timeouts when you can be doing real work.
+
+Summary
+
+This chapter covers several potential optimizations that can be implemented on a broad array of embedded platforms, depending on the policy decisions
+The discussion centers on optimizing the boot flow of embedded systems, particularly concerning the initialization and utilization of peripherals. It highlights that while Universal Serial Bus or U S B functionality might be available from the operating system, its complete removal from the boot flow is often a requirement for the investigation platform, meaning U S B devices are not actively used or initialized during the initial system startup phase, prior to the loading of the Bios or operating system loader.
+
+A core principle discussed is the strategy of dividing long, sequential tasks into smaller, functional blocks that can then be distributed for parallel execution. This approach is particularly relevant given that the Basic Input Output System or Bios, as it exists today, is often not multithreaded. This non-multithreaded nature means that tasks that could potentially run concurrently must still be executed sequentially. The text identifies a key challenge in this sequential execution: waiting for long timeouts or scans, which can introduce significant idle time.
+
+To mitigate these delays, the concept of eliminating idle time is introduced, proposing two primary methods. The first is to proactively "command" hardware, such as hard drives, to spin up early in the boot process. This leverages the fact that solid state drives, in particular, require a minimum readiness time before data can be reliably retrieved. By initiating this spin up process earlier, the system can overlap the hardware initialization with other boot sequence tasks, thereby reducing overall latency. The text notes that this pre-warming approach is particularly relevant for newer Liquid Crystal Display or L C D displays, which may have a considerable reset time, potentially as high as nine hundred milliseconds, upon each power cycle.
+
+The second strategy involves optimizing the utilization of the Central Processing Unit or C P U and Direct Memory Access or D M A engines. The text suggests that the C P U can be kept fully occupied, and any D M A activity can be managed alongside other operations. A specific example given is the parallel loading of data from storage to memory while other processes are being executed. This concept of overlapping I O operations with computation is a fundamental principle in achieving high system throughput and responsiveness. The overarching advice is to avoid waiting idly for hardware operations or timeouts, and instead, to actively engage other system resources during these waiting periods, thereby maximizing the efficiency of the boot process.
+
+The chapter's summary indicates a focus on identifying and implementing potential optimizations applicable across a wide spectrum of embedded platforms. These optimizations are contingent on specific policy decisions that dictate how system resources and boot sequence tasks are managed.

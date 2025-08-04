@@ -1,0 +1,47 @@
+CPU Initialization
+This consists of simple configuring of processor and machine registers,
+
+loading a microcode update, and enabling the Local APIC.
+
+Microcode Update. Microcode is a hardware layer of instructions involved
+in the implementation of the machine-defined architecture. It is most
+prevalent in CISC-based processors. Microcode is developed by the CPU
+vendor and incorporated into an internal CPU ROM during manufacture.
+Since the infamous “Pentium flaw,” Intel processor architecture allows that
+microcode to be updated in the field either through a BIOS update or via an
+OS update of “configuration data.”
+
+Today an Intel processor must have the latest microcode update to be
+considered a warranted CPU. Intel provides microcode updates that are
+written to the writable microcode store in the CPU. The updates are
+encrypted and signed by Intel such that only the processor that the microcode
+update was designed for can authenticate and load that update. On socketed
+systems, the BIOS may have to carry many flavors of microcode update
+depending on the number of processor steppings supported. It is important to
+load the microcode updates early in the boot sequence to limit the exposure
+of the system to any known errata in the silicon. It is important to note that
+the microcode update may need to be reapplied to the CPU after certain reset
+events in the boot sequence.
+
+The BSP microcode update must be loaded before No-Eviction mode is
+
+entered.
+
+Local APIC. The Local APIC must be enabled to handle any interrupts that
+
+occur early in post, before enabling protected mode. For more information on
+the Intel APIC Architecture and Local APICs, please see the Intel 64 and IA-
+
+32 Intel Architecture Software Developer’s Manual, Volume 3A: System
+C P U Initialization. This consists of simple configuring of processor and machine registers, loading a microcode update, and enabling the Local A P I C.
+
+Microcode Update. Microcode is a hardware layer of instructions involved in the implementation of the machine defined architecture. It is most prevalent in C I S C based processors. Microcode is developed by the C P U vendor and incorporated into an internal C P U R O M during manufacture. Since the infamous "Pentium flaw," Intel processor architecture allows that microcode to be updated in the field either through a B I O S update or via an O S update of "configuration data."
+
+Today an Intel processor must have the latest microcode update to be considered a warranted C P U. Intel provides microcode updates that are written to the writable microcode store in the C P U. The updates are encrypted and signed by Intel such that only the processor that the microcode update was designed for can authenticate and load that update. On socketed systems, the B I O S may have to carry many flavors of microcode update depending on the number of processor steppings supported. It is important to load the microcode updates early in the boot sequence to limit the exposure of the system to any known errata in the silicon. It is important to note that the microcode update may need to be reapplied to the C P U after certain reset events in the boot sequence. The B S P microcode update must be loaded before No Eviction mode is entered.
+
+Local A P I C. The Local A P I C must be enabled to handle any interrupts that occur early in post, before enabling protected mode. For more information on the Intel A P I C Architecture and Local A P I Cs, please see the Intel sixty four and I A thirty two Intel Architecture Software Developer's Manual, Volume three A: System.
+The process of C P U Initialization involves configuring the processor and its associated machine registers, along with loading a microcode update, and subsequently enabling the Local A P I C. Microcode itself represents a hardware layer of instructions. This layer is integral to the machine defined architecture, and it is most commonly observed in C I S C based processors. Microcode is developed by the C P U vendor and is typically incorporated into an internal C P U R O M during the manufacturing phase. Historically, certain processor architectures, such as the Intel processor architecture, permitted microcode to be updated in the field, either through a B I O S update or an operating system update designated as "configuration data."
+
+Modern Intel processors necessitate the latest microcode update to function correctly. Intel provides microcode updates that are written to a specific writable microcode store within the C P U. These updates are encrypted and digitally signed by Intel, ensuring that only the processor for which the microcode was designed can authenticate and load it. In socketed systems, the B I O S may contain various flavors of microcode updates tailored to different processor steppings. It is crucial to load these microcode updates early in the boot sequence. This early loading minimizes the exposure of the system to any known errata present in the silicon hardware. It is also important to recognize that microcode may need to be reapplied to the C P U after specific reset events occurring during the boot sequence. The Boot Strap Processor, or B S P, microcode update must be loaded before the system enters what is termed "No Eviction mode."
+
+The Local A P I C, which stands for Local Advanced Programmable Interrupt Controller, must be enabled to handle any interrupts that occur early in the power on self test, or P O S T, phase, and prior to enabling protected mode. For more detailed information pertaining to the Intel A P I C architecture and Local A P I Cs, reference is made to the Intel 64 And I A thirty two Intel Architecture Software Developer's Manual, specifically Volume three A, covering System Programming.

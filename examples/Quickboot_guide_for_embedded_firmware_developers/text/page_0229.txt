@@ -1,0 +1,53 @@
+optimization removes the BDS checks for boot devices on CD-ROM, floppy,
+and network since they are not supported on this platform. If the operating
+system is being loaded from flash instead of hard disk, the hard disk would be
+
+replaced with an optimized flash boot.
+
+Platform Memory Speed
+
+Noticeable boot time improvement was realized by using the highest memory
+speed supported on the platform. On platforms featuring the Intel Atom
+processor, this is determined by a set of jumpers on the board. On other
+
+platforms, this may be a setting in BIOS setup.
+
+Remove PS/2 Keyboard/Mouse
+
+Initialization of the PS/2 keyboard and mouse in the BIOS takes a
+considerable amount of time due to the specification of these devices. This
+eliminates the possibility of interacting with the BIOS during the BIOS post
+and operating system loader. If BIOS setup has been removed as discussed
+below, user input is not needed during the BIOS. On a fielded embedded
+device, keyboard and mouse are typically not needed and therefore do not
+need to be initialized. During device development and debug this feature
+
+might be better left on until the device is operational.
+
+Remove BIOS Setup
+
+During the boot process, the BIOS provides an opportunity for the user to hit
+
+a hot key that terminates the boot process and instead displays a menu used to
+Optimization removes the B D S checks for boot devices on C D R O M, floppy, and network since they are not supported on this platform. If the operating system is being loaded from flash instead of hard disk, the hard disk would be replaced with an optimized flash boot.
+
+Platform Memory Speed
+
+Noticeable boot time improvement was realized by using the highest memory speed supported on the platform. On platforms featuring the Intel Atom processor, this is determined by a set of jumpers on the board. On other platforms, this may be a setting in B I O S setup.
+
+Remove P S/two Keyboard/Mouse
+
+Initialization of the P S/two keyboard and mouse in the B I O S takes a considerable amount of time due to the specification of these devices. This eliminates the possibility of interacting with the B I O S during the B I O S post and operating system loader. If B I O S setup has been removed as discussed below, user input is not needed during the B I O S. On a fielded embedded device, keyboard and mouse are typically not needed and therefore do not need to be initialized. During device development and debug this feature might be better left on until the device is operational.
+
+Remove B I O S Setup
+
+During the boot process, the B I O S provides an opportunity for the user to hit a hot key that terminates the boot process and instead displays a menu used to
+This document discusses several aspects of system boot processes and performance optimizations.
+
+The first section elaborates on an optimization that removes checks for boot devices such as CD-ROM, floppy drives, and network interfaces. This is particularly relevant for systems where the operating system is loaded from flash memory instead of a traditional hard disk. By eliminating these checks, the system's boot time can be reduced. The core concept here relates to the boot sequence and the role of the Boot Device Selection (BDS) process, which typically enumerates and prioritizes available boot media. Removing unsupported device checks streamlines this enumeration, leading to faster initialization. The implication is a shift towards embedded systems or specialized devices where boot media are fixed and predictable, allowing for such optimizations.
+
+The subsequent section, "Platform Memory Speed," addresses improving boot time through memory configuration. It states that boot time improvements are achieved by utilizing the highest supported memory speed on the platform. The example given is on platforms featuring the Intel Atom processor, where memory speed is determined by jumper settings on the motherboard, or through BIOS setup. This highlights the critical interplay between hardware configuration, specifically memory clock speeds and timings, and overall system performance, particularly during the initial power-on self-test and operating system loading phases. Faster memory allows for quicker data retrieval and processing, directly impacting boot duration.
+
+The "Remove PS/2 Keyboard/Mouse" section delves into the initialization of legacy input devices. It points out that the BIOS initialization of PS/2 keyboards and mice consumes a considerable amount of time due to their specification and the need for interaction with the BIOS post and operating system loader. By removing or disabling these initializations, the system can avoid potential conflicts and reduce boot latency. The text notes that in many fielded embedded devices, user input via these legacy ports is not required during the BIOS phase, making their initialization unnecessary. This suggests a design choice to optimize boot times by selectively disabling hardware initialization that doesn't contribute to the core booting functionality or the primary operational requirements of the device. The mention of device development and debugging implies that these initializations might be retained for diagnostic purposes during the development lifecycle but are removed for production.
+
+Finally, "Remove BIOS Setup" discusses an aspect of the BIOS itself. It states that during the boot process, the BIOS offers an opportunity for the user to interact with the system, typically by pressing a specific hot key. This interaction usually leads to the termination of the normal boot sequence and the display of a BIOS setup menu, allowing for system configuration. The implication of "removing BIOS Setup" would be to prevent this user intervention, thereby ensuring a faster and uninterrupted boot process, especially in environments where user configuration is not permitted or desired during startup. This is a common practice in appliances or highly specialized embedded systems where the boot process must be deterministic and efficient.

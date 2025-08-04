@@ -1,0 +1,49 @@
+completes any required hardware initialization so that it can launch the boot
+target. At its most complex, you can add a series of platform-specific,
+
+extensive, value-added hardware initialization not required for launching the
+
+boot target.
+SEC Phase SEC Phase
+| Par-mamory early initinkzation, microcode Par-memory early initalization, microcode
+paiching, and MTRA programming. patching, and MTRR programming.
+PE| Phase
+
+Dispatches vanous PEI drivers. Par-memory early
+initialization, microcode patching, and MTRR programming.
+
+OFS Reaums Vector
+Ma
+DXE + BOS Phase DQXE + BOS Phase
+Discover ths drivers available to the platiorm.
+Discover all drivers available to the platform.
+Dispatch only the minimal drivers required io
+Dispatch al drivers encountered, boot th target
+
+Optimized Boot
+
+Figure 10.1: Architecture Overview of Boot Process
+
+What Is a Boot Target?
+The boot target is defined by something known as an EFI device path (see the
+UEFI specification). This device path is a binary description of where the
+
+required boot target is physically located. This gives the BIOS sufficient
+completes any required hardware initialization so that it can launch the boot target. At its most complex, you can add a series of platform specific, extensive, value added hardware initialization not required for launching the boot target.
+
+The diagram shows an overview of the boot process, illustrating two main paths: Normal Boot and Optimized Boot. Both paths begin with the SEC Phase, which handles per memory early initialization, microcode patching, and M T R R programming.
+
+Following the SEC Phase, both paths diverge. The Normal Boot path enters the P E I Phase, which dispatches various P E I drivers, performing per memory early initialization, microcode patching, and M T R R programming. From there, it checks if the system is in an S three boot mode. If not, it proceeds to the D X E plus B D S Phase, where it discovers all drivers available to the platform and dispatches all drivers encountered. This leads to a Normal Boot. If the system is in an S three boot mode, it bypasses the D X E plus B D S Phase and proceeds to O S Resume Vector.
+
+The Optimized Boot path also enters the P E I Phase but dispatches only minimal P E I drivers, performing per memory early initialization, microcode patching, and M T R R programming. Similar to the Normal Boot, it then checks if the system is in an S three boot mode. If it is, it proceeds to O S Resume Vector. If not, it enters the D X E plus B D S Phase, where it discovers the drivers available to the platform and dispatches only the minimal drivers required to meet the target. This leads to an Optimized Boot.
+
+Figure 10.1: Architecture Overview of Boot Process
+
+What Is a Boot Target?
+
+The boot target is defined by something known as an E F I device path. This device path is a binary description of where the required boot target is physically located. This gives the B I O S sufficient
+The diagram illustrates a comparative overview of a normal boot process versus an optimized boot process, both initiated by a system firmware.  The boot process begins with the S E C Phase, which handles per memory early initialization, microcode patching, and M T R R programming.  Following the S E C Phase, the P E I Phase is entered. In the normal boot path, this phase dispatches various P E I drivers, performing per memory early initialization, microcode patching, and M T R R programming. Conversely, the optimized boot path's P E I Phase dispatches only minimal P E I drivers, also undertaking per memory early initialization, microcode patching, and M T R R programming.
+
+The subsequent decision point for both paths involves checking if the system is in an S three boot mode. If the system is not in an S three boot mode, the process proceeds to the O S Resume Vector. From the O S Resume Vector, the normal boot path enters the D X E plus B D S Phase, where it discovers all drivers available to the platform and dispatches all encountered drivers. The optimized boot path, also originating from the O S Resume Vector, enters its D X E plus B D S Phase, but here it discovers only the drivers available to the platform that are minimal drivers required to boot the target. This distinction highlights a key optimization strategy: reducing the scope of driver discovery and dispatch for faster system startup when a full boot is not mandated.
+
+The text further defines a "boot target" as an E F I device path, which is a binary description specifying the physical location of the required boot target. This information is crucial for the B I O S to locate and load the necessary operating system loader or other bootable software. The underlying principle here is the structured and phased approach to system initialization, where hardware is progressively configured and made available to higher-level software components, ultimately leading to the loading of the operating system. The optimized path demonstrates a design trade-off, sacrificing some flexibility for improved performance by pre-selecting essential components.

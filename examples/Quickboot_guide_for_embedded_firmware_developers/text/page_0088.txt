@@ -1,0 +1,63 @@
+First of N Slot Entries. Each slot entry is 16-bytes long and
+32 16 describes how a slot’s PCI interrupt pins are wire OR’d to
+other slot interrupt pins and to the chipset’s IRQ pins.
+
+(N1
+1)3 16 Nth Slot Entry
+16
+
+Figure 5.1 is an example of the $PIR table.
+
+Entry Location Bus Device Pin Link TRQs
+
+0 embedded 0 2 A Dx&0 3 4 5 6 10 11 14 15
+1 embedded 1 0 A Ox&0 2 4 5 6 10 11 14 15
+1 embedded 1 1] B Oxi 1 3 4 5 6 10 11 14 15
+1 embedded 1 0 C Ox 2 3 4 5 6&6 10 11 14 15
+1 embedded 1 LL] D Oxé&3 3 4 5 6 10 11 14 15
+2 embedded 0 259 A 0x60 3 4 5% 6 10 11 14 15
+2 embedded ( 29 B 0x63 3 4 5 6 10 11 14 15
+2 embedded 0 29 C Oxé2 3 4 5 6 10 11 14 15
+2 embedded 0 29 [ Ox&h 3 4 5 6 10 11 14 15
+a embedded 0 al A Dxé&2 3 & 5 6&6 10 11 14 15
+4 embedded 13 A Oxé&1 I &4 5 & 10 11 14 15
+4 embedded 2 iy A 0x60 3 4 5 6 10 11 14 15
+6 embedded & 3 A Ox&8 3 4 5 6 10 11 14 15
+7 slot 1 3 r A 0x62 3 4 5 6&6 10 11 14 15
+Fi slat 1 3 7 BE Ox&3 2 4 5 6 10 11 14 15
+7 slot 1 1 7 C Ox60 3 4 5 6 10 11 14 15
+Fi slat 1 3 7 D 0x61 3 4 5 6&6 10 11 14 15
+
+Figure 5.1: An Example of the $PIR Table
+
+The $PIR table is not the only way to describe the IRQ routing to the
+operating system. Microsoft Windows 2000 and later versions of Windows
+
+use ACPI tables and methods to determine the IRQ mapping supported per
+PCI devices. The ACPI table FADT will show which mode.
+There are N Slot Entries. Each slot entry is sixteen bytes long and describes how a slot's P C I interrupt pins are wire Or'd to other slot interrupt pins and to the chipset's I R Q pins. An example entry structure might include fields of thirty two and sixteen bytes, followed by an Nth Slot Entry, potentially with parameters such as N minus one, one, three, and sixteen.
+
+Figure five point one is an example of the dollar P I R table.
+
+The table, titled 'An Example of the dollar P I R Table', details various P C I device interrupt configurations, listing entries by Entry number, Location, Bus, Device, Pin, Link, and T R Q S. A notable pattern is that the T R Q S column consistently lists the same eight values for every entry: three, four, five, six, ten, eleven, fourteen, and fifteen.
+
+The entries begin with 'Entry zero', which is an embedded device on bus zero, device two, utilizing Pin A, with a Link value of hexadecimal sixty.
+
+Following this are four entries under 'Entry one', all designated as embedded devices on bus one, device zero. These entries differentiate by Pin and Link values. Pin A is linked to hexadecimal sixty, Pin B to hexadecimal sixty one, Pin C to hexadecimal sixty two, and Pin D to hexadecimal sixty three.
+
+Next, four entries are listed under 'Entry two', also embedded devices, all on bus zero, device twenty nine. Pin A for these entries is linked to hexadecimal sixty, Pin B to hexadecimal sixty three, Pin C to hexadecimal sixty two, and Pin D to hexadecimal sixty B.
+
+Individual embedded entries include 'Entry three' on bus zero, device thirty one, Pin A, with Link hexadecimal sixty two. 'Entry four' is on bus four, device thirteen, Pin A, with Link hexadecimal sixty one. 'Entry five' is on bus two, device four, Pin A, with Link hexadecimal sixty. And 'Entry six' is on bus four, device three, Pin A, with Link hexadecimal sixty eight.
+
+Finally, four entries under 'Entry seven' are found in 'slot one' on bus three, device seven. These entries vary by Pin and Link. Pin A links to hexadecimal sixty two, Pin B to hexadecimal sixty three, Pin C to hexadecimal sixty, and Pin D to hexadecimal sixty one.
+
+The dollar P I R table is not the only way to describe the I R Q routing to the operating system. Microsoft Windows two thousand and later versions of Windows use A C P I tables and methods to determine the I R Q mapping supported per P C I devices. The A C P I table F A D T will show which mode.
+This document delves into the intricate mechanisms of interrupt routing within a computer system, specifically focusing on P C I devices and the evolution of system configuration methodologies. At its core, it describes a structured approach to mapping hardware interrupt signals to system-level interrupt request lines, a critical function for operating system resource management.
+
+The foundational concept presented is the P C I interrupt routing table, often referred to as the dollar sign P I R table. This table, stored within the system's firmware, serves as a blueprint for how P C I interrupt pins, designated as I N T A, I N T B, I N T C, and I N T D for each P C I device, are electrically connected and ultimately routed to the chipset's I R Q pins. Each record within this table, termed a "slot entry," is a fixed-size data structure, precisely sixteen bytes in length. A key principle highlighted is the "wire O R'd" connection scheme, which means that multiple P C I interrupt pins can be logically O R-ed together onto a single interrupt line. This design allows multiple devices or slots to share an interrupt line, asserting an interrupt request if any of the connected devices trigger an event. The interrupt controller then detects this composite signal and dispatches it to the C P U for processing.
+
+Figure five point one presents an illustrative example of such a dollar sign P I R table. This tabular data structure provides a detailed mapping for various P C I devices and their interrupt pins. The table is organized into several distinct fields. The "Entry" column serves as an identifier for a particular routing specification, demonstrating that multiple entries might exist for a single logical P C I device if it utilizes more than one interrupt pin. The "Location" field specifies whether the device is "embedded" on the motherboard, implying an integrated component, or situated within a physical "slot," such as "slot one," indicating an expansion slot. This distinction is vital for understanding the system's physical and logical topology. The "Bus" and "Device" columns collectively provide a unique hierarchical address for each P C I function within the P C I enumeration space. "Pin" explicitly identifies which of the four P C I interrupt pins, A, B, C, or D, is being described by that specific entry.
+
+The "Link" column contains a hexadecimal value, such as hexadecimal six zero or hexadecimal six three. This value represents an interrupt link or a virtual interrupt line managed by the chipset. Multiple P C I interrupt pins from different devices or even different buses can share the same "Link" value. This sharing is precisely where the "wire O R'd" concept manifests: all pins tied to a common link will collectively assert the underlying physical I R Q line to which that link is mapped. This design pattern is crucial for conserving the limited number of physical I R Q lines available in a system. Finally, the "T R Q s" column, structured as a series of numbers such as three, four, five, six, ten, eleven, fourteen, and fifteen, represents a set of available or preferred system I R Q numbers that the specified P C I interrupt pin *could* be routed to via its designated "Link." The operating system, during its initialization and resource allocation phases, selects one of these available I R Qs to assign to the device, based on system-wide availability and conflict resolution algorithms. This provides the operating system with flexibility in dynamic I R Q assignment.
+
+It is important to recognize that while the dollar sign P I R table historically provided the necessary interrupt routing information, modern operating systems have evolved to employ more sophisticated and extensible frameworks. As noted, Microsoft Windows two thousand and subsequent versions, for example, primarily rely on the Advanced Configuration and Power Interface, or A C P I, for hardware configuration and power management. A C P I defines a set of tables and interfaces that allow the operating system to discover and manage system resources in a more programmatic and less B I O S-dependent manner. One such critical A C P I table is the Fixed A C P I Description Table, or F A D T. The F A D T specifies fundamental system characteristics, including details pertinent to interrupt routing, and can indicate which specific methods the system employs for P C I I R Q mapping, providing a more comprehensive and flexible approach compared to the older, static dollar sign P I R table. This transition underscores a broader trend in computing towards dynamic, operating system driven resource management, moving away from rigid, firmware-dictated configurations.

@@ -1,0 +1,76 @@
+should be disabled by firmware as soon as possible coming out of reset.
+Halting the system for debug prior to disabling this Watch Dog Timer on
+chipsets that power on with this timer enabled will result in system resets,
+which doesn’t allow firmware debug. The OS will re-enable the Watch Dog
+Timer if it so desires. Consult the chipset datasheet for details on the specific
+implementation of the TCO Watch Dog Timer. Refer to the Chipset BIOS
+
+Writer’s Guide for more details.
+
+Local APIC (LAPIC) Timer
+
+The Local APIC contains a timer that can be used by firmware. Refer to the
+Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 3A
+for a detailed description of the Local APIC timer.
+
+Memory Caching Control
+
+Memory regions that must have different caching behaviors applied will vary
+from design to design. In the absence of detailed caching requirements for a
+platform, the following guidelines provide a “safe” caching environment for
+
+typical systems:
+
+Default Cache Rule — Uncached.
+00000000-0009FFFF — Write Back.
+
+000A 0000-O00BFFFF — Write Combined /Uncached
+000C0000-000FFFFF — Write Back /Write Protect
+00100000-TopOfMemory — Write Back.
+
+TSEG — Cached on newer processors.
+
+Graphics Memory — Write Combined or Uncached.
+
+© No Uk WE
+
+Hardware Memory-Mapped I/O — Uncached.
+should be disabled by firmware as soon as possible coming out of reset. Halting the system for debug prior to disabling this Watch Dog Timer on chipsets that power on with this timer enabled will result in system resets, which doesn't allow firmware debug. The O S will re enable the Watch Dog Timer if it so desires. Consult the chipset datasheet for details on the specific implementation of the T C O Watch Dog Timer. Refer to the Chipset B I O S Writer's Guide for more details.
+
+L ocal A P I C ( L A P I C ) Timer
+
+The L ocal A P I C contains a timer that can be used by firmware. Refer to the I ntel sixty four and I A thirty two Architectures Software D eveloper's M anual, Volume three A for a detailed description of the L ocal A P I C timer.
+
+M emory Caching Control
+
+M emory regions that must have different caching behaviors applied will vary from design to design. In the absence of detailed caching requirements for a platform, the following guidelines provide a "safe" caching environment for typical systems:
+
+one. Default Cache Rule – Uncached.
+two. zero zero zero zero zero zero zero zero dash zero zero zero nine F F F F – Write Back.
+three. zero zero zero A zero zero zero zero dash zero zero zero B F F F F – Write Combined /Uncached.
+four. zero zero zero C zero zero zero zero dash zero zero zero zero F F F F – Write Back /Write Protect.
+five. zero zero one zero zero zero zero zero dash T o p O f M emory – Write Back.
+six. T S E G – Cached on newer processors.
+seven. Graphics Memory – Write Combined or Uncached.
+eight. Hardware Memory Mapped I O – Uncached.
+The text discusses system management functionalities, specifically focusing on the behavior of a Watch Dog Timer and memory caching strategies.
+
+Regarding the Watch Dog Timer, it is stated that the timer should be disabled by firmware as soon as possible after reset. Halting the system, particularly prior to disabling this timer, while the timer is enabled on chipsets that power on, can result in system resets. This is because the Operating System (O S) will re-enable the Watch Dog Timer if it detects it is not functioning as intended. For precise details regarding its implementation, consulting the chipset datasheets and the Chipset B I O S Writer's Guide is recommended.
+
+The document then introduces the Local A P I C (LAPIC) Timer. It explains that the Local A P I C contains a timer that can be utilized by firmware. For a comprehensive understanding of its operation, reference is made to the Intel sixty four and I A thirty two Architectures Software Developer's Manual, specifically Volume three A, which provides a detailed description of this timer.
+
+The subsequent section focuses on Memory Caching Control. It highlights that different memory regions can exhibit distinct caching behaviors, which are often determined by design. In scenarios where specific caching requirements for a platform are not explicitly defined, the provided guidelines offer a "safe" caching environment. The guidelines enumerate several typical system caching configurations.
+
+The first guideline, "Default Cache Rule," specifies that certain memory regions are Uncached. The second entry, represented by the hexadecimal range zero zero zero zero zero zero zero zero to zero zero zero nine FFFF, indicates a "Write Back" caching policy. "Write Back" caching means that data modifications are initially written to the cache and only later written back to main memory, which can improve performance by reducing memory bus traffic.
+
+The third guideline, covering the range zero zero zero A zero zero zero zero to zero zero zero B FFFF, defines a policy of "Write Combined / Uncached." This suggests a hybrid approach where writes might be combined for efficiency, or the region is treated as Uncached, implying direct writes to memory without cache involvement.
+
+The fourth guideline, for the range zero zero zero C zero zero zero zero to zero zero zero zero FFFF, specifies "Write Back / Write Protect." This policy combines the "Write Back" strategy with protection mechanisms, preventing unauthorized modifications or ensuring data integrity.
+
+The fifth entry, "zero zero one zero zero zero zero zero to Top of Memory," indicates a "Write Back" policy. This implies that the entire memory space from the beginning of this range upwards uses the "Write Back" caching mechanism.
+
+The sixth guideline refers to "T S E G," which is defined as Cached on newer processors. This indicates a specific memory segment intended for temporary storage that benefits from caching on modern processing units.
+
+The seventh guideline concerns "Graphics Memory," which can be configured as either "Write Combined" or "Uncached." This flexibility allows for optimization of graphics operations, where combining writes can improve throughput, or uncached access can ensure immediate visibility of memory updates.
+
+Finally, the eighth guideline designates "Hardware Memory Mapped I O" as "Uncached." This is a crucial setting for Input Output (I O) devices mapped into the memory address space, as it ensures that CPU accesses directly interact with the hardware registers, avoiding potential issues with stale data in the cache. This "Uncached" attribute is vital for proper operation of peripheral devices.

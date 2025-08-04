@@ -1,0 +1,41 @@
+(GPL) ideology, then it is likely that team members will already know the
+rules; or at least what the rules were. New team members should be walked
+through the company norms. DO NOT ASSUME that the new smart people
+(and not so new smart people) who you hired will just know.
+
+Also, as the law is somewhat fluid in nature, even if you are an old hand,
+it is very important to get fresh advice from a professional, because the terms
+can be nuanced. The nuances change from year to year without a great deal of
+advertisement to the broader community. The company may change their
+policies, etc. The following is an example of some of the basics, at the
+writing of this book. This is not a ruling by a judge, and this was not written
+
+by a lawyer.
+
+Proprietary License
+
+Under a proprietary license, the distribution and reusability rules are defined
+by the originators, but developers have to be very careful in how they define
+things. Terms can vary broadly. The people you license from will also be
+potentially interested in your licensing terms, and it may take each party’s
+lawyers many months to walk through everything and agree, should the need
+arise. This puts any development performed during the negotiation timeframe
+at risk of being unusable.
+
+Many name-brand software packages come with forms of a proprietary
+license. While brand-name companies make money directly or indirectly with
+proprietary licenses, some forms of the proprietary license are in fact
+
+freeware (no-cost).
+
+Berkeley Software Distribution (BSD) License
+(G P L) ideology, then it is likely that team members will already know the rules; or at least what the rules were. New team members should be walked through the company norms. DO NOT ASSUME that the new smart people (and not so new smart people) who you hired will just know. Also, as the law is somewhat fluid in nature, even if you are an old hand, it is very important to get fresh advice from a professional, because the terms can be nuanced. The nuances change from year to year without a great deal of advertisement to the broader community. The company may change their policies, etc. The following is an example of some of the basics, at the writing of this book. This is not a ruling by a judge, and this was not written by a lawyer.
+
+Proprietary License
+
+Under a proprietary license, the distribution and reusability rules are defined by the originators, but developers have to be very careful in how they define things. Terms can vary broadly. The people you license from will also be potentially interested in your licensing terms, and it may take each party's lawyers many months to walk through everything and agree, should the need arise. This puts any development performed during the negotiation timeframe at risk of being unusable. Many name brand software packages come with forms of a proprietary license. While brand name companies make money directly or indirectly with proprietary licenses, some forms of the proprietary license are in fact freeware (no cost).
+
+Berkeley Software Distribution (B S D) License
+The text discusses the implications of software licensing, particularly contrasting proprietary licenses with other models. It highlights the importance of understanding the specific terms of a proprietary license, emphasizing that nuances can change over time and differ across communities. The advice given is to seek fresh advice from professionals, such as lawyers, when dealing with these terms, as they are not static and can be complex. The document stresses that assuming new team members, or even experienced ones, will inherently understand all licensing terms is a risky proposition.
+
+A proprietary license defines the rules for distribution and reusability of software. Developers working with such licenses must be meticulous in understanding how the terms are defined, as they can vary significantly. Engaging with legal counsel is often necessary to navigate these complexities, as misunderstanding or misinterpreting licensing terms can lead to legal disputes, potentially halting development or rendering products unusable. The process of understanding and agreeing upon these terms can be lengthy, involving extensive negotiation between parties. The document also notes that many commercial software packages are distributed under proprietary licenses. While some companies monetize their software directly through these licenses, others may offer proprietary software for free, which is often referred to as freeware. This distinction is important in understanding the business models associated with software distribution. The mention of "Berkeley Software Distribution (BSD) License" signifies a move towards discussing a specific type of open-source or permissive license, which contrasts with the proprietary model previously described, suggesting a broader exploration of licensing paradigms.

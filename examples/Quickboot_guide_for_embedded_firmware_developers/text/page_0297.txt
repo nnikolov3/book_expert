@@ -1,0 +1,56 @@
+used by the module manufacturer for the SPD data and any (optional)
+specific supplier information. The byte count includes the fields for all
+required and optional data. Bits 6-4 describe the total size of the serial
+memory used to hold the Serial Presence Detect data. Bit 7 indicates whether
+the unique module identifier (found in bytes 117-125) is covered by the CRC
+encoded on bytes 126 and 127.
+
+Bit 7 Bits 6:4 Bits 3:0
+CRC Coverage SPD Bytes Total SPD Bytes Used
+0 = CRC covers bytes 0-125 Bit [6, 5, 4]: Bit [3, 2, 1, 0]:
+1 = CRC covers bytes 0-116 000 = Undefined 0000 = Undefined
+001 = 256 0001 = 128
+All others reserved 0010 = 176
+0011 = 256
+
+All others reserved
+
+SPD Field 0x01: SPD Revision
+
+Down-on-board memory designs should use 0x10 for this field.
+
+Byte (Dec) Byte (Hex) Field Name Typ.Value Definition
+
+1 Ox01 SPD Rey 0x10 Rev 1.0
+
+Byte 1: SPD Revision
+
+This byte describes the compatibility level of the encoding of the bytes
+contained in the SPD EEPROM, and the current collection of valid defined
+bytes. Software should examine the upper nibble (Encoding Level) to
+
+determine if it can correctly interpret the contents of the module SPD. The
+Used by the module manufacturer for the S P D data and any optional specific supplier information. The byte count includes the fields for all required and optional data. Bits six through four describe the total size of the serial memory used to hold the unique module identifier found in bytes one hundred seventeen through one hundred twenty five, which is covered by the C R C encoded on bytes one hundred twenty six and one hundred twenty seven.
+
+Bit seven, C R C Coverage, indicates that zero equals C R C covers bytes zero through one hundred twenty five, and one equals C R C covers bytes zero through one hundred sixteen.
+
+Bits six through four, S P D Bytes Total, describe the total number of bytes. Specifically, Bit six through four is used, where zero zero zero is undefined, zero zero one is two hundred fifty six, and all others are reserved.
+
+Bits three through zero, S P D Bytes Used, specify the number of bytes used. Bit three through zero is used, where zero zero zero zero is undefined, zero zero zero one is one hundred twenty eight, zero zero one zero is one hundred seventy six, zero zero one one is two hundred fifty six, and all others are reserved.
+
+S P D Field zero times zero one is S P D Revision. Down on board memory designs should use zero times one zero for this field.
+
+The table shows the S P D Revision field. Byte index one, which is hexadecimal zero times zero one, has the Field Name S P D Rev and a Typical Value of hexadecimal zero times one zero. The Definition is Revision one point zero.
+
+Byte one, S P D Revision, describes the compatibility level of the encoding of the bytes contained in the S P D E E P R O M, and the current collection of valid defined bytes. Software should examine the upper nibble, Encoding Level, to determine if it can correctly interpret the contents of the module S P D.
+The provided text discusses the Serial Presence Detect, or S P D, data stored on memory modules. This data serves as a vital interface for system firmware to identify and configure memory components.  Specifically, it details how the S P D data is structured, with particular emphasis on the meaning of individual bits and bytes within this data structure.
+
+The S P D data format utilizes bit fields to convey critical information. Bit seven, for instance, indicates the CRC, or Cyclic Redundancy Check, coverage. A value of zero signifies that the CRC covers bytes zero through one hundred twenty-five, while a value of one indicates coverage of bytes zero through one hundred sixteen. This bit is crucial for ensuring data integrity during transmission and read operations.
+
+Bits six through four are allocated to the total S P D byte count. This field, represented as a three-bit binary number, specifies the overall size of the serial presence detect data. For example, a binary value of zero zero zero indicates an undefined total byte count, whereas binary zero zero one signifies two hundred fifty-six bytes. Other values within this range are also defined, with any remaining combinations being reserved for future use.
+
+The lower three bits, bits three through zero, are designated for the S P D bytes used. Similar to the total byte count, this field uses a three-bit binary representation to indicate the number of bytes actively employed within the S P D data structure. Specific values such as binary zero zero zero zero indicate an undefined state, while binary zero zero zero one denotes one hundred twenty-eight bytes used. Binary zero zero one zero signifies one hundred seventy-six bytes, and binary zero zero one one indicates two hundred fifty-six bytes. Any other values in this field are considered reserved. This bit allocation allows for a flexible and extensible data format that can accommodate varying amounts of configuration information.
+
+The document then presents a table detailing S P D Field zero X zero one, specifically the S P D Revision. It notes that down on board memory designs should utilize zero X one zero for this specific field. The table itself is structured with columns for Byte (Decimal), Byte (Hexadecimal), Field Name, Typical Value, and Definition. The entry shows that Byte one, represented in hexadecimal as zero X zero one, corresponds to the S P D Rev field, with a typical value of zero X one zero, and is defined as Revision one point zero. This suggests a versioning mechanism for the S P D data format itself, allowing systems to understand compatibility based on the revision number.
+
+The text further elaborates on Byte one, which describes the compatibility level of the encoding of bytes contained within the S P D E E P R O M. It highlights that the current collection of validly defined bytes requires software to examine the upper nibble, also referred to as the Encoding Level, to correctly interpret the contents of the module S P D. This implies a hierarchical or layered approach to data interpretation within the S P D structure, where the Encoding Level dictates how subsequent data fields should be understood. This mechanism ensures that systems can correctly parse and utilize S P D information even as the format evolves.

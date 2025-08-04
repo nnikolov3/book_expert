@@ -1,0 +1,39 @@
+To understand the why and how of the current designs, you should go
+back and study history a little, maybe not quite as far back as the systems
+based on the AT bus (also known as the Industry Standard Architecture, or
+ISA bus), but it would help. We then can understand how the different
+advancements in bus technology and capabilities of add-in cards, from ISA to
+PCI to PCI-X to PCle, have gone along and how popular and mature
+functions have been integrated into the Intel chipsets. Today most of the Intel
+architecture revolves around PCI devices in the chipset. You can specifically
+look at graphics and how it has individually adapted over the years to take
+advantage of the location in the system and proximity to CPU, memory, and
+I/O. Each step along the path of this evolution has gone toward increasing
+bandwidth and reducing bottlenecks, putting the next key technology in the
+best possible position to show the extensibility, modularity and speed of the
+platform. This is a universal truth in building the better mouse trap year after
+year.
+
+In communicating with software and the evolution of the platform, there
+are multiple angles to consider: the BIOS or firmware, the operating system,
+the applications, and how these interact with each other. The hardware
+interfaces are built into the BIOS, and the OS kernel, and the device drivers.
+The applications and software interfaces can change dramatically, but one
+cannot talk about hardware architecture without also talking about the
+instruction set architecture, (ISA), not to be confused with the older platform
+bus of choice. While the rest of the platform has had the benefit of
+fundamental revision (gradually leaving legacy behind), BIOS has grown
+
+through accretion on the same architecture. Table 2.1 illustrates some
+
+example advances.
+
+Table 2.1:
+To understand the why and how of the current designs, you should go back and study history a little, maybe not quite as far back as the systems based on the A T bus, also known as the Industry Standard Architecture, or I S A bus, but it would help. We then can understand how the different advancements in bus technology and capabilities of add in cards, from I S A to P C I dash X to P C I E, have gone along and how popular and mature functions have been integrated into the Intel chipsets. Today most of the Intel architecture revolves around P C I devices in the chipset. You can specifically look at graphics and how it has individually adapted over the years to take advantage of the location in the system and proximity to C P U, memory, and I O. Each step along the path of this evolution has gone toward increasing bandwidth and reducing bottlenecks, putting the next key technology in the best possible position to show the extensibility, modularity, and speed of the platform. This is a universal truth in building the better mouse trap year after year.
+
+In communicating with software and the evolution of the platform, there are multiple angles to consider: the B I O S or firmware, the operating system, the applications, and how these interact with each other. The hardware interfaces are built into the B I O S, and the O S kernel, and the device drivers. The applications and software interfaces can change dramatically, but one cannot talk about hardware architecture without also talking about the instruction set architecture, I S A, not to be confused with the older platform bus of choice. While the rest of the platform has had the benefit of fundamental revision, gradually leaving legacy behind, B I O S has grown through accretion on the same architecture. Table two point one illustrates some example advances.
+Understanding the evolution of computing platforms necessitates a historical perspective on their underlying architectures, particularly the I O interconnects. Early personal computing systems were fundamentally built upon the A T bus, more formally known as the Industry Standard Architecture, or I S A bus. This bus served as the primary conduit for expansion cards and peripherals. Over time, the limitations of the I S A bus, particularly in terms of bandwidth and the ability to scale with increasingly complex components, became evident. This led to a series of significant advancements in bus technology, evolving from P C I, to P C I-X, and ultimately to P C I E.
+
+This progression represents a fundamental shift in system design philosophy. P C I introduced a more sophisticated shared bus architecture, providing higher bandwidth and enabling features like plug and play. P C I-X further extended this parallel bus concept with increased clock speeds and bus widths, primarily serving high-throughput enterprise applications. The most profound architectural transformation occurred with P C I E, which transitioned from a parallel bus to a high speed, point to point serial interconnect. This paradigm shift addressed the inherent limitations of parallel buses, such as clock skew and signal integrity issues at higher frequencies, by employing dedicated serial lanes, each capable of full duplex communication. The ability to aggregate multiple lanes, such as x sixteen for graphics or x four for N V M E S S Ds, provides immense scalable bandwidth. This relentless pursuit of increased bandwidth and reduced latency for data transfer between the C P U, memory, and I O devices is a central theme in hardware evolution. The integration of P C I E devices directly into Intel chipsets has optimized their proximity to core system resources, thereby minimizing communication bottlenecks. This strategic evolution, driven by the need to support ever more demanding applications like high performance graphics, exemplifies a universal engineering principle: continuously enhancing extensibility, modularity, and speed through iterative design improvements that eliminate system bottlenecks.
+
+The intricate relationship between hardware and software layers is another critical aspect of system evolution. Multiple conceptual angles must be considered: the B I O S or firmware, the operating system, and the various applications, all interacting through a complex hierarchy of interfaces. The fundamental hardware interfaces are established by the B I O S at boot up and later managed by the O S kernel and specific device drivers. While software interfaces, such as those provided by the O S to applications, can undergo dramatic shifts, any discussion of hardware architecture remains incomplete without acknowledging the Instruction Set Architecture, or I S A. The I S A defines the set of operations that the C P U can natively execute and forms the immutable contract between the hardware processor and the software that runs upon it. It should not be confused with the older platform bus, the I S A bus. While most other parts of the computing platform have benefited from radical architectural revisions, the B I O S, or basic I O system, has largely evolved through a process of accretion. This means new functionalities and support for modern hardware have been layered upon its existing, often legacy, architectural foundation, rather than undergoing a complete, fundamental redesign. This contrasts sharply with the transformative changes seen in components like the I O bus, highlighting the enduring presence of architectural legacies in system design.

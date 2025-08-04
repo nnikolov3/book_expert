@@ -1,0 +1,45 @@
+—The level would be used to remove the command if the build is set for
+
+a lower level.
+
+—The function pointer is for the core to call your library {for
+
+implementation of the command.
+
+Fao Tom Fm
+
+Figure 7.2: UEFI Shell 2.0 Architectural Layout
+
+Note: Per the UEFI Shell 2.0 specification, the distribution is always two
+
+files minimum.
+
+Adding a shell application is almost as much overhead in terms of coding
+work. Although the work to build the library is reduced, more work is
+required in the distribution of the separate files that are not part of the shell
+
+binary itself.
+The level would be used to remove the command if the build is set for a lower level. The function pointer is for the core to call your library for implementation of the command.
+
+The diagram shows the UEFI Shell 2.0 Architectural Layout. At the top, there are blocks for Shell Library, Shell Applications, and Shell Scripts, with Shell Scripts and Shell Applications having dashed line connections to lower levels. Below these is a large block labeled Shell Core. Within Shell Core, there are several interconnected blocks: Command-line Parser, Shell Protocol, Shell Console Parser, Command Launcher, Script Processor, and Level 3 Command Set, which is described as Optional Features. Dashed lines connect Shell Core components. Below the Shell Core, there is a layer labeled U E F I P I Interfaces. Underneath this layer are blocks representing CPU Modules and Chipset Modules. The entire structure is supported by a base layer labeled Hardware. Arrows indicate the flow of interaction. Specifically, Shell Scripts and Shell Applications connect to the Shell Core. The Shell Core's Command Launcher and Script Processor interact with each other and with the Level 3 Command Set. The Shell Core also connects to the U E F I P I Interfaces, which in turn interface with the CPU Modules and Chipset Modules within the Hardware layer. The Command-line Parser, Shell Protocol, and Shell Console Parser are also part of the Shell Core, with the Shell Console Parser interfacing with the Command Launcher.
+
+Figure seven point two U E F I Shell two point zero Architectural Layout.
+
+Note: Per the U E F I Shell two point zero specification, the distribution is always two files minimum.
+
+Adding a shell application is almost as much overhead in terms of coding work. Although the work to build the library is reduced, more work is required in the distribution of the separate files that are not part of the shell binary itself.
+The presented material details aspects of the Unified Extensible Firmware Interface, or U E F I, shell architecture, specifically focusing on its operational levels and command execution mechanisms. The text first establishes that a specific "level" parameter can be utilized to prune commands from a build, implying a hierarchical or modular design where functionality can be selectively included or excluded based on the target environment or desired feature set. This concept relates to software configuration and build systems, where dependencies and features are managed to optimize the final artifact.
+
+Furthermore, it is stated that a function pointer serves as the mechanism for the core system to invoke library functions, which in this context are likely related to command implementations. This highlights a fundamental software design pattern: using function pointers to achieve dynamic dispatch or to abstract away the specific implementation details of a called procedure. The core system, rather than having direct references to each command's code, holds pointers to these functions, allowing for flexibility and extensibility. When a command is requested, the core dereferences the appropriate function pointer to execute the corresponding code.
+
+The accompanying diagram, Figure 7.2, visually represents the U E F I Shell 2.0 Architectural Layout. The diagram illustrates a layered structure, beginning with "Hardware" at the base. Above the hardware are "C P U Modules" and "Chipset Modules," representing the fundamental processing and platform components. Interfacing with these hardware elements is the "U E F I/P I Interfaces," which abstract the hardware for higher-level software.
+
+Rising above the interfaces, the diagram depicts several components. A central "Shell Core" acts as the foundation for the shell environment. Attached to the Shell Core are various modules: a "Command-line Parser," "Shell Protocol," and "Shell Console Parser." These components are responsible for interpreting user input from the command line.
+
+Further up, the "Command Launcher" is shown, which is responsible for initiating the execution of commands. This component likely interacts with different command sets. The diagram shows "Shell Library," "Shell Applications," and "Shell Scripts" as distinct entities that can be invoked. "Shell Scripts" feed into a "Script Processor," which in turn interfaces with "Profile Command Set" and "Level three Command Set," suggesting a tiered approach to command organization or features. "Optional Features" is also shown as a modular component.
+
+The diagram further illustrates the dependency and invocation flow using dashed lines. For instance, the Command Launcher interacts with the U E F I/P I Interfaces, and indirectly with U E F I Drivers. Several U E F I Drivers are depicted in a columnar fashion, representing the various drivers necessary to interface with specific hardware or services within the U E F I environment. These drivers are shown as abstract blocks, with labels like "U E F I Driver." The diagram suggests that the Shell Core and its associated components manage the overall shell operation, delegating command execution to the Command Launcher, which utilizes U E F I services and libraries.
+
+The note accompanying the figure states that, according to the U E F I Shell 2.0 specification, the distribution always includes a minimum of two files. This points to a foundational requirement for the shell's operation, perhaps for essential services or a basic command set to be present.
+
+The subsequent paragraph discusses the overhead associated with adding a shell application. It posits that creating a new shell application involves a significant amount of coding work, and building the library for it also incurs substantial effort. The statement implies that the work required to distribute separate files, which are not part of the shell binary itself, is comparable to the coding effort for the application. This suggests a trade-off between integrating functionality directly into the core shell binary versus distributing it as external modules or applications, with each approach having its own development and distribution complexities. The efficiency and modularity of the U E F I shell architecture are key considerations here, balancing feature richness with binary size and complexity.

@@ -1,0 +1,38 @@
+Chapter 9
+The Intel® Architecture Boot Flow
+
+There is no one giant step that does it. It’s a lot of little steps.
+—Peter A. Cohen
+
+A lot of little steps is exactly the idea of walking the path of the Intel
+architecture boot flow. The bare minimum firmware requirements for making
+an Intel architecture platform operational and for booting an OS are presented
+here in a given order. Design or market segment-based requirements might
+add, delete, or reorder many of the items presented in this chapter; however,
+for the vast majority of system designs, these steps in this order are sufficient
+for a full or cold boot from a state where the power is off to the handoff to the
+operating system. Depending on the architecture of the BIOS, there may be
+multiple software phases to jump through with different sets of rules, but the
+sequence for actually touching the hardware is, at least in the early phases,
+
+very much the same.
+
+Hardware Power Sequences (The Pre-Pre-Boot)
+
+When someone pushes the button, the CPU just doesn’t jump up and start
+
+fetching code from flash.
+Chapter nine The Intel architecture boot flow.
+
+There is no one giant step that does it. It's a lot of little steps.
+
+Peter A. Cohen
+
+A lot of little steps is exactly the idea of walking the path of the Intel architecture boot flow. The bare minimum firmware requirements for making an Intel architecture platform operational and for booting an O S are presented here in a given order. Design or market segment based requirements might add, delete, or reorder many of the items presented in this chapter; however, for the vast majority of system designs, these steps in this order are sufficient for a full or cold boot from a state where the power is off to the handoff to the operating system. Depending on the architecture of the B I O S, there may be multiple software phases to jump through with different sets of rules, but the sequence for actually touching the hardware is, at least in the early phases, very much the same.
+
+Hardware power sequences (The Pre Pre Boot)
+
+When someone pushes the button, the C P U just doesn't jump up and start fetching code from flash.
+This chapter, titled "The Intel Architecture Boot Flow," delves into the intricacies of the system startup process on Intel architectures. The overarching theme emphasizes that a computer's boot process is not a singular, monumental event but rather a carefully orchestrated sequence of numerous small, incremental steps. This detailed breakdown is crucial for understanding how a system transitions from a powered-off state to an operational one, ready to load an operating system. The text highlights that the bare minimum firmware requirements for making an Intel architecture platform operational and for booting an operating system are presented in a specific order within this chapter. It acknowledges that design choices or market segment requirements might necessitate modifications, such as adding, deleting, or reordering these steps. However, it asserts that the fundamental sequence presented is sufficient for the vast majority of system designs. This sequence dictates the transition from a power-off state to the initial handoff to the operating system's BIOS, or Basic Input/Output System. The process involves multiple software phases, each governed by distinct sets of rules. The ultimate goal is the successful interaction with the hardware, which commences in the earliest stages of this boot sequence.
+
+The subsequent section, "Hardware Power Sequences (The Pre-Pre-Boot)," begins to elaborate on the very initial stages of system activation. It posits that upon the depression of a power button, the Central Processing Unit, or C P U, does not immediately commence fetching executable code from persistent storage, such as flash memory. This implies a series of preliminary hardware initializations and power management operations that must occur before the C P U can begin its instruction execution cycle. These pre-boot sequences are foundational to establishing a stable hardware environment for the subsequent firmware and operating system loading phases.

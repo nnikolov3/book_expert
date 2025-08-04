@@ -1,0 +1,49 @@
+hub/device layer as required for the platform. This is in some ways a platform
+policy decision.
+
+If the BIOS finds a USB Device—get the ID from the descriptor, then
+set the address. Depending on the device type, we may need to get a further
+descriptor and configure as needed. What interface to query is next.
+
+These steps are repeated for each root port.
+
+SATA
+
+Intel components have supported ATA controllers in one form or another
+since early 1990s chipsets. These have converted over time from Parallel
+ATA to Serial ATA. Today most Intel platforms support only SATA
+controllers, up to a maximum of six SATA ports. It is possible to still find
+PATA-supported chips in the market either as integrated controllers or as
+discrete PCI devices. Intel datasheets have complete details on number and
+types of controllers, number of ports, and available configurations and
+SATA-generation support per component, as well as complete set of
+registers.
+
+SATA controllers support the ATA/IDE programming interface and
+may support Advanced Host Controller Interface (AHCI), not available on all
+chips. In this section, the term “ATA-IDE Mode” refers to the ATA/IDE
+programming interface that uses standard task file I/O registers or PCI IDE
+Bus Master 1/0 block registers. The term “AHCI Mode” refers to the AHCI
+programming interface that uses memory-mapped register/buffer space and a
+
+command-list-based model.
+
+SATA Controller Initialization
+hub device layer as required for the platform. This is in some ways a platform policy decision.
+
+If the bios finds a U S B device, get the I D from the descriptor, then set the address. Depending on the device type, we may need to get a further descriptor and configure as needed. What interface to query is next. These steps are repeated for each root port.
+
+S A T A
+
+Intel components have supported A T A controllers in one form or another since early nineteen nineties chipsets. These have converted over time from Parallel A T A to Serial A T A. Today most Intel platforms support only S A T A controllers, up to a maximum of six S A T A ports. It is possible to still find P A T A supported chips in the market either as integrated controllers or as discrete P C I E devices. Intel datasheets have complete details on number and types of controllers, number of ports, and available configurations and S A T A generation support per component, as well as a complete set of registers.
+
+S A T A controllers support the A T A slash I D E programming interface and may support Advanced Host Controller Interface, A H C I, not available on all chips. In this section, the term “A T A I D E Mode” refers to the A T A slash I D E programming interface that uses standard task file I O registers or P C I E I D E Bus Master I O block registers. The term “A H C I Mode” refers to the A H C I programming interface that uses memory mapped register buffer space and a command list based model.
+
+S A T A Controller Initialization
+The foundational process of device discovery and configuration within a computing system, often initiated by the B I O S during boot, involves a series of intricate steps exemplified by U S B device enumeration. When the B I O S detects a U S B device, it first queries the device for its unique identifier, which is typically found within a device descriptor. This descriptor is a structured block of data providing fundamental information about the device's capabilities and type. Subsequent to obtaining this I D, the B I O S assigns a specific address to the U S B device, enabling it to communicate uniquely on the shared U S B bus. The depth of the interrogation and configuration process is contingent upon the device's type, often necessitating further queries to retrieve additional descriptors that detail its various interfaces and functional characteristics. This entire sequence of identification, addressing, and configuration is systematically repeated for each U S B root port present on the system, reflecting a platform level policy decision that dictates the specific enumeration strategy.
+
+Transitioning to storage controller technologies, Intel's evolution in supporting A T A controllers illustrates a significant paradigm shift from Parallel A T A, or P A T A, to Serial A T A, known as S A T A. While P A T A relied on wide, parallel data paths that were susceptible to signal integrity issues at higher speeds, S A T A adopted a more robust serial, point to point communication model, enhancing data transfer rates and simplifying cabling. Modern Intel platforms predominantly support S A T A controllers, often integrated directly into the chipset, providing a maximum of six S A T A ports. Nevertheless, older P A T A supported chipsets can still be encountered in the market, either as integrated components or as discrete P C I devices. Detailed specifications regarding the number and types of integrated controllers, their port configurations, and S A T A generation support are meticulously documented in Intel's datasheets, alongside comprehensive sets of programming registers that allow low level hardware interaction.
+
+S A T A controllers offer distinct programming interfaces, each representing a different level of abstraction and capability for interacting with storage devices. The legacy approach is known as A T A hyphen I D E Mode. This mode provides backward compatibility by using programming interfaces that mimic those of older I D E controllers. Within A T A hyphen I D E Mode, the system interacts with the controller either through standard task file I O registers or through P C I I D E Bus Master I O block registers. The task file approach involves direct C P U manipulation of memory mapped registers to issue commands and transfer data, a synchronous and less efficient method for contemporary high performance storage. P C I I D E Bus Master I O, while still using the I D E conceptual model for commands, introduces Direct Memory Access capabilities, allowing the controller to transfer data directly to and from system Ram without constant C P U intervention, thereby improving throughput.
+
+In contrast, the more advanced and widely adopted programming interface is the Advanced Host Controller Interface, or A H C I. Unlike the I D E modes, A H C I provides a standardized abstraction layer over the specific hardware implementation of S A T A controllers. This standardization is critical as it enables a single software driver to manage a wide array of A H C I compliant S A T A controllers from different manufacturers, reducing driver complexity and improving interoperability. The A H C I programming interface fundamentally relies on memory mapped register and buffer space. Instead of direct task file register manipulation, the host system constructs command lists and data structures in system memory, which the A H C I compliant controller then accesses and processes autonomously. This command list based model facilitates efficient, asynchronous command execution and enables advanced features such as Native Command Queuing, where multiple commands can be queued and processed by the drive itself in an optimized order, significantly enhancing I O performance and overall system responsiveness. The A H C I mode represents a crucial advancement in storage I O architecture, moving from simple register polling to a more sophisticated, queue driven, and highly parallelized command submission model.

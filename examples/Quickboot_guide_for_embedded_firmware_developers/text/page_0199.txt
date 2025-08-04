@@ -1,0 +1,51 @@
+An SIO typically controls the PS/2, serial, and parallel interfaces. Most
+systems still support some of the legacy interfaces rather than implementing a
+legacy- free system. Refer to the specific SIO datasheet for details on
+
+programming information.
+
+Legacy-Free Systems
+
+Legacy-free systems use USB as the input device. If pre-OS keyboard
+support is required, then the legacy keyboard interfaces must be trapped.
+Refer to the IOH/ICH BIOS Specification for more details on legacy-free
+
+systems.
+
+USB Initialization
+
+The USB controller supports both EHCI and now XHCI. To enable the host
+controller for standard PCI resources is relatively easy. It is possible to not
+enable USB until the OS drivers take over and have a very well-functioning
+system. If pre-OS support for EHCI or XHCI is required, then the tasks
+associated with the USB subsystem become substantially more complex.
+Legacy USB requires an SMI handler be used to trap port 60/64 accesses to
+I/O space and convert these to the proper keyboard or mouse commands. This
+
+pre-OS USB support is required if booting to USB is preferred.
+
+SATA Initialization
+
+A SATA controller supports the ATA/IDE programming interface, as well as
+the Advanced Host Controller Interface (AHCI, not available on all SKUs).
+In the following discussion, the term “ATA-IDE Mode” refers to the
+An S I O typically controls the P S two, serial, and parallel interfaces. Most systems still support some of the legacy interfaces rather than implementing a legacy free system. Refer to the specific S I O datasheet for details on programming information.
+
+Legacy Free Systems
+
+Legacy free systems use U S B as the input device. If pre O S keyboard support is required, then the legacy keyboard interfaces must be trapped. Refer to the I O H I C H B I O S Specification for more details on legacy free systems.
+
+U S B Initialization
+
+The U S B controller supports both E H C I and now X H C I. To enable the host controller for standard P C I resources is relatively easy. It is possible to not enable U S B until the O S drivers take over and have a very well functioning system. If pre O S support for E H C I or X H C I is required, then the tasks associated with the U S B subsystem become substantially more complex. Legacy U S B requires an S M I handler be used to trap port sixty four accesses to I O space and convert these to the proper keyboard or mouse commands. This pre O S U S B support is required if booting to U S B is preferred.
+
+S A T A Initialization
+
+A S A T A controller supports the A T A I D E programming interface, as well as the Advanced Host Controller Interface (A H C I, not available on all S K U s). In the following discussion, the term "A T A I D E Mode" refers to the
+The Super I O or S I O chip serves as a foundational component in many computer systems, orchestrating communication across a spectrum of peripheral interfaces. These typically include legacy standards such as the P S two, serial, and parallel ports. While modern systems increasingly adopt a legacy free architecture, prioritizing newer interfaces like U S B, many still retain support for these older, well-established connection types. The decision to implement legacy interfaces is often a trade-off between backward compatibility and the cost and complexity of integration. For detailed specifications and operational nuances, consulting the specific S I O datasheet is imperative, as it outlines the chip's capabilities and adherence to various interface standards.
+
+Within the realm of legacy free systems, the Universal Serial Bus, or U S B, has become the predominant input device interface. In these environments, where legacy keyboard support might be a requirement, U S B controllers are leveraged as the primary input mechanism. The management and integration of these U S B controllers, particularly for pre operating system environments, necessitate careful handling. The E H C I, or Enhanced H O S T Controller Interface, and the more recent X H C I, or eXtensible H O S T Controller Interface, are the key specifications governing U S B host controller functionality. Enabling the host controller for standard Peripheral Component Interconnect, or P C I, resources is a relatively straightforward process. However, the system must wait for the operating system drivers to take control of the U S B subsystem before U S B devices can be fully utilized.
+
+The initialization process for U S B can become significantly more complex when pre operating system support for E H C I or X H C I is required. In such scenarios, tasks associated with the U S B subsystem's readiness must be managed with greater precision. Legacy U S B implementations often relied on System Management Interrupts, or S M I, handlers to intercept crucial input events. These handlers would effectively trap port sixty four accesses, which are characteristic of legacy keyboard and mouse command protocols, and then translate these to the appropriate U S B communication structures. Consequently, pre operating system U S B support, especially when booting from a U S B drive, depends heavily on the robust implementation of these interrupt-driven mechanisms.
+
+The Serial ATA, or S A T A, interface represents another critical subsystem for storage devices. A S A T A controller typically provides compatibility with the established A T A I D E programming interface. This includes support for the Advanced Host Controller Interface, or A H C I, which is a specification that enables more advanced features for S A T A devices, though its availability can vary across different product configurations, or S K Us. When discussing S A T A functionality, the term "A T A I D E Mode" is often used to refer to the backward compatibility layer that allows S A T A controllers to operate with systems and software designed for the older A T A I D E standard. This mode ensures that legacy storage devices and drivers can still function, bridging the gap between older and newer storage technologies.

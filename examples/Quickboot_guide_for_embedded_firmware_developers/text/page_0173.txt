@@ -1,0 +1,30 @@
+Simple Device Initialization
+
+The early initialization phase readies the bootstrap processor (BSP) and 1/0
+peripherals’ base address registers that are needed to configure the memory
+controller. The device-specific portion of an Intel architecture memory map is
+highly configurable. Most devices are seen and accessed via a logical PCI bus
+hierarchy, although a small number may be memory-mapped devices that
+have part-specific access mechanisms. Device control registers are mapped to
+a predefined I/O or MMIO space and can be set up before the memory map is
+configured. This allows the early initial firmware to configure the memory
+map of the device needed to set up DRAM. Before DRAM can be
+configured, the firmware must establish the exact configuring of DRAM that
+is on the board. The Intel architecture reference platform memory map is
+
+described in more detail in Figure 9.3. SOC devices based on other processor
+
+architectures typically provide a static address map for all internal
+peripherals, with external devices connected via a bus interface. The bus-
+based devices are mapped to a memory range within the SOC address space.
+These SOC devices usually provide a configurable chip select register, which
+can be set to specify the base address and size of the memory range enabled
+by the chip select. SOCs based on Intel architecture primarily use the logical
+
+PCI infrastructure for internal and external devices.
+Simple Device Initialization.
+
+The early initialization phase readies the bootstrap processor and I O peripherals' base address registers that are needed to configure the memory controller. The device specific portion of an Intel architecture memory map is highly configurable. Most devices are seen and accessed via a logical P C I bus hierarchy, although a small number may be memory mapped devices that have part specific access mechanisms. Device control registers are mapped to a predefined I O or M M I O space and can be set up before the memory map is configured. This allows the early initial firmware to configure the memory map of the device needed to set up D Ram. Before D Ram can be configured, the firmware must establish the exact configuring of D Ram that is on the board. The Intel architecture reference platform memory map is described in more detail in Figure nine point three. S O C devices based on other processor architectures typically provide a static address map for all internal peripherals, with external devices connected via a bus interface. The bus based devices are mapped to a memory range within the S O C address space. These S O C devices usually provide a configurable chip select register, which can be set to specify the base address and size of the memory range enabled by the chip select. S O C s based on Intel architecture primarily use the logical P C I infrastructure for internal and external devices.
+The fundamental process of simple device initialization involves several key stages, starting with the bootstrap processor, or B S P, and I O peripherals. This initial phase readies the system by configuring essential components, particularly the memory controller. The Intel architecture, as a common example, employs a specific memory map for device configuration. Most devices are accessed and recognized through this memory map, which is structured in a logical P C I bus hierarchy. While a small number of devices might be memory mapped, meaning their operations are directly accessible as memory addresses, the majority rely on device control registers that are mapped to a predefined I O or memory mapped I O, also known as M M I O, space. This space is configured prior to the system's full operation, enabling the early firmware to establish the memory map for devices that are critical for initial setup, such as the D Ram.
+
+The firmware's responsibility extends to confirming the precise configuration of D Ram, which is a crucial component on the motherboard. The Intel architecture reference platform, often detailed in documentation such as Figure nine point three, provides a comprehensive overview of this memory mapping. Systems on a chip, or S O Cs, based on various processor architectures, typically utilize a static address map for their internal peripherals. These internal peripherals are connected through a bus interface. External devices, on the other hand, are also mapped into the S O C's address space, often residing within a specific memory range. A key aspect of S O C design is the provision of configurable chip select registers. These registers allow the system to define the base address and the size of the memory range that a particular device occupies. Consequently, S O Cs that leverage an Intel architecture predominantly utilize the logical P C I infrastructure to manage both internal and external device connectivity and addressing.

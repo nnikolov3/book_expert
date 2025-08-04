@@ -1,0 +1,38 @@
+How effective is it? Based on experiments with a variety of systems from
+
+2010 through 2012, system boot times were decreased from:
+—seconds (full boot)
+—As low as 1 second (Fast Boot) in some cases
+
+—Typically, 2 seconds for a Fast Boot is achievable for PCs, imagine
+
+what a true embedded system can do?
+
+Summary
+
+This chapter introduced a very powerful Fast Boot mechanism that can be
+applied to UEFI solutions. While this mechanism provides dynamic and
+reliable time savings over a monotonic long, slow boot, other optimizations
+must still be performed for optimum results. As we have seen in other
+chapters, hardware selection, OS loader optimizations, and OS interface come
+into play. Due diligence of the development and design teams is vital to a
+successful Fast Boot user experience.
+
+Developers should read Chapter 12, and then reread Chapters 10, 11,
+
+and 12. Then ask yourself and others the right questions, including: “What
+will it take to do this?”
+How effective is it? Based on experiments with a variety of systems from two thousand ten through two thousand twelve, system boot times were decreased from:
+
+*   seconds (full boot)
+*   As low as one second (Fast Boot) in some cases
+*   Typically, two seconds for a Fast Boot is achievable for P Cs, imagine what a true embedded system can do?
+
+Summary
+
+This chapter introduced a very powerful Fast Boot mechanism that can be applied to U E F I solutions. While this mechanism provides dynamic and reliable time savings over a monotonic long, slow boot, other optimizations must still be performed for optimum results. As we have seen in other chapters, hardware selection, O S loader optimizations, and O S interface come into play. Due diligence of the development and design teams is vital to a successful Fast Boot user experience.
+
+Developers should read Chapter twelve, and then reread Chapters ten, eleven, and twelve. Then ask yourself and others the right questions, including: What will it take to do this?
+Experiments conducted from two thousand ten through two thousand twelve reveal that system boot times were significantly reduced. Specifically, full boot times were decreased, with some cases achieving a boot time as low as one second, a phenomenon termed Fast Boot. For personal computers, a boot time of two seconds for Fast Boot is demonstrably achievable, illustrating the potential for truly expedited embedded system startups.
+
+This chapter has introduced a robust Fast Boot mechanism applicable to U E F I solutions. This mechanism facilitates dynamic and incremental time savings through a series of optimizations. These include monotonic long and slow boot optimizations, as well as enhancements to other chapters, hardware selection, and the O S loader. The O S interface also plays a crucial role in this process. Diligent development and design efforts by engineering teams are paramount for a successful Fast Boot user experience. Developers are encouraged to review Chapters twelve, ten, and eleven, and to critically engage with fundamental questions such as "What will it take to achieve this?" to guide their development process.

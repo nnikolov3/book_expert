@@ -1,0 +1,40 @@
+SDRAM datasheet. The value of this number may be dependent on the
+SDRAM page size; please refer to the DDR3 SDRAM datasheet section on
+Addressing to determine the page size for these devices. Controller designers
+must also note that at some frequencies, a minimum number of clocks may be
+required, resulting in a larger tWTRmin value than indicated in the SPD. For
+example, tWTRmin for DDR3-800 must be 4 clocks.
+
+Bits 7-0
+Internal Write to Read Delay Time (tWTR) MTB Units
+Values defined from 1 to 255
+
+Example:
+tWTR (MTB units) Timebase (ns) tWTR Result (ns) Use
+&0 Ox3C 0.125 7.5 All DDR3 SDRAM speed bins
+
+Note: tRTP is at least 4 nCK independent of operating frequency.
+
+SPD Field #26: “Minimum Internal Write to Read Command Delay Time
+(twrmin)” Definition from JEDEC DDR3 SPD Specification
+
+Table 56 Electrical Characteristics and AC Operating Conditions
+(Continued) Notes 1-8 apply to the entire table
+The S D R A M datasheet. The value of this number may be dependent on the S D R A M page size; please refer to the D D R three S D R A M datasheet section on addressing to determine the page size for these devices. Controller designers must also note that at some frequencies, a minimum number of clocks may be required, resulting in a larger t W T R min value than indicated in the S P D. For example, t W T R min for D D R three 800 must be four clocks.
+
+Bits seven to zero: Internal Write to Read Delay Time (t W T R) M T B Units. Values defined from one to two hundred fifty five.
+
+Example:
+The table shows the following data with columns for t W T R (M T B units), Timebase (ns), t W T R Result (ns), and Use.
+In the first row, sixty t W T R units correspond to a timebase of zero point one two five nanoseconds, a t W T R result of seven point five nanoseconds, and is used for all D D R three S D R A M speed bins.
+
+Note: t R T P is at least four n C K independent of operating frequency.
+
+S P D Field number twenty six: Minimum Internal Write to Read Command Delay Time (t W T R min) Definition from J E D E C D D R three S P D Specification.
+
+Table fifty six Electrical Characteristics and A C Operating Conditions (Continued). Notes one through eight apply to the entire table.
+The provided text delves into the intricacies of SDRAM timing parameters, specifically focusing on the "Internal Write to Read Delay Time," denoted as tWTR. This parameter is crucial for DDR3 SDRAM memory controllers, influencing the efficiency of read operations following write operations. The value of tWTR is often specified in terms of clock cycles and can be found in the SDRAM datasheet, with its exact timing dependent on the SDRAM's page size and operating frequency.
+
+The information presented highlights that the specific timing for tWTR is detailed within the Serial Presence Detect, or SPD, data structure, a standardized method for memory modules to communicate their capabilities to the host system. Specifically, "SPD Field #26" contains the "Minimum Internal Write to Read Command Delay Time" (tWTRmin), as defined by the JEDEC DDR3 SPD Specification. This field is encoded using bits seven through zero, with values ranging from one to two hundred fifty-five.
+
+An illustrative example is provided to clarify the relationship between different timing specifications. It shows a value of sixty in "tWTR (MTB units)," corresponding to a "Timebase (ns)" of zero point one two five, resulting in a "tWTR Result (ns)" of seven point five. This particular timing is associated with "All DDR3 SDRAM speed bins," implying it's a general characteristic. A critical note specifies that tRTP, another timing parameter likely related to read-to-write turnaround, is at least four clock cycles, independent of the operating frequency. This implies a minimum latency requirement to ensure proper operation, even when the memory operates at higher clock speeds where individual clock cycles are shorter. The text also references "Table 56 Electrical Characteristics and AC Operating Conditions," indicating that notes one through eight from that table are applicable to the presented data, underscoring the comprehensive nature of these specifications for system designers.

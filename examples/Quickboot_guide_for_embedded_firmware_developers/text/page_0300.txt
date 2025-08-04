@@ -1,0 +1,57 @@
+Line SDRAM/ Module Type Bit7 Bite Bit5 Bits Bit3 Bit2 Bitl Bit0 Hex
+# Corresponding to Key Byte
+
+0 Reserved 0 Or 0 0 0 0 0 0 00
+1 Standard FPM DRAM 0 i] LE] 0 0 0 Cr 1 01
+2 £00 0 0 0 a 0 0 1 0 02
+3 Pipelined Nibble 0 0 0 0 0 0 1 1 03
+4 SDRAM 0 0 0 0 Q 1 0 0 04
+5 ROM 0 i) 0 0 0 1 i) 1 05
+2 DOR SGRAM 0 i] 0 0 0 1 1 0 06
+ri DDR SDRAM 0 } 0 0 0 1 1 1 or
+& DDR2 SDRAM 0 i 0 0 1 0 0 0 of
+¢  DDR2 SDRAM FB-DIMM 0 0 0 a 1 0 0 1 og
+10 DDR2 SDRAM FB-DIMM PROBE 0 0 0 a 1 0 1 0 0A
+11 DDR3 SDRAM 0 0 0 0 1 0 1 1 OB
+253 Reserved 1 1 1 1 1 1 0 1 FD
+254 Reserved 1 1 1 1 1 1 1 0 FE
+255% Reserved 1 1 1 1 1 1 1 1 FF
+
+SPD Field 0x03: Module Type
+
+This field is typically set to 0x02 for Unbuffered DIMMs or 0x03 when using
+SO-DIMMs. If the specific chipset/CPU ONLY supports SO-DIMMSs, use
+0x03 so as not to confuse the BIOS.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+3 0x03 Module Type O=03 SO-DIMM
+
+Per JEDEC Specification, Byte 3: Key Byte/ Module Type
+This byte is a Key Byte used to index the module specific section of the SPD
+The table lists SDRAM module types and their corresponding key byte values.
+Row zero is reserved.
+Row one represents Standard FPM DRAM, with hex value zero zero.
+Row two represents EDO, with hex value zero one.
+Row three represents Pipelined Nibble, with hex value zero two.
+Row four represents SDRAM, with hex value zero three.
+Row five represents ROM, with hex value zero four.
+Row six represents DDR SDGRAM, with hex value zero five.
+Row seven represents DDR SDRAM, with hex value zero six.
+Row eight represents DDR two SDRAM, with hex value zero seven.
+Row nine represents DDR two SDRAM F B DIMM, with hex value zero eight.
+Row ten represents DDR two SDRAM F B DIMM PROBE, with hex value zero nine.
+Row eleven represents DDR three SDRAM, with hex value zero A.
+There are further entries for reserved values at row two hundred fifty three with hex value F D and row two hundred fifty four with hex value F E. Row two hundred fifty five is also reserved with hex value F F.
+
+The SPD Field zero x zero three: Module Type. This field is typically set to zero x zero two for Unbuffered DIMMs or zero x zero three when using SO DIMMs. If the specific chipset C P U only supports SO DIMMs, use zero x zero three so as not to confuse the B I O S.
+
+The data presents a table with three columns: Byte (Dec), Byte (Hex), Field Name, Typ. Value, and Definition.
+Row three shows Byte (Dec) as three, Byte (Hex) as zero x zero three, Field Name as Module Type, Typ. Value as zero x zero three, and Definition as SO DIMM.
+
+Per JEDEC Specification, Byte three: Key Byte / Module Type. This byte is a Key Byte used to index the module specific section of the SPD.
+The provided content details specific fields within the Serial Presence Detect, or S P D, memory standard, primarily focusing on the representation of different memory module types. The table enumerates various memory technologies, correlating their type with a numerical identifier and a hexadecimal representation, further broken down into individual bits from bit seven down to bit zero. For instance, line zero signifies a 'Reserved' state with all bits set to zero, represented as hexadecimal zero zero. Line one, 'Standard FPM DRAM', is encoded with bit one set to one, resulting in hexadecimal zero one. This pattern continues for 'EDO' memory on line two, which has bit two set to one, yielding hexadecimal zero two, and 'Pipelined Nibble' on line three with bits one and two set to one, producing hexadecimal zero three.
+
+Subsequent lines detail more advanced memory types. 'SDRAM' on line four is represented by hexadecimal zero four, 'ROM' on line five by hexadecimal zero five, 'DDR SDGRAM' on line six by hexadecimal zero six, and 'DDR SDRAM' on line seven by hexadecimal zero seven. Further down, 'DDR2 SDRAM' appears with hexadecimal zero eight, and 'DDR2 SDRAM FB DIMM' is shown twice, once with hexadecimal zero nine and again with hexadecimal zero A, indicating distinct sub-types or configurations within that category. 'DDR3 SDRAM' is represented by hexadecimal zero B. Reserved entries are also present at the upper end of the table, such as line two hundred fifty three, 'Reserved', encoded as hexadecimal F D, and line two hundred fifty four, 'Reserved', encoded as hexadecimal F E, both utilizing a pattern of all bits set to one except for specific bits being zero. Line two hundred fifty five, also 'Reserved', is shown with all bits set to one, resulting in hexadecimal F F.
+
+The second section clarifies the significance of the S P D Field zero three, designated as 'Module Type'. This field is crucial for identifying the specific form factor of the memory module. It is typically set to zero two for unbuffered DIMMs, and zero three when the module is a SO DIMM. The text emphasizes that if a particular chipset or C P U exclusively supports SO DIMMs, this field will be set to zero three to ensure proper BIOS interpretation and to prevent compatibility issues. The table following this explanation reinforces this, showing that Byte three, which corresponds to the 'Key Byte / Module Type', has a typical value of zero three and its definition is 'SO DIMM', aligning with the textual explanation. This 'Key Byte' serves as an index into the module-specific section of the S P D data, enabling the system to correctly configure and utilize the installed memory. The standard referenced is the J E D E C specification, which governs the design and interoperability of semiconductor devices.

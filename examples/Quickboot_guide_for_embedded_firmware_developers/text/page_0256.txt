@@ -1,0 +1,68 @@
+SPI Flash Reads and Writes
+
+BIOS can minimize the number for flash writes by combining several writes
+into one. Any content in SPI flash should be read at most once during each
+boot and then stored in memory/variable for future reference. Refer to PCH
+BIOS Writer’s Guide for the optimal SPI prefetch setting. The PCH
+prefetching algorithm is optimized for serial access in the hardware; however,
+if the firmware is not laid out in a sequential nature, the prefetch feature may
+need to be turned off if the read addresses are random (see also “EDK II
+Performance Optimization Guide — Section 8.3”).
+
+SPI flash access latency can be greatly improved with hardware and
+
+firmware codesign. Table 12.1 presents some guidelines that, when followed,
+
+can provide improvements of several seconds off a boot.
+
+Table 12.1: Improving SPI Flash Access Latency with Hardware and
+
+Firmware Co-Design
+
+Chipset Hardware Board Chipset System Firmware
+(SP) Hardware Firmware (BIOS)
+
+Fast read mode Soft-strap setting of Maximize SP read in
+{multiple data cycles SP mode sequential block
+
+per control cycle)
+
+Quad data pin support  & data lanes routing Minimize single lane
+{4 bit per clock) for and signal integrity write (write combine)
+read
+
+Maximum clock rate at 50 MHz signal SP| usage collision SP usage collision
+50 MHz (from default integrity avoidance with BIOS avoidance with BIOS
+of 25 MHz)
+
+software-controllable Dynamic mode setting
+
+prefetch mode depending on usage
+S P I Flash Reads and Writes
+
+B I O S can minimize the number for flash writes by combining several writes into one. Any content in S P I flash should be read at most once during each boot and then stored in memory or variable for future reference. Refer to P C H B I O S Writer's Guide for the optimal S P I prefetch setting. The P C H prefetching algorithm is optimized for serial access in the hardware; however, if the firmware is not laid out in a sequential nature, the prefetch feature may need to be turned off if the read addresses are random (see also E D K II Performance Optimization Guide – Section eight point three). S P I flash access latency can be greatly improved with hardware and firmware codesign. Table twelve point one presents some guidelines that, when followed, can provide improvements of several seconds off a boot.
+
+Table twelve point one: Improving S P I Flash Access Latency with Hardware and Firmware Co Design
+
+The table shows improvements in S P I flash access latency. Under Chipset Hardware (S P I), the first row describes the 'Fast read mode (multiple data cycles per control cycle)'. Corresponding to this in the Board Hardware column is 'data lanes routing and signal integrity'. In the Chipset Firmware column, it is 'Soft strap setting of S P I mode'. And in the System Firmware (B I O S) column, it is 'Maximize S P I read in sequential block'.
+
+The second row under Chipset Hardware (S P I) describes 'Quad data pin support (four bit per clock) for read'. The Board Hardware column states 'data lanes routing and signal integrity'. The Chipset Firmware column specifies 'S P I usage collision avoidance with B I O S'. The System Firmware (B I O S) column states 'Minimize single lane write (write combine)'.
+
+The third row under Chipset Hardware (S P I) describes 'Maximum clock rate at fifty megahertz (from default of twenty five megahertz)'. The Board Hardware column states 'fifty megahertz signal integrity'. The Chipset Firmware column specifies 'S P I usage collision avoidance with B I O S'. The System Firmware (B I O S) column states 'Dynamic mode setting depending on usage'.
+
+The last row under Chipset Hardware (S P I) describes 'Software controllable prefetch mode'.
+The page delves into optimizing Serial Peripheral Interface, or S P I, flash memory access, specifically focusing on minimizing write operations by the Basic Input Output System, or B I O S.  The core principle is to consolidate multiple writes into a single operation, often by buffering data in memory or a variable for subsequent write-through to the S P I flash.  This strategy aims to reduce the overhead associated with individual write cycles.
+
+A key concept highlighted is the P C H B I O S Writer's Guide and its prefetch setting. Prefetching, in this context, is an algorithm optimized for serial access patterns in memory. When the firmware's access to S P I flash is sequential, prefetching can significantly improve performance by anticipating upcoming data needs. However, if the read addresses are random, meaning they are not accessed in a contiguous block, the prefetch feature might need to be disabled to avoid potential performance degradation or incorrect data fetches. The document references "EDK II Performance Optimization Guide – Section Eight point three" for further details on this aspect.
+
+The section also emphasizes that S P I flash access latency can be substantially improved through a combination of hardware and firmware co design. Table Twelve point one is presented as a source of guidelines for achieving these improvements, suggesting that by following these recommendations, a reduction of several seconds in boot time can be realized.
+
+Table Twelve point one itself outlines various aspects of improving S P I flash access latency across different domains: Chipset Hardware, Board Hardware, Chipset Firmware, and System Firmware, specifically B I O S.
+
+Under Chipset Hardware (S P I), it details features like "Fast read mode," which allows for multiple data cycles per control cycle, effectively increasing the data transfer rate. Another feature mentioned is "Quad data pin support" for reads, which utilizes four bits per clock cycle for data transmission, further enhancing read throughput. The "Maximum clock rate" is also specified, with an example of fifty megahertz, noting a potential increase from a default of twenty five megahertz. Finally, "Software controllable prefetch mode" is listed, indicating that the prefetching behavior can be managed by the system's software.
+
+The Board Hardware column addresses "4 data lanes routing and signal integrity," signifying the importance of the physical layout and signal quality for optimal S P I communication.
+
+In the Chipset Firmware column, "Soft strap setting of S P I mode" is mentioned, suggesting firmware configuration options to optimize S P I operation. "S P I usage collision avoidance with B I O S" points to mechanisms to prevent conflicts when both the chipset firmware and B I O S attempt to access the S P I interface simultaneously.
+
+Lastly, the System Firmware (B I O S) column details strategies to "Maximize S P I read in sequential block," reinforcing the benefit of sequential access. It also highlights the "Minimize single lane write (write combine)" technique, where multiple small writes are combined into a single, larger write operation to enhance efficiency. Similar to the chipset firmware, "S P I usage collision avoidance with B I O S" is also a concern for system firmware. The table concludes with "Dynamic mode setting depending on usage," implying that the S P I interface can adapt its operational mode based on the current workload or access patterns.

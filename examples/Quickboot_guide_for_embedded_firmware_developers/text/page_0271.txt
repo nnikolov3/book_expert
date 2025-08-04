@@ -1,0 +1,49 @@
+Security
+
+Security at a high level is often a tradeoff versus boot speeds and
+responsiveness. Trusted Platform Modules and measured boots will add
+noticeable time to a boot flow. Single-threaded Boot ROMs, HW Root of
+Trust and subsequent daisy chaining of authentication takes a very long time
+if not architected for speed (and security). You need to look at the platform
+requirements carefully and balance security and responsiveness. There are
+
+some things we can do to mitigate security impact to platform boot times.
+
+Intel® Trusted Execution Technology (Intel TXT)
+
+Intel Trusted Execution Technology included additional BIOS binary
+modules that execute to assist in authentication of subsequent code execution
+and provide a secure environment for that activity. It takes time to execute
+these modules, and it takes a small amount of time to do authentication prior
+to executing code in these environments. Other authentication schemes have
+
+similar setup and execution penalties.
+
+TPM Present Detect and Early Start
+
+Trusted platform modules hash and save results as variables during a secure
+or measured boot. The delay associated with a TPM can be between 300 ms
+to upwards of 1 second, depending on the TPM vendor, the TPM firmware
+revision, and the size of the BIOS firmware volumes being hashed. There are
+
+several techniques that can save time when using a TPM:
+
+1.
+Security
+
+Security at a high level is often a tradeoff versus boot speeds and responsiveness. Trusted Platform Modules and measured boots will add noticeable time to a boot flow. Single threaded Boot ROMs, H W Root of Trust and subsequent daisy chaining of authentication takes a very long time if not architected for speed and security. You need to look at the platform requirements carefully and balance security and responsiveness. There are some things we can do to mitigate security impact to platform boot times.
+
+Intel Trusted Execution Technology Intel T X T
+
+Intel Trusted Execution Technology included additional B I O S binary modules that execute to assist in authentication of subsequent code execution and provide a secure environment for that activity. It takes time to execute these modules, and it takes a small amount of time to do authentication prior to executing code in these environments. Other authentication schemes have similar setup and execution penalties.
+
+T P M Present Detect and Early Start
+
+Trusted platform modules hash and save results as variables during a secure or measured boot. The delay associated with a T P M can be between three hundred milliseconds to upwards of one second, depending on the T P M vendor, the T P M firmware revision, and the size of the B I O S firmware volumes being hashed. There are several techniques that can save time when using a T P M:
+
+1.
+The foundational concept discussed is the inherent tradeoff between system security and performance, specifically in the context of platform boot times.  Achieving robust security, particularly through mechanisms like Trusted Platform Modules and measured boots, introduces overhead that can extend the initial startup duration of a computing system.  Single-threaded boot ROMs, a common legacy architecture, can exacerbate this issue.  The process of establishing trust, often involving a "daisy chaining" of authentication steps where each component verifies the preceding one, can be time-consuming.  The integrity of this chain is paramount, and if it's not architected with performance in mind, the security assurances come at a significant cost to boot speed.  Therefore, a critical engineering challenge is to meticulously balance the requirements for security and responsiveness, optimizing the platform's boot sequence to mitigate these performance impacts.
+
+A key technological advancement enabling enhanced security with manageable performance impact is Intel Trusted Execution Technology, often referred to as Intel T X T. This technology extends the Trusted Execution Environment by incorporating additional binary modules within the Base Input Output System, or B I O S. These modules are designed to assist in the authentication of subsequent code execution, thereby establishing a secure environment for critical operations during the boot process. The authentication of these modules requires a finite amount of processing time, and the efficiency of this process directly influences the overall boot duration. Alternative authentication schemes may incur similar setup and execution penalties, underscoring the importance of optimizing the underlying cryptographic and verification procedures.
+
+The section on T P M Present Detect and Early Start delves into the operational aspects of Trusted Platform Modules. T P M modules function by hashing and securely storing measurement data, or "platform configuration registers," which represent the state of various boot components. This measured data is critical for establishing a verifiable chain of trust. The delay associated with T P M operations during a secure or measured boot can vary. Specifically, the time taken can range from approximately three hundred milliseconds to upwards of one second. This variability is influenced by several factors, including the specific T P M vendor and the size of the B I O S firmware volumes that need to be hashed and validated. The text indicates that there are specific techniques available to mitigate this delay, thereby improving the time savings when utilizing a T P M.

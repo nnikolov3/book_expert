@@ -1,0 +1,78 @@
+Get PCI Interrupt Routing Options
+
+This routine returns the PCI interrupt routing options available on the system
+motherboard and the current state of what interrupts are currently exclusively
+assigned to PCI. Routing information is returned in a data buffer that contains
+an IRQ routing for each PCI device or slot. The format of an entry in the IRQ
+
+routing table is shown in Table 5.2.
+
+Table 5.2: Format of an Entry in the IRQ Routing Table
+
+Offset Size Description
+0 Byte PCI Bus Number — The bus number of the slot.
+
+PCI Device Number (in upper five bits) — The device number
+of the slot (shifted left 3 bits)
+
+Link Value for INTA# — A value of zero means this interrupt
+pin is not connected to any other interrupt pins and is not
+connected to any of the Interrupt Router’s interrupt pins. The
+nonzero link values are specific to a chipset and decided by the
+chipset vendor. A value of 1 through the number of interrupt
+
+2 Byte pins on the Interrupt Router means the pin is connected to that
+PIRQn# pin of the Interrupt Router. A value larger than the
+number of interrupt pins on the Interrupt Router means the pin
+is wire OR’d together with other slot interrupt pins, but the
+group is not connected to any PIRQn# pin on the Interrupt
+Router.
+
+IRQ Bitmap for INTA# — This value shows which of the
+standard AT IRQs this PCI’s interrupts can be routed to. This
+provides the routing options for one particular PCI interrupt
+
+Word pin. In this bitmap, bit 0 corresponds to IRQO, bit 1 to IRQ1,
+and so on. A 1 bit in this bitmap indicates that routing is
+possible; a 0 bit indicates that no routing is possible. This
+bitmap must be the same for all pins that have the same link
+number.
+
+5 Byte Link Value for INTB#
+6 Word IRQ Bitmap for INTB#
+
+1 Byte
+
+3
+Get P C I Interrupt Routing Options.
+
+This routine returns the P C I interrupt routing options available on the system motherboard and the current state of what interrupts are currently exclusively assigned to P C I. Routing information is returned in a data buffer that contains an I R Q routing for each P C I device or slot. The format of an entry in the I R Q routing table is shown in Table five point two.
+
+Table five point two: Format of an Entry in the I R Q Routing Table.
+
+The table describes the format of an entry in the I R Q routing table, detailing the offset, size, and description of each field.
+
+At offset zero, a Byte sized field represents the P C I Bus Number. This is the bus number of the slot.
+
+At offset one, a Byte sized field represents the P C I Device Number. This value is found in the upper five bits and denotes the device number of the slot, shifted left three bits.
+
+At offset two, a Byte sized field describes the Link Value for I N T A sharp. A value of zero indicates that this interrupt pin is not connected to any other interrupt pins and is also not connected to any of the Interrupt Router’s interrupt pins. The non-zero link values are specific to a chipset and are decided by the chipset vendor. A value of one through the number of interrupt pins on the Interrupt Router means the pin is connected to that P I R Q N sharp pin of the Interrupt Router. A value larger than the number of interrupt pins on the Interrupt Router signifies that the pin is wire O R'd together with other slot interrupt pins, but the group is not connected to any P I R Q N sharp pin on the Interrupt Router.
+
+At offset three, a Word sized field represents the I R Q Bitmap for I N T A sharp. This value indicates which of the standard A T I R Qs this P C I's interrupts can be routed to. This field provides the routing options for one particular P C I interrupt pin. In this bitmap, bit zero corresponds to I R Q zero, bit one to I R Q one, and so on. A one bit in this bitmap indicates that routing is possible; a zero bit indicates that no routing is possible. This bitmap must be the same for all pins that have the same link number.
+
+At offset five, a Byte sized field represents the Link Value for I N T B sharp.
+
+At offset six, a Word sized field represents the I R Q Bitmap for I N T B sharp.
+This document describes a fundamental aspect of system-level interrupt management, specifically concerning P C I devices. The `Get P C I Interrupt Routing Options` routine provides the operating system or system firmware with vital information about how P C I device interrupt requests are mapped to the system's traditional interrupt request lines, or I R Qs. This mapping is critical for enabling devices to signal the C P U about events that require immediate attention, such as data ready for processing or an error condition. The returned data, structured as an I R Q Routing Table entry, details the interrupt routing for a specific P C I device or slot.
+
+The table itself, titled `Table five dot two: Format of an Entry in the I R Q Routing Table`, outlines a seven byte data structure. Each field within this structure provides specific parameters for the interrupt routing.
+
+At `Offset zero`, a single `Byte` stores the P C I `Bus Number`. In the hierarchical P C I architecture, multiple buses can exist within a system, connected via bridges. This byte uniquely identifies the specific bus to which the P C I device in question is attached.
+
+Following at `Offset one`, another `Byte` represents the P C I `Device Number`. This field specifies the unique identifier for a device on a particular P C I bus. The description notes that the `device number` occupies the `upper five bits` of this byte, and is `shifted left three bits`. This encoding scheme implies that the lower three bits might be used to encode the P C I function number, or they are reserved, aligning with the standard P C I configuration space addressing mechanism which typically uses an eight bit bus number, a five bit device number, and a three bit function number to form a unique identifier for any P C I function within a system.
+
+The core of the interrupt routing information begins at `Offset two`, with a `Byte` designated as the `Link Value for I N T A sharp`. P C I devices utilize up to four interrupt pins, named I N T A sharp, I N T B sharp, I N T C sharp, and I N T D sharp. This field describes the routing status for the `I N T A sharp` pin. A `value of zero` is a crucial indicator: it means this particular interrupt pin is not connected or routed to any interrupt controller pin within the system. This could signify that the device does not use `I N T A sharp`, or that its interrupts are handled through an alternative mechanism. If the value ranges from `one through the number of interrupt pins on the Interrupt Router`, it indicates a direct connection from the P C I device's `I N T A sharp` pin to a specific `P I R Q N sharp` pin on the interrupt router. The `P I R Q N sharp` pins are the physical interrupt inputs on the dedicated P C I interrupt controller, which then map these to the traditional I R Q lines understood by the C P U. A `value larger than the number of interrupt pins on the Interrupt Router` signifies a more complex routing scenario: it implies that the P C I device's interrupt pin is `wire O R'd` with interrupt pins from other P C I slots. However, this `wire O R'd` group itself is *not* connected to any specific `P I R Q N sharp` pin on the interrupt router, suggesting a shared interrupt line that might require further system-specific handling or a different routing path. The note that `non-zero link values are specific to a chipset and decided by the chipset vendor` underscores the hardware-dependent nature of P C I interrupt routing. The chipset, typically the Southbridge or Platform Controller Hub, houses the P C I controller and the interrupt router, making its design choices paramount to how interrupts are managed and exposed to the operating system.
+
+At `Offset three`, a `Word` (typically two bytes) is allocated for the `I R Q Bitmap for I N T A sharp`. This bitmap provides a comprehensive view of the routing possibilities for the `I N T A sharp` interrupt. Each bit in this `word` corresponds to a standard A T I R Q line. For instance, `bit zero corresponds to I R Q zero`, `bit one to I R Q one`, and so forth. A `one bit` at a specific position indicates that routing from this P C I device's `I N T A sharp` pin to the corresponding A T I R Q line is possible, while a `zero bit` signifies that such routing is not permissible. This bitmap allows the system's B I O S or the operating system to dynamically assign an available I R Q to the P C I device, facilitating efficient resource allocation and avoiding conflicts. A crucial constraint is that this `bitmap must be the same for all pins that have the same link number`, ensuring consistency in routing capabilities for logically grouped interrupt lines, which is vital for proper system operation, especially in scenarios involving interrupt sharing.
+
+The structure repeats for `I N T B sharp`, with `Offset five` providing the `Link Value for I N T B sharp` as a `Byte`, and `Offset six` containing the `Word I R Q Bitmap for I N T B sharp`. This parallelism confirms that each of the four P C I interrupt pins (`I N T A sharp` through `I N T D sharp`) possesses its own distinct routing configuration and capabilities. Understanding this table is fundamental for operating systems to correctly identify, configure, and manage P C I devices, enabling them to communicate critical events to the C P U through the underlying interrupt subsystem. Without this detailed routing information, effective and reliable interaction with P C I peripherals would be impossible, leading to system instability or non-functional hardware.

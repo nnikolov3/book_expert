@@ -1,0 +1,49 @@
+initialization. One alternative mechanism that can be utilized is the access to
+this information through memory-mapped I/O (MMIO) instead. Such an
+enhancement would need silicon changes to create the mappings in memory
+space, but could achieve potentially a much faster and leaner initialization
+mechanism. Alternatively, beyond the USB specification requirements, study
+of the actual timing of the silicon and shortening of the “standard” delays
+down to what is actually required by the component can yield great benefits.
+Results may vary by the controller and device manufacturers, but the
+
+potential time savings are dramatic. More on this in Chapter 12.
+
+Embedded controllers are custom programmable hardware that can
+interface with and extend the abilities of the system, as well as provide a
+back-end solution to some interesting design problems. These controllers
+come with their own firmware and control interfaces to the system BIOS,
+besides embedding keyboard controllers and other super 10 functionality.
+
+Field Programmable Grid Arrays (FPGAs) are examples that provide
+fixed functionality until they get reprogrammed. Their sizes can vary and
+their applicability depends on the market segment in which they are found.
+Like CMOS, they need battery backup to maintain their NV status ... along
+these lines. The usage can follow standard programming needs, like PCI or
+USB, ACPI, and so on, or it can be completely custom or need no additional
+programming at all. FPGAs are normally used to provide feature
+
+augmentation to a design or early development phases of new silicon.
+
+Option ROMs
+
+Formerly ISA-expansion ROMs, PCI-option ROMs such as video BIOS and
+now UEFI drivers such as graphics output protocols provide another
+
+mechanism for taking things one step beyond industry standards. These
+initialization. One alternative mechanism that can be utilized is the access to this information through memory mapped I O, M M I O, instead. Such an enhancement would need silicon changes to create the mappings in memory space, but could achieve potentially a much faster and leaner initialization mechanism. Alternatively, beyond the U S B specification requirements, study of the actual timing of the silicon and shortening of the "standard" delays down to what is actually required by the component can yield great benefits. Results may vary by the controller and device manufacturers, but the potential time savings are dramatic. More on this in Chapter twelve.
+
+Embedded controllers are custom programmable hardware that can interface with and extend the abilities of the system, as well as provide a back end solution to some interesting design problems. These controllers come with their own firmware and control interfaces to the system B I O S, besides embedding keyboard controllers and other super I O functionality.
+
+Field Programmable Grid Arrays, F P G As, are examples that provide fixed functionality until they get reprogrammed. Their sizes can vary and their applicability depends on the market segment in which they are found. Like C M O S, they need battery backup to maintain their N V status along these lines. The usage can follow standard programming needs, like P C I or U S B, A C P I, and so on, or it can be completely custom or need no additional programming at all. F P G As are normally used to provide feature augmentation to a design or early development phases of new silicon.
+
+Option R O Ms
+
+Formerly I S A expansion R O Ms, P C I option R O Ms such as video B I O S and now U E F I drivers such as graphics output protocols provide another mechanism for taking things one step beyond industry standards. These
+A fundamental aspect of system initialization involves retrieving essential configuration data. One advanced mechanism for achieving this is through memory mapped I O, or M M I O. In this paradigm, hardware registers and device memory are projected into the system's physical address space, allowing the C P U to interact with them using standard memory load and store instructions, rather than dedicated I O port instructions. While implementing M M I O for initialization often necessitates specific silicon modifications to establish these memory mappings, it offers the significant advantage of a faster and leaner initialization sequence. This efficiency stems from leveraging the highly optimized memory access pathways of the C P U. Furthermore, meticulous analysis of the Universal Serial Bus, or U S B, specification requirements, particularly regarding the timing of device enumeration and communication, reveals that the actual timing behavior of silicon components can deviate from the defined standard. Understanding and potentially shortening these standard specified delays through optimized hardware design can yield substantial performance benefits during initialization. Although the precise results can vary significantly between different controller and device manufacturers, the potential for dramatic time savings by fine tuning these low level timings is considerable.
+
+Embedded controllers represent a crucial class of custom programmable hardware designed to extend and enhance the inherent capabilities of a system. These specialized processors interface directly with core system components and often incorporate their own firmware and control interfaces, frequently interacting closely with the system B I O S. Beyond managing general purpose I O, they often integrate dedicated functions, such as keyboard control, providing a sophisticated back end solution to intricate design challenges.
+
+Field Programmable Gate Arrays, or F P G A s, are another pivotal technology in hardware design. These reconfigurable devices provide a malleable hardware platform whose functionality can be precisely defined and altered through programming. Their physical size and, consequently, their applicability, span a wide spectrum, dictated by the target market segment. Similar to C M O S based components that retain their state through battery backup, F P G A s often require mechanisms to maintain their non volatile, or N V, configuration status across power cycles. The inherent programmability of F P G A s allows them to conform to established programming interfaces like P C I E, U S B, or A C P I, or alternatively, to implement entirely custom logic without requiring additional programming. Conventionally, F P G A s are employed early in the development cycle of new silicon, or during the design phase, to facilitate feature augmentation and rapid prototyping, thereby significantly accelerating hardware development and verification processes before committing to more rigid A S I C designs.
+
+Option R O M s, or Read Only Memory modules, serve as a foundational mechanism for extending system functionality beyond core industry standards. Historically, these were seen as I S A expansion R O M s, providing supplementary code for expansion cards. In contemporary systems, this concept has evolved into P C I E option R O M s and U E F I drivers. These components encapsulate essential drivers and firmware, such as those for graphics output protocols, enabling advanced capabilities that are not inherently part of the main system B I O S, thereby allowing specialized hardware to be initialized and utilized effectively during the boot process.

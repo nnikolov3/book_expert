@@ -1,0 +1,47 @@
+The current week number should be inserted into the lower byte. The last two
+years of the year number should be inserted into the upper byte. Make sure to
+
+use Binary Coded Decimal for the two numbers.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+120-121 0xTB-0x79 Module Manufacturing Date 0x 1004 Week 4, 2010
+
+Bytes 120-121: Module Manufacturing Date
+
+The module manufacturer includes a date code for the module. The JEDEC
+definitions for bytes 120 and 121 are year and week, respectively. These
+bytes must be represented in Binary Coded Decimal (BCD). For example,
+week 47 in year 2003 would be coded as 0x03 (0000 0011) in byte 120 and
+0x47 (01000111) in byte 121.
+
+SPD Field 0x7A—-0x7D: Module Serial Number
+
+Since there isn’t a module (DIMM) physically present, this field is a “not
+care.” However, it should be programmed for BIOS algorithms to be able to
+
+tell “if the DIMM has changed,” which is a trigger for fast or slow boot paths.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+122-125 O=TA-0O=TD Module Serial Number 20534846 “SHF"
+
+Bytes 122-125: Module Serial Number
+The supplier must include a unique serial number for the module. The
+supplier may use whatever decode method desired to maintain a unique serial
+
+number for each module. One method of achieving this is by assigning a byte
+The current week number should be inserted into the lower byte. The last two years of the year number should be inserted into the upper byte. Make sure to use Binary Coded Decimal for the two numbers.
+
+The table shows byte information for module manufacturing date. The first row covers bytes one hundred twenty to one hundred twenty one. In decimal, this range is one hundred twenty to one hundred twenty one. In hexadecimal, it is zero x seven eight through zero x seven nine. The field name is Module Manufacturing Date. The typical value is zero x one zero zero four. The definition is Week four, two thousand ten.
+
+Bytes one hundred twenty to one hundred twenty one: Module Manufacturing Date. The module manufacturer includes a date code for the module. The J E D E C definitions for bytes one hundred twenty and one hundred twenty one are year and week, respectively. These bytes must be represented in Binary Coded Decimal. For example, week forty seven in year two thousand three would be coded as zero x zero three, representing zero zero zero zero zero zero eleven in byte one hundred twenty and zero x forty seven, representing zero one zero zero zero one eleven, in byte one hundred twenty one.
+
+SPD Field zero x seven A through zero x seven D: Module Serial Number. Since there isn't a module D I M M physically present, this field is a "not care." However, it should be programmed for B I O S algorithms to be able to tell "if the D I M M has changed," which is a trigger for fast or slow boot paths.
+
+The table shows byte information for module serial number. The row covers bytes one hundred twenty two to one hundred twenty five. In decimal, this range is one hundred twenty two to one hundred twenty five. In hexadecimal, it is zero x seven A through zero x seven D. The field name is Module Serial Number. The typical value is two zero five three four eight four six. The definition is S H F.
+
+Bytes one hundred twenty two to one hundred twenty five: Module Serial Number. The supplier must include a unique serial number for the module. The supplier may use whatever decode method desired to maintain a unique serial number for each module. One method of achieving this is by assigning a byte.
+The presented text details specific fields within a system, likely related to hardware identification, such as those found in memory modules or other computer components. The first section describes bytes one hundred twenty to one hundred twenty one, which are designated for the "Module Manufacturing Date." This information is encoded using Binary Coded Decimal, or B C D, a method where each decimal digit is represented by a four bit binary number. For instance, the year component is stored in byte one hundred twenty, and the week of the year is stored in byte one hundred twenty one. The hexadecimal value zero x seventy eight to zero x seventy nine in byte one hundred twenty represents the year two thousand and ten, and the hexadecimal value zero x one zero zero four in byte one hundred twenty one signifies the fourth week of that year. The J E D E C standard specifies this encoding, ensuring interoperability and a consistent interpretation of manufacturing dates across different hardware.
+
+The second segment focuses on "S P D Field Zero x seven A to zero x seven D," which corresponds to the "Module Serial Number." This field is crucial for system initialization, specifically for the basic input output system, or B I O S. The B I O S can utilize this serial number to detect changes in installed modules, potentially influencing the boot process by either accelerating or decelerating it. The table indicates that these bytes, ranging from one hundred twenty two to one hundred twenty five, store the serial number, with a sample value shown as two zero five three four eight four six. The definition for this field is a textual representation, in this case, "S H F." This implies that the serial number might be a string or a numerical identifier that can be represented as a human readable string. The underlying principle here is data serialization and identification for hardware management, enabling the system to uniquely track and configure individual hardware units. The supplier is responsible for ensuring that this serial number is unique for each module, and various encoding schemes can be employed to achieve this uniqueness, such as assigning a specific byte or a combination of bytes to represent the serial number.

@@ -1,0 +1,54 @@
+The Next Generation
+
+As with any first-generation product, changes and improvements to the
+design were made to meet the industry needs. Working together within the
+UEFI forum, where most major players in the computing business are
+working on the next-generation firmware architectures and implementations
+of UEFI open source code base, the team has produced the EDK II. It has
+taken many years to work through and prioritize some of the improvements
+and changes required to help the industry to evolve and remain vibrant. Major
+computing manufacturing companies and BIOS vendors are ready to ship
+products on this new code base, which promises more flexibility and
+streamlined features, including GCC (GNU Compiler Collection)
+compatibility.
+
+Also, while being deep in complexity, the documentation of the newer
+versions of the code is unsurpassed within the industry. The API today is
+more robust and usable than in previous generations and more easily adapted
+to new and upcoming operating systems.
+
+This was the history of the major conversion and some of the reasons
+you can decide to select a standard UEFI implementation or a different
+firmware technology to start on for development. Strategically, EDK II easily
+makes the best long-term solution. Let’s look at the state of the commercial
+
+BIOS business that has emerged from the transition.
+
+Commercial BIOS Business
+
+Looking at commercial independent BIOS vendors (IBVs), it’s evident the
+industry has been evolving since 1983, when Phoenix Technologies Limited
+
+(Phoenix) shipped its first BIOS. Like any industry, it has grown and shrunk,
+The Next Generation
+
+As with any first generation product, changes and improvements to the design were made to meet the industry needs. Working together within the U E F I forum, where most major players in the computing business are working on the next generation firmware architectures and implementations of U E F I open source code base, the team has produced the E D K two. It has taken many years to work through and prioritize some of the improvements and changes required to help the industry to evolve and remain vibrant. Major computing manufacturing companies and B I O S vendors are ready to ship products on this new code base, which promises more flexibility and streamlined features, including G C C (G N U Compiler Collection) compatibility.
+
+Also, while being deep in complexity, the documentation of the newer versions of the code is unsurpassed within the industry. The A P I today is more robust and usable than in previous generations and more easily adapted to new and upcoming operating systems.
+
+This was the history of the major conversion and some of the reasons you can decide to select a standard U E F I implementation or a different firmware technology to start on for development. Strategically, E D K two easily makes the best long term solution. Let's look at the state of the commercial B I O S business that has emerged from the transition.
+
+Commercial B I O S Business
+
+Looking at commercial independent B I O S vendors (I B Vs), it's evident the industry has been evolving since nineteen eighty three, when Phoenix Technologies Limited (Phoenix) shipped its first B I O S. Like any industry, it has grown and shrunk,
+The underlying technical concepts detailed within this passage illuminate the critical evolution of platform firmware, specifically the transition from traditional Basic I O S systems, or B I O S, to the more advanced Unified Extensible Firmware Interface, or U E F I. This shift is not merely an incremental improvement but represents a fundamental redesign of the low level software responsible for initializing hardware components and preparing a system for operating system execution. The U E F I forum, a collaborative entity comprising major players in the computing industry, serves as the central coordinating body for this standardization effort, ensuring interoperability and a consistent foundation across diverse hardware platforms.
+
+The E F I Development Kit II, or E D K two, is highlighted as the open source implementation of the U E F I specification. E D K two is an extensive modular framework that provides the foundational code and tools necessary for developers to build U E F I compliant firmware. Its open source nature fosters transparency, facilitates collective innovation, and enables a wider array of hardware manufacturers and independent B I O S vendors, or I B V s, to adopt and contribute to its development. The decades of work invested in E D K two underscore the immense complexity of crafting a robust, adaptable, and performant firmware solution that can accommodate the myriad of hardware configurations and future technological advancements.
+
+A significant technical advantage of the E D K two code base is its inherent flexibility and streamlined features, which are partly attributed to its compatibility with widely used open source compilation environments, such as the G N U Compiler Collection, or G C C. This G C C compatibility is crucial as it democratizes firmware development, reducing reliance on proprietary toolchains and accelerating the development and debugging cycles. It allows for the compilation of the firmware across various architectures and operating systems, enhancing its portability and reach within the computing landscape.
+
+Furthermore, the passage emphasizes the enhanced robustness and usability of the U E F I Application Programming Interface, or A P I. An A P I serves as the formal specification for how software components interact. In the context of firmware, a robust A P I provides a stable, well defined interface for the operating system to communicate with the underlying hardware, managing system resources, and initiating boot services. This robust A P I design is pivotal for enabling seamless adaptation to new and emerging operating systems. Unlike legacy B I O S which often required specific boot modes or emulation layers for modern O S features, U E F I offers a more native and extensible environment, supporting advanced features like secure boot, graphical boot environments, and vastly larger storage volumes through G P T, the GUID Partition Table, eliminating the two point two terabyte limitation imposed by the legacy Master Boot Record, M B R.
+
+The decision for a system manufacturer to adopt a standard U E F I implementation, such as E D K two, or to pursue an alternative firmware technology, is presented as a strategic long term choice. This decision has profound implications for product development timelines, maintenance overheads, hardware compatibility, and the ability to integrate future technologies. E D K two, by virtue of its open source foundation and industry backing, offers a compelling solution for building future proof computing platforms.
+
+The commercial B I O S business segment provides historical context to this evolution. Independent B I O S Vendors, like Phoenix Technologies Limited, have been integral to the computing industry since the early days, with Phoenix shipping its first B I O S in one thousand nine hundred eighty three. These vendors specialize in developing, customizing, and licensing firmware solutions to hardware manufacturers. The observation that this industry has "grown and shrunk" reflects the dynamic nature of the technology sector, influenced by technological paradigm shifts like the B I O S to U E F I transition, market consolidation, and the continuous demand for more sophisticated and secure platform initialization software. This historical perspective underscores the persistent need for specialized expertise in fundamental system firmware, irrespective of the underlying architectural advancements.

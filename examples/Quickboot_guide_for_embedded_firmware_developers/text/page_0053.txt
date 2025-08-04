@@ -1,0 +1,41 @@
+of flash memory is that it can be written to as the system powers up. This
+allows either the BIOS or boot loader to be stored in flash, as well as any data
+that the BIOS or boot loader may need during the boot process. Flash
+memory may also be used to store an OS as well, but depending on the
+technology of flash used, it may be cost prohibitive to do so. The packages
+that the flashes have come in over the years have been in the form of
+
+firmware hubs (FWH) and Serial Presence.
+
+Real-Time Clock (RTC)
+
+The RTC is available in most PC systems, and the RTC’s internal registers
+and RAM are organized as two banks of 128 bytes each. The RTC contains
+the CMOS, as well as a real-time clock. The RTC consists of 14 bytes that
+are used to set the time and date.
+
+The backup battery and the RAM is referred to as the CMOS battery and
+CMOS, respectively.
+
+System Memory Map
+
+A 32-bit Intel architecture system has up to 4 GB of address space. If the
+Physical Address Extensions (PAE) feature is available in the processor, up
+to 36 address bits are available, however, increasing the possible addressable
+memory space. The address space for the Intel® System Controller Hub is
+
+illustrated in Figure 3.2 as an example for this section.
+Of flash memory is that it can be written to as the system powers up. This allows either the B I O S or boot loader to be stored in flash, as well as any data that the B I O S or boot loader may need during the boot process. Flash memory may also be used to store an O S as well, but depending on the technology of flash used, it may be cost prohibitive to do so. The packages that the flashes have come in over the years have been in the form of firmware hubs, F W H, and Serial Presence.
+
+Real-Time Clock, R T C.
+
+The R T C is available in most P C systems, and the R T C's internal registers and Ram are organized as two banks of one hundred twenty eight bytes each. The R T C contains the C M O S, as well as a real time clock. The R T C consists of fourteen bytes that are used to set the time and date. The backup battery and the Ram is referred to as the C M O S battery and C M O S, respectively.
+
+System Memory Map.
+
+A thirty two bit Intel architecture system has up to four gigabytes of address space. If the Physical Address Extensions, P A E, feature is available in the processor, up to thirty six address bits are available, however, increasing the possible addressable memory space. The address space for the Intel System Controller Hub is illustrated in Figure three point two as an example for this section.
+Flash memory represents a class of non-volatile storage technology, meaning it retains its stored data even when unpowered. This fundamental property makes it indispensable for storing critical system firmware such as the B I O S, or Basic I O System, and the boot loader. The B I O S and boot loader are essential components that initialize hardware and load the operating system upon system power-up. The ability to write data to flash memory when the system is operational allows for firmware updates and configuration changes. Historically, while flash memory could theoretically store an entire operating system, the cost associated with its density and performance characteristics made this approach largely prohibitive for primary O S storage, especially in earlier iterations. Over time, the packaging and integration of flash memory evolved significantly, commonly appearing as firmware hubs, often abbreviated as F W H, and in configurations designed for serial presence detection, which refers to mechanisms for identifying memory modules and their capabilities.
+
+The Real Time Clock, or R T C, is a specialized integrated circuit found in most personal computer systems, serving the crucial function of maintaining accurate time and date information. The R T C typically incorporates internal registers and a small amount of R A M, which are logically organized into distinct banks. For instance, a common configuration might allocate two banks, each comprising one hundred twenty eight bytes. Within this R T C structure, a dedicated set of fourteen bytes is specifically designated for storing the current time and date. This precision timing is often driven by a crystal oscillator. To ensure the R T C continues to operate and retain its time and date data even when the main system power is off, it is augmented by a backup power source, typically a small lithium battery. The R A M component of the R T C, which stores configuration settings and other persistent data, is commonly referred to as C M O S R A M, and its power source is known as the C M O S battery. Thus, the C M O S battery and the R A M are intrinsically linked to the continuous operation and data retention of the R T C.
+
+Understanding the system memory map is fundamental to how an operating system and applications manage and access physical memory. In a conventional thirty two bit Intel architecture system, the theoretical maximum addressable memory space is four gigabytes, derived from two raised to the power of thirty two unique addresses. However, modern systems often incorporate a feature known as Physical Address Extensions, or P A E. P A E is a memory management mechanism that allows a thirty two bit processor to access a physical address space larger than four gigabytes. It achieves this by increasing the number of physical address bits from thirty two to, for example, thirty six bits. With thirty six address bits, the maximum addressable physical memory expands to sixty four gigabytes. This extension is managed by the processor's M M U, or Memory Management Unit, which translates the thirty two bit linear addresses used by applications into these larger thirty six bit physical addresses. The underlying address space allocation and mapping for various system components, such as peripherals and main memory, are orchestrated by specific hardware controllers. As an illustrative example of such memory mapping, the Intel System Controller Hub, a critical component of earlier chipsets, plays a central role in managing the flow of data between the C P U, memory, and various I O devices, including defining how the extended physical address space is structured and utilized.

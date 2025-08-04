@@ -1,0 +1,94 @@
+Byte Byte Field Typ. Typical Value
+
+(Dec) (Hex) Name Value Definition
+
+0 0x00 MNumber of Bytes 0x11 256 Bytes Total 128 Bytes
+Used
+
+1 0x01 5PD Rev Ox10 Rev 1.0
+
+2 0x02 Device Type 0x08 DDE3 SDRAM
+
+3 0x03 Module Type 0x03 SO-DIMM
+
+4 Ox=04 SDRAM Density & Banks 0x03 & Banks 2 Gb
+
+5 0x05 SDRAM Rows & Columns 0x19 15 Rows 10 Columns
+
+6 0x06 Nominal Voltage, Yoo 0x00 1.5Y
+
+7 0x07 Ranks & Device DQ Count Ox01 Rank = 1 Width = xB
+
+8 0x08 Module Bus Width Ox0B 72 bits (ECC)
+
+9 0x09 Fine Timebase Dividend /Divisor Ox52 2.5ps
+
+10 0=0A Medium Timebase Dividend 0x01 0.125ns
+
+11 O0x0B Medium Timebase Divisor 0x08 0.125ns
+
+12 0x0C Cycle Time (Tck-min) Ox QF 1.875ns
+
+13 0x00 Reserved 0x00
+
+14 O=x0E CAS Latencies Supported (CL&-CL11) Ox1E CL=5,6,7,8
+
+15 OxOF CAS Latencies Supported (CL12-CL18) 0x00 Cl=5,6,7,8
+
+16 0x10 CAS Latency Time (Tas-min or Ta) 0x69 13.125ns
+
+17 0x11 Write Recovery Time (Twe-min) Ox78 15ns
+
+18 0x12 RASH to CASH Delay (Teco-min) 0x69 13.125ns
+
+19 0x13 Min. Row Active to Row Active Delay Ox3( 7.50%
+
+(Trro-rmin)
+
+20 0x14 Min. Row Precharge Delay (ls=-min) Ox&9 13.125ns
+
+21 0x15 Upper Nibble of Teas & Tec 0x11
+
+22 Dxl16 Min. Active to Precharge Delay Ox2( 37.5ns
+
+(Teas-min) LSB
+23 0x17 Min, Active to Active Refresh Delay 0x95 50.625
+
+(Tac-min) LSB
+The table details specifications for memory modules. The first column lists the Byte in decimal format, followed by the Byte in hexadecimal format in the second column. The third column, labeled 'Field Name', describes the specific parameter. The fourth column shows the 'Typ. Value' in hexadecimal, and the fifth column provides the 'Typical Value Definition'.
+
+Row zero indicates the 'Number of Bytes' with a typical value of hexadecimal eleven, defining it as 256 Bytes Total, 128 Bytes Used.
+Row one specifies the 'SPD Rev' (Serial Presence Detect Revision) with a typical value of hexadecimal ten, which is Revision one point zero.
+Row two describes the 'Device Type' with a typical value of hexadecimal zero B, identified as D D R three S D Ram.
+Row three defines the 'Module Type' with a typical value of hexadecimal zero three, indicating S O D I M M.
+Row four details 'S D Ram Density & Banks', with a typical value of hexadecimal zero three, representing eight Banks two Gigabyte.
+Row five lists 'S D Ram Rows & Columns', showing a typical value of hexadecimal one nine, meaning fifteen Rows ten Columns.
+Row six specifies 'Nominal Voltage, V D D', with a typical value of hexadecimal zero zero, which is one point five volt.
+Row seven shows 'Ranks & Device D Q Count', with a typical value of hexadecimal zero one, defined as Rank is equal to one, Width is equal to x eight.
+Row eight indicates 'Module Bus Width' with a typical value of hexadecimal zero B, representing seventy two bits, E C C.
+Row nine presents 'Fine Timebase Dividend/Divisor' with a typical value of hexadecimal five two, corresponding to two point five P S.
+Row ten lists 'Medium Timebase Dividend' with a typical value of hexadecimal zero one, equal to zero point one two five microseconds.
+Row eleven shows 'Medium Timebase Divisor' with a typical value of hexadecimal zero eight, equal to zero point one two five microseconds.
+Row twelve defines 'Cycle Time (T C X -min)' with a typical value of hexadecimal zero F, which is one point eight seven five microseconds.
+Row thirteen shows 'Reserved' with a typical value of hexadecimal zero zero, indicated by an ellipsis.
+Row fourteen specifies 'C A S Latencies Supported (C L four C L eleven)' with a typical value of hexadecimal one E, defined as C L is equal to five, six, seven, Or eight.
+Row fifteen indicates 'C A S Latencies Supported (C L twelve C L eighteen)' with a typical value of hexadecimal zero zero, meaning C L is equal to five, six, seven, Or eight.
+Row sixteen lists 'C A S Latency (T A A -min or T C L)' with a typical value of hexadecimal sixty nine, equal to thirteen point one two five microseconds.
+Row seventeen shows 'Write Recovery Time (T W R -min)' with a typical value of hexadecimal seventy eight, meaning fifteen microseconds.
+Row eight specifies 'R A S# to C A S# Delay (T R C D -min)' with a typical value of hexadecimal sixty nine, equal to thirteen point one two five microseconds.
+Row nineteen defines 'Min. Row Active to Row Active Delay (T R R D -min)' with a typical value of hexadecimal three C, corresponding to seven point five microseconds.
+Row twenty lists 'Min. Row Precharge Delay (T R P -min)' with a typical value of hexadecimal sixty nine, equal to thirteen point one two five microseconds.
+Row twenty one indicates 'Upper Nibble of T R A S & T R C' with a typical value of hexadecimal eleven, represented by an ellipsis.
+Row twenty two shows 'Min. Active to Precharge Delay (T R A S -min) L S B' with a typical value of hexadecimal two C, which is thirty seven point five microseconds.
+Row twenty three defines 'Min. Active to Active Refresh Delay (T F C -min) L S B' with a typical value of hexadecimal nine five, corresponding to fifty point six two five.
+This table details key parameters of a memory module, likely conforming to the Serial Presence Detect (S P D) standard, which is a method for the system BIOS to identify and configure installed Ram. Each row represents a specific byte within the S P D E E P R O M, providing its offset, a typical value, and a descriptive definition.
+
+Byte zero, at offset hexadecimal zero zero, specifies the number of bytes used for the S P D data structure itself, indicated by a typical value of hexadecimal eleven, defining a total of one hundred twenty eight bytes for the S P D structure. Byte one, at hexadecimal zero one, denotes the S P D revision, with a typical value of hexadecimal one zero, corresponding to revision one point zero. Byte two, at hexadecimal zero two, defines the device type, showing hexadecimal zero B, which signifies D D R three S D Ram. Byte three, at hexadecimal zero three, indicates the module type, represented by hexadecimal zero three, corresponding to S O D I M M, a form factor commonly used in laptops.
+
+Byte four, at hexadecimal zero four, relates to S D Ram density and banks, with a typical value of hexadecimal zero three, indicating eight banks and two gigabytes of density. Byte five, at hexadecimal zero five, specifies the S D Ram rows and columns, with a typical value of hexadecimal one nine, meaning fifteen rows and ten columns. Byte six, at hexadecimal zero six, defines the nominal voltage, V D D, which is typically one point five volt. Byte seven, at hexadecimal zero seven, encodes ranks and device D Q count, where a typical value of hexadecimal zero one suggests a rank of one and a width of eight D Q pins, often referred to as x eight. Byte eight, at hexadecimal zero eight, denotes the module bus width, with a typical value of hexadecimal zero B, corresponding to seventy two bits, which includes sixty four data bits and eight error correction code bits if E C C is supported.
+
+Byte nine, at hexadecimal zero nine, specifies the fine timebase dividend or divisor, with a typical value of hexadecimal fifty two, which is used in conjunction with the medium timebase to calculate precise timing parameters. Bytes ten and eleven, at hexadecimal zero A and zero B respectively, define the medium timebase dividend and divisor, with typical values of hexadecimal zero one and hexadecimal zero eight, respectively. These values, along with the fine timebase, are crucial for deriving accurate timing values, typically in nanoseconds. Byte twelve, at hexadecimal zero C, defines the cycle time, T C X minimum, with a typical value of hexadecimal zero F, and a typical value of one point eight seven five nanoseconds. Byte thirteen, at hexadecimal zero D, is reserved.
+
+Bytes fourteen and fifteen, at hexadecimal zero E and hexadecimal zero F, detail the C A S latencies supported. Byte fourteen indicates support for C L four through C L eleven, with a typical value of hexadecimal one E, representing C L values of five, six, seven, and eight. Byte fifteen indicates support for C L twelve through C L eighteen, with a typical value of hexadecimal zero zero, signifying no support for this range or potentially a different encoding for the supported values in this specific revision.
+
+Bytes sixteen through twenty two define various timing parameters crucial for memory operation. Byte sixteen, at hexadecimal one zero, defines the C A S latency, T A A minimum, or T C L, with a typical value of hexadecimal sixty nine, corresponding to thirteen point one two five nanoseconds. Byte seventeen, at hexadecimal one one, specifies the write recovery time, T W R minimum, with a typical value of hexadecimal seventy eight, indicating fifteen nanoseconds. Byte eighteen, at hexadecimal one two, denotes the R A S# to C A S# delay, T R C D minimum, with a typical value of hexadecimal sixty nine, also thirteen point one two five nanoseconds. Byte nineteen, at hexadecimal one three, defines the minimum row active to row active delay, T R R D minimum, with a typical value of hexadecimal three C, which translates to seven point five nanoseconds. Byte twenty, at hexadecimal one four, specifies the minimum row precharge delay, T R P minimum, with a typical value of hexadecimal sixty nine, or thirteen point one two five nanoseconds. Byte twenty one, at hexadecimal one five, provides information about the upper nibble of T R A S and T R C. Byte twenty two, at hexadecimal one six, defines the minimum active to precharge delay, T R A S minimum, L S B, with a typical value of hexadecimal two C, indicating thirty seven point five nanoseconds. Finally, byte twenty three, at hexadecimal one seven, specifies the minimum active to refresh delay, T R C minimum, L S B, with a typical value of hexadecimal ninety five, corresponding to fifty point six two five nanoseconds. These timing parameters are critical for ensuring stable and efficient operation of the D D R three S D Ram module within the system's memory controller.

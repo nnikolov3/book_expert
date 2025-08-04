@@ -1,0 +1,54 @@
+Power Sequencing
+
+If measuring time from the power button, then the motherboard hardware
+power sequencing can provide a source of delay. If simplified power plans
+merge the Manageability Engine’s power plane with other devices, then an
+
+additional 70 ms may be required.
+
+Power Supply Specification
+
+If you’re using PCI or PCle add-in cards on a desktop system, then the PC
+AT power supply (silver box) will have an additional 100 ms delay for the
+PCI add-in card onboard firmware to execute. If you’re using a system with
+an embedded controller (mobile client or an all-in-one desktop), then there
+can be an additional power button debounce in embedded controller firmware
+
+that can be as much as 100 ms.
+
+Flash Subsystem
+
+The system should use the highest speed SPI flash components supported by
+the chipset.
+
+High Speed SPI Bus for Flash
+
+When selecting an SPI component, a slower 33 MHz clock for a SPI chip can
+slow the system boot time by 50 percent as compared with a 50 MHz SPI
+component. Single-byte reads versus multiple-byte reads can also affect
+
+performance. Designers should select at least a 50 MHz component. Intel
+Power Sequencing
+
+If measuring time from the power button, then the motherboard hardware power sequencing can provide a source of delay. If simplified power plans merge the Manageability Engine's power plane with other devices, then an additional seventy milliseconds may be required.
+
+Power Supply Specification
+
+If you're using P C I or P C Ie add in cards on a desktop system, then the P C A T power supply silver box will have an additional one hundred milliseconds delay for the P C I add in card onboard firmware to execute. If you're using a system with an embedded controller mobile client or an all in one desktop, then there can be an additional power button debounce in embedded controller firmware that can be as much as one hundred milliseconds.
+
+Flash Subsystem
+
+The system should use the highest speed S P I flash components supported by the chipset.
+
+High Speed S P I Bus for Flash
+
+When selecting an S P I component, a slower thirty three megahertz clock for a S P I chip can slow the system boot time by fifty percent as compared with a fifty megahertz S P I component. Single byte reads versus multiple byte reads can also affect performance. Designers should select at least a fifty megahertz component. Intel
+The text discusses several critical aspects of system initialization and component selection.
+
+**Power Sequencing** focuses on the timing constraints during system startup. When power sequencing is initiated from a power button, the motherboard's hardware power sequencing mechanism can introduce delays. If simplified power plans are utilized, potentially merging the Manageability Engine's power plane with other devices, an additional seventy milliseconds of delay may be incurred. This highlights the importance of understanding the intricate interplay of power delivery and control signals in achieving a responsive system startup.
+
+**Power Supply Specification** delves into delays associated with utilizing peripheral component interconnect express, or P C I E, add-in cards in a desktop system. The presence of a Personal Computer, or P C, AT power supply, often enclosed in a silver box, can introduce a one hundred millisecond delay to the system's boot process. This delay is often attributed to the execution of add-in card onboard firmware. For systems incorporating an embedded controller, such as a mobile client or an all-in-one desktop, an additional delay can stem from power button debounce logic implemented within the embedded controller firmware, which can extend the startup latency by as much as one hundred milliseconds.
+
+The **Flash Subsystem** section emphasizes the recommendation to employ the highest speed Serial Peripheral Interface, or S P I, flash components that are compatible with the system's chipset. This is a crucial design consideration for ensuring efficient data retrieval and system responsiveness.
+
+Finally, **High Speed S P I Bus for Flash** elaborates on the performance implications of S P I component selection. Utilizing an S P I chip with a slower clock frequency, such as thirty-three megahertz, can significantly increase system boot time, potentially by as much as fifty percent when compared to systems employing a fifty megahertz S P I component. Furthermore, the efficiency of data transfer is impacted by the read method. Single-byte reads are generally less performant than multiple-byte reads, and this difference can also affect overall system performance. Consequently, designers are advised to opt for components with at least a fifty megahertz clock frequency to optimize boot times and data access speeds.

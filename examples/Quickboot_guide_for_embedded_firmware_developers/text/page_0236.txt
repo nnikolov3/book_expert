@@ -1,0 +1,52 @@
+will maintain focus before switching to some other task (abandon
+as background).
+
+The next set of similarities was determining, without a stopwatch, a delta
+between times. Variations may not be noticeable to the untimed eye.
+Seow suggested a basic “20 percent rule” for perceptible differences.
+
+Miller’s data was a bit more refined (as Figure 11.3 shows):
+
+—75%o01f people cannot detect change of +8 percent between 2 and 4
+
+seconds
+—From 0.6 to 0.8 seconds, there was 10 percent variation
+
+—From 6 to 30 seconds, a 20-30 percent variation
+
+20 =
+a
+— —
+a
+15 _
+a
+- —~
+—
+
+10 i = er
+
+Cel ee
+
+¢ J
+
+»
+0 r r 1 r ' 1 1 r
+
+6 7 B 4 10 11 12 13 14 15
+
+Figure 11.3: Miller’s Results
+
+For typical system boot times where the BIOS executes in 6 seconds to 15
+seconds, the times would have to be improved between 1.2 and 4.5 seconds
+
+for someone to take notice and appreciate the work of a developer trying to
+will maintain focus before switching to some other task abandon as background. The next set of similarities was determining, without a stopwatch, a delta between times. Variations may not be noticeable to the untimed eye. Seow suggested a basic twenty percent rule for perceptible differences. Miller's data was a bit more refined as Figure eleven point three shows: seventy five percent of people cannot detect change of plus or minus eight percent between two and four seconds. From zero point six to zero point eight seconds, there was ten percent variation. From six to thirty seconds, a twenty to thirty percent variation.
+
+The figure shows a line graph with the x axis labeled from six to fifteen and the y axis labeled from zero to twenty. There are two lines plotted on the graph. The upper line, represented by squares, starts at approximately seven point five at x equals six and increases steadily to approximately fifteen point five at x equals fifteen. The lower line, represented by diamonds, starts at approximately four point five at x equals six and increases steadily to approximately seven point five at x equals fifteen.
+
+Figure eleven point three: Miller's Results. For typical system boot times where the B I O S executes in six seconds to fifteen seconds, the times would have to be improved between one point two and four point five seconds for someone to take notice and appreciate the work of a developer trying to
+The text discusses perceptual thresholds for time variations, referencing studies that aim to quantify how much a temporal deviation is noticeable to human observers. It highlights a study that suggests seventy five percent of people cannot detect a change of plus or minus eight percent in durations falling between two and four seconds. Furthermore, it elaborates on specific findings, noting that for durations between zero point six and zero point eight seconds, a ten percent variation is perceptible, while for longer durations, between six and thirty seconds, a twenty to thirty percent variation becomes noticeable.
+
+This perceptual data is contextualized with a plot, labeled Figure 11.3: Miller's Results. The plot presents two data series, visualized with squares and diamonds, on a graph where the x-axis ranges from six to fifteen, presumably representing discrete time points or trials, and the y-axis indicates a percentage, likely representing the magnitude of temporal variation or a related perceptual measure. The square markers show an increasing trend from approximately eight percent at x=6 to nineteen percent at x=15, while the diamond markers exhibit a less steep upward trend, starting from around four percent at x=6 and reaching approximately six percent at x=15. Both series demonstrate a positive correlation between the x-axis value and the measured percentage, suggesting that longer baseline durations or more trials might correlate with higher perceptible variation thresholds, or perhaps different experimental conditions are being represented.
+
+The text then applies these concepts to a practical example concerning system boot times. It states that typical system boot times of six seconds to fifteen seconds might require improvement such that the times would fall between one point two and four point five seconds for a user to notice and appreciate the work of a developer. This suggests a significant reduction in boot time is desirable for user perception, implying that even substantial percentage improvements in longer boot times might go unnoticed if the absolute reduction is not substantial enough to cross a critical perceptual threshold. The underlying principle here relates to psychophysics, specifically the Weber fraction, which posits that the just noticeable difference for a stimulus is proportional to the magnitude of the stimulus itself. In this context, the "stimulus" is the duration, and the "just noticeable difference" is the perceptible temporal variation.

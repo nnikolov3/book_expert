@@ -1,0 +1,42 @@
+System Loader applications there are no UEFI applications that operate in the
+runtime mode of the UEFI environment.
+
+What makes a shell application different? A shell application is one that
+must run after the shell application (itself a UEFI application) has started.
+There are a few benefits to this: parameters, file system, environment. We’ll
+go into each of those.
+
+When a UEFI application starts, it gets its parameters as a single long
+array of CHAR16. This means that the application must carry the logic for
+parsing this into parameters and then determining associations between the
+parameters (for example, the use of quotes). When a UEFI Shell application
+starts, the shell has already performed this parsing and the application is
+passed Argc and Argv almost as if it were a standard C application. This
+allows for much smaller applications, much faster application creation, and
+generally easier to maintain applications.
+
+The file system in the UEFI environment is accessed via DevicePaths.
+These are not especially easy or fun for a human to read and not especially
+
+easy to write. For example:
+PciRoot (0x0) /Pci(0x1D, 0x3) /USB (0x1, 0x0)
+
+is the DevicePath for a USB hard disk in the system. When the shell runs, it
+creates a human readable map name for this called FSO: and a consistent map
+name (stays the same across multiple platforms) called f17b0:. These are
+much easier to use. For example, echo hello world, fsO:\hi.txt makes a lot of
+sense and is easily understood by almost any user. However, the UEFI
+application must interpret the full device path from its command line and try
+to find the file system represented on that device path and find the required
+file at the end. This is a compound problem since there are usually multiple
+file systems and the effort to decode each one will repeat all the work each
+
+time the decoding must take place.
+System Loader applications there are no U E F I applications that operate in the runtime mode of the U E F I environment. What makes a shell application different? A shell application is one that must run after the shell application itself a U E F I application has started. There are a few benefits to this parameters file system environment. We'll go into each of those. When a U E F I application starts it gets its parameters as a single long array of C H A R sixteen. This means that the application must carry the logic for parsing this into parameters and then determining associations between the parameters for example the use of quotes. When a U E F I shell application starts the shell has already performed this parsing and the application is passed Argc and Argv almost as if it were a standard C application. This allows for much smaller applications much faster application creation and generally easier to maintain applications. The file system in the U E F I environment is accessed via Device Paths. These are not especially easy or fun for a human to read and not especially easy to write. For example: Pci Root open parenthesis zero x zero close parenthesis slash Pci open parenthesis zero x one D comma zero x three close parenthesis slash U S B open parenthesis zero x one comma zero x zero close parenthesis is the Device Path for a U S B hard disk in the system. When the shell runs it creates a human readable map name for this called F S zero. And a consistent map name stays the same across multiple platforms called f seventeen b zero. These are much easier to use. For example echo hello world fs0 colon backslash hi dot txt makes a lot of sense and is easily understood by almost any user. However the U E F I application must interpret the full device path from its command line and try to find the file system represented on that device path and find the required file at the end. This is a compound problem since there are usually multiple file systems and the effort to decode each one will repeat all the work each time the decoding must take place.
+The Unified Extensible Firmware Interface, or U E F I, environment supports system loader applications. Shell applications, a specific type of U E F I application, differentiate themselves by their ability to execute after the main U E F I application has commenced. This execution model offers advantages such as parameter handling, file system interaction, and access to the broader environment.
+
+When a U E F I shell application initiates, it receives its arguments as a single, long array of sixteen bit characters, known as C H A R sixteen. The application is responsible for parsing these arguments, which may include handling quoted strings to delineate complex parameters. This parsing process is analogous to how standard C applications receive their command line arguments, specifically the 'Argc' and 'Argv' parameters. The U E F I shell's approach streamlines application creation and generally simplifies the development of smaller applications.
+
+The file system within the U E F I environment is accessed through what are termed Device Paths. These paths, while functional, are not inherently user friendly for direct human interpretation. An example of such a path is presented as PciRoot (hexadecimal zero, zero) slash Pci (hexadecimal one D, hexadecimal zero three) slash U S B (hexadecimal one, hexadecimal zero). This path describes a Universal Serial Bus, or U S B, hard disk drive within the system. The U E F I shell often translates these intricate Device Paths into more comprehensible, human readable map names, such as F S zero. This mapping allows for consistent naming across different platforms, making it easier for users to refer to storage devices. For instance, a simple command like 'echo hello world' might be directed to a file path like 'f s zero colon backslash hi dot txt'.
+
+The U E F I application must interpret the complete device path from its command line input to locate the intended file system and the specific file. This can be a complex problem because systems often utilize multiple file systems, and each component within the device path may require a unique decoding process. Consequently, the effort to decode each part of the path can lead to repetitive processing, impacting the overall efficiency of file system operations.

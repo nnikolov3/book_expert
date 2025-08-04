@@ -1,0 +1,45 @@
+tWRmin (MTB units) Timebase (ns) tWR Result (ns) Use
+
+120 0.125 15 All DDR3 speed grades
+
+Steps:
+1.
+
+The BIOS first determines the common operating frequency of all
+modules in the system, ensuring that the corresponding value of
+tCK (tCKactual) falls between tCKmin (Bytes 12 and 34) and
+tCKmax. If tCKactual is not a JEDEC standard value, the next
+smaller standard tCKmin value is used for calculating Write
+
+Recovery.
+
+The BIOS then calculates the “desired” Write Recovery (WRdesired):
+WRdesired = ceiling ( tWRmin/tCKactual )
+
+where tWRmin is defined in Byte 17. The ceiling function requires that
+
+the quotient be rounded up always.
+3.
+
+The BIOS then determines the “actual” Write Recovery (WRactual):
+WRactual = max (WRdesired, min WR supported)
+
+where min WR is the lowest Write Recovery supported by the DDR3
+SDRAM. Note that not all WR values supported by DDR3 SDRAMs are
+The table shows tWRmin in M T B units, Timebase in nanoseconds, tWR Result in nanoseconds, and Use. The values are 120 for tWRmin, 0.125 for Timebase, 15 for tWR Result, and All D D R three speed grades for Use.
+
+Steps:
+One. The B I O S first determines the common operating frequency of all modules in the system, ensuring that the corresponding value of t C K, t C K actual, falls between t C K min, which is Bytes 12 and 34, and t C K max. If t C K actual is not a J E D E C standard value, the next smaller standard t C K min value is used for calculating Write Recovery.
+
+Two. The B I O S then calculates the desired Write Recovery, W R desired. W R desired is equal to the ceiling of t W R min divided by t C K actual. Where t W R min is defined in Byte 17, the ceiling function requires that the quotient be rounded up always.
+
+Three. The B I O S then determines the actual Write Recovery, W R actual. W R actual is equal to the maximum of W R desired and the minimum W R supported. Where minimum W R is the lowest Write Recovery supported by the D D R three S D R A M. Note that not all W R values supported by D D R three S D R A M s are
+The table presents parameters related to memory timing, specifically focusing on Write Recovery. The columns define tWRmin in MTB units, Timebase in nanoseconds, tWR Result in nanoseconds, and a Use case, which is specified as "All D D R three speed grades". This indicates a set of specifications or a measurement for synchronous dynamic random access memory, or S D Ram, a common type of volatile memory used in modern computing systems. The values suggest a relationship between a minimum write recovery time, a base timing unit, and an actual calculated write recovery time, applicable across various performance tiers of D D R three memory modules.
+
+The subsequent text outlines a three step process, likely executed by the system's Basic Input Output System, or B I O S, to determine an appropriate write recovery timing.
+
+Step one involves the B I O S first identifying the common operating frequency for all memory modules installed in the system. It then determines the corresponding value of tCK, which represents the clock cycle time. The tCKactual, the actual clock cycle time experienced by the memory, is checked to ensure it falls within a specified range, defined by tCKmin and tCKmax. For context, tCKmin represents the minimum clock cycle time, and tCKmax represents the maximum clock cycle time for a given memory standard. If the tCKactual deviates from a J E D E C standard value, meaning it doesn't precisely match the industry-defined timing, the B I O S selects the next smaller standard tCKmin value. This adjusted tCKmin is then used for the subsequent calculation of the Write Recovery time. This process ensures robustness by accommodating slight variations in actual clock frequencies from the ideal specifications.
+
+Step two details the calculation of a "desired" Write Recovery, denoted as W Rdesired. This is computed using the formula: W Rdesired equals the ceiling of tWRmin divided by tCKactual. The ceiling function is critical here; it mandates that the result of the division, tWRmin over tCKactual, must be rounded up to the nearest whole number. This rounding up ensures that the system allocates a sufficient, or even slightly more than strictly necessary, recovery period to guarantee successful write operations, especially when the quotient is not an integer. The context provided states that tWRmin is defined in Byte seventeen, implying a specific memory register or configuration setting that holds this value. The requirement for rounding up the quotient is a common practice in digital system design to build in timing margins and prevent data corruption.
+
+Step three involves determining the "actual" Write Recovery, W Ractual. This is calculated as the maximum of two values: W Rdesired, as computed in the previous step, and the minimum Write Recovery supported by the memory, referred to as min W R supported. This step ensures that the chosen Write Recovery time adheres to the capabilities of the installed memory. Specifically, min W R supported represents the lowest acceptable Write Recovery timing value that the D D R three S D Rams can reliably operate with. By taking the maximum, the system selects a timing that satisfies both the calculated need for recovery based on current operating conditions and the fundamental operational limits of the hardware. The note that not all W R values supported by D D R three S D Rams are uniform highlights the variability in memory chip implementations and the importance of these adaptive timing calculations.

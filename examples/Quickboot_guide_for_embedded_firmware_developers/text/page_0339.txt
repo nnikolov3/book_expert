@@ -1,0 +1,71 @@
+SPD Field 0x16: Min. Active to Precharge Delay (tp ygmin) LSB
+
+This is another field that must be extracted from the datasheet and divided by
+
+the Medium Timebase Divisor. In our example:
+
+1.
+The tRAS value found in the Micron MT41J256M8-187E datasheet fo
+our specific SDRAM chip gives 37.5 ns.
+
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+
+3.
+37.5 ns /0.125 ns = 300 = 0x012C.
+
+4.
+The LSB, 0x2C, goes into SPD field #22 (0x16).
+
+5.
+The lower nibble of the MSB, 0x01, goes into bits [3:0] of SPD field
+#21 (0x15)
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition |
+
+22
+
+0x16 Min. Active to Precharge Delay (tsasmin) LSB 0wx2C 37.5ns
+
+Byte 22: Minimum Active to Precharge Delay Time (tRASmin), Least
+S P D Field zero hexadecimal one six: Min. Active to Precharge Delay (t R A S min) L S B
+
+This is another field that must be extracted from the datasheet and divided by the Medium Timebase Divisor. In our example:
+
+one.
+
+The t R A S value found in the Micron M T four one J two five six M eight dash one eight seven E datasheet for our specific S D R A M chip gives thirty seven point five nanoseconds.
+
+two.
+
+This number must be divided by the Medium Timebase Divisor, the value in zero hexadecimal zero B. In our example this is zero point one two five nanoseconds.
+
+three.
+
+Thirty seven point five nanoseconds divided by zero point one two five nanoseconds is three hundred, which is zero hexadecimal zero one two C.
+
+four.
+
+The L S B, zero hexadecimal two C, goes into S P D field twenty two, zero hexadecimal one six.
+
+five.
+
+The lower nibble of the M S B, zero hexadecimal zero one, goes into bits three zero of S P D field twenty one, zero hexadecimal one five.
+
+The table shows byte information for S P D field twenty two. Byte twenty two, represented as hexadecimal one six, is named "Min. Active to Precharge Delay (t R A S min) L S B". The typical value for this field is hexadecimal two C, and its definition is thirty seven point five nanoseconds.
+
+Byte twenty two: Minimum Active to Precharge Delay Time (t R A S min), Least
+The page details the extraction of the Minimum Active to Precharge Delay, denoted as tRASmin, which is a critical timing parameter for Synchronous Dynamic Random Access Memory, or S D Ram. This parameter dictates the minimum time that must elapse between a row becoming active and a precharge command being issued.  The value of tRASmin is often encoded within the Serial Presence Detect, or S P D, memory module specification.
+
+Specifically, the S P D field at address hexadecimal 16, or S P D field 0x16, stores the Least Significant Byte, or L S B, of the tRASmin value. The process of extracting this timing parameter involves reading a raw value from the S P D data and then applying a scaling factor determined by the Medium Timebase Divisor.
+
+In the provided example, a specific S D Ram chip, the Micron M T 41 J 2 5 6 M 8-1 8 7 E, has a tRASmin value of thirty seven point five nanoseconds, or thirty seven point five ns. This raw value, thirty seven point five ns, must be scaled by the Medium Timebase Divisor. The page indicates that this divisor has a value of zero point one two five nanoseconds, or zero point one two five ns, represented in hexadecimal as zero hexadecimal B.
+
+The calculation to obtain the S P D encoded value for tRASmin is performed by dividing the actual timing parameter by the Medium Timebase Divisor. In this instance, thirty seven point five ns divided by zero point one two five ns yields three hundred. This result, three hundred, is then converted into hexadecimal format, which is hexadecimal 12 C. This hexadecimal value, hexadecimal 12 C, represents the combined L S B and Most Significant Byte, or M S B, parts of the encoded tRASmin.
+
+The explanation then breaks down how this encoded value is stored across different S P D fields. The L S B part of the tRASmin, which is the lower four bits of the thirty seven point five ns value after scaling, is stored in S P D field twenty two, or S P D field zero hexadecimal 16. The corresponding hexadecimal value for this field is shown as zero hexadecimal 2 C.
+
+The page further clarifies that the M S B part of the tRASmin, which would represent the higher order bits of the scaled value, is stored in S P D field twenty one, or S P D field zero hexadecimal 15. Specifically, the lower nibble, meaning the lower four bits, of this M S B value, which is zero hexadecimal 01, is placed into bits three through zero, or bits three to zero, of S P D field twenty one. This decomposition allows for the precise representation of timing parameters that might exceed the capacity of a single byte.
+
+The table presented summarizes this information, mapping the decimal byte address twenty two, the hexadecimal address zero hexadecimal 16, to the field name "Minimum Active to Precharge Delay (tRASmin) LSB". It also shows the typical value associated with this field as zero hexadecimal 2 C and provides the definition as thirty seven point five ns. Following the table, a textual representation further defines Byte twenty two as the "Minimum Active to Precharge Delay Time (tRASmin), Least" significant part. This methodical breakdown illustrates the critical process of interpreting and utilizing S P D data for system configuration and optimization.

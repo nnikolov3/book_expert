@@ -1,0 +1,43 @@
+Depending on the use of solid-state drives, there are fundamental things that
+can be done differently at the OS and application levels that can have a
+profound impact on application responsiveness. This is an area we need to
+work on, this is where our customers work, and this is where it will count the
+most. The user experience is here, if we did the rest of our jobs correctly.
+And let’s not forget that responsiveness doesn’t end at the platform
+
+level; it extends into the local network and into the ubiquitous cloud.
+
+The (Green) Machine Factor
+
+Assuming the device being created will interact with other machines, it is
+important to understand how the delays in the system will affect the overall
+effectiveness. Timing requirements between machines can be much tighter or
+much looser than when dealing with people.
+
+Mission-critical systems may have single-digit millisecond
+responsiveness requirements in certain responses where the system cannot be
+put into a lower power idle state without significant risk or limitations to the
+overall network. Other systems require only low data amounts and infrequent
+access, and can stand to wait several seconds or minutes or hours for a system
+to resume from slumber and complete a task.
+
+Real-time systems allow for setting priority on devices as well as
+execution threads so they can predetermine if there is any millisecond wait at
+all for anything in the system. The more responsive the system is, the more
+flexibility the real time system designer may have.
+
+The faster the response times can be, the deeper the sleep state can be
+and the less power is required to keep the system active over time. Example:
+If the system can be made to boot in less than two seconds from an OFF (S4)
+
+state, where power is normally 2 mW, then why put the system into S3,
+Depending on the use of solid state drives, there are fundamental things that can be done differently at the O S and application levels that can have a profound impact on application responsiveness. This is an area we need to work on, this is where our customers work, and this is where it will count the most. The user experience is here, if we did the rest of our jobs correctly. And let's not forget that responsiveness doesn't end at the platform level; it extends into the local network and into the ubiquitous cloud.
+
+The (Green) Machine Factor
+
+Assuming the device being created will interact with other machines, it is important to understand how the delays in the system will affect the overall effectiveness. Timing requirements between machines can be much tighter or much looser than when dealing with people. Mission critical systems may have single digit millisecond responsiveness requirements in certain responses where the system cannot be put into a lower power idle state without significant risk or limitations to the overall network. Other systems require only low data amounts and infrequent access, and can stand to wait several seconds or hours for a system to resume from slumber and complete a task. Real time systems allow for setting priority on devices as well as execution threads so they can predetermine if there is any millisecond wait at all for anything in the system. The more responsive the system is, the more flexibility the real time system designer may have. The faster the response times can be, the deeper the sleep state can be and the less power is required to keep the system active over time. Example: If the system can be made to boot in less than two seconds from an OFF S four state, where power is normally two m W, then why put the system into S three,
+The utilization of solid state drives introduces fundamental differences at the operating system and application levels, significantly impacting application responsiveness. This directly affects the user experience, particularly in scenarios where system interaction is paramount. The principle of responsiveness extends beyond the local platform to encompass network interactions and the broader cloud ecosystem.
+
+The section titled "The (Green) Machine Factor" delves into the crucial aspect of inter machine timing and its influence on overall system effectiveness. When devices interact, timing requirements can vary, becoming more stringent in some cases and more relaxed in others, depending on the specific interaction. Mission critical systems, for instance, often necessitate single digit millisecond responsiveness for certain operations. These systems might operate in a lower power idle state without significant risk or limitations to their overall network performance. In contrast, other systems may tolerate longer delays, requiring only low data amounts and infrequent access, allowing them to transition from a sleep state or resume from a slumber in several seconds or even minutes.
+
+Real time systems are designed to allow for the explicit prioritization of execution threads. This prioritization enables systems to predetermine whether a millisecond wait is acceptable for any operation. The core concept here is that a more responsive system generally provides greater flexibility to the system designer. Furthermore, there is an inverse relationship between response times and the power required to maintain system activity. For example, a system capable of booting in less than two seconds from an Off state, specifically the S four state which typically consumes minimal power, would then question the necessity of placing it into a less power efficient S three state. This highlights a critical trade-off between performance, specifically rapid wake-up times, and energy consumption.

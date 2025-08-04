@@ -1,0 +1,49 @@
+extreme care should be taken to understand the downstream usage model and
+workloads that are going to be exercising these features. Experiment with
+these settings, but do not be surprised if the resulting data does not support
+
+your original hypothesis.
+
+Additional Details
+
+When it comes time to address some codebase issues, the marketing
+requirements clearly define the problem space an engineer has to design
+around. With that information, there are several methods that can help that
+are fairly typical of a UEFI-based platform. This is not intended to indicate
+these are the only methods, but they are the ones most any UEFI codebase
+
+can exercise.
+
+Adjusting the BIOS to Avoid Unnecessary Drivers
+
+It is useful to go into and understand the details of how we avoided executing
+some of the extra drivers in our platform. It is also useful to reference the
+appropriate sections in the UEFI specification to better understand some of
+the underlying parts that, for conciseness, cannot be covered in this book.
+
+The BDS phase of operations is where various decisions are made
+regarding what gets launched and what platform policy is enacted. That being
+said, this is the code (regardless of which UEFI codebase you use) that will
+frequently get the most attention in the optimizations. If we refer again to the
+boot times for our proof of concept, it should be noted that the BDS phase
+was where the majority of time was reduced. Most of the reduction had to do
+with optimizations as well as some of the design choices that were made and
+the phase of initialization where that activity often takes place.
+
+At its simplest, the BDS phase is the means by which the BIOS
+Extreme care should be taken to understand the downstream usage model and workloads that are going to be exercising these features. Experiment with these settings, but do not be surprised if the resulting data does not support your original hypothesis.
+
+Additional Details
+
+When it comes time to address some codebase issues, the marketing requirements clearly define the problem space an engineer has to design around. With that information, there are several methods that can help that are fairly typical of a U E F I based platform. This is not intended to indicate these are the only methods, but they are the ones most U E F I codebase can exercise.
+
+Adjusting the B I O S to Avoid Unnecessary Drivers
+
+It is useful to go into and understand the details of how we avoided executing some of the extra drivers in our platform. It is also useful to reference the appropriate sections in the U E F I specification to better understand some of the underlying parts that, for conciseness, cannot be covered in this book. The B D S phase of operations is where various decisions are made regarding what gets launched and what platform policy is enacted. That being said, this is the code regardless of which U E F I codebase you use that will frequently get the most attention in the optimizations. If we refer again to the boot times for our proof of concept, it should be noted that the B D S phase was where the majority of time was reduced. Most of the reduction had to do with optimizations as well as some of the design choices that were made and the phase of initialization where that activity often takes place. At its simplest, the B D S phase is the means by which the B I O S
+The text discusses the careful consideration required when analyzing downstream usage models and workloads, particularly when experimenting with features. It emphasizes that empirical results may not always align with initial hypotheses, a fundamental principle in scientific investigation and system tuning.
+
+Within the "Additional Details" section, the focus shifts to practical codebase management and platform design, specifically in the context of a U E F I based platform. The challenge of defining a problem space and developing solutions through various methods is highlighted, suggesting that while common U E F I codebase practices are not exclusively the only approach, they represent frequently utilized strategies.
+
+A key concept introduced is "Adjusting the BIOS to Avoid Unnecessary Drivers." This section explains the value of examining the codebase to understand and potentially remove extraneous drivers, thereby optimizing platform performance. It also points to the U E F I specification as a crucial reference for comprehending the underlying components and how they function, particularly those that are too complex to be fully detailed within the current document.
+
+The text then elaborates on the "BDS phase of operations," defining it as the stage where critical decisions are made, including what components are launched and which platform policies are enacted. The prose clarifies that this phase's actions are intrinsically linked to the specific U E F I codebase being utilized. It further notes that optimizations during this phase, especially those impacting boot times, are frequently the most significant contributors to performance improvements. The authors suggest that the majority of time reductions observed in their proof of concept were attributable to these optimizations and design choices made during the initialization phase. At its core, the BDS phase is presented as the mechanism through which the BIOS, the fundamental input output system, exerts control over the system's startup process.

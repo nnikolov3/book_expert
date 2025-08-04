@@ -1,0 +1,53 @@
+While MTRRs are programmed by the BIOS, Page Attribute Tables (PATS)
+
+are used primarily with the OS to control caching down to the page level.
+The Intel® 64 and IA-32 Architectures Software Developer’s Manual,
+Volume 3A, Chapter 10, “Memory Cache Control” contains all the details on
+
+configuring caching for all memory regions.
+See the appropriate CPU BIOS Writer’s Guide for caching control
+
+guidelines specific to the processor.
+
+Serial Ports
+
+An RS-232 serial port or UART 16550 is initialized for either runtime or
+debug solutions. Unlike USB ports, which require considerable initialization
+and a large software stack, serial ports have a minimal register-level
+interface. A serial port can be enabled very early in POST to provide serial
+
+output support.
+
+Console In /Console Out
+During the DXE phase, part of the boot services includes console in and
+
+console out protocols.
+
+Clock and Overclock Programming
+
+Depending on the clocking solution of the platform, the BIOS may have to
+enable the clocking of the system. It is possible that a subsystem such as the
+Manageability Engine or baseboard management controller (BMC) in server
+platforms have this responsibility.
+
+It is possible that beyond the basic clock programming, there may be
+While M T R R s are programmed by the B I O S, Page Attribute Tables P A T s are used primarily with the O S to control caching down to the page level. The Intel six four and I A thirty two Architectures Software Developer's Manual, Volume thirty A, Chapter ten, "Memory Cache Control" contains all the details on configuring caching for all memory regions. See the appropriate C P U B I O S Writer's Guide for caching control guidelines specific to the processor.
+
+Serial Ports
+
+An R S twenty three two serial port or U A R T sixteen five fifty is initialized for either runtime or debug solutions. Unlike U S B ports, which require considerable initialization and a large software stack, serial ports have a minimal register level interface. A serial port can be enabled very early in P O S T to provide serial output support.
+
+Console In / Console Out
+
+During the D X E phase, part of the boot services includes console in and console out protocols.
+
+Clock and Overclock Programming
+
+Depending on the clocking solution of the platform, the B I O S may have to enable the clocking of the system. It is possible that a subsystem such as the Manageability Engine or baseboard management controller B M C in server platforms have this responsibility. It is possible that beyond the basic clock programming, there may be
+The text discusses several fundamental aspects of computer system architecture and low-level programming, primarily focusing on hardware configuration and initialization.
+
+First, it addresses the programming of Memory Type Range Registers, or M T R R s. These are crucial hardware components, often configured by the Basic Input Output System, or B I O S, and more broadly by Page Attribute Tables, or P A T s. Their primary function is to control memory caching at a granular level, specifically down to the page level. This allows the operating system, or O S, to define how different regions of physical memory are accessed by the processor, influencing performance by determining whether memory accesses are cached, written directly, or handled in some other manner. The text references the Intel 64 and I A thirty two Architectures Software Developer's Manual, Volume three A, specifically Chapter ten, "Memory Cache Control," as a definitive source for understanding the intricacies of configuring caching for various memory regions. It also points to the C P U B I O S Writer's Guide for specific caching control guidelines relevant to the processor architecture.
+
+Next, the document delves into Serial Ports. It explains that an R S twenty three two serial port or a U A R T sixteen fifty is typically initialized for either runtime operations or for debugging purposes. Unlike Universal Serial Bus, or U S B, ports, which often necessitate a substantial software stack for their functionality, serial ports are characterized by their minimal register-level interface. This design allows a serial port to be enabled very early in the boot process, specifically during the POST, or Power On Self Test, phase, to provide essential serial output support, which is vital for early system diagnostics and communication before the main operating system is fully loaded. The concept of Console In and Console Out is mentioned in relation to this early initialization, indicating that during the Dynamic Execution Environment, or D X E, phase of the boot process, console input and output protocols are managed.
+
+Finally, the text touches upon Clock and Overclock Programming. It highlights that depending on the specific clocking solution of the platform, the B I O S might be responsible for enabling the system's clocking. It suggests that this capability could extend to subsystems such as the Manageability Engine or Baseboard Management Controller, or B M C, particularly in server platforms. The implication is that the B I O S might delegate or orchestrate clock programming responsibilities to these specialized management controllers. Furthermore, it posits that clock programming can transcend basic configurations, potentially involving more advanced capabilities beyond simple clock speed adjustments, indicating a deeper level of control over system timing and performance.

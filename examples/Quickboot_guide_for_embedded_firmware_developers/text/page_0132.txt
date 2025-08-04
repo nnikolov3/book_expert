@@ -1,0 +1,41 @@
+EF_SHELL PROTOCOL EFI_SHELL _ EFI_SIMPLE_FILE_ SYSTEM. EFl_BLOCK
+PARAMETERS. FROTODOL IQ PROTOCOL
+PROTOCOL Interface #0 Inte rimce #0
+“COPY F12\Sounta. xt LVEF] Shall L a . a | .
+FS12DesSination tt” —™ Fd — [ Fi" —= 0 § "BLKD
+
+Figure 7.1: A Command Traversing the Driver Stack
+
+The running of external shell applications is critical since that is the method
+most used to add a new feature into the shell. This new feature can be
+anything from the simple printing of a string to the console for user input all
+the way up to a complex program that runs the entire platform. This is the
+only way to add a completely new feature to the shell without editing the
+shell’s own code. This is also commonly used to perform proprietary tasks,
+such as manufacturing configuration, where the executable is not found on
+the system afterwards.
+
+Automation is accomplished through script files. These are a set of
+sequential commands that can be started automatically upon entering the shell
+so that they happen whenever the shell is launched. Some shells allow a user
+to abort the running of these automatically started scripts.
+
+These two sets of extension abilities also can be combined. It is possible
+for a script file to call some of the extended executables, some commands
+internal to the shell, and even a different script file.
+
+The features that make the UEFI Shell 2.0 unique have to do with the
+features that make it especially useful for firmware. This means specifically
+that the shell can be heavily configured such that the platform can have a
+shell with a reduced feature set and a similarly reduced footprint size. At least
+64 combinations of size and feature set are available in the UEFI Shell, with
+more available via extensions. This allows for the UEFI Shell to vary in size
+from ~300 to almost 1000 KB.
+Figure seven point one: A Command Traversing the Driver Stack. The running of external shell applications is critical since that is the method most used to add a new feature into the shell. This new feature can be anything from the simple printing of a string to the console for user input all the way up to a complex program that runs the entire platform. This is the only way to add a completely new feature to the shell without editing the shell's own code. This is also commonly used to perform proprietary tasks, such as manufacturing configuration, where the executable is not found on the system afterwards. Automation is accomplished through script files. These are a set of sequential commands that can be started automatically upon entering the shell so that they happen whenever the shell is launched. Some shells allow a user to abort the running of these automatically started scripts. These two sets of extension abilities also can be combined. It is possible for a script file to call some of the extended executables, some commands internal to the shell, and even a different script file. The features that make the U E F I Shell two point zero unique have to do with the features that make it especially useful for firmware. This means specifically that the shell can be heavily configured such that the platform can have a shell with a reduced feature set and a similarly reduced footprint size. At least sixty four combinations of size and feature set are available in the U E F I Shell, with more available via extensions. This allows for the U E F I Shell to vary in size from approximately three hundred to almost one thousand K B.
+The diagram illustrates a command traversing a driver stack, commencing with a command like "Copy F12 colon Source dot Txt to F12 colon Destination dot Txt". This command is processed by the U E F I Shell Environment. The shell interacts with various protocols to facilitate this operation. Initially, it communicates with the E F I Shell protocol, likely for shell-specific functionalities. Subsequently, it interacts with the E F I Simple File System protocol, denoted as Interface number zero, to access file system operations. This file system interaction ultimately leads to communication with the E F I Block I O protocol, also designated as Interface number zero. This final interaction is abstracted as interacting with a block device, represented by "B L K zero", which conceptually signifies the underlying storage medium. This layered interaction demonstrates how a high-level command is decomposed and translated through a series of protocol interfaces to interact with the hardware.
+
+The execution of external shell applications is a critical mechanism for extending the functionality of the shell. This is often accomplished by introducing new features, which can range from simple operations like printing strings to the console for user input, to more complex tasks involving intricate program execution. These extensions can even be used to modify the shell's core behavior or perform proprietary tasks, such as manufacturing configurations, where the executable for these tasks might not be directly available on the system.
+
+Automation within the shell environment is typically achieved through script files. These scripts can be configured to execute automatically upon the shell's launch, and some shells provide the capability for a user to initiate these scripts to abort ongoing operations. Furthermore, the shell can support extension abilities that are combined, allowing a script file to invoke extended executables. These invocations can be internal to the shell itself or target a different script file, providing flexibility in program flow and modularity.
+
+The U E F I Shell 2.0 distinguishes itself through features that enhance its usability, particularly for firmware environments. This enhanced feature set allows for significant customization, enabling the platform to have a shell with a reduced footprint. Specifically, there are at least sixty four combinations of size and feature set configurations available within the U E F I Shell. This extensibility permits the U E F I Shell to vary in size, ranging from approximately three hundred items to nearly one thousand items, accommodating diverse firmware requirements and resource constraints.

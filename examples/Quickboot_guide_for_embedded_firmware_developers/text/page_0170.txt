@@ -1,0 +1,69 @@
+SMI
+| Real-Addmregs
+
+Mok J Reset
+Reset or PE =1 RSM
+PE=0
+
+Protecled
+Mode
+I
+Hesel ! FCA —
+—
+
+LME = 1, CRO.PG = 1°
+
+Mada DE “See Section 9.8.5
+JA RSM “See Section 9.8.5.4
+
+of the IA Software
+Developers Manual 3A
+
+Figure 9.2: Figure 9.2 Mode Switching per Intel® 64 and IA-32
+
+Architectures Software Developer’s Manual, Volume 3A
+
+Refer to the Intel® 64 and IA-32 Architectures Software Developer’s Manual
+Volume 3A section titled “Mode Switching” for more details.
+
+When the processor is first powered on, it will be in a special mode
+similar to real mode, but with the top 12 address lines being asserted high.
+This aliasing allows the boot code to be accessed directly from NVRAM
+(physical address OxFFFxxxxx).
+
+Upon execution of the first long jump, these 12 address lines will be
+driven according to instructions by firmware. If one of the protected modes is
+not entered before the first long jump, the processor will enter real mode,
+with only 1 MB of addressability. In order for real mode to work without
+memory, the chipset needs to be able to alias a range of memory below 1 MB
+to an equivalent range just below 4 GB to continue to access NVRAM.
+
+Certain chipsets do not have this aliasing and may require a switch into a
+Figure 9.2 illustrates mode switching within the Intel 64 and I A-32 Architectures Software Developer's Manual, Volume 3A. The diagram outlines transitions between various processor modes.
+
+The processor starts in a reset state. From reset, it can transition to Real Address Mode if the PE bit is zero. If PE is one, it enters Protected Mode.
+
+From Protected Mode, a reset or R S M signal can return the processor to Real Address Mode. An S M I # signal from Protected Mode can also lead to System Management Mode.
+
+The processor can also be in Virtual-8086 Mode, which is entered from Protected Mode. A S M I # signal from Virtual-8086 Mode also leads to System Management Mode. From Virtual-8086 Mode, a reset or R S M signal can return to Real Address Mode.
+
+The I A-32e Mode is another possible state. This mode is entered from Protected Mode when LME is one and CR0.PG is one. From I A-32e Mode, an S M I # signal leads to System Management Mode, and an R S M signal returns the processor to Protected Mode.
+
+The diagram also indicates that Virtual-8086 Mode can be accessed with V M equals one, and Real Address Mode with V M equals zero. References are made to specific sections in the IA Software Developer's Manual, such as Section 9.8.5 and Section 9.8.5.4.
+
+When the processor is first powered on, it enters a special mode similar to real mode, but with the top twelve address lines asserted high. This aliasing allows the boot code to be accessed directly from N V R A M, which is at physical address hex F F xxxxx. Upon execution of the first long jump, these twelve address lines are driven according to instructions by firmware. If one of the protected modes is not entered before the first long jump, the processor will enter real mode, with only one M B of addressability. In order for real mode to work without memory, the chipset needs to be able to alias a range of memory below one M B to an equivalent range just below four G B to continue to access N V R A M. Certain chipsets do not have this aliasing and may require a switch into a
+The provided diagram illustrates the mode switching behavior of Intel architectures, specifically focusing on the transition between Real Mode, Protected Mode, Virtual 8086 Mode, IA-32e Mode, and System Management Mode. This state transition logic is fundamental to how a processor initializes and operates, managing memory access and execution privileges.
+
+At a high level, the diagram can be interpreted as a finite state machine. The states represent distinct operational modes of the processor, and the transitions between these states are triggered by specific events or conditions. The initial state upon reset is Real Mode, a legacy mode inherited from earlier Intel processors that provides direct hardware access and a simpler memory model, limited to one megabyte of addressable memory.
+
+From Real Mode, a transition to Protected Mode occurs when the PE bit, likely a flag within a control register such as the Control Register 0 (CR0), is set to one. Protected Mode introduces more advanced memory management features, including paging and segmentation, enabling multitasking and memory protection.
+
+A reset event, or a return from system management mode (RSM), can transition the processor back to Real Mode. The diagram also shows a transition from Protected Mode to Real Mode via an SMI# (System Management Interrupt) signal. System Management Mode (SMM) is a special mode designed for handling system-wide events, such as power management or thermal control, and provides a higher level of privilege than even Protected Mode, allowing it to access all system resources.
+
+The diagram also depicts Virtual 8086 Mode, which is entered from Protected Mode when the VM bit is set to one. Virtual 8086 Mode allows the execution of 16-bit Real Mode code within a Protected Mode environment, providing compatibility with older software. Transitions to and from Virtual 8086 Mode are also shown, often mediated by SMI# or RSM signals, or specific conditions like LME being one and CR0.PG being one, which are indicators for Long Mode Enable and Paging respectively, relevant for transitioning to 64-bit modes.
+
+The IA-32e Mode, also known as Long Mode or 64-bit mode, is a significant evolution in processor architecture, enabling access to vast amounts of memory and supporting 64-bit registers and instructions. The diagram indicates that entry into IA-32e Mode from Protected Mode requires specific conditions, such as LME set to one and CR0.PG set to one, suggesting a controlled transition that leverages paging. Transitions from IA-32e Mode can occur back to Protected Mode via RSM, and to System Management Mode via SMI#.
+
+The text elaborates on the initial boot process. Upon power on, the processor enters a special mode similar to Real Mode, but with the top twelve address lines asserted high. This behavior is described as an "aliasing" effect, allowing the boot code, typically residing in Non Volatile Random Access Memory (NVRAM), to be accessed directly. This aliasing is crucial because it effectively maps a portion of the address space to a particular physical location, facilitating early system initialization before the full memory management unit (MMU) is configured.
+
+The text further explains that this aliasing enables access to NVRAM. The significance of this is that firmware, upon executing the first long jump, will transition the processor according to instructions. If the protected modes are not entered before this initial jump, the processor will enter Real Mode, but with only one megabyte of addressability. For Real Mode to function correctly, especially when dealing with larger memory spaces, the chipset must be capable of aliasing a range of memory just below four gigabytes to continue accessing NVRAM. Some chipsets may lack this aliasing capability and require a switch into a different mode to achieve this memory access. This highlights a critical dependency between processor mode, chipset capabilities, and the fundamental requirements of system firmware during the boot sequence.

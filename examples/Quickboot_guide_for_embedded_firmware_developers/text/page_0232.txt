@@ -1,0 +1,24 @@
+and requirements of the platform.
+
+It is important to note that some latent firmware bugs were found that
+only became apparent when optimizations were enabled. For this reason,
+rigorous validation is recommended after enabling these and optimizations.
+
+In creating new paths for optimizations, it is important to get as much
+data as you can from experts on a particular component or subsystem. Often
+
+the details will not be written down in specifications.
+
+None of us got where we are solely by pulling ourselves up by our
+bootstraps. We got here because somebody—a parent, a teacher, an Ivy
+League crony or a few nuns—bent down and helped us pick up our
+
+boots.
+
+— Thurgood Marshall
+and requirements of the platform. It is important to note that some latent firmware bugs were found that only became apparent when optimizations were enabled. For this reason, rigorous validation is recommended after enabling these and optimizations. In creating new paths for optimizations, it is important to get as much data as you can from experts on a particular component or subsystem. Often the details will not be written down in specifications. None of us got where we are solely by pulling ourselves up by our bootstraps. We got here because somebody—a parent, a teacher, an Ivy League crony or a few nuns—bent down and helped us pick up our boots. —Thurgood Marshall
+The text emphasizes the critical importance of comprehensive testing, particularly in the context of software optimization. It highlights that latent firmware bugs, which are issues that lie dormant and only manifest under specific conditions, can become apparent only when optimizations are enabled. This phenomenon underscores a fundamental principle in system design and verification: the behavior of a system can be profoundly altered by the presence or absence of performance enhancements. Consequently, rigorous validation is not merely advisable but essential after enabling such optimizations to ensure the system's correctness and stability across various operational states.
+
+Furthermore, the passage points to a practical challenge in creating new paths for optimization. It suggests that gathering sufficient and relevant data from domain experts on particular components or subsystems is crucial. This data forms the bedrock for informed optimization decisions. The implication here is that empirical evidence and specialized knowledge are indispensable for developing effective optimization strategies. When this detailed information is not adequately documented in specifications, it necessitates a more proactive and often labor-intensive approach to data acquisition.
+
+The text then transitions to a more metaphorical, yet profoundly relevant, point about collaborative effort and the value of diverse support networks. It states, "None of us got where we are solely by pulling ourselves up by our bootstraps." This is followed by an illustration of how various individuals, from parents and teachers to a broad social circle represented by "Ivy League crony or a few nuns," contribute to an individual's progress. This narrative serves as an analogy for the complex ecosystem of knowledge, support, and collaboration that underpins innovation and achievement in any technical field, including scientific research and engineering. It speaks to the idea that even the most independent endeavors are often built upon a foundation of collective human effort and shared learning, a principle that resonates deeply within the scientific community.

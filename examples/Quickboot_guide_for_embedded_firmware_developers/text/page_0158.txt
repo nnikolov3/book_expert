@@ -1,0 +1,49 @@
+The memory map is discussed in more detail in the following sections.
+
+The OS loader is often operating-system-specific; however, in most
+operating systems its main function is to load and execute the operating
+system kernel, which continues startup, and eventually you load an
+application. Examples for Linux include U-boot, Grub, and Sys-Linux.
+Examples for Windows CE are Eboot and ROMboot.
+
+Another term has been used in the past for the OS loader was the initial
+program loader or IPL. While the term predates most of the current
+mechanisms, it can pop up in certain crowds or segments of industry. The job
+is the same as a BIOS or a boot loader or an OS loader. The names are just
+
+changed to protect the innocent.
+
+Booting via the EFI Interface
+
+Booting a UEFI operating system consists of locating the global partition
+table record (GPT) on one of the same potentially large number of bootable
+
+media.
+
+Default EFI Boot Behavior
+
+By default, UEFI firmware will search the path /EFI/BOOT/ on a FAT GPT
+partition for an executable second-stage bootloader. Each FAT GPT partition
+will be checked in its discovered order for an appropriate boot executable. On
+a 64-bit architecture, the name of the default bootloader will be bootia64.efi;
+on a 32-bit machine it will be bootia32.efi.
+
+Operating system installation programs will typically rewrite the NvVar
+
+that controls the boot process, thus installing a new path to the operating
+The memory map is discussed in more detail in the following sections. The O S loader is often operating system specific, however, in most operating systems its main function is to load and execute the operating system kernel, which continues startup, and eventually you load an application. Examples for Linux include U boot, Grub, And Sys Linux. Examples for Windows C E are E boot And R O M boot.
+
+Another term has been used in the past for the O S loader was the initial program loader or I P L. While the term predates most of the current mechanisms, it can pop up in certain crowds or segments of industry. The job is the same as a B I O S or a boot loader or an O S loader. The names are just changed to protect the innocent.
+
+Booting via the E F I Interface
+
+Booting a U E F I operating system consists of locating the global partition table record (G P T) on one of the same potentially large number of bootable media.
+
+Default E F I Boot Behavior
+
+By default, U E F I firmware will search the path slash E F I slash B O O T slash on a F A T G P T partition for an executable second stage bootloader. Each F A T G P T partition will be checked in its discovered order for an appropriate boot executable. On a sixty four bit architecture, the name of the default bootloader will be bootia sixty four dot efi, And on a thirty two bit machine it will be bootia thirty two dot efi.
+
+Operating system installation programs will typically rewrite the N v Var that controls the boot process, thus installing a new path to the operating.
+The text discusses the role of an operating system loader, which is a fundamental component responsible for loading and executing the operating system kernel. This process is often operating system specific, meaning different operating systems may employ distinct loading mechanisms. For instance, Linux systems utilize bootloaders such as U boot, Grub, and Sys Linux. Similarly, Windows C E uses bootloaders identified as E boot and R O M boot. The concept of a program loader, or initial program loader I P L, predates the current understanding of these mechanisms and historically referred to code that initiated system startup. These loaders are crucial for transitioning control from the firmware to the operating system, allowing the system to become fully operational.
+
+The text then elaborates on the booting process via the Extensible Firmware Interface E F I. Booting an E F I operating system involves locating the global partition table G P T, which resides on bootable media. This table contains essential information for the boot process. Specifically, the default E F I boot behavior dictates that the U E F I firmware will search for a specific path, typically slash E F I slash B O O T, on a F A T formatted G P T partition. This partition is expected to contain an executable second stage bootloader. The search prioritizes F A T G P T partitions to find an appropriate boot executable. For systems based on a sixty four bit architecture, the default bootloader is expected to be named bootia sixty four dot e f i. Conversely, on a thirty two bit machine, it would be bootia thirty two dot e f i. Operating system installation programs are designed to manage this boot process by potentially rewriting the N V Var, which is a non volatile variable storage used by U E F I, thereby establishing a new path to the operating system. This mechanism ensures that the system can locate and load the correct operating system after a new installation or configuration change.

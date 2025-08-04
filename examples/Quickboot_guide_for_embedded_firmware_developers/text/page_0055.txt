@@ -1,0 +1,46 @@
+The Main Memory Address Range, referred to earlier as system memory, is
+the memory available to the OS. Parts of the Main Memory Address Range
+may not be available for the OS to use, such as Stolen Memory or ACPI
+
+tables. This will be discussed in more detail in Chapter 8, which describes OS
+
+handoff structures.
+
+PCI Memory Address Range
+
+The PCI Memory Address Range is used during PCI enumeration to assign
+any requested memory-mapped input/output (MMIQO). This memory is used
+to access registers in a specific PCI device.
+
+For systems that have 4 GB or greater of system memory, the PCI
+Memory Address Range still resides just below 4 GB. In order to avoid
+losing access to the system memory in the location of the PCI MMIQO, the
+memory is remapped just above 4 GB. Figure 3.3 illustrates how memory
+
+remapping works.
+
+Splash Screen
+
+Today, most system firmware hides the diagnostic information behind a
+bitmap with the company logo or any other image that the PC vendor deems
+suitable. These bitmaps are also known as splash screens—screens that keep
+the user’s eyes occupied until the OS can load. They serve no other purpose
+normally than a bit of marketing/brainwashing. It is common for BIOS or
+boot loaders to use splash screens to hide the boot process from users and to
+give them something to look at.
+
+They are popular for embedded systems where the user is accustomed to
+The Main Memory Address Range, referred to earlier as system memory, is the memory available to the O S. Parts of the Main Memory Address Range may not be available for the O S to use, such as Stolen Memory or A C P I tables. This will be discussed in more detail in Chapter eight, which describes O S handoff structures.
+
+P C I Memory Address Range.
+
+The P C I Memory Address Range is used during P C I enumeration to assign any requested memory mapped I O, also known as M M I O. This memory is used to access registers in a specific P C I device. For systems that have four gigabytes or greater of system memory, the P C I Memory Address Range still resides just below four gigabytes. In order to avoid losing access to the system memory in the location of the P C I M M I O, the memory is remapped just above four gigabytes. Figure three point three illustrates how memory remapping works.
+
+Splash Screen.
+
+Today, most system firmware hides the diagnostic information behind a bitmap with the company logo or any other image that the P C vendor deems suitable. These bitmaps are also known as splash screens—screens that keep the user’s eyes occupied until the O S can load. They serve no other purpose normally than a bit of marketing or brainwashing. It is common for B I O S or boot loaders to use splash screens to hide the boot process from users and to give them something to look at. They are popular for embedded systems where the user is accustomed to
+The Main Memory Address Range represents the contiguous block of addressable physical R A M that a system possesses. While this entire range conceptually defines the system's total memory capacity, not all of it is made available for general-purpose use by the operating system. Specific segments within this address space are often reserved or pre-allocated by the system firmware for dedicated hardware functions or management structures. Examples include "Stolen Memory," which is typically pre-allocated by the integrated G P U or other platform components for their exclusive use, preventing the O S from allocating D Ram in those regions. Similarly, A C P I tables, which contain crucial configuration and power management information, also occupy predefined memory locations. The mechanisms and structures by which the firmware communicates these reserved memory regions and hands off control of the remaining addressable space to the O S are fundamental aspects of platform initialization and O S boot processes, often detailed within O S handoff structures.
+
+The P C I Memory Address Range, central to peripheral component interconnect architecture, is a dedicated segment of the system's physical address space utilized during P C I enumeration. This process dynamically discovers and configures P C I devices by assigning memory-mapped input/output, or M M I O, regions. M M I O enables the C P U to interact with P C I devices by treating their internal registers as if they were locations in main memory, allowing direct load and store instructions to read from or write to these device specific control and status registers. A significant architectural challenge arises in systems equipped with four gigabytes or greater of physical system D Ram. Historically, the M M I O space for P C I devices was typically mapped into the lower four gigabytes of the thirty two bit address space. When total physical D Ram exceeds this four gigabyte boundary, or even approaches it, a conflict can occur where the M M I O region overlaps with D Ram that the O S expects to use for general application execution. To circumvent this critical resource contention and ensure full accessibility to both P C I M M I O and the entire installed physical D Ram, a technique known as memory remapping is employed. This mechanism relocates the conflicting D Ram segment, mapping it to an address range positioned just above the four gigabyte mark, leveraging the capabilities of sixty four bit addressing. The underlying conceptual shift, which could be illustrated by a diagram like Figure three point three, would visually depict the original linear address space where the P C I M M I O region overlays a portion of the D Ram. Following remapping, the diagram would show the D Ram segment logically moved to a higher address range, preserving both its integrity and the M M I O region's accessibility, thus resolving the address collision.
+
+A splash screen represents a common user interface element displayed by system firmware, such as the B I O S or boot loaders, during the initial phases of system startup. Its primary technical function is to obfuscate the detailed diagnostic information that is typically generated during the hardware initialization and O S loading sequence. Instead of presenting a raw text based output of system checks and boot progress, which can appear complex or alarming to an end user, the firmware displays a graphical bitmap, often featuring a company logo or an arbitrary image chosen by the P C vendor. While it primarily serves to provide a more polished and user friendly experience, acting as a form of visual branding or to simply occupy the user's attention, it offers no functional or diagnostic value to the end user during the boot process. This practice is prevalent in consumer oriented P C systems and is particularly ubiquitous in embedded systems, where a consistent and aesthetically pleasing visual presentation from the moment of power on is often a design requirement, providing a familiar and comforting visual cue to the user.

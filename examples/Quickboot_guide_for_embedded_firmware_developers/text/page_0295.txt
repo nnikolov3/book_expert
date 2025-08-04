@@ -1,0 +1,38 @@
+EITF SDRAM devices. Since the ECC data lines are not being used (not
+shown, but they would have required the use of an additional x8 SDRAM
+chip per channel), both DIMM equivalents are non-ECC.
+
+Analyzing the schematics provides the SDRAM width and rank
+information (SPD field #7). All the other information required in the SPD
+data block will have to be extracted from the MT41J256M8HX-187-EITF
+
+datasheet. This process is described in the next section.
+
+Calculating Specific SPD Data Based on SDRAM
+Datasheet
+
+This section will go through each SPD field and explain how to extract the
+data for the field out of the SDRAM datasheet. This section will use the
+SDRAM configuration shown in Figure A.2, using the MT41J256M8HX-
+187-EITF datasheet. Note that each section number will correspond to the
+SPD field offset.
+
+Each field will contain:
+—The exact definition out of the JEDEC DDR3 specification.
+
+—The appropriate section out of the MT41J256M8HX-187-EITF
+datasheet
+E I T F S D Ram devices. Since the E C C data lines are not being used (not shown, but they would have required the use of an additional X eight S D Ram chip per channel), both D I M M equivalents are non E C C. Analyzing the schematics provides the S D Ram width and rank information (S P D field number seven). All the other information required in the S P D data block will have to be extracted from the M T forty one J two fifty six M eight H X eighteen E I T F datasheet. This process is described in the next section.
+
+Calculating Specific S P D Data Based on S D Ram Datasheet
+
+This section will go through each S P D field and explain how to extract the data for the field out of the S D Ram datasheet. This section will use the S D Ram configuration shown in Figure A two, using the M T forty one J two fifty six M eight H X eighteen E I T F datasheet. Note that each section number will correspond to the S P D field offset.
+
+Each field will contain:
+
+The exact definition out of the J E D E C D D R three specification.
+
+The appropriate section out of the M T forty one J two fifty six M eight H X eighteen E I T F datasheet.
+The text discusses the practical aspects of configuring EITF S D Ram devices, specifically addressing scenarios where Error Correction Code, or E C C, data lines are not actively utilized. In such cases, a system would need to incorporate additional S D Ram chips, likely in an eight bit configuration per channel, to achieve the equivalent functionality of Dual In line Memory Modules, or D I M M s, that are non E C C. The analysis of schematics is crucial for determining the S D Ram width and rank information, which is a fundamental requirement for populating the Serial Presence Detect, or S P D, data block. Specifically, the text references S P D field number seven, and indicates that all other requisite information for the S P D data block will be sourced from the M T four one two five six M eight H X one eight seven E I T F datasheet, with the detailed process of extraction to be elaborated in a subsequent section.
+
+The subsequent section is dedicated to the methodology for calculating specific S P D data by referencing the S D Ram datasheet. This involves a systematic examination of each individual S P D field. The approach outlined is to correlate information from the S D Ram configuration, as presented in a figure, with the corresponding data within the M T four one two five six M eight H X one eight seven E I T F datasheet. The intention is to extract precise data values for each S P D field, with the understanding that each section dedicated to a particular field will align with the specific offset within the S P D data structure. The content of each field's analysis will comprise two key components: firstly, the precise definition of the field according to the J E D E C D D R three specification, and secondly, the relevant section from the M T four one two five six M eight H X one eight seven E I T F datasheet that provides the necessary data for that field.

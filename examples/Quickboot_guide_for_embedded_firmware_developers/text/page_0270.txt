@@ -1,0 +1,63 @@
+transition. The impact can be seen in Table 12.2 for both boot and resume
+
+times.
+
+Intel DMI bus supports a PCI ASPM lower link power scheme. To
+eliminate potential side effects, enabling of DMI ASPM should be done at the
+last possible moment in the BIOS initialization flow. Actually, it can be made
+after the POST is completed.
+
+To delay the setting of the DMI ASPM link states (LOs/L1) to the last
+
+possible moment in the boot, there are three possible options:
+
+1. At ExitBootServices()
+2. In ACPI
+3. One-shot SMI timer, heuristically determined by experiment, say 8
+
+seconds after ExitBootServices(), to cover the OS booting period
+
+Option 1 is to be selected if we are interested only in BIOS boot time
+improvement. Option 2 and 3 could be explored for OS boot time
+improvement. If we aim to improve the OS load time as well, we could use
+the SMI timer for the S4/S5 path, and use the ACPI method _BFS to set the
+DMI ASPM for the S3 path, assuming an ACPI compliant OS.
+
+Table 12.2: Active State Power Management Impact
+
+Responsiveness Phase from Microsoft’s VTS tool on ase ne ASPM
+an Intel Sandy Bridge CRB Board/BIOS ON - OFF
+BIOS Post (seconds) 8.89 8.87
+Boot to Desktop (seconds) 5.39 5.14
+Boot Complete (seconds) 7.31 6.97
+
+Resume (seconds) 0.6 0.57
+transition. The impact can be seen in Table 12 dot 2 for both boot and resume times.
+
+Intel DMI bus supports a P C I ASPM lower link power scheme. To eliminate potential side effects, enabling of DMI ASPM should be done at the last possible moment in the B I O S initialization flow. Actually, it can be made after the P O S T is completed.
+
+To delay the setting of the DMI ASPM link states L zero S or L one to the last possible moment in the boot, there are three possible options:
+
+One: At Exit Boot Services
+Two: In A C P I
+Three: One shot S M I timer, heuristically determined by experiment, say eight seconds after Exit Boot Services, to cover the O S booting period.
+
+Option One is to be selected if we are interested only in B I O S boot time improvement. Option Two and Three could be explored for O S boot time improvement. If we aim to improve the O S load time as well, we could use the S M I timer for the S four or S five path, and use the A C P I method underscore B F S to set the DMI ASPM for the S three path, assuming an A C P I compliant O S.
+
+Table 12 dot 2: Active State Power Management Impact
+
+Responsiveness Phase from Microsoft's V T S tool on an Intel Sandy Bridge C R B B oard or B I O S
+
+B I O S Post seconds: Baseline A S P M hyphen O N is eight point eight nine, A S P M hyphen O F F is eight point eight seven.
+Boot to Desktop seconds: Baseline A S P M hyphen O N is five point three nine, A S P M hyphen O F F is five point one four.
+Boot Complete seconds: Baseline A S P M hyphen O N is seven point three one, A S P M hyphen O F F is six point nine seven.
+Resume seconds: Baseline A S P M hyphen O N is zero point six, A S P M hyphen O F F is zero point five seven.
+The Intel DMI bus, which facilitates communication between the C P U and platform controllers, supports Active State Power Management, or A S P M, as a mechanism for reducing power consumption. This A S P M implementation aims to minimize power draw by enabling lower link power states, such as L zero and L one, when the bus is idle. The potential benefits of this power management strategy, particularly its impact on system responsiveness during boot and resume phases, are explored.
+
+The timing of enabling DMI A S P M within the BIOS initialization flow is critical to avoid adverse effects. Specifically, the text discusses three potential points in the boot process for configuring these DMI A S P M link states: first, at the exit boot services phase, which marks the transition from the boot environment to the operating system; second, within the Advanced Configuration and Power Interface, or A C P I, framework; and third, through a one shot S M I timer, heuristically set to approximately eight seconds after the exit boot services call, to ensure compatibility with the operating system booting period.
+
+The text further considers a specific scenario for improving operating system boot times, where option one, presumably relating to the timing of DMI A S P M configuration, is selected. Alternatively, options two and three, which involve further exploration of A C P I functionalities or utilizing the S M I timer for the S four or S five sleep state transitions, could also be employed to enhance operating system load times. The use of the A C P I method underscore B F S to configure DMI A S P M for the S three sleep state, assuming an A C P I compliant operating system, is also mentioned as a potential optimization.
+
+Table twelve point two, titled "Active State Power Management Impact," presents a comparative analysis of system responsiveness measured in seconds across different phases of operation, contrasting a baseline configuration with DMI A S P M enabled in the "on" state versus when it is "off." The metrics include BIOS Post time, which is the duration from power-on until the basic input output system completes its self-tests and hands over control to the operating system; Boot to Desktop time, representing the interval from power-on to when the graphical user interface is available; Boot Complete time, indicating the full initialization of the operating system and its essential services; and Resume time, which measures the system's responsiveness when transitioning from a sleep state.
+
+Analyzing the data in Table twelve point two, we observe that when DMI A S P M is "on," the BIOS Post time is eight point eight nine seconds, negligibly different from the baseline of eight point eight seven seconds. The Boot to Desktop time shows a reduction from five point three nine seconds in the baseline to five point one four seconds with A S P M "on," indicating a slight improvement in responsiveness during OS loading. Similarly, Boot Complete time decreases from seven point three one seconds to six point nine seven seconds, suggesting faster overall operating system initialization. The most significant impact is seen in Resume time, which drops from zero point six seconds to zero point five seven seconds when A S P M is enabled. These figures collectively suggest that while DMI A S P M has a minimal impact on the initial BIOS stages, it offers tangible benefits in accelerating operating system boot and, notably, the resume process from a low power state, thereby enhancing overall system efficiency.

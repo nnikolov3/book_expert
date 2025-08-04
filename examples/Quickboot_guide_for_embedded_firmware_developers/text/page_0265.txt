@@ -1,0 +1,45 @@
+USB Flash Drive Provisioning for Intel® AMT
+
+Instead of supporting USB provisioning for Intel AMT in a typical fast boot,
+a BIOS following the Fast Boot framework will support USB flash drive
+provisioning only in full boot mode. By definition, any type 2 or type 3
+exceptions will cause the BIOS to fall back into full boot mode. For example,
+one mechanism is when a user interrupts the boot processing by a hot key,
+stalling the boot; an exception will be triggered. If BDS phase is in full boot
+mode, a USB stick provisioning of Intel AMT will need to function as
+
+expected.
+
+Graphics Subsystem
+
+The following section describes the graphics subsystem.
+
+Graphics Device Selection
+
+When looking at video and graphics devices, the panel timings were
+mentioned above. The controller timing and speed are also important to boot
+speeds—the faster the better. The timing numbers can be modified if required
+to help to achieve this in a BMP utility on the UEFI GOP driver. A UEFI
+Graphics Output Protocol driver will provide faster boot speeds than a legacy
+video BIOS. Finally, a single graphics solution will be faster to boot than a
+
+multiple display/controller configuration.
+
+Graphics Output Protocol (GOP) Support for CSM-Free
+Operating Systems
+U S B Flash Drive Provisioning for Intel A M T. Instead of supporting U S B provisioning for Intel A M T in a typical fast boot, a B I O S following the Fast Boot framework will support U S B flash drive provisioning only in full boot mode. By definition, any type two or type three exceptions will cause the B I O S to fall back into full boot mode. For example, one mechanism is when a user interrupts the boot processing by a hot key, stalling the boot; an exception will be triggered. If B D S phase is in full boot mode, a U S B stick provisioning of Intel A M T will need to function as expected.
+
+Graphics Subsystem. The following section describes the graphics subsystem.
+
+Graphics Device Selection. When looking at video and graphics devices, the panel timings were mentioned above. The controller timing and speed are also important to boot speeds—the faster the better. The timing numbers can be modified if required to help to achieve this in a B M P utility on the U E F I G O P driver. A U E F I Graphics Output Protocol driver will provide faster boot speeds than a legacy video B I O S. Finally, a single graphics solution will be faster to boot than a multiple display/controller configuration.
+
+Graphics Output Protocol (GOP) Support for C S M Free Operating Systems.
+The provided text discusses aspects of system boot processes and graphics subsystems, particularly in the context of Intel Active Management Technology, or Intel AMT.
+
+It begins by detailing USB flash drive provisioning for Intel AMT. The underlying concept here is the boot process of a computer system, specifically how it initializes and loads an operating system. The text differentiates between a "fast boot" and a "full boot" mode. In a fast boot scenario, the system aims to quickly resume from a low power state or complete initialization rapidly. The Fast Boot framework, when used with Intel AMT, supports USB flash drive provisioning. However, there's a crucial detail: this support is limited to "full boot mode." The implication is that certain USB devices or provisioning methods, specifically those classified as type two or type three, might not function correctly or might cause the system to fall back to a more comprehensive "full boot" mode if they interrupt the fast boot sequence. This fallback is described as a mechanism where user interaction, such as pressing a hot key to stall the boot process, can trigger an exception. If this exception occurs during the Boot Device Selection or BDS phase, and that phase is in full boot mode, then Intel AMT provisioning via a USB stick may not operate as intended. This highlights the critical timing and mode dependencies in modern system initialization, where efficiency features like fast boot can have specific requirements for peripheral device interaction.
+
+The text then transitions to the "Graphics Subsystem," indicating a shift in focus to the components responsible for rendering visual output. It states that the following section will describe this subsystem.
+
+The subsequent section, "Graphics Device Selection," delves into factors influencing the choice and performance of graphics hardware during the boot sequence. It emphasizes that beyond basic video and graphics device identification, the "panel timings" and "controller timing and speed" are also significant for achieving optimal boot speeds. This concept relates to the synchronized operation between the graphics controller and the display panel, where precise timing signals ensure proper display initialization. The text suggests that these timing parameters are not static and can be modified if required, implying a level of configurability within the system's firmware or drivers. The primary mechanism for this modification and for enabling faster boot speeds is through a UEFI Graphics Output Protocol driver, or UEFI GOP driver. This driver is presented as a modern alternative to legacy video BIOS, which traditionally handled graphics initialization. The UEFI GOP driver is designed to provide faster boot speeds, and it is noted that a single graphics solution will generally boot faster than a configuration involving multiple displays or controllers. This points to the performance benefits of standardized, extensible interfaces like UEFI GOP over older, less flexible methods, and the system overhead associated with managing multiple display outputs.
+
+Finally, the text introduces "Graphics Output Protocol (GOP) Support for CSM Free Operating Systems." This title indicates a discussion on the capabilities of the Graphics Output Protocol, specifically in the context of operating systems that do not rely on the Compatibility Support Module, or CSM. The CSM is a component within some UEFI implementations that emulates a legacy BIOS environment, allowing older operating systems or bootloaders that are not UEFI-compatible to run. Operating systems designed to be "CSM Free" are typically modern systems that can boot directly in UEFI mode without needing the legacy BIOS emulation. The mention of GOP support in this context suggests that the UEFI GOP driver plays a crucial role in initializing graphics for these modern, UEFI-native operating systems, and its capabilities are specifically relevant when the system is not burdened by the need to manage CSM functionality. This implies a more direct and potentially faster path for graphics initialization in a purely UEFI environment.

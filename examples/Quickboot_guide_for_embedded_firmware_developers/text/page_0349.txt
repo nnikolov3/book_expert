@@ -1,0 +1,99 @@
+DDR3-800 DDR3-106&6 DDR3-1333 DDR3-1600 wuUsit
+Parameter Symbol
+Min Max Mim Max Min Max Min Max &
+MULTIFURPOSE REGISTER 'MPER MIN = CK; MAX = n/a CE
+burst end to mode register exit
+Calibration Timing
+POWER-UP
+LICL com-
+and BESET "ini 212 - 512 - 512 - 512 - CK
+mand: Long
+: operation
+calibration
+: Marmal
+time F0oper 256 - 256 = 2 5:6 - 256 = ck
+operation
+JOS dl:
+Qe Soman "Fics Gl = Geil = Gill = ell = LK
+short calibration
+Initialization and Reset Timing
+Exi ef CKE HIGH
+TP it ‘RRP MIN = greater of SCK or 'RFC + 10ns; MAX = ng CK
+valid command
+Beg
+egin piwer supply ramp YVddpr MIN = n/a: Max = J00 ms
+to power supplies stable
+RESET & LOW 1 "WPS
+© pare MIN = 0; Max = 200 ms
+supplies stable
+R # | md !
+ESET & LOW ta 1/0 a [&F; MIN = n/a: Max = 30 Ce
+Rn High= 1
+Hefresh Timing
+REFRESH -10-ACTIVATE or RE- '‘RFC=1Gb MIN= 110; MAX = 70,200 Ins
+FRESH command period 'RFC=2Gh MIN = 160: MAX = 70,200
+'RFC-&GH MIN = 30060; MAX = 70, 200
+Maximum Tc £ + 85°C 64 (1X) mis
+refresh
+period Te» + B55 32 (1X) mis
+Maximum
+Te £ + 85%C 'REFI 7.8 (68mei/8, 19240 TL
+average
+periodic Tes + B55
+refresh 3.9 (32ms/8,19240 Js
+Write recovery time WH MIN = 1 %5ns: MAX = n/a ns
+Delay fram start of internal WTR MIN = greater of ACK or 7.50%; MAX = n/a CK
+WRITE transaction to
+infernal READ command
+Lelf-Refrash Timing
+Exit self-refresh to commands LS MIN = Greater of SCE or "RFC + 10ns; MAX = n/a LK
+not requiring a becked [HLL
+Exit sell-relresh to commands oH SOLL MIN ="DLLE (MIN): MAX = n/a CK
+requiring a locked DLL
+Minimum CEE low pulse width "CKESH MIN ="CEE + CK, Max =n/a CK
+For Sedl-refresh exit timing
+Valid clocks after self-refresh "CK SRE MIN = greater of SCK or 15ns; MAX =n/a CK
+
+entry OF power down entry
+The table outlines various timing parameters for DDR3 memory across different frequencies, specifically DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600, with units indicated.
+
+Under the "Calibration Timing" section, the "MULTIPURPOSE REGISTER burst end to mode register exit" parameter has a symbol of 'M P R R'. For DDR3-800, DDR3-1066, DDR3-1333, and DDR3-1600, the minimum is specified as one clock cycle, and the maximum is not applicable. The unit is clock cycles, indicated by 'C K'.
+
+The "ZQC command: Long calibration time" parameter, with symbol 'Z Q init', requires 512 clock cycles for all listed frequencies for both minimum and maximum calibration times, with the unit being clock cycles.
+
+The "ZQC command: short calibration" parameter, with symbol 'Z Q Cs', requires 64 clock cycles for all listed frequencies for both minimum and maximum calibration times, with the unit being clock cycles.
+
+The "Initialization and Reset Timing" section details several parameters. The "Exit reset from C K E HIGH to a valid command" parameter, with symbol 'X R P', has a minimum requirement of being greater than or equal to the system clock or 'R F C' plus ten nanoseconds, and the maximum is not applicable. The unit is clock cycles.
+
+The "Begin power supply ramp to power supplies stable" parameter, with symbol 'V D D p r', has a minimum of not applicable and a maximum of 200 milliseconds.
+
+The "RESET # LOW to power supplies stable" parameter, with symbol 'R P S', has a minimum of zero and a maximum of 200 milliseconds.
+
+The "RESET # LOW to I O and R m High is equal to Z" parameter, with symbol 'I O z', has a minimum of not applicable and a maximum of 20 milliseconds. The unit is nanoseconds.
+
+In the "Refresh Timing" section, the "REFRESH to ACTIVATE or REFRESH command period" is divided into three categories based on memory size. For one gigabyte ('R F C 1 G b'), the minimum refresh period is 110 clock cycles and the maximum is 70,200 clock cycles. For two gigabytes ('R F C 2 G b'), the minimum is 160 clock cycles and the maximum is 70,200 clock cycles. For four gigabytes ('R F C 4 G b'), the minimum is 3000 clock cycles and the maximum is 70,200 clock cycles. The unit for these parameters is nanoseconds.
+
+The "Maximum refresh period" is further specified by temperature. At temperatures less than or equal to 85 degrees Celsius ('T c is less than or equal to plus 85 degrees Celsius'), the period is 64 times the clock cycle, indicated as 64 '1 X'. At temperatures greater than 85 degrees Celsius ('T c is greater than 85 degrees Celsius'), the period is 32 times the clock cycle, indicated as 32 '1 X'. The unit is milliseconds.
+
+The "Maximum average periodic refresh" is also dependent on temperature. At temperatures less than or equal to 85 degrees Celsius, the period is 7.8 milliseconds, with a detail of 64 milliseconds divided by 8,192,40 units. At temperatures greater than 85 degrees Celsius, the period is 3.9 milliseconds, with a detail of 32 milliseconds divided by 8,192,40 units. The unit is microseconds.
+
+The "Write recovery time" parameter, with symbol 'W R', has a minimum of 15 nanoseconds and a maximum that is not applicable.
+
+The "Delay from start of internal WRITE transaction to internal READ command" parameter, with symbol 'W T R', has a minimum that is the greater of four clock cycles or 7.5 nanoseconds, and the maximum is not applicable. The unit is clock cycles.
+
+The "Self Refresh Timing" section includes parameters related to exiting self-refresh modes. The "Exit self-refresh to commands not requiring a locked D L L" parameter, with symbol 'X S', has a minimum that is the greater of the system clock or 'R F C' plus ten nanoseconds, and the maximum is not applicable. The unit is clock cycles.
+
+The "Exit self-refresh to commands requiring a locked D L L" parameter, with symbol 'X S D L L', has a minimum that is the D L L minimum and a maximum that is not applicable. The unit is clock cycles.
+
+The "Minimum C K E low pulse width for self-refresh exit timing" parameter, with symbol 'C K E S R', has a minimum that is 'C K E' plus the system clock, and the maximum is not applicable. The unit is clock cycles.
+
+The "Valid clocks after self-refresh entry or power down entry" parameter, with symbol 'C K S R E', has a minimum that is the greater of the system clock or 15 nanoseconds, and the maximum is not applicable. The unit is clock cycles.
+This document details timing parameters for a dynamic random access memory, or D Ram, interface, specifically focusing on DDR3 standards at various frequencies: eight hundred megahertz, one thousand sixty six megahertz, one thousand three hundred thirty three megahertz, and sixteen hundred megahertz. The parameters are categorized into Calibration Timing, Initialization and Reset Timing, and Self Refresh Timing.
+
+Within Calibration Timing, several parameters are defined, each with minimum and maximum values specified in clock cycles, denoted as C K, or in units of time. For instance, the 'MPRR', representing the multi purpose register burst end to mode register exit, has a minimum requirement of one C K cycle and no maximum specified, indicated as 'n slash a'. Long calibration operations, associated with the 'ZQCL' command, require a minimum of five hundred twelve C K cycles for both normal operation and short calibration. Similarly, the 'ZQCS' command for short calibration also has a minimum timing of sixty four C K cycles.
+
+The Initialization and Reset Timing section outlines critical durations for bringing the D Ram out of reset and into an operational state. The parameter 'XRP' signifies the time required to exit reset from a C K E high state to a valid command, with a minimum duration defined as the greater of five C K cycles or 'R F C' plus ten nanoseconds, 'n S', and a maximum of 'n slash a'. The 'Vddpr' parameter relates to the ramp up of power supply to stable levels, specifying a minimum of 'n slash a' and a maximum of two hundred milliseconds, 'm S'. 'RPS' defines the time for reset to low, transitioning power supplies to a stable state, with a minimum of zero milliseconds and a maximum of two hundred milliseconds. Finally, 'I O Z' indicates the time for reset to low, affecting the input output interface and high impedance states, with a minimum of 'n slash a' and a maximum of twenty nanoseconds, 'n S'.
+
+The Refresh Timing section details the intervals and durations associated with the D Ram's refresh operations, crucial for maintaining data integrity in D Ram cells. The 'R F C' parameter, representing the refresh to activate or refresh command period, varies based on the D Ram density. For a one gigabyte module, the minimum refresh period is one hundred ten clock cycles and the maximum is seventy thousand, two hundred clock cycles. For a two gigabyte module, these values are one hundred sixty and seventy thousand, two hundred clock cycles, respectively. For a four gigabyte module, the minimum is three thousand clock cycles, with the maximum again being seventy thousand, two hundred clock cycles. The maximum refresh period is further broken down by temperature conditions. For temperatures less than or equal to eighty five degrees Celsius, the maximum refresh period is sixty four clock cycles, equivalent to one X. For temperatures greater than eighty five degrees Celsius, this extends to thirty two clock cycles, or one X. The maximum average periodic refresh, measured in microseconds, 'u S', is seven point eight microseconds for temperatures less than or equal to eighty five degrees Celsius and three point nine microseconds for temperatures greater than eighty five degrees Celsius, with these values being dependent on eight thousand, one hundred ninety two clock cycles for the former and eight thousand, one hundred ninety two clock cycles for the latter. Write recovery time, 'W R', requires a minimum of fifteen nanoseconds, 'n S', with no maximum specified. The delay from the start of an internal write transaction to an internal read command, 'W T R', has a minimum defined as the greater of four C K cycles or seven point five nanoseconds, 'n S'.
+
+Lastly, the Self Refresh Timing section specifies parameters for operating the D Ram in a low power self refresh mode. Exiting self refresh to commands not requiring a locked D L L component has a minimum timing determined by the greater of the system clock, 'S C K', or 'R F C' plus ten nanoseconds. Exiting self refresh to commands that do require a locked D L L dictates a minimum timing based on the D L L lock status, with a maximum of 'n slash a'. The minimum C K E low pulse width for self refresh exit timing is defined by C K E and the system clock, with a maximum of 'n slash a'. Valid clocks are required after self refresh entry or power down entry, with a minimum of fifteen nanoseconds, 'n S', and a maximum of 'n slash a'. All these self refresh timing parameters are specified in units of clock cycles, 'C K'.

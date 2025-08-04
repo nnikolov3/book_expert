@@ -1,0 +1,45 @@
+reset sequence, memory context can be maintained.
+
+If there were any memory timing changes or other configuration
+changes that require a reset to take effect, this is normally the time to execute
+a warm reset. That warm reset would start the early initialization phase over
+
+again; affected registers would need to be restored.
+
+Shadowing
+
+From the reset vector, execution starts off directly from the nonvolatile flash
+storage (NVRAM). This operating mode is known as execute in place (XIP).
+The read performance of nonvolatile storage is much slower than the read
+performance of DRAM. The performance of the code running from flash is
+much lower than if it executed from RAM, so most early firmware will copy
+from the slower nonvolatile storage into RAM. The firmware starts to run the
+RAM copy of the firmware. This process is sometimes known as shadowing.
+Shadowing involves having the same contents in RAM and flash; with a
+change in the address decoders the RAM copy is logically in front of the
+flash copy and the program starts to execute from RAM. On other embedded
+systems, the chip selects ranges managed to allow the change from flash to
+RAM execution. Most computing systems run as little as possible in place.
+However, some constrained (in terms of RAM) embedded platforms execute
+all the application in place. This is generally an option on very small
+embedded devices. Larger systems with main memory generally do not
+execute in place for anything but the very initial boot steps before memory
+has been configured. The firmware is often compressed instead of a simple
+copy. This allows reduction of the NVRAM requirements for the firmware.
+However, the processor cannot execute a compressed image in place.
+
+On Intel architecture platforms, the shadowing of the firmware is usually
+reset sequence, memory context can be maintained. If there were any memory timing changes or other configuration changes that require a reset to take effect, this is normally the time to execute a warm reset. That warm reset would start the early initialization phase over again; affected registers would need to be restored.
+
+Shadowing
+
+From the reset vector, execution starts off directly from the nonvolatile flash storage N V RAM. This operating mode is known as execute in place X I P. The read performance of nonvolatile storage is much slower than the read performance of D Ram. The performance of the code running from flash is much lower than if it executed from Ram, so most early firmware will copy from the slower nonvolatile storage into Ram. The firmware starts to run the Ram copy of the firmware. This process is sometimes known as shadowing. Shadowing involves having the same contents in Ram and flash; with a change in the address decoders the Ram copy is logically in front of the flash copy and the program starts to execute from Ram. On other embedded systems, the chip selects managed to allow the change from flash to Ram execution. Most computing systems run as little as possible in place. However, some constrained in terms of Ram embedded platforms execute all the application in place. This is generally an option on very small embedded devices. Larger systems with main memory generally do not execute in place for anything but the very initial boot steps before memory has been configured. The firmware is often compressed instead of a simple copy. This allows reduction of the N V RAM requirements for the firmware. However, the processor cannot execute a compressed image in place.
+
+On Intel architecture platforms, the shadowing of the firmware is usually
+The text discusses aspects of system resets and firmware execution, particularly focusing on a technique called "shadowing."
+
+Regarding resets, a system's memory context can be maintained across certain reset sequences. However, when configuration changes, such as memory timing adjustments, necessitate a reset to take effect, a warm reset is typically employed. A warm reset initiates the early initialization phase, and any affected registers would require restoration.
+
+The core concept elaborated upon is firmware shadowing. This process begins at the reset vector, where execution can directly commence from nonvolatile flash storage, a mode known as execute in place, or X I P. The performance of code read from flash is generally slower than that of code executed from Ram. Consequently, a common practice for early firmware is to copy the firmware from the slower nonvolatile storage, such as flash memory, into Ram. This copied firmware is then executed from Ram. This technique of having identical contents in both Ram and flash, where address decoders prioritize the Ram copy, is termed shadowing. When other embedded systems are designed such that the chip select signals manage memory ranges to allow a transition from flash to Ram execution, this further facilitates shadowing. Many computing systems aim to minimize their execution time, often running as efficiently as possible from their primary memory.
+
+The discussion then extends to embedded platforms, particularly those with constrained resources, where shadowing is a common approach. For very small embedded devices, executing firmware directly from flash, also known as execute in place, is often the preferred method. Larger systems with main memory typically do not have this limitation and can load firmware from their initial boot steps into memory before configuration. The firmware itself may be compressed, which reduces the overall Ram requirements. However, this compression can pose a challenge if the processor cannot execute a compressed image directly. On Intel architecture platforms, the shadowing of firmware is a customary optimization.

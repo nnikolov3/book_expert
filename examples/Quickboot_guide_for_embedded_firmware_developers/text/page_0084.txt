@@ -1,0 +1,61 @@
+PCI BIOS Specification v2.1 spells out PCI BIOS calls via legacy software
+interrupt Int 1Ah; however, legacy calls are fast becoming obsolete in the
+modern world of UEFI. PCI BIOS (Int 1Ah) function calls are listed in Table
+2.1.
+
+Table 5.1: PCI BIOS (Int 1Ah) Function Calls
+
+Function AH AL
+PCI_FUNCTION_ID B1lh
+PCI_BIOS_ PRESENT 01h
+FIND PCI DEVICE 02h
+FIND PCI CLASS CODE 03h
+GENERATE _SPECIAL_CYCLE 06h
+READ CONFIG_BYTE 08h
+READ CONFIG_WORD 09h
+READ _CONFIG_DWORD OAh
+WRITE _CONFIG_BYTE OBh
+WRITE _CONFIG_WORD 0Ch
+WRITE _CONFIG_DWORD ODh
+GET IRQ _ROUTING_OPTIONS OEh
+SET PCI _IRQ OFh
+
+Most operating systems today can access PCI devices directly with their own
+class driver. As the PCI bus is completely discoverable (unless hidden by the
+BIOS for a board-specific reason), then through that class driver they can
+access PCI devices, class codes, as well as read and write configuration
+registers as needed.
+
+The more useful calls are Get_IRQ_Routing_Options and Set_PCI_IRQ,
+
+which some operating systems still use.
+P C I B I O S Specification version two point one spells out P C I B I O S calls via legacy software interrupt Int one A hexadecimal; however, legacy calls are fast becoming obsolete in the modern world of U E F I. P C I B I O S Int one A hexadecimal function calls are listed in Table five point one.
+
+The table titled "P C I B I O S Int one A hexadecimal Function Calls" presents a list of functions and their corresponding A H or A L register values. The first column is "Function" and the second column is "A H A L".
+
+For the P C I underscore FUNCTION underscore I D function, the A H value is B one hexadecimal.
+For the P C I underscore B I O S underscore PRESENT function, the A L value is zero one hexadecimal.
+For the FIND underscore P C I underscore DEVICE function, the A L value is zero two hexadecimal.
+For the FIND underscore P C I underscore CLASS underscore CODE function, the A L value is zero three hexadecimal.
+For the GENERATE underscore SPECIAL underscore CYCLE function, the A L value is zero six hexadecimal.
+For the READ underscore CONFIG underscore BYTE function, the A L value is zero eight hexadecimal.
+For the READ underscore CONFIG underscore WORD function, the A L value is zero nine hexadecimal.
+For the READ underscore CONFIG underscore D WORD function, the A L value is zero A hexadecimal.
+For the WRITE underscore CONFIG underscore BYTE function, the A L value is zero B hexadecimal.
+For the WRITE underscore CONFIG underscore WORD function, the A L value is zero C hexadecimal.
+For the WRITE underscore CONFIG underscore D WORD function, the A L value is zero D hexadecimal.
+For the GET underscore I R Q underscore ROUTING underscore OPTIONS function, the A L value is zero E hexadecimal.
+And for the SET underscore P C I underscore I R Q function, the A L value is zero F hexadecimal.
+
+Most operating systems today can access P C I devices directly with their own class driver. As the P C I bus is completely discoverable, unless hidden by the B I O S for a board specific reason, then through that class driver they can access P C I devices, class codes, as well as read and write configuration registers as needed. The more useful calls are Get underscore I R Q underscore Routing underscore Options and Set underscore P C I underscore I R Q, which some operating systems still use.
+The Peripheral Component Interconnect, or P C I, B I O S Specification version two point one, historically defined a set of calls enabling software to interact with P C I devices through a legacy software interrupt mechanism, specifically Interrupt hexadecimal one A. These interrupt-driven interactions were foundational for operating systems and bootloaders to discover, identify, and configure P C I hardware components during the system's initialization phase. However, in the modern computing landscape, with the widespread adoption of the Unified Extensible Firmware Interface, or U E F I, these legacy B I O S calls are largely becoming obsolete. U E F I provides a more robust, standardized, and extensible interface for firmware, often allowing for direct hardware manipulation by the operating system, thereby reducing reliance on traditional B I O S services.
+
+The table presented enumerates the specific P C I B I O S function calls that could be invoked via the Interrupt hexadecimal one A vector. Each function is identified by a symbolic name and its corresponding hexadecimal value, which would typically be loaded into the A H or A L general-purpose registers before triggering the software interrupt. For instance, the `P C I_FUNCTION_ID` function, identified by hexadecimal B one in the A H register, serves as an initial handshake to verify the presence and version of the P C I B I O S, ensuring that the system firmware supports P C I operations. Subsequently, sub-functions are selected by placing their unique hexadecimal codes into the A L register, while keeping the main interrupt vector as hexadecimal one A.
+
+The `P C I_B I O S_P R E S E N T` function, with an A L value of zero one hexadecimal, provides a direct query for the availability of the P C I B I O S. Device enumeration and discovery are facilitated by functions such as `FIND_P C I_DEVICE` and `FIND_P C I_CLASS_CODE`, corresponding to A L values of zero two hexadecimal and zero three hexadecimal respectively. These functions allow system software to iterate through connected P C I devices either by their unique vendor and device identifiers or by their generic class codes, which categorize devices based on their functionality, such as network controllers or mass storage controllers. The `GENERATE_SPECIAL_CYCLE` function, mapping to A L zero six hexadecimal, enables the generation of specific P C I bus cycles that are used for broadcast messages or other special signaling.
+
+A crucial set of functions revolve around accessing the P C I configuration space. Each P C I device maintains a set of standardized configuration registers that store essential information like vendor I D, device I D, class codes, and, importantly, Base Address Registers, or B A R s, which define memory or I O regions the device uses. The `READ_CONFIG_BYTE`, `READ_CONFIG_WORD`, and `READ_CONFIG_DWORD` functions, with A L values of zero eight hexadecimal, zero nine hexadecimal, and zero A hexadecimal respectively, allow system software to retrieve information from these configuration registers at byte, word (two byte), and double word (four byte) granularities. Conversely, the `WRITE_CONFIG_BYTE`, `WRITE_CONFIG_WORD`, and `WRITE_CONFIG_DWORD` functions, with A L values of zero B hexadecimal, zero C hexadecimal, and zero D hexadecimal, enable the system to write to these registers, configuring the device's operational parameters, resource assignments, and control bits. This read and write capability is fundamental to the Plug and Play functionality of P C I, where the system dynamically allocates resources and sets up devices.
+
+Finally, interrupt management is handled by `GET_I R Q_ROUTING_OPTIONS` and `SET_P C I_I R Q`, with A L values of zero E hexadecimal and zero F hexadecimal. These functions are critical for establishing how P C I device interrupts are mapped to the system's interrupt request, or I R Q, lines. Correct interrupt routing is essential for P C I devices to asynchronously signal events to the C P U, allowing for efficient communication without constant polling.
+
+In contemporary computing environments, most operating systems bypass these legacy B I O S P C I calls. Modern operating systems possess their own P C I bus drivers that directly interact with P C I hardware, leveraging the inherent discoverability of the P C I bus architecture. The P C I specification mandates that devices identify themselves and their resource requirements through their configuration space. This allows the O S to directly read and write to these configuration registers via memory-mapped I O, rather than relying on an intermediary B I O S firmware layer. This direct access provides enhanced performance, greater flexibility, and more comprehensive control over hardware resources. While the B I O S still performs an initial enumeration and basic setup during boot, the operating system typically takes over full management, dynamically loading appropriate device drivers based on the discovered device and class codes. Despite this shift, the functions related to interrupt routing, specifically `Get_I R Q_Routing_Options` and `Set_P C I_I R Q`, sometimes retain utility even in modern systems. This is because I R Q routing can involve platform-specific implementations and intricate interactions between the P C I host bridge, the Advanced Programmable Interrupt Controller, or A P I C, and the motherboard's specific interrupt topology, for which the B I O S or U E F I might still provide the authoritative or necessary interface for certain dynamic reconfigurations.

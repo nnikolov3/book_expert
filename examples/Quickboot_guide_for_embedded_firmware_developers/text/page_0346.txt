@@ -1,0 +1,97 @@
+DDR3-1066 Speed Bin -187E 187
+Cl-'RCD-'RP 7-7-7 8-8-8
+
+Parameter Symbol Min Max Min Max Units Notes
+
+ACTIVATE to internal "RCD 13.125 15 - ns
+
+READ or WRITE
+
+delay time
+
+PRECHARGE ‘RP 13.125 15 - ns
+
+command period
+
+ACTIVATE-to- ‘RC 50.625 52.5 . ns
+
+ACTIVATE or Refresh
+
+command period
+
+ACTIVATE-to- ‘RAS 37.5 a = tREFI 37.5 9 = tREFI ns 1
+
+PRECHARGE
+
+command period
+
+ClL="5% CWL=%5% 'CK{AVG) 3.0 3.3 3.0 3.3 ns 2. 3
+CWL=6 'CK{AVG) Reserved Reserved ns 3
+
+CL=¢& CWL=5 'CK{AVG) 2.5 3.3 2.5 3.3 ns r,
+CWL=6 "CK{AVG) Reserved Reserved ns 2.3
+
+CL=7 CWL=5 'CK([AVG) Reserved Reserved ns 3
+CWL=6 "CK{AVG) 1.B75 € 2.5 Reserved ns 2,3
+
+CL=38 CWL=5 'CK([AVG) Reserved Reserved ns 3
+CWL=6 MK{AVG) 1.875% «2.5 1.875 «2.5 ns ,
+
+Supported CL settings 5.6, 7, 8 5% 6, 8 CK
+
+Supported CWL settings 5B 5, 6 CK
+
+Notes:
+
+1. 'REFI depends on Tgpgg.
+
+2. The CL and CWL settings result in ‘CK requirements. When selecting
+'CK, both CL and CWL requirement settings need to be fulfilled.
+
+3. Reserved settings are not allowed.
+The table presents timing parameters for DDR three to one thousand sixty six Speed Bin, categorized by CL, RCD, and RP. The data includes a parameter column, a symbol column, minimum and maximum values, units, and notes.
+
+For the parameter ACTIVATE to internal READ or WRITE delay time, the symbol is RCD. For the -187E speed bin, the minimum value is thirteen point one two five nanoseconds, with no maximum specified. For the -187 speed bin, the minimum value is fifteen nanoseconds, with no maximum specified.
+
+For the PRECHARGE command period, the symbol is RP. For the -187E speed bin, the minimum is seven point seven and the maximum is seven point seven. For the -187 speed bin, the minimum is eight point eight and the maximum is eight point eight.
+
+For the ACTIVATE to ACTIVATE or Refresh command period, the symbol is RC. For the -187E speed bin, the minimum is not specified, and the maximum is not specified. For the -187 speed bin, the minimum is fifty point six two five nanoseconds, with no maximum specified.
+
+For the ACTIVATE to PRECHARGE command period, the symbol is RAS. For both the -187E and -187 speed bins, the value is thirty seven point five, with a maximum of nine times tREFI. The unit is nanoseconds, and the note is one.
+
+The table then details column latencies CL and write latencies CWL.
+
+When CL is five and CWL is five, the parameter is CK (AVG). For the -187E speed bin, the minimum is three point zero and the maximum is three point three. For the -187 speed bin, the minimum is three point zero and the maximum is three point three. The unit is nanoseconds. The notes indicate two and three.
+
+When CL is five and CWL is six, the parameter is CK (AVG). For both speed bins, the value is Reserved. The unit is nanoseconds. The notes indicate three.
+
+When CL is six and CWL is five, the parameter is CK (AVG). For the -187E speed bin, the minimum is two point five and the maximum is three point three. For the -187 speed bin, the minimum is two point five and the maximum is three point three. The unit is nanoseconds. The notes indicate two.
+
+When CL is six and CWL is six, the parameter is CK (AVG). For both speed bins, the value is Reserved. The unit is nanoseconds. The notes indicate two and three.
+
+When CL is seven and CWL is five, the parameter is CK (AVG). For the -187E speed bin, the value is Reserved. For the -187 speed bin, the value is Reserved. The unit is nanoseconds. The notes indicate three.
+
+When CL is seven and CWL is six, the parameter is CK (AVG). For the -187E speed bin, the minimum is one point eight seven five and the maximum is less than two point five. For the -187 speed bin, the value is Reserved. The unit is nanoseconds. The notes indicate two and three.
+
+When CL is eight and CWL is five, the parameter is CK (AVG). For the -187E speed bin, the value is Reserved. For the -187 speed bin, the value is Reserved. The unit is nanoseconds. The notes indicate three.
+
+When CL is eight and CWL is six, the parameter is CK (AVG). For the -187E speed bin, the minimum is one point eight seven five and the maximum is less than two point five. For the -187 speed bin, the minimum is one point eight seven five and the maximum is less than two point five. The unit is nanoseconds. The notes indicate two.
+
+The supported CL settings for the -187E speed bin are five, six, seven, and eight. For the -187 speed bin, they are five, six, and eight.
+
+The supported CWL settings for the -187E speed bin are five and six. For the -187 speed bin, they are also five and six.
+
+The notes provide additional information. Note one states that tREFI depends on T OPER. Note two explains that the CL and CWL settings result in tCK requirements, and when selecting tCK, both CL and CWL requirement settings need to be fulfilled. Note three clarifies that reserved settings are not allowed.
+This document details timing parameters for DDR3-1066 memory modules, specifically focusing on two speed bins: -187E and -187, corresponding to 'C L', 'R C D', and 'R P' values of 7-7-7 and 8-8-8 respectively. These parameters dictate the timing intervals, measured in nanoseconds, between various memory operations to ensure data integrity and system stability.
+
+The table presents several critical timing parameters. The first is 'A C T I V A T E' to internal 'R E A D' or 'W R I T E' delay time. For the -187E bin, this is a minimum of thirteen point one two five nanoseconds, with no specified maximum. For the -187 bin, the minimum is fifteen nanoseconds, also without a specified maximum. Following this is the 'P R E C H A R G E' command period. This parameter also shows thirteen point one two five nanoseconds minimum for the -187E bin and fifteen nanoseconds minimum for the -187 bin, with no upper limits specified.
+
+The 'A C T I V A T E' to 'A C T I V A T E' or 'R E F R E S H' command period is next. This value is fifty point six two five nanoseconds minimum for the -187E bin and fifty two point five nanoseconds minimum for the -187 bin. Again, no maximum is provided. The 'A C T I V A T E' to 'P R E C H A R G E' command period is specified as thirty seven point five nanoseconds, or nine times 't R E F I', for both bins. This indicates that this timing is dependent on the 't R E F I' parameter, which itself is influenced by operating temperature as noted in the accompanying text.
+
+The subsequent rows detail the relationship between 'C L', 'C W L', and the clock cycle timing, denoted as 't C K'. For 'C L' equal to five, when 'C W L' is also five, the timing is three point zero to three point three nanoseconds, with the 'C K ( A V G )' symbol. This corresponds to notes two and three, indicating that specific 'C L' and 'C W L' requirements must be met, and reserved settings are not permitted. When 'C L' is five and 'C W L' is six, this setting is reserved. For 'C L' equal to six, with 'C W L' equal to five, the timing is two point five to three point three nanoseconds, again with the 'C K ( A V G )' notation and corresponding notes. When 'C L' is six and 'C W L' is six, this is also reserved.
+
+Moving to higher 'C L' values, when 'C L' is seven and 'C W L' is five, the timing is one point eight seven five nanoseconds with a maximum of less than two point five nanoseconds. This is for the -187E bin. For the -187 bin, this specific combination is reserved. When 'C L' is seven and 'C W L' is six, the timing is also reserved for the -187E bin, and one point eight seven five nanoseconds with a maximum of less than two point five nanoseconds for the -187 bin.
+
+Finally, for 'C L' equal to eight, when 'C W L' is five, the timing is one point eight seven five nanoseconds with a maximum of less than two point five nanoseconds for the -187E bin, and one point eight seven five nanoseconds with a maximum of less than two point five nanoseconds for the -187 bin. When 'C L' is eight and 'C W L' is six, the timing is one point eight seven five nanoseconds with a maximum of less than two point five nanoseconds for the -187E bin, and again one point eight seven five nanoseconds with a maximum of less than two point five nanoseconds for the -187 bin.
+
+The supported 'C L' settings are listed as five, six, seven, and eight for the -187E bin and five, six, and eight for the -187 bin. The supported 'C W L' settings are five and six for both bins. The units for all timing parameters are nanoseconds, except where noted as 'C K', referring to clock cycles. The notes clarify that 't R E F I' is dependent on the operating temperature and that certain 'C L' and 'C W L' combinations necessitate specific 't C K' requirements to be fulfilled, with reserved settings being disallowed. This detailed breakdown allows for precise configuration of memory controllers to optimize performance and reliability.

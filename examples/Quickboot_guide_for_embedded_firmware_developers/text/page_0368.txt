@@ -1,0 +1,50 @@
+ranging from +127 to -128. Examples: See SPD byte 18. For Two’s
+Complement encoding, see Relating the MTB and FTB.
+
+Byte 37: Minimum Row Precharge Delay Time (tRPmin)
+
+This byte modifies the calculation of SPD Byte 20 (MTB units) with a fine
+correction using FTB units. The value of tRPmin comes from the SDRAM
+datasheet. This value is a Two’s Complement multiplier for FTB units,
+ranging from +127 to -128. Examples: See SPD byte 20. For Two’s
+Complement encoding, see Relating the MTB and FTB.
+
+Byte 38: Fine Offset for Minimum Active to Active/Refresh Delay Time
+(tRCmin)
+
+This byte modifies the calculation of SPD Bytes 21 and 23 (MTB units) with
+a fine correction using FTB units. The value of tRCmin comes from the
+SDRAM datasheet. This value is a Two’s Complement multiplier for FTB
+units, ranging from +127 to -128. Examples: See SPD byte 21 and 23. For
+Two’s Complement encoding, see Relating the MTB and FTB.
+
+Module-Specific Section: Bytes 60-116
+
+This section contains SPD bytes specific to DDR3 module families. Module
+Type Key Byte 3 is used as an index for the encoding of bytes 60-116. The
+content of bytes 60-116 are described in multiple appendices, one for each
+
+memory module family.
+
+SPD Field #60: “Module Nominal Height” Definition from JEDEC DDR3
+SPD Specification
+ranging from plus one hundred twenty seven to minus one hundred twenty eight. Examples: See S P D byte eighteen. For Two's Complement encoding, see Relating the M T B and F T B.
+
+Byte thirty seven: Minimum Row Precharge Delay Time (tRPmin)
+
+This byte modifies the calculation of S P D Byte twenty (M T B units) with a fine correction using F T B units. The value of tRPmin comes from the S D R A M datasheet. This value is a Two's Complement multiplier for F T B units, ranging from plus one hundred twenty seven to minus one hundred twenty eight. Examples: See S P D byte twenty. For Two's Complement encoding, see Relating the M T B and F T B.
+
+Byte thirty eight: Fine Offset for Minimum Active to Active/Refresh Delay Time (tRCmin)
+
+This byte modifies the calculation of S P D Bytes twenty one and twenty three (M T B units) with a fine correction using F T B units. The value of tRCmin comes from the S D R A M datasheet. This value is a Two's Complement multiplier for F T B units, ranging from plus one hundred twenty seven to minus one hundred twenty eight. Examples: See S P D byte twenty one and twenty three. For Two's Complement encoding, see Relating the M T B and F T B.
+
+Module Specific Section: Bytes sixty to one hundred sixteen
+
+This section contains S P D bytes specific to D D R three module families. Module Type Key Byte three is used as an index for the encoding of bytes sixty to one hundred sixteen. The content of bytes sixty to one hundred sixteen are described in multiple appendices, one for each memory module family.
+
+S P D Field number sixty: "Module Nominal Height" Definition from J E D E C D D R3 S P D Specification.
+The document delves into specific byte definitions within the Serial Presence Detect, or S P D, data structure, a crucial component for identifying and configuring memory modules. It first details Byte 37, which defines the Minimum Row Precharge Delay Time, denoted as tRPmin. This parameter is critical for DRAM operation, specifying the minimum time required between activating a row and initiating a precharge operation on that same row. The value of tRPmin, as indicated, is derived from the S D Ram datasheet and is represented in Fine Timing Boundary, or F T B, units. The encoding uses a Two's Complement multiplier, allowing for a range from plus one hundred twenty seven to minus one hundred twenty eight. The text references other parts of the S P D for examples and further explanation regarding this encoding scheme.
+
+Following this, Byte 38 is described, representing the Fine Offset for Minimum Active to Active/Refresh Delay Time, or tRCmin. Similar to tRPmin, this byte modifies a value derived from S D Ram parameters, specifically bytes twenty one and twenty three, which are also quantified in M T B units. The value of tRCmin, obtained from the S D Ram datasheet, is also subject to a Two's Complement encoding, spanning the same range of plus one hundred twenty seven to minus one hundred twenty eight, with references to related documentation for context.
+
+The document then transitions to a broader "Module Specific Section," encompassing bytes sixty through one hundred sixteen. This section is dedicated to S P D bytes that are particular to D D R three memory module families. A key element within this section is Module Type Key Byte three, which functions as an index to govern the encoding of the subsequent bytes in the sixty to one hundred sixteen range. The content of these bytes, as specified, is detailed across multiple appendices, with each appendix dedicated to a particular memory module family. Finally, it highlights S P D Field number sixty, which pertains to the "Module Nominal Height," a definition sourced from the J E D E C D D R three S P D Specification, providing a standardized measurement for the physical dimensions of the memory module.

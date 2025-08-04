@@ -1,0 +1,51 @@
+Conclusion
+
+Avoid cross-contamination of your products. From a legal point of view, it is
+important not to link BSD code (like that in Intel BLDK or Tiano), or any
+proprietary code (like a commercial BIOS) to GPL code (like Linux). It may
+help to keep GPL code firewalled and separated as much as possible, either
+physically or logically, from other code whose license types are such that one
+entity does not cross-pollinate with the other. Execution during one phase
+should know nothing about the next phase except where to jump to once that
+black box code is loaded. In this manner, there is no linking performed. It
+should be noted that some legal experts believe that linking is irrelevant and
+
+it is the actual intent that matters.
+
+—Any non-GPL code would frown upon being linked at this point to any
+GPL v3 code.
+
+—LGPL libraries, from reading through several references, appear to not
+have this linking problem that GPL code has.
+
+—There are open-source tools to allow creation of a firmware image that
+concatenates the blocks into an FWH or SPI image such that it can
+
+be flashed or upgraded.
+
+When looking at the debate between proprietary, BSD, and GPL licenses, it
+can be equated roughly to an in-depth political, ideological discussion. The
+rules can be drastically different. The viewpoints are as diverse as they would
+be between passionate and insightful people debating the merits and demerits
+of capitalism, socialism, and communism (respectively). And comparing the
+three, the analogy can play out along these lines. But when going from the
+
+theoretical to the implementation, the differences can make or break your
+Conclusion
+
+Avoid cross contamination of your products. From a legal point of view, it is important not to link G P L code like that in Intel B L D K or Tiano, or any proprietary code like a commercial B I O S to G P L code like Linux. It may help to keep G P L code firewalled and separated as much as possible, either physically or logically, from other code whose license types are such that one entity does not cross pollinate with the other. Execution during one phase should know nothing about the next phase except where to jump to once that black box code is loaded. In this manner, there is no linking performed. It should be noted that some legal experts believe that linking is irrelevant and it is the actual intent that matters.
+
+Any non G P L code would frown upon being linked at this point to any G P L v three code.
+
+L G P L libraries, from reading through several references, appear to not have this linking problem that G P L code has.
+
+There are open source tools to allow creation of a firmware image that concatenates the blocks into an F W H or S P I image such that it can be flashed or upgraded.
+
+When looking at the debate between proprietary, B S D, and G P L licenses, it can be equated roughly to an in depth political, ideological discussion. The rules can be drastically different. The viewpoints are as diverse as they would be between passionate and insightful people debating the merits and demerits of capitalism, socialism, and communism respectively. And comparing the three, the analogy can play out along these lines. But when going from the theoretical to the implementation, the differences can make or break your
+The core technical concept here revolves around software licensing, particularly the implications of linking different code modules with varying license obligations. The primary focus is on the GNU General Public License (GPL), its variants like the Lesser GPL (LGPL), and proprietary licenses. From a legal and technical standpoint, cross-contamination of code is a critical concern. This refers to situations where code under one license, especially a more restrictive one like the GPL, becomes integrated with code under a different license, potentially imposing its licensing terms onto the other code.
+
+The text highlights the practice of firewalling and separating code, particularly GPL code, as much as possible, either physically or logically. This is a strategy to mitigate license propagation. The concept of execution phases is relevant here, where the intent is that one entity or phase of execution should not "pollinate" with another, meaning the licensing terms do not bleed across. The execution context dictates the outcome; for instance, a black box execution where the inner workings are not exposed might alter the licensing implications compared to a scenario where linking is more apparent. The debate also touches upon whether the act of linking itself is legally significant, with some legal experts holding the view that the intent behind the linking process is paramount.
+
+The discussion then delves into specific scenarios. Non G P L code being linked at a point where G P L version three code is involved is presented as a situation that would be disfavored due to the strictures of G P L v3. Similarly, the LGPL libraries are noted to have licensing challenges when linked in certain ways, implying that while intended to be more permissive than the standard G P L, their linking requirements can still lead to complications. The technical aspect of creating firmware images, specifically those that concatenate blocks into a Firmware Hub Write (F W H) or Serial Peripheral Interface (S P I) image, is also mentioned. This process involves packaging and potentially distributing software, and the licensing of the constituent code modules directly impacts the deployability and upgradability of such images.
+
+The latter part of the text shifts to a broader analogy, comparing the debate surrounding proprietary, B S D, and G P L licenses to political and ideological discussions. It suggests that the viewpoints can be as diverse as those debated in contexts of capitalism, socialism, and communism. The analogy implies that the underlying principles and the practical implications of these different licensing models can lead to significantly different outcomes, akin to how these ideologies can shape societal structures and economic systems. The "make or break" aspect when moving from theoretical principles to practical implementation underscores the real-world impact of these licensing choices on software development and distribution.

@@ -1,0 +1,49 @@
+system’s standard bootloader. For example: the new path will be
+/EFI/BOOT/grub.efi for a Linux system or
+C:\Windows\System32\winload.efi for a Windows system.
+
+A second-stage bootloader, as shown in Figure 8.1, will then hand off
+
+control from the second stage to the runtime system by first locating the
+bootloader configuration file, if any, and then executing commands contained
+
+in that configuration file in the following order:
+
+1. Locate a kernel image
+
+2. Locate any ancillary boot data, such as an init RAM disk
+
+3. Optional: convert an EFI memory map to E820h tables, for systems that
+do not support UEFI Runtime Services
+
+4. Call ExitBootServices()
+
+5. Execute the kernel with parameters given in the boot loader
+
+configuration file
+
+Direct Execution of a Linux Kernel
+
+Modern UEFI systems, in conjunction with modern versions of the Linux
+kernel, can directly execute a Linux kernel without need of a second-stage
+bootloader such as Grub.
+
+Since the Linux kernel now can get the EFI memory map via a call to
+UEFI Runtime Services, the necessity of using a second-stage bootloader to
+convert an EFI memory map to E820h/E801h tables is mitigated.
+
+This extension to the Linux kernel is fully backward compatible,
+meaning it is possible to add the EFI_STUB kernel configuration option to
+your kernel configuration and to seamlessly use this to execute the kernel
+
+directly from an UEFI firmware, or to execute the kernel as specified above
+system's standard bootloader. For example, the new path will be E F I boot gr ub dot E F I for a Linux system or C colon backslash Windows backslash System32 backslash winload dot E F I for a Windows system. A second-stage bootloader, as shown in Figure eight point one, will then hand off control from the second stage to the runtime system by first locating the bootloader configuration file, if any, and then executing commands contained in that configuration file in the following order: One, locate a kernel image. Two, locate any ancillary boot data, such as an init R A M disk. Three, Optional: convert an E F I memory map to E eight hundred twenty h tables, for systems that do not support U E F I Runtime Services. Four, call Exit Boot Services parentheses. Five, execute the kernel with parameters given in the boot loader configuration file.
+
+Direct Execution of a Linux Kernel
+
+Modern U E F I systems, in conjunction with modern versions of the Linux kernel, can directly execute a Linux kernel without need of a second-stage bootloader such as Gr ub. Since the Linux kernel now can get the E F I memory map via a call to U E F I Runtime Services, the necessity of using a second-stage bootloader to convert an E F I memory map to E eight hundred twenty h or E eight hundred one h tables is mitigated. This extension to the Linux kernel is fully backward compatible, meaning it is possible to add the E F I S T U B kernel configuration option to your kernel configuration and to seamlessly use this to execute the kernel directly from an U E F I firmware, or to execute the kernel as specified above.
+The text describes the process of booting a Linux kernel within a modern Unified Extensible Firmware Interface, or U E F I, system, detailing a transition from a standard bootloader to a more direct execution model. Initially, a system's standard bootloader, such as G R U B, might be used, with paths like `/E F I/B O O T/grub.efi` for a Linux system or `C:\Windows\System32\winload.efi` for a Windows system.
+
+The interaction involves a second stage bootloader, which takes control from the initial bootloader. This second stage then handsoff to the runtime system, first by locating the bootloader configuration file. It then proceeds through a sequence of operations: locating a kernel image, finding ancillary boot data like an init R A M disk, and optionally converting an E F I memory map to E eight two oh h or E eight oh one h tables, particularly for systems that do not support U E F I Runtime Services. Finally, it calls `ExitBootServices()` and executes the kernel with parameters specified in the bootloader configuration.
+
+The section titled "Direct Execution of a Linux Kernel" elaborates on how modern U E F I systems can directly execute a Linux kernel without the need for an intermediate second stage bootloader. This is facilitated by the Linux kernel's ability to obtain the E F I memory map through a direct call to U E F I Runtime Services. This capability eliminates the necessity of a second stage bootloader to translate the E F I memory map. This advancement is backward compatible, enabling the addition of an E F I S T U B kernel configuration option, which allows the system to seamlessly use this configuration or directly execute the kernel as previously described.

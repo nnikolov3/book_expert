@@ -1,0 +1,56 @@
+lower nibble (Additions Level) can optionally be used to determine which
+additional bytes or attribute bits have been defined; however, since any
+undefined additional byte must be encoded as 0x00 or undefined attribute bit
+must be defined as 0, software can safely detect additional bytes and use safe
+
+defaults if a zero encoding is read for these bytes.
+
+Production SPD Encoding Level Additions Level Hex
+
+Status Revision Bit? Bité Bits Bit4 Bit: Bit2 Bit1 Bito
+
+Pre- Revision 0.0 0 0 0 0 0 0 0 0 00
+
+production
+
+Production SPD Encoding Level Additions Level Hex
+
+Status Revision Bit7 Bite Bits Bit4 Bit: Bitz Bitl Bito
+Revision 0.1 0 0 0 0 0 0 0 1 01
+
+Revision 0.9 0 0 0 0 1 0 0 1 09
+
+Production Revision 1.0 0 0 0 1 0 0 0 0 10
+Revision 1.1 0 i) 0 1 0 i) 0 1 11
+Undefined Undefined 1 i 1 i 1 i 1 1 FF
+
+The Additions Level is never reduced even after an increment of the
+Encoding Level. For example, if the current SPD revision level were 1.2 and
+a change in Encoding Level were approved, the next revision level would be
+2.2. If additions to revision 2.2 were approved, the next revision would be
+2.3. Changes in the Encoding Level are extremely rare, however, since they
+can create incompatibilities with older systems.
+
+The exceptions to the above rule are the SPD revision levels used during
+
+development prior to the Revision 1.0 release. Revisions 0.0 through 0.9 are
+The lower nibble, which represents the Additions Level, can optionally be used to determine which additional bytes or attribute bits have been defined. However, since any undefined additional byte must be encoded as zero or an undefined attribute bit must be defined as zero, software can safely detect additional bytes and use safe defaults if a zero encoding is read for these bytes.
+
+The first table presents data for pre-production status. The SPD Revision is Revision zero point zero. In the Encoding Level, all bits from Bit seven down to Bit zero are zero. The Additions Level is also zero for all bits, and the Hex value is zero zero.
+
+The second table presents data for production status. For Revision zero point one, the Encoding Level bits from Bit seven through Bit three are zero. Bit two is zero, Bit one is one, and Bit zero is zero, resulting in an Additions Level of zero zero one. The Hex value is zero one. Following this, there are ellipsis indicating further revisions within this range. For Revision zero point nine, the Encoding Level bits from Bit seven through Bit four are zero. Bit three is zero, Bit two is zero, Bit one is zero, and Bit zero is one, resulting in an Additions Level of zero zero zero one. The Hex value is zero nine.
+
+The table continues with Revision one point zero. In the Encoding Level, Bit seven through Bit three are zero. Bit two is zero, Bit one is zero, and Bit zero is zero, giving an Additions Level of zero zero zero zero and a Hex value of ten. For Revision one point one, the Encoding Level bits from Bit seven through Bit three are zero. Bit two is zero, Bit one is one, and Bit zero is one, resulting in an Additions Level of zero zero zero one one. The Hex value is eleven. Ellipsis follow, indicating more revisions.
+
+For an Undefined Production Status with Undefined SPD Revision, all Encoding Level bits from Bit seven through Bit zero are one. The Additions Level bits from Bit two through Bit zero are also one. The Hex value is F F.
+
+The Additions Level is never reduced even after an increment of the Encoding Level. For example, if the current SPD revision level were one point two and a change in Encoding Level were approved, the next revision level would be two point two. If additions to revision two point two were approved, the next revision would be two point three. Changes in the Encoding Level are extremely rare, however, since they can create incompatibilities with older systems. The exceptions to the above rule are the SPD revision levels used during development prior to the Revision one point zero release. Revisions zero point zero through zero point nine are exceptions.
+The document describes a system where the lower nibble, specifically the "Additions Level," can be utilized to signify the presence of additional bytes or attribute bits. When such extensions are not defined, they are to be encoded as hexadecimal zero zero, a convention that permits software to reliably detect these additional bytes and apply safe defaults.
+
+The tables presented illustrate the relationship between "Production Status," "S P D Revision," "Encoding Level" represented by bits seven through zero, and the "Additions Level" which culminates in a hexadecimal representation. In the "Pre production" phase, a specific S P D revision, "Revision zero point zero," is associated with an encoding level where all bits, seven through zero, are set to zero, resulting in an "Additions Level" of hexadecimal zero zero.
+
+Subsequent tables detail further revisions. For "Revision zero point one," the encoding level shows bits seven through two as zero, bit one as one, and bit zero as zero, corresponding to an "Additions Level" of hexadecimal zero one. This pattern continues, with "Revision zero point nine" also showing an encoding level that leads to an "Additions Level" of hexadecimal zero nine.
+
+The tables then transition to later production revisions, showcasing "Revision one point zero" and "Revision one point one." These revisions appear to have a consistent encoding level where bits seven through three are zero, bit two is one, and bit one is zero, yielding an "Additions Level" of hexadecimal ten. An "Undefined" status is also represented, with all encoding bits set to one, resulting in an "Additions Level" of hexadecimal F F.
+
+A key principle articulated is that the "Additions Level" is monotonically increasing; it is never reduced, even when the "Encoding Level" increments. For instance, if the current S P D revision level is one point two and an "Encoding Level" is approved, the subsequent revision level would be two point two. If additions to "Revision" two point two were approved, the next revision would be two point three. Changes to the "Encoding Level" are noted as being extremely rare, and such changes can introduce incompatibilities with older systems. The primary exception to the general rule of non-decreasing "Additions Level" applies to S P D revisions implemented during development prior to the "Revision one point zero" release; specifically, revisions zero point zero through zero point nine adhere to this exception.

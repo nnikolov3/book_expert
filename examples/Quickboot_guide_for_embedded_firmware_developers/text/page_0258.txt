@@ -1,0 +1,66 @@
+Starting on Sandy Bridge CPUs, which launched in 2010, the CPU frequency
+at reset is limited to the lowest frequency supported by the processor. To
+enable CPU performance state (P-state) transitioning, a list of registers must
+be configured in the correct order. For the Intel Fast Boot, the following is
+
+expected:
+
+1. Every Full Boot shall save the necessary register setting in UEFI
+Variables protocol, as nonvolatile content.
+
+2. On Fast Boot, the necessary registers needed for enabling P-state will be
+restored as soon as possible. By the time that DXE phase is entered, the
+
+boot processor shall be in PO with turbo enabled (if applicable).
+
+Streamline CPU Reset and Initial CPU Microcode Update
+
+Precise time budgeting has been done for the following sequence of events—
+from platform reset to initial BIOS code fetch at the reset vector (memory
+
+address). The key steps within this sequence are:
+
+1. CPU timestamp counter zeroed and counting started at maximum
+nonturbo frequency.
+
+DMI initialization completed.
+
+Soft strap and dynamic fusing of CPU completed.
+
+CPU patch microcode update read from SPI flash (only once).
+
+gk Ww
+
+All logical processors (APs) within the CPU package patch-updated
+(using the cached copy of the CPU patchMU).
+6. BSP (bootstrap processor) starts fetching the BIOS at reset vector for
+
+execution.
+Starting on Sandy Bridge C P Us, which launched in two thousand ten, the C P U frequency at reset is limited to the lowest frequency supported by the processor. To enable C P U performance state P state transitioning, a list of registers must be configured in the correct order. For the Intel Fast Boot, the following is expected:
+
+One. Every Full Boot shall save the necessary register setting in U E F I Variables protocol, as nonvolatile content.
+Two. On Fast Boot, the necessary registers needed for enabling P state will be restored as soon as possible. By the time that D X E phase is entered, the boot processor shall be in P zero with turbo enabled if applicable.
+
+Streamline C P U Reset and Initial C P U Microcode Update
+
+Precise time budgeting has been done for the following sequence of events—from platform reset to initial B I O S code fetch at the reset vector memory address. The key steps within this sequence are:
+
+One. C P U timestamp counter zeroed and counting started at maximum nonturbo frequency.
+Two. D M I initialization completed.
+Three. Soft strap and dynamic fusing of C P U completed.
+Four. C P U patch microcode update read from S P I flash only once.
+Five. All logical processors A P s within the C P U package patch updated using the cached copy of the C P U patch M U.
+Six. B S P bootstrap processor starts fetching the B I O S at reset vector for execution.
+The provided text delves into the intricacies of CPU initialization, specifically focusing on how processor frequency and performance states, known as P states, are managed during the boot process. This discussion originates from the Sandy Bridge CPU architecture, introduced around two thousand ten. A fundamental aspect of CPU operation is its clock frequency, which dictates the pace at which instructions are executed. CPUs can dynamically adjust this frequency to balance performance and power consumption. This dynamic adjustment is often referred to as P state transitioning.
+
+For a CPU to effectively transition between these P states, a specific sequence of register configurations is required. The text highlights that the CPU frequency at reset is typically limited to the lowest supported frequency to ensure a stable startup. To enable the dynamic P state transitioning, a predefined list of registers must be configured in a precise order. This configuration is crucial for the functionality known as Intel Fast Boot.
+
+Two primary boot scenarios are presented. In the first scenario, a "Full Boot," the system saves the necessary register settings within the U E F I Variables protocol. This protocol is designed to store nonvolatile content, meaning the settings persist even when the power is off. This ensures that previous configurations can be restored or utilized in subsequent boots.
+
+The second scenario is a "Fast Boot." During a fast boot, the system is expected to restore the previously saved necessary registers, enabling P state transitioning. This restoration must occur as soon as the boot process permits. The text specifies that by the time the DXE phase, which stands for Driver Execution Environment, is entered, the boot processor should be operating in P zero, which is the highest performance state, with turbo boost functionality enabled, if applicable. Turbo boost is a technology that allows the CPU to temporarily exceed its base clock speed when thermal and power conditions permit, providing a burst of additional performance.
+
+The document then transitions to discussing the process of "Streamline CPU Reset and Initial CPU Microcode Update." This section emphasizes the importance of precise time budgeting for a sequence of events that occur from the platform reset to the initial B I O S code fetch at the reset vector. The reset vector is a specific memory address where the processor begins execution after a reset event. The key steps involved in this streamlined process are enumerated.
+
+First, the C P U timestamp counter is zeroed, and its counting process begins at the maximum non turbo frequency. This establishes a baseline for timekeeping within the processor. Second, D M I initialization, which refers to the Direct Media Interface used for communication between the central hub and the I O controller, is completed. Third, soft strap and dynamic fusing of the C P U are performed. Soft strapping refers to configuring hardware settings through software, while dynamic fusing likely pertains to features that can be enabled or disabled on the fly.
+
+The fourth step involves reading the C P U patch microcode from the S P I flash, which is a Serial Peripheral Interface flash memory. Microcode is a layer of instructions that can update or correct the functionality of the processor's control unit. This update is performed only once to ensure consistency. Fifth, all logical processors, also known as A P s or auxiliary processors, within the C P U package are updated using a cached copy of the C P U patch. This ensures that all processing units within the C P U package are running with the latest microcode. Finally, the B S P, or bootstrap processor, which is the primary processor responsible for initiating the boot sequence, starts fetching the B I O S at the reset vector for execution. This sequence of operations is critical for ensuring a correct and efficient system startup, with particular attention paid to the timing and dependencies between various initialization steps.

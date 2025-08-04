@@ -1,0 +1,45 @@
+To boot to an OS, you must have the right boot path enabled to get to the
+target operating system. In a mainstream system, this means you have to hunt
+and peck to find all the bootable storage devices within the bootable buses
+and devices, locate a bootable partition somewhere, and then decide whether
+
+you want to boot to it or not. But how do you get there?
+
+The Bus
+
+From the CPU and chipset, there is likely a bus or two that must be traversed,
+such as PCI, AHCI, USB, or SD. We must communicate on that bus in order
+to know whether the OS is out there on a device somewhere, and that the
+next-stage boot loader is resident and ready to be loaded and executed.
+Fortunately, in the EFI case, there is often a bus driver that has been
+constructed. That bus driver would know the protocols for reads, writes, and
+so on. This is fundamental regardless of whether you are searching for
+bootable partitions, locating and identifying the boot target’s .efi file, or, in
+the case of a closed box, just reading a sector and blindly handing off control
+
+to 1t.
+
+The Device
+
+Once you can communicate across a particular bus to talk to the device, there
+may be multiple boot partitions or devices to choose from. For this a boot
+priority list is a requirement, unless you have only one specific target in
+mind. While you may be able to hard-code this for a closed box, for recovery
+cases, it is ideal to have a list of removable media that reflect a higher priority
+than the default storage. Alternate input methods may be used to drive the
+
+boot flow to a particular device (such as the use of jumpers or switches on
+To boot to an O S, you must have the right boot path enabled to get to the target operating system. In a mainstream system, this means you have to hunt and peck to find all the bootable storage devices within the bootable buses and devices, locate a bootable partition somewhere, and then decide whether you want to boot to it or not. But how do you get there?
+
+The Bus
+
+From the C P U and chipset, there is likely a bus or two that must be traversed, such as P C I, A H C I, U S B, or S D. We must communicate on that bus in order to know whether the O S is out there on a device somewhere, and that the next stage boot loader is resident and ready to be loaded and executed. Fortunately, in the E F I case, there is often a bus driver that has been constructed. That bus driver would know the protocols for reads, writes, and so on. This is fundamental regardless of whether you are searching for bootable partitions, locating and identifying the boot target's dot e f i file, or, in the case of a closed box, just reading a sector and blindly handing off control to it.
+
+The Device
+
+Once you can communicate across a particular bus to talk to the device, there may be multiple boot partitions or devices to choose from. For this a boot priority list is a requirement, unless you have only one specific target in mind. While you may be able to hard code this for a closed box, for recovery cases, it is ideal to have a list of removable media that reflect a higher priority than the default storage. Alternate input methods may be used to drive the boot flow to a particular device (such as the use of jumpers or switches on
+The process of booting an operating system fundamentally requires establishing a correct boot path, which involves locating and identifying a bootable storage device containing the target operating system. This is achieved by systematically probing accessible storage devices, often through a series of bus traversals. The system must first identify the presence of bootable partitions and then locate the specific executable boot loader, such as an EFI file, on one of these partitions. In a mainstream system, this hunting and pecking process is essential to determine the bootable media and subsequently decide whether to initiate the boot sequence from it.
+
+Communication between the central processing unit, chipset, and various peripheral devices occurs over buses. Common examples of such buses include P C I E, A H C I, U S B, and S D. To successfully boot, the system must be able to communicate over the relevant bus to determine if the operating system resides on a particular device and if its corresponding next stage boot loader is present and ready for execution. In scenarios utilizing the Extensible Firmware Interface, or E F I, a bus driver is typically available, facilitating communication protocols for reading and writing data. This driver's capability to interpret bootable partition information and locate the boot target's E F I file is critical. In more constrained environments, this process might involve simply reading a specific sector of a storage device to ascertain its bootable status.
+
+When interacting with a specific device over a bus, multiple bootable partitions or devices may be encountered. The system's boot priority list dictates the order in which these are interrogated. In cases where only a single, specific target is required, or when dealing with a "closed box" scenario for recovery purposes, this priority list can be hardcoded. Alternatively, systems may support a list of removable media with configurable priorities, allowing the boot flow to be directed to a particular device via alternate input methods like jumpers or switches. This flexibility ensures that the system can be configured to boot from a designated device even when multiple potential boot sources are available.

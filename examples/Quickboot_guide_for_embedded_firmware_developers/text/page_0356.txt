@@ -1,0 +1,60 @@
+Write recovery hime WE MIN=15n5: MAX =n'a ns
+
+Delay from start of internal WTR MIN = greater of 4CK or 7.5ns; MAX = n/a CK
+WRITE iransaction to
+
+internal READ command
+
+READ-to-PFRECHARGE time 'RTP MIN = greater of 4CK or 7.5ns; MAX = n/a CK
+CASE lo CASE command delay ‘CLD MIN = 4K; MAX = n/a CK
+Auto precharge write DAL MIN = WE+'RP/CK [AVG]; MAX =n/ a CK
+recovery + precharge time
+
+MODE REGISTER SET "MED MIM = 4CK: MAX =n'a CK
+command cycle time
+
+MODE REGISTER SET "SOD MIN = greater of 12CK or 15ns; MAX = n/a CK
+
+command update delay
+
+SPD Field #27: “Minimum Internal Read to Precharge Command Delay
+Time (tgpmin)” Example from Micron MT41J256M8 Datasheet
+
+SPD Field 0x1C: tgaw Upper Nibble
+
+This is the upper nibble for the tp, SDRAM timing parameter. See the next
+
+section for how to calculate this value, and put the upper nibble into SPD
+Field #28, bits [3:0].
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+28 D=1C traw Upper Nibble Dx]
+
+Byte 28: Upper Nibble for tFAW
+This byte defines the most significant nibble for the value of tFAW (SPD
+byte 29). This value comes from the DDR3 SDRAM datasheet.
+
+Bits 7-4 Bits 3-0
+Reserved tg,,, Most Significant Nibble
+
+Reserved See Byte 29 description
+Write recovery time, WR, minimum fifteen nanoseconds, maximum n a, ns. Delay from start of internal W T R, minimum greater than four C K or seven point five nanoseconds, maximum n a, C K. Write transaction to internal R E A D command, R T P, minimum greater than four C K or seven point five nanoseconds, maximum n a, C K. R E A D to P R E C H A R G E time, C C D, minimum four C K, maximum n a, C K. C A S sharp to C A S sharp command delay, D A L, minimum is W R plus R P divided by C K average, maximum n a, C K. Auto precharge write recovery plus precharge time, M R D, minimum four C K, maximum n a, C K. M O D E R E G I S T E R S E T command cycle time, M O D E R E G I S T E R S E T command update delay, minimum greater than twelve C K or fifteen nanoseconds, maximum n a, C K.
+
+S P D Field twenty seven: Minimum Internal Read to Precharge Command Delay Time t R T P min example from Micron M T forty one J two hundred fifty six M eight Datasheet.
+
+S P D Field zero times one C: t F A W Upper Nibble. This is the upper nibble for the t F A W S D R A M timing parameter. See the next section for how to calculate this value, and put the upper nibble into S P D Field twenty eight, bits three to zero.
+
+The table presents data with three columns: Byte Dec, Byte Hex, Field Name, Typ. Value, and Definition.
+For Byte Dec twenty eight, the Byte Hex is zero times one C, the Field Name is t F A W Upper Nibble, the Typ. Value is zero times zero one, and the Definition is a hyphen.
+
+Byte twenty eight: Upper Nibble for t F A W. This byte defines the most significant nibble for the value of t F A W, S P D byte twenty nine. This value comes from the D D R three S D R A M datasheet.
+
+Bits seven to four: Reserved. Bits three to zero: t F A W Most Significant Nibble. Reserved. See Byte twenty nine description.
+The page presents information concerning Synchronous Dynamic Random Access Memory, or S D Ram, timing parameters and their representation within the Serial Presence Detect, or S P D, data structure. Specifically, it details the mapping of S D Ram timing values into the S P D format, which is crucial for system initialization and configuration.
+
+At the top, a table outlines various S D Ram timing parameters. Each entry includes a parameter name, a mnemonic code, minimum and maximum timing constraints, and the unit of measurement. For instance, "Write recovery time" has the mnemonic 'WR' and is defined with a minimum of fifteen nanoseconds and no specified maximum, with the unit being nanoseconds. "Delay from start of internal W R I T E transaction to internal R E A D command" uses the mnemonic 'WTR' and has a minimum constraint expressed as the greater of four clock cycles or seven point five nanoseconds, with a maximum of not applicable, measured in clock cycles. Other parameters like R T P, C C D, D A L, and M R D are similarly defined, illustrating the precise timing relationships required for efficient S D Ram operation. These parameters govern critical operations such as data retrieval, precharging memory banks, and setting operational modes. The use of clock cycles (CK) indicates a dependency on the system clock frequency, while nanoseconds provide absolute time constraints.
+
+The text then focuses on "S P D Field #27: Minimum Internal Read to Precharge Command Delay Time (t R T Pmin)", citing the Micron M T four one J two five six M eight Datasheet. This highlights how specific, performance-critical timing parameters are encoded within the S P D structure, allowing the system's memory controller to ascertain the capabilities and optimal operating settings of the installed S D Ram modules.
+
+Subsequently, "S P D Field zero X one C: t F A W Upper Nibble" is introduced. This section explains that this particular S P D field relates to the t F A W, or Four Active Window, timing parameter in S D Ram. It specifies that this field, located at hexadecimal address one C, contains the "upper nibble" of the t F A W value. A table further clarifies this mapping: Byte twenty eight (decimal), which corresponds to hexadecimal one C, is designated as the field name "t F A W Upper Nibble" and has a typical value of zero X zero one. This entry is further elaborated upon: Byte twenty eight, specifically its upper nibble (bits seven through four), defines the most significant part of the t F A W timing value. The lower nibble (bits three through zero) is reserved and references Byte twenty nine for its definition. This structure indicates a common practice in memory module configuration where a single byte is split to encode multiple related pieces of information or to accommodate values that require more than four bits but less than a full byte. The value of t F A W itself is derived from the D D R three S D Ram datasheet, underscoring the interrelation between S P D definitions and the underlying memory device specifications. This level of detail in S P D data is essential for automated system configuration, ensuring compatibility and optimal performance across diverse hardware configurations.

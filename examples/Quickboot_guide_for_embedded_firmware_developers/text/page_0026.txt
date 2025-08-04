@@ -1,0 +1,202 @@
+Advancement
+
+19805
+
+1990s
+
+2000s
+
+201108
+
+CPU
+
+Buses
+
+Memory
+
+Video
+
+Graphics
+Audio
+
+Storage
+
+as
+
+Firmware
+
+16 bit internal
+8 bit 3xternal
+
+8 bit I5A
+
+16-64 KB down,
+194 KB expan-
+sion PROMs,
+EEPROMs
+
+MDA for text, EGA
+
+CGA to TV
+
+PL speaker, 1 Ch.
+PAM
+
+Cassette tape, KB
+with 5Y4-inch
+floppy drives
+PC-D05 1.0
+
+and above
+
+8 KB ASM BIOS
+32 KB BASIC
+
+32 bit
+Virtual memory,
+Pentium, Pé,
+
+Dual Processors
+
+Microchannelt,
+XT, EISA, PCI,
+LSE
+
+EDO, BEDO,
+SORAM, RDRAM,
+DDR, NOR, PWH
+
+Color, VGA,
+SVGA,
+VGA
+
+20, 3D
+
+SoundBlastert,
+AC'Q7
+
+HDDs, mega-
+bytes, with IDE
+and UDMA, PATA
+
+Windowst 3.1,
+Windows 95
+Windows 98
+Windows NT
+
+Upto 1 MB EFI
+and legacy
+
+G4b extensions
+Pentium™4, Intel®
+Xeon, bigger caches,
+multi threading
+
+PCI-Xt, PCI Expresst,
+USB2
+
+DDR2,
+DDR3,
+NAND,
+SPI
+
+OVI, HDMI, DP
+
+3D enhancements
+Intel® HD Audio
+
+USB, SATA, SATA2,
+550s,
+
+gigabytes
+
+Linuxt
+
+Windows 2000
+Windows XP,
+Windows 7,
+
+4 MB and & MB UEFI
+and legacy
+
+G4b processing,
+128b extensions
+Intel® Atom, intel®
+Core, multiple
+cares, little cores
+
+(again)
+
+USB3, Light Peak
+
+Lower power DDR,
+DDR4,
+550s, PCle NVMe
+
+eDP, 4K and soon
+aK
+
+GPUs
+
+Lower power and
+codec enhance-
+ments
+
+Terabytes, SDIO,
+MMC, SATA3, ONFI
+MAND
+
+Windows 8, 81.,
+Windows 10, full
+protected mode
+operating systems,
+Linux 2.6.18 and
+above
+
+16 MB, offload
+
+engines
+
+The Big Blocks of Intel Architecture
+The table illustrates the advancement of computer architecture across four decades: the nineteen eighties, nineteen nineties, two thousands, and two thousands tens.
+
+Beginning with the C P U, in the nineteen eighties, the C P U featured sixteen bit internal and eight bit three times external architectures. By the nineteen nineties, it advanced to thirty two bit, incorporating virtual memory, Pentium, P six, and dual processors. The two thousands saw sixty four bit extensions, Pentium four, Intel Xeon processors, bigger caches, and multi threading. The two thousands tens brought sixty four bit processing, one hundred twenty eight bit extensions, Intel Atom, Intel Core, and the trend of multiple cores, and little cores again.
+
+For Buses, the nineteen eighties had the eight bit I S A. The nineteen nineties introduced Micro channel T, X T, E I S A, P C I T, and U S B. The two thousands advanced to P C I X T, P C I Express T, and U S B two. In the two thousands tens, U S B three and Light Peak were prominent.
+
+Regarding Memory, the nineteen eighties offered sixteen to sixty four kilobyte down and one hundred ninety six kilobyte expansion P R O M S and E E P R O M S. The nineteen nineties introduced E D O, B E D O, S D Ram, R D Ram, D D R, N O R, and F W H. In the two thousands, memory evolved to D D R two, D D R three, N A N D, and S P I. The two thousands tens featured lower power D D R, D D R four, S S D s, and P C I E N V M e.
+
+For Video, the nineteen eighties used M D A for text and E G A. The nineteen nineties expanded to color, V G A, S V G A, and X V G A. The two thousands saw D V I, H D M I, and D P. By the two thousands tens, video advanced to e D P, four K, and soon eight K resolutions.
+
+In Graphics, the nineteen eighties were characterized by C G A to T V. The nineteen nineties introduced two D and three D graphics. Three D enhancements arrived in the two thousands. The two thousands tens marked the widespread use of G P U s.
+
+For Audio, the nineteen eighties had P C speakers with one channel P W M. The nineteen nineties brought Sound Blaster T and A C ninety seven. Intel H D Audio became standard in the two thousands. The two thousands tens focused on lower power and codec enhancements for audio.
+
+Storage in the nineteen eighties primarily involved cassette tape and kilobytes with five and one quarter inch floppy drives. The nineteen nineties saw H D D s and megabytes, with I D E and U D M A, P A T A interfaces. The two thousands introduced U S B, S A T A, S A T A two, S S D s, and gigabytes of storage capacity. The two thousands tens brought terabytes, S D I O, M M C, S A T A three, O N F I N A N D technologies.
+
+Regarding the O S, the nineteen eighties featured P C D O S one point zero and above. The nineteen nineties introduced Windows three point one, Windows ninety five, Windows ninety eight, and Windows N T. The two thousands brought Linux, Windows two thousand, Windows X P, and Windows seven. The two thousands tens were characterized by Windows eight, eight point one, Windows ten, full protected mode operating systems, and Linux two point six point one eight and above.
+
+Finally, for Firmware, the nineteen eighties used eight kilobyte A S M B I O S and thirty two kilobyte B A S I C. The nineteen nineties saw firmware grow to up to one megabyte E F I and legacy systems. In the two thousands, firmware increased to four megabyte and eight megabyte E F I and legacy. By the two thousands tens, firmware reached sixteen megabyte and incorporated offload engines.
+
+The overall theme of this table is "The Big Blocks of Intel Architecture."
+The presented tabular data illustrates a profound evolution in fundamental computing architectures and technologies across four decades, from the nineteen eighties to the two thousand tens. This progression is a testament to the relentless pursuit of enhanced performance, increased capacity, superior fidelity, and greater efficiency in digital systems, underpinned by breakthroughs in semiconductor physics, materials science, and computer science algorithms.
+
+Analyzing the Central Processing Unit, or C P U, advancements reveals a foundational shift in processing capabilities. The nineteen eighties saw C P U s with a sixteen bit internal data path and an eight bit external bus, exemplified by early microprocessors which processed data in sixteen bit chunks internally but were limited to transferring eight bits at a time across the system bus. This constrained both computational throughput and external communication. By the nineteen nineties, the industry transitioned to full thirty two bit C P U architectures, such as the original Pentium and P six microarchitectures. This enabled direct addressing of up to four gigabytes of physical memory and facilitated the widespread adoption of virtual memory, a crucial operating system abstraction that provides each process with its own isolated memory space, enhancing system stability and enabling multitasking. The introduction of dual processors, meaning multiple physical C P U chips, marked the earliest mainstream foray into hardware parallelism, allowing two independent streams of instructions to be executed simultaneously.
+
+The two thousands brought sixty four bit extensions, initially seen in processors like the Pentium four and Intel Xeon. These extensions allowed C P U s to address memory beyond the four gigabyte limit, essential for large datasets and server workloads, while maintaining compatibility with existing thirty two bit software. Cache sizes experienced exponential growth, evolving from kilobytes to megabytes for L one, L two, and L three caches, strategically placed close to the C P U to bridge the widening speed gap between the processor and main D Ram. Multi threading, particularly Simultaneous Multi Threading as implemented in Hyper Threading, further enhanced parallelism by allowing a single physical C P U core to execute multiple software threads concurrently, improving resource utilization by interleaving instructions from different threads on shared functional units. The two thousand tens solidified sixty four bit processing as the industry standard, and introduced one hundred twenty eight bit extensions, primarily referring to wider S I M D (Single Instruction Multiple Data) instruction sets like A V X, which enable parallel operations on larger vectors of data, accelerating multimedia, scientific, and cryptographic computations. The pervasive adoption of multiple cores within a single C P U die, seen in the Intel Core series, became the primary strategy for performance scaling, moving away from simple clock frequency increases. The re-emergence of "little cores" like those in the Intel Atom, or similar heterogeneous architectures, indicated a growing emphasis on power efficiency and workload-specific optimization, balancing high performance cores with low power, high efficiency cores.
+
+The evolution of Buses highlights the constant demand for increased data throughput between components. The eight bit I S A bus of the nineteen eighties was a bottleneck, leading to attempts to improve it with Microchannel and E I S A in the nineteen nineties. However, the Peripheral Component Interconnect, or P C I, bus became the dominant standard due to its higher speed and efficient arbitration. Concurrently, the Universal Serial Bus, or U S B, emerged, revolutionizing peripheral connectivity with its simplicity and hot plug capability. The two thousands saw the introduction of P C I Express, or P C I E, which was a paradigm shift from a shared parallel bus to a serial point to point interconnect. P C I E's scalable lane architecture offered vastly superior bandwidth, becoming critical for high performance components like G P U s. U S B two further increased peripheral data transfer rates. By the two thousand tens, U S B three provided another order of magnitude increase in speed, essential for external storage and high resolution devices. Technologies like Light Peak, which evolved into Thunderbolt, offered a high bandwidth, multi-protocol serial connection, consolidating data, video, and power over a single cable, showcasing the trend towards versatile, high-speed external interfaces.
+
+Memory technologies also illustrate a dramatic increase in capacity and speed. Early systems in the nineteen eighties were limited to tens of kilobytes of Ram, often supplemented by P R O M s and E E P R O M s for system firmware. The nineteen nineties brought significant improvements with E D O (Extended Data Out) and B E D O (Burst E D O) Ram, followed by the revolutionary S D Ram (Synchronous D Ram) which synchronized memory operations with the system clock for higher performance. D D R (Double Data Rate) S D Ram then doubled throughput by transferring data on both clock edges. Proprietary R D Ram also emerged as a high-speed alternative. The two thousands saw successive generations of D D R Ram, specifically D D R two and D D R three, each offering higher speeds and lower latencies. Critically, N A N D flash memory began its ascent, initially for small embedded systems, laying the groundwork for Solid State Drives, or S S D s. The two thousand tens were defined by D D R four, offering further gains in speed, density, and power efficiency. The widespread adoption of S S D s, now primarily using P C I E N V M E (Non Volatile Memory Express) interfaces, fundamentally transformed storage performance by bypassing the S A T A bottleneck and directly leveraging the high bandwidth of P C I E lanes, leading to dramatic improvements in system responsiveness.
+
+Video and Graphics advancements tell a story of escalating visual fidelity and computational complexity. The nineteen eighties started with text-only displays like M D A and basic color graphics like E G A. The nineteen nineties introduced V G A, S V G A, and X V G A, progressively increasing resolution and color depth, enabling richer graphical user interfaces and early multimedia. The two thousands marked the transition to digital display interfaces such as D V I, H D M I, and D P, eliminating analog signal degradation and supporting higher resolutions. The crucial development was the advent of specialized three D graphics accelerators that offloaded complex rendering tasks from the C P U, driving the evolution of sophisticated three D gaming and visualization. By the two thousand tens, Graphics Processing Units, or G P U s, became distinct and highly parallel processors, no longer just for graphics but increasingly for general purpose computation (G P G P U), accelerating tasks from scientific simulations to machine learning, and enabling ultra high definition displays such as four K and eight K.
+
+Audio capabilities progressed from the rudimentary P C speaker, generating simple tones via P W M in the nineteen eighties, to multi-channel digital audio with Sound Blaster cards and the A C ninety seven codec in the nineteen nineties, transforming P C s into true multimedia machines. The two thousands saw the adoption of Intel H D Audio, providing higher fidelity and more sophisticated audio processing. The two thousand tens focused on lower power codecs and further enhancements, reflecting the integration of high-quality audio into a wider array of devices and emphasis on mobile platforms.
+
+Storage technology underwent a transformation from primitive, low-capacity media like cassette tapes and five and a quarter inch floppy drives in the nineteen eighties, storing data in kilobytes. The nineteen nineties introduced Hard Disk Drives, or H D D s, with megabyte capacities, leveraging I D E and then U D M A (Ultra D M A) over P A T A (Parallel A T A) interfaces. The two thousands saw the dominance of S A T A (Serial A T A) interfaces, offering higher speeds and simplified cabling, and the emergence of S S D s, initially in gigabytes. The two thousand tens witnessed the explosion of H D D capacities into the terabyte range, the proliferation of removable media standards like S D I O and M M C, the ubiquitous S A T A three standard, and the widespread adoption of O N F I (Open N A N D Flash Interface) for N A N D flash, solidifying flash memory as a high performance and high density storage solution.
+
+Operating Systems, or O S s, evolved from the single user, single tasking P C D O S of the nineteen eighties to complex, multi user, multitasking environments. The nineteen nineties saw the rise of Microsoft Windows, starting with graphical shells like Windows three point one, then fully integrated graphical O S s like Windows ninety five and ninety eight for consumers. Crucially, Windows N T introduced a robust kernel with preemptive multitasking and memory protection, laying the groundwork for all future professional and consumer Windows versions. The two thousands brought the maturation of Linux as a powerful open source alternative, alongside Microsoft's continued refinement of the N T kernel with Windows two thousand, X P, and seven, offering increasing stability, security, and usability. By the two thousand tens, operating systems like Windows eight, eight point one, and ten, along with advanced Linux kernels, were universally "full protected mode" operating systems. This signifies that they leverage the C P U's protected mode capabilities to manage virtual memory, enforce memory isolation between processes, and provide preemptive multitasking, ensuring that application crashes do not destabilize the entire system, a fundamental principle for modern computing reliability and security.
+
+Finally, Firmware, the low level software that initializes hardware, also expanded in complexity and capability. The nineteen eighties featured small, assembly-coded B I O S (Basic Input Output System) of eight kilobytes. While the table anachronistically mentions E F I for the nineteen nineties, the general trend was for B I O S sizes to grow, eventually leading to the widespread adoption of U E F I (Unified Extensible Firmware Interface) in the two thousands. U E F I provided a more sophisticated, modular, and extensible firmware environment, supporting larger storage devices through G P T (G U I D Partition Table) and enabling more complex boot processes. By the two thousand tens, U E F I firmware reached sixteen megabytes or more, incorporating "offload engines." These are specialized hardware or firmware components, such as the Intel Management Engine, which perform tasks like security, power management, or remote administration independently of the main C P U, signifying a trend towards deeper integration and delegation of system management functions to dedicated subsystems within the platform.
+
+Collectively, this table illustrates the core principles driving computer architecture: the relentless pursuit of speed through parallelism and pipelining; increased addressable memory and storage capacity; improved data transfer efficiency through higher bandwidth buses and serial interconnects; and the continuous abstraction of hardware complexity through sophisticated operating systems and firmware. These advancements, fueled by exponential growth in transistor density and innovative algorithmic designs, have transformed computing from a niche tool into a pervasive, indispensable aspect of modern life.

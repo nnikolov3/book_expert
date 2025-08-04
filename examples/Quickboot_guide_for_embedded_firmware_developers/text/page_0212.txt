@@ -1,0 +1,48 @@
+—Western Digital 80GB Scorpio Blue 5400 RPM drive
+—Intel® Solid State Drive X25-E
+
+It should also be noted that this proof of concept was intended to emulate
+real-world expectations of a system BIOS, meaning nothing was done to
+achieve results that could not reasonably be expected in a mass-market
+product design. The steps that were taken for this effort should be easily
+portable to other designs and should largely be codebase-independent.
+
+Table 10.1 lists the performance numbers achieved while maintaining
+
+broad market requirements.
+
+Table 10.1: Performance Measurement Results — Before/After
+
+Normal Bool Optimized Boot Percentage Reduction
+Boot Phase Time Time Delta in Boot Times
+SEC (ps) 26342 25419 9023 1.503
+PEI (ps) 1230905 63315 467 290 37.98
+DXE (ps) GOB234 443021 555213 55.61
+BDS (us) 7396050 7677S 6629272 89.63
+Total (s) 2.651531 1.999533 7.651098 79.28%
+Example 2
+
+Measurements were taken starting from a configuration based on the original
+
+Intel Atom processor. The performance numbers achieved are listed in Table
+10.2.
+
+—Intel Atom Processor 2530/7110 (CO stepping)
+Western Digital eight O G B Scorpio Blue five thousand four hundred R P M drive.
+Intel Solid State Drive X twenty five dash E.
+It should also be noted that this proof of concept was intended to emulate real world expectations of a system B I O S, meaning nothing was done to achieve results that could not reasonably be expected in a mass market product design. The steps that were taken for this effort should be easily portable to other designs and should largely be codebase independent. Table ten point one lists the performance numbers achieved while maintaining broad market requirements.
+
+Table ten point one: Performance Measurement Results – Before slash After.
+
+The table shows performance measurements for different boot phases, comparing normal boot time with optimized boot time. For the S E C boot phase, the normal boot time is twenty six thousand three hundred forty two microseconds, and the optimized boot time is twenty five thousand four hundred nineteen microseconds, resulting in a delta of nine hundred twenty three microseconds and a percentage reduction in boot times of three point five O three percent. For the P E I boot phase, the normal boot time is one million two hundred thirty thousand nine hundred five microseconds, and the optimized boot time is seven hundred sixty three thousand three hundred fifteen microseconds, with a delta of four hundred sixty seven thousand five hundred ninety microseconds and a percentage reduction of thirty seven point nine eight percent. The D X E boot phase shows a normal boot time of nine hundred ninety eight thousand two hundred thirty four microseconds and an optimized boot time of four hundred forty three thousand twenty one microseconds, a delta of five hundred fifty five thousand two hundred thirteen microseconds, and a percentage reduction of fifty five point six one percent. For the B D S boot phase, the normal boot time is seven million three hundred ninety six thousand fifty microseconds, the optimized boot time is seven hundred sixty six thousand seven hundred seventy eight microseconds, a delta of six million six hundred twenty nine thousand two hundred seventy two microseconds, and a percentage reduction of eighty nine point six three percent. The total boot time is measured in seconds, with a normal time of nine point six five one five three one seconds and an optimized time of one point nine nine nine five three three seconds, a delta of seven point six five one nine nine eight seconds, and a percentage reduction of seventy nine point two eight percent.
+
+Example two.
+Measurements were taken starting from a configuration based on the original Intel Atom processor. The performance numbers achieved are listed in Table ten point two.
+Intel Atom Processor Z five hundred thirty slash Z one O C O stepping.
+The text describes a proof of concept aimed at emulating real-world expectations of a system B I O S, specifically focusing on performance improvements attainable without compromising broad market requirements. It references two storage devices: a Western Digital eighty gigabyte Scorpio Blue five thousand four hundred R P M drive and an Intel Solid State Drive X twenty five E. The core of the discussion revolves around Table ten point one, which presents performance measurement results before and after an optimization process.
+
+Table ten point one is structured with columns for 'Boot Phase', 'Normal Boot Time', 'Optimized Boot Time', 'Delta', and 'Percentage Reduction in Boot Times'. The 'Boot Phase' column lists specific stages of the system startup process: S E C, P E I, D X E, and B D S, followed by a 'Total' row. The unit of measurement for the individual boot phases is microseconds, denoted as 'µs', while the total time is presented in seconds, denoted as 's'.
+
+For each boot phase, the table provides the time taken in a normal configuration and an optimized configuration. The 'Delta' column quantifies the difference between these two times, indicating the absolute reduction in boot time. The 'Percentage Reduction in Boot Times' column then expresses this reduction as a percentage of the original boot time, a key metric for assessing the effectiveness of the optimization. For instance, the S E C phase, which took twenty six thousand three hundred forty two microseconds normally, was optimized to twenty five thousand four hundred nineteen microseconds, resulting in a delta of nine hundred twenty three microseconds and a percentage reduction of three point five zero three percent. The P E I phase shows a much larger reduction, from one million two hundred thirty thousand nine hundred five microseconds to seven hundred sixty three thousand three hundred fifteen microseconds, a delta of four hundred sixty seven thousand five hundred ninety microseconds, leading to a thirty seven point nine eight percent reduction. Similarly, D X E and B D S phases also exhibit significant time savings. The 'Total' row summarizes the overall improvement, showing a reduction from nine point six five one five three one seconds to one point nine nine nine five three three seconds, a delta of seven point six five one nine nine eight seconds, translating to a seventy nine point two eight percent overall reduction in boot time.
+
+The text also introduces "Example two," which details measurements taken from a configuration utilizing an Intel Atom processor Z five hundred thirty / Z ten, specifically the C zero stepping. The performance numbers achieved with this configuration are referenced as being listed in Table ten point two, though Table ten point two itself is not provided in this excerpt. This implies a comparative analysis of performance characteristics across different hardware platforms or configurations. The context suggests that the optimization techniques demonstrated in Table ten point one are being evaluated on this alternative Intel Atom platform.

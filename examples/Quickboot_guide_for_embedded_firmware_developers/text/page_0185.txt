@@ -1,0 +1,45 @@
+Send Startup IPIs to all processors.
+Disable all NEM settings, if this has not already been done.
+
+Load microcode updates on all processors.
+
+oS UAW
+
+Enable Cache On for all processors.
+
+Partial details of these sequences are in the Software Developer’s Manual;
+fuller details can be found in the BIOS Writer’s Guide for that particular
+processor or on CPU reference code obtained from Intel.
+
+From a UEFI perspective the AP initialization may either be part of the
+PEI or the DXE phase of the boot flow or in the early or advanced
+initialization. At the time of this printing, the location of the AP initialization
+
+code may be considered product dependent.
+
+CPUID—Threads and Cores
+Since Intel processors are packaged in various configurations, there are
+different terms that must be understood when considering processor
+initialization:
+
+—Thread. A logical processor that shares resources with another logical
+
+processor in the same physical package.
+
+—Core. A processor that coexists with another processor in the same
+physical package that does not share any resources with other
+
+Processors.
+—Package. A “chip” that contains any number of cores and threads.
+
+Threads and cores on the same package are detectable by executing the
+CPUID instruction.
+See the Intel® 64 and IA-32 Architectures Software Developer’s
+Send startup I P Is to all processors. Disable all N E M settings, if this has not already been done. Load microcode updates on all processors. Enable Cache On for all processors. Partial details of these sequences are in the Software Developer's Manual; fuller details can be found in the B I O S Writer's Guide for that particular processor or on C P U reference code obtained from Intel. From a U E F I perspective the A P initialization may either be part of the P E I or the D X E phase of the boot flow or in the early or advanced initialization. At the time of this printing, the location of the A P initialization code may be considered product dependent. C P U I D — Threads and Cores. Since Intel processors are packaged in various configurations, there are different terms that must be understood when considering processor initialization. Thread. A logical processor that shares resources with another logical processor in the same physical package. Core. A processor that coexists with another processor in the same physical package that does not share any resources with other processors. Package. A chip that contains any number of cores and threads. Threads and cores on the same package are detectable by executing the C P U I D instruction. See the Intel sixty four and I A thirty two Architectures Software Developer's.
+The presented text outlines a series of steps crucial for processor initialization, specifically mentioning the sending of Startup Interprocessor Interrupts (I P I s) to all processors, disabling all Non-maskable Interrupt (N E M) settings, loading microcode updates onto all processors, and finally enabling cache on all processors. These operations are fundamental to bringing a multi-processor system into a stable, operational state. The reference to details being available in the Software Developer's Manual and CPU reference code from Intel indicates that these procedures are specific to Intel architectures and involve low-level hardware control.
+
+Furthermore, the text touches upon the Universal Extensible Firmware Interface (U E F I) perspective, noting that the Application Processor (A P) initialization can occur during the Pre-installation Environment (P E I) phase or the Driver Execution Environment (D X E) phase of the boot process. The precise timing and location of this A P initialization are described as product-dependent, highlighting the variability in system boot sequences.
+
+A significant portion of the text is dedicated to defining key terms related to processor packaging and concurrency: "Thread", "Core", and "Package". A "Thread" is characterized as a logical processor that shares resources with another logical processor within the same physical package. This concept directly relates to Simultaneous Multi Threading (S M T) or hyper threading, where a single physical core can execute multiple threads concurrently by time-multiplexing its execution resources. A "Core" is defined as a processor that coexists with another processor on the same physical package but does not share any resources with other processors. This implies that each core represents a distinct execution pipeline, capable of independent operation. A "Package" is described as a single "chip" that can contain any number of cores and threads. This hierarchical organization, from threads to cores to the overall package, is critical for understanding multicore processor design and software parallelism.
+
+The text concludes by stating that threads and cores on the same package can be detected by executing the C P U I D instruction. The C P U I D instruction is a fundamental x86 instruction that provides the operating system and applications with detailed information about the processor's features, capabilities, and topology. This instruction is essential for software to understand and leverage the available hardware resources, including the number of cores, logical processors, and cache hierarchies. The mention of Intel 64 and I A 32 Architectures Software Developer's Manuals further underscores the platform-specific nature of this information.

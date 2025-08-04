@@ -1,0 +1,35 @@
+Figure 11.4: The Platform Level Stack Responsiveness
+
+—Low latency hardware. Today’s silicon and hardware provide much
+greater speed than they are normally tuned for. While people think
+of a PC as booting in 45 seconds or more, the same hardware,
+properly tuned, can execute a viable boot path in less than 1
+
+second.
+
+—Along these lines, power sequencing of the various power rails on the
+platform is an area that needs to be examined. Between 300 and
+700 ms can be absorbed by just the power sequencing. This is
+before the CPU comes out of reset and the system firmware starts
+
+operating.
+
+—Fast boot BIOS and firmware. System BIOS and embedded
+Figure 11.4: The Platform Level Stack Responsiveness.
+
+Low latency hardware. Today's silicon and hardware provide much greater speed than they are normally tuned for. While people think of a PC as booting in forty five seconds or more, the same hardware, properly tuned, can execute a viable boot path in less than one second.
+
+Along these lines, power sequencing of the various power rails on the platform is an area that needs to be examined. Between three hundred and seven hundred milliseconds can be absorbed by just the power sequencing. This is before the C P U comes out of reset and the system firmware starts operating.
+
+Fast boot B I O S and firmware. System B I O S and embedded
+The figure illustrates a layered conceptual model of platform level stack responsiveness, visualized as a series of stacked, progressively receding rectangles, each representing a distinct layer that contributes to overall system responsiveness. At the base, forming the foundation of this stack, is "Low Latency Hardware." This layer signifies the intrinsic performance characteristics of the underlying silicon and other hardware components, dictating the absolute minimum time required for operations. Above this fundamental layer sits "Fast Boot BIOS and Firmware." The Basic Input Output System, or B I O S, and the associated firmware are critical for the initial hardware initialization and system boot process. Optimizing this layer, for instance through efficient code and streamlined initialization sequences, can significantly reduce boot times.
+
+The next level up is the "Tuned Operating System Kernel." The operating system kernel is the core component that manages the system's resources. Tuning it for responsiveness involves optimizing task scheduling, interrupt handling, memory management, and driver interactions. Higher still, we encounter "Optimized Device Drivers." Device drivers act as intermediaries between the operating system and hardware components, translating generic system requests into specific hardware commands. Their efficiency directly impacts how quickly and reliably peripheral devices can be accessed and controlled, contributing to overall platform speed.
+
+The penultimate layer is "Flexible Middleware and Services." Middleware provides common software services and communication protocols that enable different applications to interact. Flexibility and efficiency in this layer are crucial for seamless integration and quick data processing. Finally, at the apex of the stack, are "Well behaved Applications." These are the user-facing programs, whose responsiveness is ultimately dependent on the performance and efficiency of all the layers beneath them. The diagram conceptually depicts a dependency hierarchy, where improvements in lower layers directly benefit the responsiveness of those above.
+
+The accompanying text elaborates on these concepts, particularly highlighting the significance of "Low Latency Hardware." It states that while hardware provides the raw speed, its potential is often constrained by other factors. The text points out that a Personal Computer, or P C, can take forty five seconds or more to boot, and that even with properly tuned hardware, achieving a usable boot state in under one second is a challenging goal. This emphasizes that hardware capabilities alone are insufficient for optimal responsiveness; the entire software stack must be considered.
+
+The text then delves into the critical area of "power sequencing of the various power rails." This refers to the precise order and timing in which different voltage domains and power supplies within a system are activated during the boot process. It is noted that between three hundred milliseconds and seven hundred milliseconds of the boot time can be consumed by this power sequencing alone, which occurs before the Central Processing Unit, or C P U, is even out of reset and the system firmware begins its operations. This highlights power management and distribution as a non-trivial latency contributor.
+
+Finally, the text mentions "Fast Boot BIOS and firmware" again, reinforcing its role. It further includes the concept of "System BIOS and embedded" technologies, implying that the firmware’s characteristics, including its size, complexity, and the specific embedded systems it supports, are vital factors in achieving rapid system startup. The overall message conveyed is that achieving high platform responsiveness requires a holistic approach, optimizing every layer from the fundamental hardware up through the operating system and application software, with particular attention to critical initialization sequences like power management and firmware execution.

@@ -1,0 +1,47 @@
+distribution is customization, but this brings with it a higher overhead to get
+the product included in your firmware image.
+
+The binary EFI Shell is distributed in binary form via SVN in the EDK
+and EDK II standard distributions at http://www.tianocore.org. This binary
+
+comes in two sizes, with the larger image having more commands available.
+
+The binary UEFI Shell will be distributed in binary form via SVN in the
+EDK II and via UDK releases, both located at http://www.tianocore.org.
+
+The source for the EFI Shell is located in an EFI Shell subproject called
+efi-shell. This is at http://efi-shell.tianocore.org. There are two build files that
+support the two different versions.
+
+The source for the UEFI Shell is located via SVN in the EDK II and in
+the UDK distributions at http://edk2.tianocore.org. The customization is
+
+controlled by Platform Configuration Database entries and configured in the
+DSC used for building the shell.
+
+GUIs and the UEFI Shell
+
+There is no inherent support for graphical user interfaces (GUIs) in any of the
+shells discussed. There are methods in human interface infrastructure (HII)
+that are possible to use for configuring and performing localized displays.
+This would be done via the HiiLib (in UDK\EDK II) or directly via the HII
+protocols (See Chapters 29 and 30 of UEFI specification).
+
+Another possibility is to use libraries to achieve this functionality. You
+could use the C Library (in UDK\EDK II); it should be possible to compile
+some standard graphics libraries and use them in the shell.
+
+There are libraries that some companies have developed for application
+development. Some of these are available for purchase and others are used
+
+internally only. One example of a publicly available solution is the AMI
+distribution is customization, but this brings with it a higher overhead to get the product included in your firmware image. The binary E F I Shell is distributed in binary form via S V N in the E D K and E D K two standard distributions at http: slash slash www dot tianocore dot org. This binary comes in two sizes, with the larger image having more commands available. The binary U E F I Shell will be distributed in binary form via S V N in the E D K two and via U D K releases, both located at http: slash slash www dot tianocore dot org. The source for the E F I Shell is located in an E F I Shell subproject called efi shell. This is at http: slash slash efi shell dot tianocore dot org. There are two build files that support the two different versions. The source for the U E F I Shell is located via S V N in the E D K two and in the U D K distributions at http: slash slash edk2 dot tianocore dot org. The customization is controlled by Platform Configuration Database entries and configured in the D S C used for building the shell.
+
+G U I s and the U E F I Shell
+
+There is no inherent support for graphical user interfaces G U I s in any of the shells discussed. There are methods in human interface infrastructure H I I that are possible to use for configuring and performing localized displays. This would be done via the HiiLib in U D K E D K two or directly via the H I I protocols See Chapters twenty nine and thirty of U E F I specification.
+
+Another possibility is to use libraries to achieve this functionality. You could use the C Library in U D K E D K two. It should be possible to compile some standard graphics libraries and use them in the shell. There are libraries that some companies have developed for application development. Some of these are available for purchase and others are used internally only. One example of a publicly available solution is the A M I
+The distribution of firmware images, specifically the EFI Shell, involves considerations of customization and overhead. The EFI Shell is provided in binary form, accessible via SVN repositories such as the EDK and EDK II standard distributions, with download locations specified. These distributions come in different sizes, where a larger image typically offers more command functionality. The binary EFI Shell is also distributed via SVN in the EDK II and UDK releases, with source code available for the EFI Shell subproject at a given Uniform Resource Locator. This source code includes build files that support distinct versions of the shell. Further, the source code for the UEFI Shell in the UDK distributions is also accessible via SVN, with customization managed through Platform Configuration Database entries and configured within the DSC files essential for building the shell.
+
+Regarding GUIs and the UEFI Shell, there is no direct, inherent support for graphical user interfaces within the shells themselves. However, the human interface infrastructure, or H I I, provides methods that can be leveraged for configuring and displaying localized content. This functionality can be accessed through the H I I Lib, which resides within the UDK\E D K II environment, or directly through the H I I protocols as detailed in specific sections of the UEFI specification. An alternative approach to achieving similar functionality involves utilizing C libraries, enabling the compilation and use of standard graphics libraries directly within the shell. Moreover, companies have developed application development environments, some of which are commercially available, while others are intended for internal use only. An example of a publicly available solution is the AMI.

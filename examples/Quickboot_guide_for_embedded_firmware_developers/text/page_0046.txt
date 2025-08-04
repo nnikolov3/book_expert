@@ -1,0 +1,32 @@
+trying to remove it. It is basically the runtime handlers (INT 10, INT 16,
+INT 13, INT 19, and so on) as defined by IBM AT Technical Reference
+Manual. In modern system firmware, the legacy interface has been
+placed into a lifeboat called the Compatibility Segment Module. The
+interface that communicates between 32-bit/64-bit code (EFI/UEFI) and
+CSM 16-bit code is implemented per CSM Specification Version 0.97.
+No additional document is required because it follows the specification.
+The newer EFI interface should be preferred for newer designs;
+however, if the requirements of the platform/applications spell out the
+need for an older operating system to be supported, then the legacy
+
+interface will remain a key part of the overall firmware landscape.
+
+Summary
+
+Intel architecture has grown to become the industry standard. Understanding
+how it has been developed, what the basic subsystems entail, and how they
+interact and advance the system, help to provide a foundation of how or why
+
+systems operate the way they do.
+trying to remove it. It is basically the runtime handlers, interrupt ten, interrupt sixteen, interrupt thirteen, interrupt nineteen, and so on, as defined by I B M A T Technical Reference Manual. In modern system firmware, the legacy interface has been placed into a lifeboat called the Compatibility Segment Module. The interface that communicates between thirty two bit slash sixty four bit code, E F I slash U E F I, and C S M sixteen bit code is implemented per C S M Specification Version zero point nine seven. No additional document is required because it follows the specification. The newer E F I interface should be preferred for newer designs; however, if the requirements of the platform or applications spell out the need for an older operating system to be supported, then the legacy interface will remain a key part of the overall firmware landscape.
+
+Summary
+
+Intel architecture has grown to become the industry standard. Understanding how it has been developed, what the basic subsystems entail, and how they interact and advance the system, help to provide a foundation of how or why systems operate the way they do.
+The first paragraph delves into the intricate mechanisms of system firmware, specifically addressing the evolution from legacy B I O S to the modern U E F I, and the critical role of compatibility layers. The runtime handlers mentioned, such as I N T ten, I N T sixteen, I N T thirteen, and I N T nineteen, are historical software interrupts defined within the x86 architecture, originating from the I B M A T Technical Reference Manual. These interrupts provided a standardized A P I for software to interact with the B I O S, enabling basic I O operations like video display, keyboard input, and disk access. For instance, I N T thirteen provided disk services, crucial for loading the operating system from storage devices.
+
+In modern computing systems, the traditional B I O S has largely been superseded by U E F I, the Unified Extensible Firmware Interface. U E F I offers significant advantages, including support for sixty four bit execution, larger disk partitions through G P T, network capabilities, and a more modular, driver based architecture. However, to maintain backward compatibility with older operating systems or hardware that rely on B I O S services, U E F I systems often incorporate a Compatibility Support Module, or C S M. This C S M acts as a "lifeboat" for the legacy B I O S interface, essentially emulating the B I O S environment within a U E F I firmware.
+
+The C S M facilitates communication between the native U E F I firmware, which typically operates in thirty two bit protected mode or sixty four bit long mode, and the legacy software that expects a sixteen bit real mode environment provided by B I O S. The C S M sixteen bit code is implemented according to the C S M Specification Version zero point nine seven, allowing U E F I to temporarily switch the C P U into sixteen bit real mode to execute legacy B I O S services. While the newer E F I interface is unequivocally preferred for all new system designs due to its architectural superiority and enhanced capabilities, the necessity of supporting older operating systems or specialized hardware dictates the continued presence of this legacy interface within the overall firmware landscape. This design choice reflects a fundamental engineering trade off: embracing modern architecture versus preserving a broad compatibility base.
+
+The summary highlights the profound impact of Intel architecture on the computing industry. Its instruction set architecture, or I S A, and the associated platform designs have become the de facto industry standard, profoundly influencing how computing systems are conceptualized, designed, and operated. Understanding Intel architecture involves comprehending not just the C P U itself, but also the fundamental principles governing its interactions with memory hierarchies, I O subsystems, and various peripheral components. This foundational knowledge is essential for engineers and computer scientists to grasp the intricate interplay of hardware and software, from the lowest levels of firmware initialization to the highest levels of application execution, and to continue advancing the capabilities and efficiency of computing platforms.

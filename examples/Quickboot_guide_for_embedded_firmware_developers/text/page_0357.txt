@@ -1,0 +1,40 @@
+SPD Field #28: “Upper Nibble for tga,” Definition from JEDEC DDR3
+SPD Specification
+
+SPD Field 0x1D: Min. Four Activate Window Delay (tgpwmin) LSB
+
+This is another field that must be extracted from the datasheet and divided by
+
+the Medium Timebase Divisor. In our example:
+
+1.
+The tga value found in the Micron MT41J256M8 datasheet for our
+specific SDRAM chip gives 37.5 ns. Note that in the case of this
+SDRAM part, the number varies, depending on the part’s page size.
+In the case of the MT41J256M8, the page size is 1K as shown.
+
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+
+3.
+37.5 ns /0.125 ns = 300 = 0x12C.
+
+4.
+The upper nibble, 0x1, is put into SPD field #28, bits [3:0].
+
+5.
+
+The LSB, 0x2C, is put into SPD field #29.
+S P D Field number twenty eight, Upper Nibble for T F A W Definition from J E D E C D D R three S P D Specification. S P D Field zero times one D, Min Four Activate Window Delay T F A W min L S B. This is another field that must be extracted from the datasheet and divided by the Medium Timebase Divisor. In our example: One. The T F A W value found in the Micron M T forty one J two hundred fifty six M eight datasheet for our specific S D R A M chip gives thirty seven point five nanoseconds. Note that in the case of this S D R A M part, the number varies, depending on the part's page size. In the case of the M T forty one J two hundred fifty six M eight, the page size is one K as shown. Two. This number must be divided by the Medium Timebase Divisor, the value in zero times zero B. In our example this is zero point one two five nanoseconds. Three. Thirty seven point five nanoseconds divided by zero point one two five nanoseconds is equal to three hundred is equal to zero times one two C. Four. The upper nibble, zero times one, is put into S P D field number twenty eight, bits bracket three colon zero. Five. The L S B, zero times two C, is put into S P D field number twenty nine.
+The document details the interpretation of specific serial presence detect, or S P D, fields within the J E D E C D D R three S P D specification, focusing on the minimum four activate window delay, denoted as t F A W min. This parameter is crucial for memory timing and controller operation.
+
+S P D Field twenty eight is described as holding the upper nibble for the t F A W definition. More specifically, S P D Field zero times one D specifies the minimum four activate window delay's least significant bit, or L S B. This field, alongside others, is populated with data derived from the memory chip's datasheet and further processed through a medium timebase divisor.
+
+The document provides a practical example using a Micron M T four one J two fifty six M eight S D Ram chip. The t F A W value found in this chip's datasheet is thirty seven point five nanoseconds. It is important to note that memory timing parameters like t F A W can vary between memory modules and even between different parts from the same manufacturer, often influenced by factors such as page size, which in this example is one K.
+
+The extracted t F A W value of thirty seven point five nanoseconds is then divided by a medium timebase divisor. In this specific example, the medium timebase divisor has a value of zero times zero B, which equates to zero point one two five nanoseconds. This division is a critical step in normalizing the timing parameter to a format usable by the memory controller, often for programming into configuration registers.
+
+The calculation performed is thirty seven point five nanoseconds divided by zero point one two five nanoseconds, resulting in a value of three hundred. This result is then represented in hexadecimal as zero times one two C. This normalized value represents the t F A W parameter in units relative to the timebase.
+
+Finally, the document specifies how these calculated values are stored in the S P D fields. The upper nibble of the calculated value, which is zero times one, is placed into S P D Field twenty eight, corresponding to the upper nibble definition. The least significant bits, zero times two C, are placed into S P D Field twenty nine. This method of encoding timing parameters allows for a precise yet compact representation of critical memory performance characteristics within the S P D structure.

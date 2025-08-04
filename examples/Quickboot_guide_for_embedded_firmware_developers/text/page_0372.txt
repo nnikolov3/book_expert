@@ -1,0 +1,49 @@
+Byte 62 (Unbuffered): Reference Raw Card Used
+
+This byte indicates which JEDEC reference design raw card was used as the
+basis for the module assembly, if any. Bits 4-0 describe the raw card and bits
+6-5 describe the revision level of that raw card. Special reference raw card
+indicator, ZZ, is used when no JEDEC standard raw card reference design
+was used as the basis for the module design. Preproduction modules should
+be encoded as revision 0 in bits 6-5.
+
+The JEDEC committee defines a specific “Reference Raw Card”
+enumerator for a given DIMM topology. The DIMM equivalents used in the
+design must be analyzed (number of ranks, x4, x8, x16 components, ECC,
+and so on) and matched to the appropriate JEDEC Reference Raw Card. The
+
+matching Reference Raw Card number is put into this SPD field.
+
+In our example topology shown below:
+
+Bit 7 Bits 6-5 Bits 4-0
+Reference Raw Card Reference Raw Card Reference Raw Card
+Extension Revision
+no Reference raw cards 00 = revision When bit 7 = 0,
+through AL 001 = revision 1 00000 = Reference raw
+card A
+LL 00001 = Reference raw
+10 = revision 2
+card B
+LL 00010 = Reference raw
+11 = revision 3
+card C
+00011 = Reference raw
+card D
+00100 = Reference raw
+card E
+
+00101 = Reference raw
+card F
+Byte sixty two, unbuffered, is designated as Reference Raw Card Used. This byte indicates which JEDEC reference design raw card was utilized as the basis for the module assembly, if any. Bits four through zero describe the revision level of that raw card. Special reference raw card indicator, ZZ, is employed when no JEDEC standard raw card reference design was used as the basis for the module design. Preproduction modules should be encoded as revision zero in bits six through five.
+
+The JEDEC committee defines a specific Reference Raw Card enumerator for a given D I M M topology. The D I M M equivalents used in the design must be analyzed for the number of ranks, X four, X eight, and X sixteen components, E C C, and so on, and matched to the appropriate JEDEC Reference Raw Card. The matching Reference Raw Card number is then placed into this S P D field.
+
+The example topology is shown below.
+
+The table data is organized by bit fields and their corresponding meanings. Bit seven, labeled Reference Raw Card Extension, indicates: zero is equal to Reference raw cards A, and through A L. Bits six through five are labeled Reference Raw Card Revision. Zero zero is revision zero. Zero one is revision one. One zero is revision two. One one is revision three. Bits four through zero are labeled Reference Raw Card. When bit seven is equal to zero, it indicates: zero zero zero zero is Reference raw card A. Zero zero zero one is Reference raw card B. Zero zero one zero is Reference raw card C. Zero zero one one is Reference raw card D. Zero one zero zero is Reference raw card E. Zero one zero one is Reference raw card F.
+This document details the interpretation of Byte 62 from a system's serial presence detect, or S P D, data, specifically focusing on its role in identifying the "Reference Raw Card Used" for module assembly. This byte serves as a crucial metadata field, indicating which reference design board or "raw card" was employed during the development and manufacturing of the memory module. The information encoded within this byte is vital for ensuring compatibility and proper function, especially in the context of standardized electronic components.
+
+The byte is structured into distinct fields: bit 7 and bits six through five, and bits four through zero. Bit 7 acts as a flag, differentiating between the use of a standard reference raw card and other configurations. Specifically, a value of zero in bit 7 signifies the use of a standard reference raw card. The subsequent bits, six and five, are allocated for encoding the revision level of that reference raw card. A value of binary zero zero in these bits indicates revision zero, and subsequent binary combinations, such as binary zero one, binary one zero, and binary one one, correspond to revision one, revision two, and revision three, respectively.
+
+The more granular information, covering bits four through zero, provides a specific identifier for the reference raw card itself. This field is utilized when bit 7 is set to zero, indicating the use of a standard reference raw card. The JEDEC Solid State Technology Association, an industry standards organization, defines a specific enumeration for these reference raw cards, tailored to various D I M M topologies. The particular characteristics of the D I M M, such as the number of ranks, the component data width (represented as x four, x eight, or x sixteen), the presence of error correction code, or E C C, and other design attributes, are analyzed to determine the appropriate reference raw card. This analysis results in a unique JEDEC Reference Raw Card number, which is then stored in this field within the S P D data. For instance, the table illustrates that when bit seven is zero, and bits four through zero are binary zero zero zero zero zero, it signifies Reference Raw Card A. Similarly, binary zero zero zero zero one corresponds to Reference Raw Card B, and so forth, up to Reference Raw Card F, which is represented by binary zero zero one zero one. This systematic encoding ensures that the precise hardware configuration used during development can be accurately communicated and understood by the system's firmware or operating system, facilitating correct module initialization and operation.

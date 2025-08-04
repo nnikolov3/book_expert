@@ -1,0 +1,41 @@
+—I2C Read: Where 12C is an alternate mode of operation supported by
+the PCH SMBus controller.
+
+With the MRC code today on fast boots, we do not read all the SPD bytes all
+the time; we read only the serial number of the DIMMs, unless the DIMMs
+change. The serial number can be performed with sequential reads.
+Experiments prove that using the I2C read saves a few milliseconds, which
+
+count overall.
+
+Minimize BIOS Shadowing Size, Dual DXE Paths for Fast Path
+
+versus Full Boot
+
+UEFI BIOS is packaged into multiple firmware volumes. The Fast Boot is
+enhanced when there are several DXE firmware volumes instead of one
+monolithic one. That means the DXE phase of the BIOS should be split into
+two or more DXE firmware volumes; for example, a fast one and a slow one
+(a full one). The fast-boot-capable DXE firmware volume contains the
+minimum subset of module needed for IFB typical boot, and the other DXE
+firmware volume contains the rest of the module needed for full boot.
+
+This requirement affects only the firmware volumes that have to be
+decompressed from SPI flash into memory before execution. To optimize
+decompression speed, the BIOS needs to avoid decompressing unnecessary
+modules that will not be executed.
+
+This may be done at the DXE driver boundary; however, there is no
+restriction preventing module owners from creating a smaller fast boot
+
+module and a separate full boot module for the two different volumes.
+I two C read: where I two C is an alternate mode of operation supported by the P C H S M B us controller. With the M R C code today on fast boots, we do not read all the S P D bytes all the time; we read only the serial number of the D I M M s, unless the D I M M s change. The serial number can be performed with sequential reads. Experiments prove that using the I two C read saves a few milliseconds, which count overall.
+
+Minimize B I O S Shadowing Size, Dual D X E Paths for Fast Path versus Full Boot
+
+U E F I B I O S is packaged into multiple firmware volumes. The Fast Boot is enhanced when there are several D X E firmware volumes instead of one monolithic one. That means the D X E phase of the B I O S should be split into two or more D X E firmware volumes; for example, a fast one and a slow one (a full one). The fast boot capable D X E firmware volume contains the minimum subset of modules needed for I F B typical boot, and the other D X E firmware volume contains the rest of the modules needed for full boot. This requirement affects only the firmware volumes that have to be decompressed from S P I flash into memory before execution. To optimize decompression speed, the B I O S needs to avoid decompressing unnecessary modules that will not be executed. This may be done at the D X E driver boundary; however, there is no restriction preventing module owners from creating a smaller fast boot module and a separate full boot module for the two different volumes.
+The text describes optimization techniques for system boot processes, specifically focusing on the Universal Extensible Firmware Interface, or U E F I, and its interaction with system memory and firmware modules.
+
+It begins by detailing an optimization for reading serial presence detect, or S P D, data from dual in line memory modules, or D I M M s. Traditionally, the Memory Reference Code, or M R C, reads all S P D bytes during system initialization for fast boots. However, this passage proposes an alternative: reading only the serial number of the D I M M s unless there's a change in D I M M configuration. This is achieved using the I triple E one two C, or I C, protocol, which offers an alternate mode of operation supported by the P C H S M Bus controller. The rationale behind this optimization is demonstrated by experiments showing that this selective I triple E one two C read saves a few milliseconds, contributing to an overall faster boot time.
+
+The subsequent section addresses minimizing B I O S shadowing size and enabling dual D X E, or Dynamic Execution, paths for fast boots versus a full boot. U E F I B I O S is described as being packaged into multiple firmware volumes. For a fast boot scenario, the U E F I B I O S can be enhanced by utilizing several D X E firmware volumes instead of a single monolithic volume. This implies partitioning the D X E phase of the B I O S into two or more distinct D X E firmware volumes. For instance, one volume might contain the essential, fast boot capable D X E firmware needed for a typical fast boot, a configuration referred to as the fast boot one, while another volume would store the remaining D X E firmware necessary for a full boot, or the slow one. This architectural split affects only the firmware volumes that must be decompressed from S P I flash memory before execution. To improve decompression speed, the B I O S is advised to avoid decompressing unnecessary modules that would not be executed during a fast boot. This approach can be implemented at the D X E driver boundary, with the understanding that there is no inherent restriction preventing module owners from creating a smaller fast boot module and a separate full boot module for these distinct execution paths. This modularization allows for selective loading of firmware components based on the boot mode, thereby optimizing boot times.

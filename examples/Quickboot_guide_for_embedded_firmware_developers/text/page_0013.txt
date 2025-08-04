@@ -1,0 +1,50 @@
+and new companies have started while major competitive players have
+
+merged.
+
+Award
+
+Award BIOS was started in Taiwan and with its unique per-unit license
+quickly took advantage of local tax loopholes to gain the edge at local
+motherboard vendors. The simplicity and affinity of the Award code base has
+kept the product entrenched in various motherboard manufacturers years after
+
+Phoenix had discontinued the product.
+
+General Software
+
+Formed in 1989 by former Windows NT architect Steve Jones, General
+Software created unique and dynamic solutions for the embedded segment.
+General Software has in the past been one of the major players in the
+
+embedded space but did not penetrate much into the mainstream markets.
+
+Phoenix Technologies Limited
+
+Phoenix, headquartered in Milpitas, CA, was founded in 1979 (pre-BIOS). In
+1998, Phoenix purchased the Award BIOS, and in 2007 acquired General
+Software. By combining the code bases and resources of the three original
+companies, Phoenix BIOS has a large amount of intellectual property to draw
+from as it moves forward. Phoenix has gone through great changes in the past
+
+few years, including branching out into adjacent software ventures.
+And new companies have started while major competitive players have merged.
+
+Award
+
+Award B I O S was started in Taiwan and with its unique per-unit license quickly took advantage of local tax loopholes to gain the edge at local motherboard vendors. The simplicity and affinity of the Award code base has kept the product entrenched in various motherboard manufacturers years after Phoenix had discontinued the product.
+
+General Software
+
+Formed in one thousand nine hundred eighty nine by former Windows N T architect Steve Jones, General Software created unique and dynamic solutions for the embedded segment. General Software has in the past been one of the major players in the embedded space but did not penetrate much into the mainstream markets.
+
+Phoenix Technologies Limited
+
+Phoenix, headquartered in Milpitas, C A, was founded in one thousand nine hundred seventy nine, pre-B I O S. In one thousand nine hundred ninety eight, Phoenix purchased the Award B I O S, and in two thousand seven acquired General Software. By combining the code bases and resources of the three original companies, Phoenix B I O S has a large amount of intellectual property to draw from as it moves forward. Phoenix has gone through great changes in the past few years, including branching out into adjacent software ventures.
+The Basic Input Output System, or B I O S, represents a fundamental layer of firmware essential to the operation of nearly all personal computers and embedded systems. It is the very first software executed by the central processing unit upon power on, performing crucial initializations such as the Power On Self Test to verify hardware integrity, setting up memory access, and configuring essential peripherals. Its primary role is to bridge the gap between the bare metal hardware and the operating system that subsequently loads.
+
+Award B I O S, originating in Taiwan, strategically leveraged a unique per unit licensing model. This economic approach, combined with taking advantage of local tax loopholes, provided a significant competitive edge, enabling widespread adoption among motherboard vendors. From a technical standpoint, the enduring presence and entrenchment of the Award code base in various motherboard manufacturers, even years after Phoenix acquired and subsequently discontinued the standalone product, speaks to its architectural robustness. The described "simplicity and affinity" of the code base are critical attributes for firmware. A simple code base is inherently more maintainable, less prone to errors, and easier to adapt across diverse hardware configurations, ensuring its longevity and continued utility within integrated systems.
+
+General Software, founded in one thousand nine hundred eighty nine by Steve Jones, a former architect of Windows N T, specialized in crafting unique and dynamic software solutions specifically for the embedded segment. Embedded systems are characterized by their dedicated functionality, often resource constrained environments, and stringent real time requirements, contrasting sharply with the general purpose nature of mainstream computing. While General Software became a significant player within this specialized embedded space, its inherent focus on niche, purpose built solutions meant it did not achieve substantial penetration into broader mainstream markets, which typically demand different software paradigms and distribution models. The complexity and specificity of embedded software development often necessitate deep integration with hardware, making it distinct from desktop or server operating system development.
+
+Phoenix Technologies Limited, headquartered in Milpitas, California, established its roots in one thousand nine hundred seventy nine, initially predating the widespread recognition of the B I O S as a distinct product category. Their strategic acquisitions were pivotal in consolidating the B I O S market. In one thousand nine hundred ninety eight, Phoenix purchased the Award B I O S, followed by the acquisition of General Software in two thousand seven. This series of mergers and acquisitions (M and A) allowed Phoenix to combine the code bases and intellectual property from three distinct original companies. The aggregation of these diverse intellectual assets, including the acclaimed simplicity of the Award B I O S, endowed Phoenix B I O S with a substantial reservoir of intellectual property. This consolidated intellectual capital is invaluable, serving as a foundational blueprint for future innovation and providing a competitive moat in the low level system software domain. The subsequent evolution of Phoenix, including its expansion into adjacent software ventures, demonstrates a strategic diversification, leveraging its core expertise in firmware and system level software into new market opportunities.

@@ -1,0 +1,43 @@
+4 GB
+PCI Memory
+Address Range
+2 GB | |
+[ TOM)
+Main Memory
+Address Range
+1 MB
+Legacy
+Address Range
+0
+
+Figure 3.2: System Memory Map for the Intel® IO Controller Hub, TOM is
+
+variable
+
+The memory map contains specific regions used for specific purposes.
+
+Legacy Address Range
+
+The Legacy Address Range is used for multiple things in legacy systems. The
+Interrupt Vector Table (IVT) is located at physical address 0. Interrupts were
+discussed in depth in Chapter 2. The video BIOS gets loaded at 0xC000:0
+and the video buffer resides in the 0xA000 segment. The 0xC800:0 through
+0xD000 segments can be used for option ROMs. The 0xE000 and 0OxFO000
+segments are typically reserved for any runtime BIOS or boot loader code or
+data.
+
+Main Memory Address Range
+Figure three point two illustrates the system memory map for the Intel I O Controller Hub, where T O M, or Top Of Memory, is variable.
+
+The memory map contains specific regions used for specific purposes.
+
+### Legacy Address Range
+
+The Legacy Address Range is used for multiple functions in legacy systems. The Interrupt Vector Table, or I V T, is located at physical address zero. Interrupts were discussed in depth in Chapter two. The video B I O S gets loaded at hexadecimal C zero zero zero colon zero, and the video buffer resides in the hexadecimal A zero zero zero segment. The hexadecimal C eight zero zero colon zero through hexadecimal D zero zero zero segments can be used for option R O M s. The hexadecimal E zero zero zero and hexadecimal F zero zero zero segments are typically reserved for any runtime B I O S or boot loader code or data.
+
+### Main Memory Address Range
+The diagram illustrates a system memory map for an Intel IO Controller Hub, where the Total Available Memory, or T O M, is variable. This memory map is segmented into distinct regions, each designated for specific operational purposes within the system architecture.
+
+At the base of the memory map, starting from address zero, is the Legacy Address Range. This region, extending up to one megabyte, is historically significant and remains vital for compatibility with older systems and specific hardware functionalities. It's within this range that critical system components are often initialized. For instance, the Interrupt Vector Table, or I V T, which serves as a lookup mechanism for handling hardware interrupts, is typically situated at physical address zero. The text further clarifies that interrupts themselves are discussed in more detail in a subsequent chapter. The video B I O S, a fundamental firmware component responsible for initializing the graphics hardware and displaying output during system startup, is loaded at segment zero C000:0. Additionally, the video buffer, a region of memory used to store pixel data for display, resides in the segment zero A000. Other segments within this legacy range, specifically zero C800:0 through zero E000 and zero F000, are designated for optional R O Ms, which can contain firmware for various peripheral devices, or for runtime B I O S code and boot loader instructions. This segmentation ensures that essential low-level operations can be managed efficiently and with backward compatibility.
+
+Above the Legacy Address Range, the memory map designates a broader area for Main Memory, typically encompassing the system's primary Ram. This section is conventionally known as the Main Memory Address Range. The diagram visually depicts this as a contiguous block that begins where the Legacy Address Range concludes and extends upwards. The diagram also indicates a further allocation above the main memory, labeled as the P C I E Memory Address Range, which extends up to four gigabytes. This latter region is dedicated to the addressing of Peripheral Component Interconnect Express devices, a high-speed serial expansion bus standard used for connecting hardware components like graphics cards and network interfaces. The diagram visually represents these ranges hierarchically, with the legacy space at the bottom, followed by main memory, and then the P C I E space at the top, up to the four gigabyte boundary. The demarcation at two gigabytes is labeled as T O M, indicating the upper limit of usable memory in this particular system configuration, which can be subject to variation.

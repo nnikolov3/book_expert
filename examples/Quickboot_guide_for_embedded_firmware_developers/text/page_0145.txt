@@ -1,0 +1,58 @@
+The shell will by default add the root of each drive, as well as the
+\efil\tools and \efi\boot directories. This means that any tool that wants to
+appear to be an internal command should reside in one of those three
+
+directories.
+
+Note: For automatic help system integration, there should be a help file
+named the same as the application file and with contents contained in .man
+file format the same as the shell internal commands (except their information
+
+is stored via HII).
+
+Once the internal command (in a profile) or the external application has
+started, they have the same privileges and almost the same access. A few
+actions can only be accessed via the UefiShell CommandLib. These actions
+are centered on internal shell functionality that a few commands need to
+
+manipulate:
+—Shell script interaction
+—Shell alias interaction
+—Shell map interaction
+
+Note: Linking a shell application with the library will work, but (per
+definition) the library functions only when also linked to the shell core so it
+
+functions (completely) only for internal shell commands.
+
+The help system built into the UEFI Shell 2.0 core automatically parses a file
+when someone uses the help command (for example, help <Your App_
+Name>). This file must be in the same location as the application file. The
+
+Unicode text file must have file format similar to this:
+The shell will by default add the root of each drive, as well as the efi tools and efi boot directories. This means that any tool that wants to appear to be an internal command should reside in one of those three directories.
+
+Note: For automatic help system integration, there should be a help file named the same as the application file and with contents contained in dot man file format the same as the shell internal commands, except their information is stored via H I I.
+
+Once the internal command, in a profile, or the external application has started, they have the same privileges and almost the same access. A few actions can only be accessed via the Uefi Shell Command Lib. These actions are centered on internal shell functionality that a few commands need to manipulate:
+
+* Shell script interaction
+* Shell alias interaction
+* Shell map interaction
+
+Note: Linking a shell application with the library will work, but per definition, the library functions only when also linked to the shell core so it functions, completely, only for internal shell commands.
+
+The help system built into the U E F I Shell two point zero core automatically parses a file when someone uses the help command, for example, help less than Your App underscore Name greater than. This file must be in the same location as the application file. The U T F eight text file must have file format similar to this:
+The shell's default behavior is to incorporate the root of each drive, recognizing directories such as `\efi\tools` and `\efi\boot`. This implies that any utility seeking to present itself as an internal command must reside within one of these three designated directory structures.
+
+For seamless integration of an automatic help system, a dedicated help file is stipulated. This file must share the same name as its corresponding application, and its content, typically stored in a `.man` file format, should mirror the structure of the shell's internal commands, with the exception of information accessed via the Human Interface Infrastructure, or H I I.
+
+When an internal command, whether defined in a profile or as an external application, is invoked, it inherits the same privileges and access levels as the shell itself. A curated set of actions, primarily focused on core shell functionalities, can be accessed via the U E F I Shell Command Library. These actions are categorized, including:
+
+*   Shell script interaction
+*   Shell alias interaction
+*   Shell map interaction
+
+It is noteworthy that the direct linking of a shell application with this library will function correctly, provided that the library is also linked to the shell's core. This linkage specifically pertains to internal shell commands, ensuring their functionality is exclusively available to the core shell environment.
+
+The help system, as implemented within the U E F I Shell version 2.0, operates by automatically parsing a help file. This occurs when a user invokes the help command, for instance, by typing `help <Your_App_Name>`. The help file must be located in the same directory as the application it supports. Furthermore, the Unicode text file format utilized for these help files must adhere to a specific structure, implied to be consistent across all such files.

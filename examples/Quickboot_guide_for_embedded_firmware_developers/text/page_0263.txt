@@ -1,0 +1,47 @@
+PCle Port Disable Algorithm
+
+There are Mini PCle enumeration needs for detections that ultimately lead to
+function-disable of the particular PCle port. These include PCIe port without
+card detected, and NAND over PCle initialization flow. All these must be
+
+combined and get done in a single Mini PCie enumeration.
+
+Manageability Engine
+
+The Manageability Engine (ME) is a security processor subsystem and
+offload engine inside the PCH. There are two SKUs of the firmware that runs
+on the device: 1.5 MB and 5.0 MB SKUs. The 5.0 MB SKU is associated
+with advanced security features, such as Intel® Active Management
+Technology. The 5.0 MB firmware requires a setup option ROM called the
+Manageability Engine BIOS Extension (MEBXx), which up until 2011 ran on
+every boot, which took time. There are also ME/BIOS interactions during
+
+boot, regardless of the firmware SKUs.
+
+Eliminating MEBx
+
+Starting with 2012 platform controller hubs, the Intel PCH 5.0 MB eliminates
+the need to execute MEBXx on Fast Boots. Instead of running MEBX on every
+
+boot, MEBXx is run only as needed within the framework on a typical boot per
+the UEFI flag.
+
+Reducing Manageability Engine and BIOS Interactions
+P C I E Port Disable Algorithm.
+
+There are Mini P C I E enumeration needs for detections that ultimately lead to function disable of the particular P C I E port. These include P C I E port without card detected, and N A N D over P C I E initialization flow. All these must be combined and get done in a single Mini P C I E enumeration.
+
+Manageability Engine.
+
+The Manageability Engine (M E) is a security processor subsystem and offload engine inside the P C H. There are two S K U s of the firmware that runs on the device: one point five M B and five point zero M B S K U s. The five point zero M B S K U is associated with advanced security features, such as Intel® Active Management Technology. The five point zero M B firmware requires a setup option R O M called the Manageability Engine B I O S Extension (M E B x), which up until two thousand eleven ran on every boot, which took time. There are also M E slash B I O S interactions during boot, regardless of the firmware S K U s.
+
+Eliminating M E B x.
+
+Starting with two thousand twelve platform controller hubs, the Intel P C H five point zero M B eliminates the need to execute M E B x on Fast Boots. Instead of running M E B x on every boot, M E B x is run only as needed within the framework on a typical boot per the U E F I flag.
+
+Reducing Manageability Engine and B I O S Interactions.
+The P C I E port disable algorithm involves detecting conditions that lead to the function disabling of a specific P C I E port. These conditions encompass card detection, and initialization flows over P C I E, including NAND operations. Critically, all these detected events must be consolidated and processed within a singular P C I E enumeration cycle.
+
+The Manageability Engine, often referred to as ME, functions as a dedicated security processor subsystem and an offload engine integrated within the Platform Controller Hub, or P C H. There exist two primary SKUs (Stock Keeping Units) for this firmware, namely a one point five megabyte SKU and a five point zero megabyte SKU. The five point zero megabyte SKU is specifically associated with advanced security features, such as the Intel Active Management Technology. This particular five point zero megabyte firmware necessitates a setup option R O M that is identified as the Manageability Engine BIOS Extension, or M E B x. Historically, up until two thousand eleven, this extension ran on every boot cycle, contributing to boot time. Furthermore, ME/BIOS interactions during the boot process were prevalent, irrespective of the specific firmware SKU utilized.
+
+The elimination of M E B x execution on every boot cycle is a notable development. Starting with platform controller hubs from two thousand twelve, the Intel P C H five point zero megabyte version effectively removes the necessity for M E B x execution during Fast Boots. Consequently, instead of running M E B x on every boot, it is now executed only as required, contingent upon the Uniform Extensible Firmware Interface, or U E F I flag. This shift signifies a more efficient boot process by deferring M E B x operations until they are functionally indispensable.

@@ -1,0 +1,60 @@
+The Memory Map
+
+Intel processors can access two different address ranges, memory and 1/0,
+
+using different CPU op codes to access each range. Figure 2.3 shows the
+
+classic IA32 memory map.
+—The top of physical memory limit is specific to CPU and chipset.
+
+—The bottom 1 MB has all the backward compatibility legacy baggage
+from the original IBM PC.
+
+—Below 4 GB there is a variety of ranges required to support newer
+technology platform-specific memory ranges needed to make the
+system work. Four gigabytes were chosen when 32-bit hardware
+and operating systems were the norm, and there weren’t any
+systems on the mainstream market that could hold 4 GB of physical
+
+memory. It was all virtual at the time. Times have changed.
+
+—Similarly, below the platform-specific ranges are the PCI memory
+ranges for prefetchable and non-prefetchable. Again, when PCI was
+the ultimate in standard buses, there was plenty of virtual space
+
+below the top of the 4-GB boundary that was free to use virtually.
+
+—DRAM occupies the lower region, from 0 GB to however much
+memory you have (called Top of Lower Memory = TOLM), 3 GB
+in this example. Note: this is why a Windows XP system with 4 GB
+usually reports about 3 GB.
+
+—It is possible that memory exists above 4 GB and that DRAM will be
+
+accessible. This would be the top of memory or top of upper
+The Memory Map.
+
+Intel processors can access two different address ranges, memory and I O, using different C P U op codes to access each range. Figure two point three shows the classic I A thirty two memory map.
+
+The top of physical memory limit is specific to C P U and chipset.
+
+The bottom one megabyte has all the backward compatibility legacy baggage from the original I B M P C.
+
+Below four gigabytes, there is a variety of ranges required to support newer technology platform specific memory ranges needed to make the system work. Four gigabytes were chosen when thirty two bit hardware and operating systems were the norm, and there weren't any systems on the mainstream market that could hold four gigabytes of physical memory. It was all virtual at the time. Times have changed.
+
+Similarly, below the platform specific ranges are the P C I memory ranges for prefetchable and non prefetchable. Again, when P C I was the ultimate in standard buses, there was plenty of virtual space below the top of the four gigabyte boundary that was free to use virtually.
+
+D Ram occupies the lower region, from zero gigabytes to however much memory you have, called Top of Lower Memory, T O L M, three gigabytes in this example. Note: this is why a Windows X P system with four gigabytes usually reports about three gigabytes.
+
+It is possible that memory exists above four gigabytes and that D Ram will be accessible. This would be the top of memory or top of upper.
+Intel processors employ distinct architectural mechanisms to differentiate between memory address spaces and I O address spaces. This separation, facilitated by specific C P U operation codes, is a fundamental design principle enabling the processor to interact with main memory and peripheral devices through separate addressing schemes. The total discoverable physical memory within a computing system is constrained not solely by the installed D Ram modules, but intrinsically by the capabilities of the C P U and its supporting chipset. This limitation arises from the number of address lines the C P U exposes and the memory controller's design, which together define the maximum addressable physical address space.
+
+A specific architectural decision, rooted in the evolution of the I B M P C, mandates the reservation of the lowest one megabyte of the physical address space. This region accommodates legacy components and ensures backward compatibility for older operating systems and device drivers that expect specific hardware mappings within this initial memory segment.
+
+The four gigabyte address boundary represents a pivotal architectural constraint inherent to thirty two bit systems. With thirty two address lines, a processor can directly address two to the power of thirty two bytes, which is equal to four gigabytes. During the era when thirty two bit hardware and operating systems were prevalent, systems were architecturally designed such that the entire addressable physical memory fell within this four gigabyte limit. At this time, the prevailing paradigm was that all memory access occurred within a virtual memory framework, providing an abstraction layer over physical memory.
+
+Within this four gigabyte address space, dedicated regions are allocated for P C I devices. These regions are further delineated into prefetchable and non-prefetchable categories. Prefetchable memory can be cached and speculatively read by the C P U or direct memory access capable devices, optimizing data throughput for contiguous blocks. Non-prefetchable memory, typically used for device registers or memory mapped I O, requires strict ordering and cannot be cached or speculatively accessed due to potential side effects or state changes upon read. The widespread adoption of P C I as the de facto standard for peripheral component interconnection meant that a significant portion of the virtual address space below the four gigabyte ceiling was logically reserved for its use, even if not all physical addresses were populated with P C I devices.
+
+D Ram typically occupies the contiguous lower portion of the system's physical address space, starting from address zero. However, this D Ram does not necessarily extend contiguously up to the four gigabyte boundary. Instead, a portion of the four gigabyte address range is occupied by various system hardware components, including the aforementioned P C I memory mapped I O regions, B I O S R O M, and other platform specific device addresses. The effective usable D Ram for the operating system and applications is therefore capped at a point often referred to as "Top of Lower Memory," or T O L M, which is typically less than the total physical address space. For instance, in a system with four gigabytes of installed D Ram, a thirty two bit operating system like Windows X P might only report approximately three gigabytes of usable memory, because the remaining gigabyte is effectively shadowed or consumed by hardware mappings within the four gigabyte physical address space.
+
+The conceptual ability for D Ram to exist and be accessible above the four gigabyte boundary points to the evolution of memory addressing capabilities beyond the strictures of thirty two bit architectures. This necessitates mechanisms such as Physical Address Extension, or P A E, in thirty two bit systems, or the fundamental shift to sixty four bit processor architectures, which inherently support a much larger physical address space, allowing for much greater physical memory capacities and thus eliminating the four gigabyte barrier as a primary constraint for D Ram visibility. This upper region of D Ram, if present, would be conceptually mapped as the "top of upper memory."

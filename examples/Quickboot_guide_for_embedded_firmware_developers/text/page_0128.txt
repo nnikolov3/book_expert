@@ -1,0 +1,49 @@
+As the intent of SMM is to be as invisible as possible to the system during
+runtime, hardware should not have its state modified by SMM code. This
+means that the concept of a console is probably off limits for debug
+
+messages.
+The best methods of debugging SMM are:
+
+—POST Codes. The port 0x80—0x83 I/O range is mostly treated as a
+write-only range and displayed on seven-segment displays. Reads
+to those I/O ports is not always allowed by Intel architecture
+chipsets. Therefore, the seven-segment displays may be used to
+help debug SMM or indicate that SMM or specific SMM handlers
+are implemented. This is common with the SMM handler for
+enabling/disabling ACPI.
+
+—Use of ITP. Commercial ITPs usually allow special breakpoints to be
+placed upon entering and exiting SMM, which allow a user to step
+through the entire firmware SMM infrastructure or debug code that
+invoke an SMM handler after the SMM trap.
+
+Industry Specifications
+
+Numerous industry specifications outline communication methods between
+firmware and higher-level software. No two specifications look entirely the
+same. The requirements on the locations and styles of the firmware buffers
+
+differ between all of them.
+
+Pitfalls
+As the intent of S M M is to be as invisible as possible to the system during runtime, hardware should not have its state modified by S M M code. This means that the concept of a console is probably off limits for debug messages.
+
+The best methods of debugging S M M are:
+
+First, by using P O S T Codes. The port hexadecimal eighty to hexadecimal eighty three I O range is mostly treated as a write only range and displayed on seven segment displays. Reads to those I O ports are not always allowed by Intel architecture chipsets. Therefore, the seven segment displays may be used to help debug S M M or indicate that S M M or specific S M M handlers are implemented. This is common with the S M M handler for enabling or disabling A C P I.
+
+Second, by using I T P. Commercial I T P's usually allow special breakpoints to be placed upon entering and exiting S M M, which allow a user to step through the entire firmware S M M infrastructure or debug code that invokes an S M M handler after the S M M trap.
+
+**Industry Specifications**
+
+Numerous industry specifications outline communication methods between firmware and higher level software. No two specifications look entirely the same. The requirements on the locations and styles of the firmware buffers differ between all of them.
+
+**Pitfalls**
+System Management Mode, or S M M, fundamentally operates as an extremely privileged execution environment, designed to be as unobtrusive as possible to the general system state during runtime. Its primary directive is to handle critical system events without perturbing the operational integrity of the O S or other applications. Consequently, hardware should ideally retain its unmodified state when S M M code executes. This inherent stealth and isolation imply that traditional console based debug messages are largely impractical or prohibited within this mode, necessitating specialized debugging methodologies.
+
+One established method for debugging S M M involves the use of P O S T Codes. These are diagnostic numerical values emitted by the B I O S or U E F I during the power on self test sequence, signaling the system's operational status. Specifically, the I O port range from hexadecimal eighty to hexadecimal eighty three is typically designated as a write only region for these P O S T codes. The data written to these ports is often displayed on physical seven segment displays, allowing technicians to observe system progress or identify errors. However, it is crucial to note that direct reads from these particular I O ports are not universally supported or permitted across all Intel architecture chipsets. These diagnostic displays serve as a vital, rudimentary channel to ascertain whether S M M has been entered, whether particular S M M handlers are active, or to convey state information relevant to S M M operations, such as the enabling or disabling of A C P I functionalities. This mechanism provides an out of band communication channel that is indispensable when the primary display and O S environment are not yet functional or are compromised.
+
+A more sophisticated debugging approach involves the utilization of In Target Probes, or I T P s. Commercial I T P systems typically offer the capability to set specialized hardware breakpoints. These breakpoints can be precisely configured to trigger upon entry into and exit from the S M M environment. The significance of such a feature lies in its ability to allow a developer to perform step by step execution through the intricate S M M infrastructure embedded within the firmware. This includes the ability to meticulously trace the flow of control within S M M handlers that are invoked subsequent to an S M M trap, which is the specific event or interrupt that causes the C P U to switch into S M M. This level of granular control is essential for identifying subtle bugs, race conditions, or performance bottlenecks within the critical, time sensitive code that operates in this highly privileged mode.
+
+The broader landscape of industry specifications presents inherent challenges for consistent S M M development and debugging. Numerous, distinct specifications exist that dictate the communication protocols and interface mechanisms between firmware components and higher level software. A significant issue arises from the lack of uniformity; virtually no two specifications share identical requirements for the locations, structures, and styles of the firmware buffers used for data exchange. This heterogeneity complicates the creation of generalized tools and methodologies, requiring platform specific adaptations for debugging and integration, and posing significant hurdles for achieving universal interoperability in low level system management.

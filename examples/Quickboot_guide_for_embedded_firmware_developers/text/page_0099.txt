@@ -1,0 +1,54 @@
+When supported, RAID mode is selected by programming the SMS
+field, D31:F2:90h[7:6] to 10b. In this mode, the SATA controller is set up to
+use the AHCI programming interface. The SATA ports are controlled by a
+single SATA function, D31:F2. In RAID mode, the Sub Class Code,
+D31:F2:0Ah, will be set to 04h. This mode does require specific OS driver
+Support.
+
+In order for the RAID option ROM to access all 6/4 SATA ports, the
+RAID option ROM enables and uses the AHCI programming interface by
+setting the AE bit, ABAR 04h[31]. One consequence is that all register
+settings applicable to AHCI mode set by the BIOS must be set in RAID as
+well. The other consequence is that the BIOS is required to provide AHCI
+support to ATAPI SATA devices, which the RAID option ROM does not
+handle.
+
+PCH supports stable image compatible ID. When the alternative ID
+enable, D31 :F2 :9Ch [7] is not set, PCH SATA controller will report Device
+ID as 2822h for desktop SKU.
+
+SATA Mode Default Settings
+
+The system BIOS may implement a setup option that provides the user with
+the ability to select the SATA controller mode. This ensures that the
+operating system can be loaded and made operational on the platform if the
+required device driver support is not available. For embedded devices, of
+course, this is unlikely, but can be implemented via a tool-tunable NVRAM
+
+variable.
+
+Enabling SATA Ports
+
+SATA drives cannot start to spin-up or start to become data-ready until the
+When supported, R A I D mode is selected by programming the S M S field, D thirty one colon F two colon hexadecimal ninety index seven through six to binary one zero. In this mode, the S A T A controller is set up to use the A H C I programming interface. The S A T A ports are controlled by a single S A T A function, D thirty one colon F two. In R A I D mode, the Sub Class Code, D thirty one colon F two colon hexadecimal zero A, will be set to hexadecimal zero four. This mode does require specific O S driver support.
+
+In order for the R A I D option R O M to access all six slash four S A T A ports, the R A I D option R O M enables and uses the A H C I programming interface by setting the A E bit, A B A R hexadecimal zero four index thirty one. One consequence is that all register settings applicable to A H C I mode set by the B I O S must be set in R A I D as well. The other consequence is that the B I O S is required to provide A H C I support to A T A P I S A T A devices, which the R A I D option R O M does not handle.
+
+P C H supports stable image compatible I D. When the alternative I D enable, D thirty one colon F two colon hexadecimal nine C index seven is not set, P C H S A T A controller will report Device I D as hexadecimal two eight two two for desktop S K U.
+
+S A T A Mode Default Settings
+
+The system B I O S may implement a setup option that provides the user with the ability to select the S A T A controller mode. This ensures that the operating system can be loaded and made operational on the platform if the required device driver support is not available. For embedded devices, of course, this is unlikely, but can be implemented via a tool tunable N V Ram variable.
+
+Enabling S A T A Ports
+
+S A T A drives cannot start to spin up or start to become data ready until the
+The configuration of Serial A T A, or S A T A, host controllers for various operational modes, particularly R A I D, involves precise low level hardware programming. When R A I D mode is desired, the S A T A controller's behavior is dictated by specific bit settings within its P C I configuration space. For instance, the S A T A controller is configured to operate under the Advanced Host Controller Interface, or A H C I, programming model by setting bits seven and six of the register at offset ninety hexadecimal within Device thirty one, Function two, to the binary value one zero. Concurrently, S A T A ports under this configuration are managed by a unified S A T A function, designated as Device thirty one, Function two. A critical aspect in R A I D mode is the alteration of the P C I Sub Class Code, which for Device thirty one, Function two, at offset zero A hexadecimal, must be set to zero four hexadecimal. This specific Sub Class Code signals to the operating system the controller's R A I D capability, thereby necessitating the loading of a compatible, specialized O S driver for proper functionality.
+
+To facilitate access to all six or four S A T A ports within a R A I D array, the R A I D option R O M, a piece of firmware that initializes the R A I D controller before the main O S loads, must be enabled and leverage the A H C I programming interface. This enablement typically involves setting bit thirty one in the A B A R, or A H C I Base Address Register, at offset zero four hexadecimal. A significant consequence of selecting this R A I D mode via the option R O M is that all register settings pertinent to A H C I operation must be appropriately configured in R A I D mode by the system B I O S. Furthermore, the B I O S is also tasked with providing A H C I support for A T A P I S A T A devices, such as optical drives, because the R A I D option R O M itself typically lacks the capability to manage these devices.
+
+The Platform Controller Hub, or P C H, which integrates many peripheral functions, supports a stable image compatible I D mechanism for the S A T A controller. This means that if the alternative Device I D enable bit, specifically bit seven of register nine C hexadecimal within Device thirty one, Function two, is not asserted, the P C H S A T A controller will report its Device I D as two eight two two hexadecimal. This specific Device I D is common for desktop S K U products and helps the operating system identify and apply the correct P C H driver for S A T A functionality.
+
+Regarding S A T A mode default settings, the system B I O S, which is the foundational firmware for a computer system, often provides a user accessible setup option to select the desired S A T A controller mode. This is crucial for ensuring that the operating system can correctly identify the S A T A controller and load the requisite device drivers, thereby allowing storage devices to be recognized and function properly. Without the correct driver support, the platform cannot operate efficiently, or in some cases, at all. For embedded systems, where user intervention is often undesirable or impractical, this mode selection capability is typically replaced by a tool tunable N V Ram variable. This allows system integrators to pre configure the S A T A controller mode during manufacturing or deployment, ensuring consistent behavior across deployed units without requiring B I O S level user interaction.
+
+Finally, the enabling of S A T A ports involves a sequence of operations to bring the connected storage drives to an operational state. S A T A drives, particularly traditional hard disk drives, cannot immediately begin data transfer upon power up. They must first undergo a spin up process, where their platters reach stable rotational speed, and then transition to a data ready state, signifying that their internal electronics and mechanical components are initialized and prepared to receive and execute commands for reading or writing data. This sequence ensures the integrity of data and the reliability of storage operations.

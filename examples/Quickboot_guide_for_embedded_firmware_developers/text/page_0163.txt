@@ -1,0 +1,27 @@
+path, but this is important if the solution is going to go beyond the simple
+prototype and into high volume manufacturing. The blind handoff to disk
+means reading the first sector of a target device and jumping to a known
+(good) address. It is the preference of RTOS vendors who don’t call back into
+system firmware during runtime and have not yet implemented either a
+
+legacy OS interface or an EFI interface.
+
+Summary
+
+Loading an operating system after the platform is initialized can be done in a
+variety of ways. Known and tested standards are the fastest and easiest
+methods to provide for a flexible solution. More deeply embedded solutions
+have several other options but must be fully thought through beyond the lab
+environment if the system is meant for bigger, better, and broader things.
+Choose wisely and let the circumstances dictate the development (and
+boot) path; with UEFI, one doesn’t need to be married to a single boot
+
+solution.
+path, but this is important if the solution is going to go beyond the simple prototype and into high volume manufacturing. The blind handoff to disk means reading the first sector of a target device and jumping to a known (good) address. It is the preference of R T O S vendors who don't call back into system firmware during runtime and have not yet implemented either a legacy O S interface or an E F I interface.
+
+Summary
+
+Loading an operating system after the platform is initialized can be done in a variety of ways. Known and tested standards are the fastest and easiest methods to provide for a flexible solution. More deeply embedded solutions have several other options but must be fully thought through beyond the lab environment if the system is meant for bigger, better, and broader things. Choose wisely and let the circumstances dictate the development (and boot) path; with U E F I, one doesn't need to be married to a single boot solution.
+The discussion centers on the critical boot path of an embedded system, emphasizing its importance for both simple prototypes and high-volume manufacturing. A key aspect is the blind handoff to disk, a process where the system firmware initiates a transfer of control to a known, or at least expected, disk address without explicit verification. This practice is highlighted as a preference among R T O S vendors, particularly when the system firmware does not incorporate a legacy O S interface or an E F I interface. The implication here is that while this approach might be expedient for development or initial deployment, it bypasses more robust initialization and validation sequences typically found in more feature-rich firmware, potentially leading to security or stability concerns if the target address is compromised or incorrect.
+
+The summary section then elaborates on the operationalization of an operating system after the initial platform initialization. It states that this loading process can be accomplished through various methods, with known and tested standards generally representing the most efficient and straightforward approaches. However, it also acknowledges that more sophisticated embedded solutions may require deeper consideration and may involve moving beyond simple laboratory setups to more complex real-world environments. The overarching recommendation is to carefully evaluate and select the boot path and associated methods based on the specific requirements and scale of the system, whether it is destined for smaller, simpler applications or larger, more demanding ones. The advice to "choose wisely and let the circumstances dictate the development" underscores the need for context-specific design decisions. Specifically, it notes that with E F I, one is not necessarily constrained to a single, monolithic boot solution, implying greater flexibility and modularity in the boot process compared to legacy BIOS systems. This flexibility is a significant advancement, allowing for more dynamic and adaptable system startup procedures.

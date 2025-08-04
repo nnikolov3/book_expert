@@ -1,0 +1,52 @@
+In our example:
+
+1.
+The tWR value found in the Micron MT41J256M8 datasheet for our
+specific SDRAM chip gives 15 ns.
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+3.
+15 ns /0.125 ns = 120 = 0x78.
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+17 ox11 Write Recovery Time (twemin) 0x78 15ns
+
+From the JEDEC Specification: Byte 17: Minimum Write Recovery Time
+(tWRmin)
+This byte defines the minimum SDRAM write recovery time in Medium
+
+Timebase (MTB) units. This value comes from the DDR3 SDRAM
+datasheet.
+
+Bits 7-0
+Minimum Write Recovery Time (tWR) MTB Units
+Values defined from 1 to 255
+
+Example:
+In our example: One. The t W R value found in the Micron M T forty one J two hundred fifty six M eight datasheet for our specific S D R A M chip gives fifteen nanoseconds. Two. This number must be divided by the Medium Timebase Divisor, the value in hexadecimal zero zero B. In our example, this is zero point one two five nanoseconds. Three. Fifteen nanoseconds divided by zero point one two five nanoseconds is one hundred twenty, which is hexadecimal seventy eight.
+
+The table shows a single row of data with four columns: Byte (Dec), Byte (Hex), Field Name, Typ. Value, and Definition.
+
+The row displays:
+Byte (Dec) is seventeen.
+Byte (Hex) is hexadecimal one one.
+Field Name is Write Recovery Time, t W R min.
+Typ. Value is hexadecimal zero seven eight.
+Definition is fifteen nanoseconds.
+
+From the J E D E C Specification: Byte seventeen: Minimum Write Recovery Time (t W R min). This byte defines the minimum S D R A M write recovery time in Medium Timebase (M T B) units. This value comes from the D D R three S D R A M datasheet.
+
+Bits seven to zero: Minimum Write Recovery Time (t W R) M T B Units. Values defined from one to two hundred fifty five.
+
+Example:
+The provided text details a calculation for determining the minimum write recovery time, denoted as tWR, for a Synchronous Dynamic Random Access Memory, or SDRAM, chip. This parameter is crucial for ensuring data integrity during write operations in memory systems.
+
+The process begins by referencing a specific SDRAM chip, in this case, a Micron MT41J256M8, which has a tWR value of fifteen nanoseconds as specified in its datasheet. This raw value, representing a direct time duration, then needs to be normalized or converted based on a system-specific timebase.
+
+The text explains that this fifteen nanosecond value must be divided by a "Medium Timebase Divisor." This divisor is presented in hexadecimal as zero x zero B, which translates to a decimal value of eleven. This division is a common practice in memory system design where timing parameters are often expressed as multiples or fractions of a reference clock or internal timer, referred to as the timebase. This allows for flexibility and scalability across different system frequencies.
+
+The example calculation then proceeds: fifteen nanoseconds divided by zero point one two five nanoseconds. It's important to note the slight discrepancy here; the text first states fifteen nanoseconds and a divisor of zero x zero B (eleven). However, the subsequent calculation uses zero point one two five nanoseconds, which implies a divisor of one hundred and twenty, not eleven. Assuming the calculation is the intended demonstration, it proceeds as follows: fifteen nanoseconds divided by zero point one two five nanoseconds equals one hundred and twenty. This result, one hundred and twenty, is then represented in hexadecimal as zero x seventy eight. This suggests that the Medium Timebase Divisor, when applied to the fifteen nanosecond tWR value, results in a scaled value that can be represented by a programmable register.
+
+The accompanying table provides a specification for this parameter. It indicates that "Byte seventeen" (hexadecimal one one) in a JEDEC specification defines the "Write Recovery Time (tWRmin)". The typical value for this is given as zero x seventy eight, which corresponds to one hundred and twenty in decimal, and the definition is fifteen nanoseconds. This aligns with the calculation, implying that the JEDEC specification uses a unit system where a value of one hundred and twenty in this particular register field translates to a real-world time of fifteen nanoseconds, mediated by an implicit timebase.
+
+Further context is provided by the mention of "Bits seven to zero" within this byte, which define the "Minimum Write Recovery Time (tWR) MTB Units." The values defined for these bits range from one to two hundred and fifty-five. This signifies that this specific byte is a programmable register where the value written determines the tWR timing, and that the mapping from these register values to actual nanoseconds is dependent on the Medium Timebase. The "MTB" likely stands for Medium Timebase. This tiered approach to timing specification is common in complex hardware like SDRAM, allowing for granular control and adaptation to various operating conditions and system architectures.

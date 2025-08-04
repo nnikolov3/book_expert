@@ -1,0 +1,52 @@
+The Operating System
+
+To Intel architecture, the key requirements for the OS can be boiled down to
+a few standards. The OS communicates to the BIOS via one interface or the
+other. There are three key interfaces between the BIOS and the OS:
+
+1. ACPI (Advanced Configuration and Power Interface). This specification
+defines how the BIOS passes the “reserved memory ranges” and other
+PnP interfacing between the BIOS and the OS. It also covers a lot of
+interface information on power management, interrupts, and multiple
+CPUs that the operating systems require.
+
+2. PCI (Peripheral Component Interface). This is the quintessential internal
+plug-and-play specification. It has evolved and remains a central
+computing industry tenet. If you are designing an add-in device, or even
+an integrated device, having it utilize this standard interface can be a
+make-or-break hinge factor. If you don’t have this interface, then
+everything on the part is custom, and your OS will not understand how
+to interpret the hardware. Yes, other interfaces can be run, including
+USB which is plug and play, but to talk to the internals of the
+chipset/CPU, the IO has to go through PCI.
+
+3. UEFI (Unified Extensible Firmware Interface). This is an industry
+specification defining BIOS and BIOS-to-OS interfaces, which change
+from boot phase to boot phase. It is like what Buddhism is to religion; it
+can encompass all, and it does encompass ACPI and several legacy table
+components. It has been designed to reduce cost in development and
+time to market for new technologies and platforms. Its real purpose is to
+replace the Legacy BIOS-to-OS interface, to potentially abstract and
+replace legacy hardware (82xx) from the platform.
+
+4. Legacy Interface code (16-bit code), which I am not counting as we’re
+The Operating System.
+
+To Intel architecture, the key requirements for the O S can be boiled down to a few standards. The O S communicates to the B I O S via one interface or the other. There are three key interfaces between the B I O S and the O S.
+
+The first interface is A C P I, which stands for Advanced Configuration and Power Interface. This specification defines how the B I O S passes the “reserved memory ranges” and other P n P interfacing between the B I O S and the O S. It also covers a lot of interface information on power management, interrupts, and multiple C P U s that the operating systems require.
+
+The second interface is P C I, or Peripheral Component Interface. This is the quintessential internal plug and play specification. It has evolved and remains a central computing industry tenet. If you are designing an add-in device, or even an integrated device, having it utilize this standard interface can be a make or break hinge factor. If you don’t have this interface, then everything on the part is custom, and your O S will not understand how to interpret the hardware. Yes, other interfaces can be run, including U S B which is plug and play, but to talk to the internals of the chipset slash C P U, the I O has to go through P C I.
+
+The third interface is U E F I, which means Unified Extensible Firmware Interface. This is an industry specification defining B I O S and B I O S to O S interfaces, which change from boot phase to boot phase. It is like what Buddhism is to religion; it can encompass all, and it does encompass A C P I and several legacy table components. It has been designed to reduce cost in development and time to market for new technologies and platforms. Its real purpose is to replace the Legacy B I O S to O S interface, to potentially abstract and replace legacy hardware, denoted as eighty two x x, from the platform.
+
+The fourth item is Legacy Interface code, which is sixteen bit code, which I am not counting as we're.
+The interaction between an operating system and the fundamental platform firmware, commonly known as the B I O S in traditional systems, is critical for system initialization, hardware abstraction, and resource management. In the context of Intel architecture, these requirements are primarily mediated through several established standards and interfaces. The operating system communicates with the B I O S either through a single integrated interface or a combination of distinct ones, each designed to address specific aspects of system operation. Three paramount interfaces govern this intricate dance between firmware and operating system.
+
+Firstly, the Advanced Configuration and Power Interface, or A C P I, stands as a foundational specification that dictates how the B I O S designates reserved memory regions for various system functions. Beyond memory allocation, A C P I is central to the Plug And Play mechanism, facilitating seamless interaction between the B I O S and the O S for device detection and configuration. Its comprehensive scope extends to crucial aspects such as sophisticated power management policies, interrupt routing, and the coordination across multiple C P U units, all of which are indispensable for modern operating systems to function efficiently and reliably. A C P I allows the O S to abstract away the underlying hardware intricacies related to power states, thermal management, and resource allocation, presenting a unified interface to software components.
+
+Secondly, the Peripheral Component Interconnect, or P C I, represents a quintessential internal bus standard that has profoundly shaped computing architecture, embodying the principle of Plug And Play. This interface has undergone significant evolution, transitioning from a parallel bus to its serial iteration, P C I E, yet its conceptual role as a central conduit for peripheral communication remains. For instance, in the design of an add in device or an integrated component, leveraging the P C I standard is often a make or break factor, as it defines the fundamental communication protocol. Without adherence to this interface, the operating system would lack the inherent mechanisms to interpret and interact with the hardware. While other interfaces, such as U S B, enable Plug And Play for external devices, their underlying I O operations often route through the P C I subsystem to communicate with the internal components of the chipset and C P U. This highlights P C I's pervasive role as a foundational layer for high speed internal data transfer.
+
+Thirdly, the Unified Extensible Firmware Interface, or U E F I, is a modern industry standard that redefines the interface specifications between the B I O S and the operating system. It represents a paradigm shift, fundamentally altering how a system progresses from the initial boot phase to the operational state of the O S. The shift from Legacy B I O S to U E F I is akin to a profound philosophical transformation in a complex system, encompassing and integrating functionalities previously disparate, such as A C P I and numerous legacy table components. U E F I was conceived with the explicit goals of reducing development costs and accelerating the time to market for new technologies and platforms. Its primary objective is to supersede the traditional B I O S to O S interface, thereby abstracting away and replacing legacy hardware specific code, often associated with components like the hexadecimal eight two X X series from the platform. This abstraction provides a more modular, extensible, and secure boot environment, supporting features like secure boot, larger disk partitions beyond two terabytes, and network boot capabilities inherently.
+
+Finally, while the concept of legacy interface code, typically sixteen bit code, is acknowledged, it is often viewed as a historical artifact, gradually being phased out by the more capable and flexible U E F I standard. This older code relies on specific interrupt vectors and memory addresses, presenting a more rigid and less scalable interface compared to its modern successors.

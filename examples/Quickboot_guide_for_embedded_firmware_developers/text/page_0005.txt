@@ -1,0 +1,48 @@
+memory subsystem. Once main memory is initialized, the system firmware is
+shadowed from ROM into the RAM and the initialization continues. As part
+of the advanced initialization stages, the system firmware creates tables of
+hardware information in main memory for the operating system to utilization
+during its installation, loading, and runtime execution. During POST,
+hardware workarounds are often implemented to avoid changing silicon or
+hardware during later design phases. There may be an element of the system
+firmware that remains active during latter stages to allow for responses to
+various operating system function calls. The system firmware is customized
+for the specific hardware needs of the platform and perhaps for a given
+application. The last thing the system firmware does is hand off control to the
+OS loader.
+
+System firmware can be constructed in a proprietary legacy code base
+and/or in a Unified Extensible Firmware Interface (UEFI) framework. Legacy
+BIOS incorporates a legacy OS interface and follows legacy software
+interrupt protocols that have been evolving organically since the IBM PC
+(circa 1981). UEFI is a specification detailing an interface that helps hand off
+control of the system for the preboot environment—that is, after the system is
+powered on, but before the operating system starts—to an operating system,
+such as Microsoft Windows or Linux. UEFI provides an interface between
+operating systems and platform firmware at boot time, and supports an
+architecture-independent mechanism for initializing add-in cards (option
+ROM). We will dig in to the story of how and why legacy BIOS has been
+converted to UEFI in a minute. A key takeaway is that the system
+initialization code is either going to be UEFI-based, or legacy-based, or try to
+
+support elements of both depending on the operating system requirements.
+
+OS Loader
+Memory subsystem. Once main memory is initialized, the system firmware is shadowed from R O M into the Ram and the initialization continues. As part of the advanced initialization stages, the system firmware creates tables of hardware information in main memory for the operating system to utilization during its installation, loading, and runtime execution. During P O S T, hardware workarounds are often implemented to avoid changing silicon or hardware during later design phases. There may be an element of the system firmware that remains active during latter stages to allow for responses to various operating system function calls. The system firmware is customized for the specific hardware needs of the platform and perhaps for a given application. The last thing the system firmware does is hand off control to the O S loader.
+
+System firmware can be constructed in a proprietary legacy code base and or in a Unified Extensible Firmware Interface (U E F I) framework. Legacy B I O S incorporates a legacy O S interface and follows legacy software interrupt protocols that have been evolving organically since the I B M P C (circa one thousand nine hundred eighty one). U E F I is a specification detailing an interface that helps hand off control of the system for the preboot environment—that is, after the system is powered on, but before the operating system starts—to an operating system, such as Microsoft Windows or Linux. U E F I provides an interface between operating systems and platform firmware at boot time, and supports an architecture independent mechanism for initializing add in cards (option R O M). We will dig in to the story of how and why legacy B I O S has been converted to U E F I in a minute. A key takeaway is that the system initialization code is either going to be U E F I based, or legacy based, or try to support elements of both depending on the operating system requirements.
+
+O S Loader
+The intricate dance of a computer system coming to life begins with the memory subsystem's initialization. Upon power on, the system firmware, typically stored in Read Only Memory or R O M, is vitalized. A crucial performance optimization in this early phase involves "shadowing," where the contents of the R O M are copied into the faster Random Access Memory, or Ram. This process allows the Central Processing Unit, or C P U, to execute firmware instructions at significantly higher speeds, as Ram access times are inherently much lower than those of R O M, thereby accelerating the overall boot sequence and subsequent system operations.
+
+During these initial stages of hardware bring-up, the system firmware, as a foundational layer of software, undertakes several critical responsibilities. It dynamically constructs and populates various data structures within the main memory, these tables containing essential information about the detected hardware configuration. This comprehensive hardware inventory is indispensable for the operating system's subsequent utilization, facilitating its correct identification, initialization, and management of peripherals and components throughout its loading and runtime execution phases. A significant part of this process is the Power On Self Test, or P O S T, which is a diagnostic routine executed immediately after power up to verify the basic functionality of core hardware components.
+
+A nuanced aspect of firmware engineering involves the implementation of hardware workarounds. Given the iterative nature of silicon and hardware design, particularly during early development, minor imperfections or errata can emerge. Firmware often incorporates specific logic to mitigate these issues, ensuring system stability and correct operation without requiring physical modification of the hardware itself. Furthermore, an essential element of the system firmware persists in an active state even after the primary operating system has loaded. These persistent firmware components serve to respond to various operating system function calls, providing low level services for tasks such as power management, thermal control, or specialized hardware access, thereby bridging the gap between the hardware and the higher level software. The firmware is meticulously customized to align with the specific hardware requirements of a given platform and the intended application, underscoring the tight integration between hardware and its foundational software. Ultimately, the culminating act of the system firmware is the secure and complete transfer of control to the operating system loader, initiating the operating system's full boot process.
+
+Historically, system firmware was constructed upon a proprietary legacy code base known as the Basic I O System, or B I O S. Originating around nineteen eighty one with the I B M P C, B I O S operates within the C P U's one six bit real mode, which imposes severe limitations on addressable memory, typically capped at one megabyte. It relies extensively on a set of interrupt protocols that evolved organically over decades, leading to a complex and often rigid architecture.
+
+In contrast, the Unified Extensible Firmware Interface, or U E F I, represents a modern, more robust, and extensible framework. U E F I is not merely an incremental improvement but a comprehensive specification that defines a standardized interface for the preboot environment. This standardization facilitates a more efficient and flexible handoff of control from firmware to the operating system. When the system is powered on, U E F I takes charge, managing all aspects of the preboot environment before the operating system, such as Microsoft Windows or Linux, begins its execution.
+
+U E F I provides a sophisticated interface between the operating systems and the platform firmware during boot time. It supports advanced features like sixty four bit operation, network booting, and secure boot, which are critical for modern computing environments. Furthermore, U E F I offers an architecture independent mechanism for initializing add in cards, often those with their own option R O M s. This modularity and standardization are significant advancements over legacy B I O S, which struggled with extensible, architecture neutral device initialization.
+
+The industry is in a transitional period where legacy B I O S systems are progressively being converted to U E F I. A key architectural decision for system developers is whether the system's initialization code will be exclusively U E F I based, or if it will retain backward compatibility with legacy B I O S, or even attempt to support elements of both, with the choice largely dictated by the specific operating system requirements and the necessity for interoperability with older hardware or software.

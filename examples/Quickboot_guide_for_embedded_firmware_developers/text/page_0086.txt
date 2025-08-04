@@ -1,0 +1,51 @@
+8 Byte Link Value for INTC#
+9 Word IRQ Bitmap for INTC#
+11 Byte Link Value for INTD#
+12 Word IRQ Bitmap for INTD#
+
+Slot Number — This value is used to communicate whether the
+table entry is for a system-board device or an add-in slot. For
+system-board devices, the slot number should be set to zero.
+
+14 Byte For add-in slots, the slot number should be set to a value that
+corresponds with the physical placement of the slot on the
+system board. This provides a way to correlate physical slots
+with PCI device numbers.
+
+15 Byte Reserved
+
+Set PCI Hardware Interrupt
+Set PCI hardware is intended to be used by a configuration utility or a Plug-
+N-Play operating system like Windows* 98 or higher. It can assign a specific
+
+IRQ to an interrupt pin on a particular Bus and Device number.
+
+$PIR Table
+Per Microsoft’s PCI IRQ Routing Table Specification 1.0, the PCI IRQ
+Routing Table is in system memory from FO000h to FFFFFh on a 16-byte
+boundary. It begins with a signature of $PIR, and the resulting table output is
+compatible with the formatting of the buffer pointing to Int 1Ah
+Get_PCI_interupt_routing options call above.
+
+The PCI IRQ Routing Table ($PIR) has the header structure shown in
+Table 5.3.
+
+Table 5.3: Header Structure of the PCI IRQ Routing Table ($PIR)
+
+Offset Name
+Set P C I Hardware Interrupt. Set P C I hardware is intended to be used by a configuration utility or a Plug N Play operating system like Windows ninety eight or higher. It can assign a specific I R Q to an interrupt pin on a particular Bus and Device number.
+
+Dollar P I R Table. Per Microsoft's P C I I R Q Routing Table Specification one point zero, the P C I I R Q Routing Table is in system memory from hexadecimal F zero zero zero zero H to hexadecimal F F F F F H on a sixteen byte boundary. It begins with a signature of dollar P I R, and the resulting table output is compatible with the formatting of the buffer pointing to Int one A H Get P C I interrupt routing options call above. The P C I I R Q Routing Table dollar P I R has the header structure shown in Table five point three.
+
+Table five point three, titled "Header Structure of the P C I I R Q Routing Table dollar P I R", describes fields with their byte offset, size, and name. At byte offset eight, there is a Byte field named Link Value for I N T C hash. At byte offset nine, there is a Word field named I R Q Bitmap for I N T C hash. At byte offset eleven, there is a Byte field named Link Value for I N T D hash. At byte offset twelve, there is a Word field named I R Q Bitmap for I N T D hash. At byte offset fourteen, there is a Byte field named Slot Number. This value is used to communicate whether the table entry is for a system board device or an add in slot. For system board devices, the slot number should be set to zero. For add in slots, the slot number should be set to a value that corresponds with the physical placement of the slot on the system board. This provides a way to correlate physical slots with P C I device numbers. Finally, at byte offset fifteen, there is a Byte field named Reserved.
+The information presented details critical aspects of hardware resource management and system-level configuration within a computer architecture, particularly focusing on P C I devices and interrupt handling.
+
+At a fundamental level, the system manages hardware components through structured data. Specific byte and word offsets within a conceptual table define distinct attributes for P C I devices. For instance, at offset eight, a single byte represents a "Link Value" for I N T C hash. This byte likely encodes an identifier or a pointer to further configuration data related to interrupt line C. Similarly, at offset nine, a two byte word specifies an "I R Q Bitmap" for I N T C hash. A bitmap, in this context, is a compact data structure where each bit corresponds to a unique interrupt request line. Setting a particular bit within this word would indicate the allocation or availability status of a specific I R Q for the I N T C interrupt pin. The same pattern is observed for I N T D hash at offsets eleven and twelve, highlighting a symmetric design for managing interrupt lines.
+
+Crucially, at offset fourteen, a single byte defines the "Slot Number." This field serves as a crucial discriminator: a value of zero signifies that the P C I device is integrated directly onto the system board, indicating a fixed, non-removable component. Conversely, for add-in P C I cards, this slot number provides a direct mapping between the logical P C I device enumeration and its physical location within an expansion slot on the motherboard. This mapping is vital for operating systems and device drivers to correctly identify, configure, and manage peripherals based on their physical presence. Finally, offset fifteen is designated as "Reserved," a common practice in hardware and software specification to allocate space for future extensions or to maintain byte alignment without defining current functionality.
+
+The mechanism for configuring P C I hardware interrupts, often referred to as "Set P C I Hardware," underpins the Plug and Play paradigm. This design principle allows operating systems, such as Windows ninety eight and later iterations, to automatically discover, identify, and configure hardware devices without requiring manual user intervention. The underlying technical concept involves a configuration utility or the O S kernel itself interrogating hardware devices or system firmware to determine their resource requirements, specifically their interrupt needs. The "Set P C I Hardware" functionality enables the O S to dynamically assign a specific I R Q number to an interrupt pin on a particular P C I Bus and Device. This assignment is critical for establishing efficient communication pathways between the device and the C P U, ensuring that the C P U can respond promptly to events generated by the hardware peripheral.
+
+A central component facilitating this automatic configuration is the dollar P I R Table, formally known as the P C I I R Q Routing Table Specification one point zero by Microsoft. This table is a fundamental data structure residing in system memory, specifically within the B I O S or firmware address range, typically from hexadecimal F zero zero zero zero h to F F F F F h. Its location in this high memory region ensures its availability during early system boot stages before the operating system is fully loaded. The table is designed with a strict sixteen byte memory boundary alignment, which is essential for optimized cache line fetching and memory access efficiency on many modern processor architectures. The presence of a distinct "dollar P I R" signature acts as a magic number, allowing the operating system or firmware to reliably locate and validate the table's integrity in memory. The specification further dictates that the output format of this table is compatible with a buffer pointed to by interrupt one A h, suggesting a standardized A P I call, possibly `Get_P C I_interrupt_routing_options`, which software can invoke to retrieve this crucial routing information.
+
+The structure of this dollar P I R table, particularly its header, is paramount for its correct interpretation. While the full table content is not provided, the section specifies a header structure identified as "Table five point three" which would typically include fields such as "Byte Offset in," "Size," and "Name." This conceptual table schema describes the layout of the dollar P I R header itself. Each entry in such a table would delineate a field within the dollar P I R header, specifying its relative byte offset from the beginning of the header, its size in bytes, and a descriptive name for the field. This meta-information is indispensable for parsing the table correctly, ensuring that the operating system can accurately extract and utilize the P C I I R Q routing information to assign interrupts and manage system resources effectively. Without this precise definition of the header, the table's data would be indecipherable, highlighting the importance of clear, standardized data structures in complex system architectures.

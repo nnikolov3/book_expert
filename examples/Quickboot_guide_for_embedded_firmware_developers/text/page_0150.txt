@@ -1,0 +1,46 @@
+The shell command MemMap can display memory information about
+the
+
+platform. The actual map is, in this case, not the information that is of
+interest. The interesting information is the other part—about how many bytes
+of memory are allocated for each type (that is, BootServiceData). The
+MemMap command is run (recording the data) before and after running an
+application or loading and unloading a driver and then run again, and the end
+results are compared with the first run.
+
+The commands Connect, Disconnect, and Map are required for setup
+and configuration of drivers for devices that are disk drives. Many commands
+can be used for write, read, and verify on a disk drive. A simple version
+would be to echo a text file to the new drive and then use the Compare
+
+command to verify it.
+
+The End for the Shell
+
+There are many possible end-game scenarios for the shell. They can range
+from exiting the shell to having it run forever as a background program. They
+
+are (vaguely organized from simple to less simple):
+—Exit command
+—OS Loader
+—Shell application as platform
+—Runtime application
+
+The simplest example is that a user can run the exit command and return
+The shell command MemMap can display memory information about the platform. The actual map is, in this case, not the information that is of interest. The interesting information is the other part, about how many bytes of memory are allocated for each type, that is, BootServiceData. The MemMap command is run, recording the data, before and after running an application or loading and unloading a driver, and then run again, and the end results are compared with the first run. The commands Connect, Disconnect, and Map are required for setup and configuration of drivers for devices that are disk drives. Many commands can be used for write, read, and verify on a disk drive. A simple version would be to echo a text file to the new drive and then use the Compare command to verify it.
+
+The End for the Shell
+
+There are many possible end-game scenarios for the shell. They can range from exiting the shell to having it run forever as a background program. They are vaguely organized from simple to less simple:
+
+Exit command
+O S Loader
+Shell application as platform
+Runtime application
+
+The simplest example is that a user can run the exit command and return
+The shell command `MemMap` functions as a diagnostic utility to inspect memory allocation patterns within the system. It operates by recording the state of memory usage, specifically the allocation of bytes for various data types, such as `BootServiceData`, before and after a specific operation. This operation typically involves loading or unloading a driver. The utility then re-executes the same operation and compares the subsequent memory usage with the initial measurement, providing insights into memory fragmentation or leakage that may occur during driver lifecycles.
+
+The `MemMap` command is part of a suite of commands, including `Connect`, `Disconnect`, and `Map`, which are essential for the setup and configuration of drivers, particularly for disk drives. These commands enable fundamental I O operations on storage devices: writing data, reading data, and verifying data integrity. A simplified workflow for verifying disk operations involves creating a text file, writing its content to a new drive, and then using the `Compare` command to ensure the data was transferred accurately.
+
+The document then transitions to discuss potential termination scenarios for a shell environment. These scenarios are broadly categorized based on the shell's final state, ranging from immediate exit to indefinite background operation. The described end-game scenarios include the shell itself exiting, the `O S Loader` taking control, the shell transitioning into a platform component, or evolving into a persistent runtime application. The simplest case involves a user-initiated `exit` command, which terminates the shell's current execution context and returns control to the preceding environment.

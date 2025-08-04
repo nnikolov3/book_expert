@@ -1,0 +1,53 @@
+Under a BSD License, there are three versions to consider with varying
+degrees of compatibility between proprietary and GPL and other BSD
+licensed software. There have been multiple versions of the BSD license:
+four-clause, three-clause, and two-clause. The full license texts can be found
+
+online, but below are some key difference.
+
+Key Four Clauses to the Original License
+
+The following are the four key clauses of the original license:
+
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. All advertising materials mentioning features or use of this software
+must display the following acknowledgement: This product includes
+software developed by the <organization>.
+
+4. Neither the name of the <organization> nor the names of its contributors
+may be used to endorse or promote products derived from this software
+
+without specific prior written permission.
+
+The four-clause BSD license was not GPL-compatible, and the mandatory
+product message advertising the BSD developers was not wanted by product
+
+developers downstream.
+
+Three-Clause BSD
+Under a BSD License, there are three versions to consider with varying degrees of compatibility between proprietary and G P L and other BSD licensed software. There have been multiple versions of the BSD license: four clause, three clause, and two clause. The full license texts can be found online, but below are some key differences.
+
+Key Four Clauses to the Original License
+
+The following are the four key clauses of the original license:
+One. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Two. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and or other materials provided with the distribution.
+Three. All advertising materials mentioning features or use of this software must display the following acknowledgement: This product includes software developed by the organization.
+Four. Neither the name of the organization nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+The four clause BSD license was not G P L compatible, and the mandatory product message advertising the BSD developers was not wanted by product developers downstream.
+
+Three Clause BSD
+The text delineates the nuances of the Berkeley Software Distribution, or B S D, license, highlighting its tiered compatibility with proprietary and G P L licenses, and underscoring the existence of multiple versions: the four clause, three clause, and two clause variants. The core of the discussion centers on the "Key Four Clauses to the Original License," which encapsulate the fundamental permissions and obligations governing the distribution and modification of B S D licensed software.
+
+The first clause mandates the preservation of the original copyright notice, along with the specific conditions and the subsequent disclaimer, irrespective of whether the software is redistributed in source or binary form. This ensures attribution and adherence to the license terms across all derivative works. The second clause reiterates this requirement for binary redistributions, emphasizing the need to reproduce the original copyright notice, the conditions, and the disclaimer within accompanying documentation or other materials provided with the distribution. This clause is crucial for maintaining the integrity of the licensing framework as the software propagates.
+
+The third clause addresses acknowledgment in advertising and promotional materials. It stipulates that any advertising that features or makes use of the software must include a visible acknowledgment, specifying the software's origin from the originating organization. This clause is designed to provide visibility to the original developers and their contributions. Finally, the fourth clause pertains to endorsement and promotion. It prohibits the use of the names of the original developers or their associated organizations to endorse or promote products derived from the software without explicit prior written consent. This clause serves to protect the reputation and intellectual property rights of the creators by preventing unauthorized endorsement.
+
+The text then notes that the four clause B S D license is not G P L compatible, and a significant point of contention for product developers is the mandatory inclusion of the product message advertising the B S D developers, which was not desired by downstream product developers. This incompatibility and the perceived burden of the promotional clause underscore the practical considerations and historical context surrounding the adoption and evolution of software licenses, particularly in relation to the General Public License, or G P L. The subsequent mention of "Three Clause B S D" suggests a divergence from these original conditions, likely to address the aforementioned compatibility and promotional concerns.

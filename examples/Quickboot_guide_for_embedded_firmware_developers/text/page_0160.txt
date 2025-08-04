@@ -1,0 +1,52 @@
+from a standard second-stage boot loader.
+
+Firmware enters BDSG phase
+Boot Device Salaction
+
+Head 2nd stage from
+known ofiset an legacy SPI Bash
+
+1. JF HoT image
+
+valuel?
+
+Yes
+
+Giri — ead bootloader
+configuration trom amet filesystem
+
+No HoT image
+valid?
+
+Hoolloaoer read kermat initrd
+from FATAREXTIEXTL
+fila-sysiom on SLHOMSMMO
+
+No RoT images
+vaha'y
+
+Yas
+
+Hand off to run-time as specified
+
+Figure 8.1: Default Second-Stage Boot Loader Flow
+from a standard second stage boot loader.
+
+The diagram illustrates the default second stage boot loader flow.
+
+The process begins with the firmware entering the BDS phase, also known as Boot Device Selection. From here, the flow proceeds to read the second stage from a known offset on legacy S P I flash. A decision point follows, checking if the R o T image is valid. If it is not valid, the boot process fails. If the R o T image is valid, the next step is for Grub to read the bootloader configuration from the target file system.
+
+After reading the configuration, another decision point checks if the R o T images are valid. If they are not valid, the boot process fails. If the R o T images are valid, the bootloader reads the kernel and initrd from F A T thirty two, E X T three, or E X T four file systems on S D I O or e M M C.
+
+Following this, there is a final decision point that again checks if the R o T images are valid. If they are not valid, the boot process fails. If they are valid, the system hands off to run time as specified in the bootloader configuration.
+
+Figure eight point one shows the Default Second Stage Boot Loader Flow.
+The diagram illustrates a typical workflow for a second-stage boot loader, a critical component responsible for initializing the system and loading the operating system. The process begins with the Firmware entering the Boot Device Selection, or B D S, phase. This phase is crucial for identifying and preparing the storage device from which the subsequent boot loader stages will be loaded.
+
+Following the B D S phase, the system attempts to read the second-stage boot loader from a known offset on a legacy S P I flash memory. This is a common practice for storing essential boot code, as S P I flash offers non-volatile storage directly accessible by the system's firmware. The integrity of this read boot loader is then verified. If the "RoT image valid" check fails, the system indicates a boot failure.
+
+Assuming the initial boot loader is valid, the process proceeds to the Grub stage, which is responsible for reading the boot loader configuration from the target file system. Grub, or GRand Unified Bootloader, is a widely used boot loader for Unix-like systems, capable of managing multiple operating systems and complex boot configurations. Again, a validation step for the "RoT image" follows. If this validation fails, it results in a boot failure.
+
+Upon successful validation of the Grub-related boot loader configuration, the next step involves the boot loader reading the operating system kernel and the initial ramdisk, or initrd, from file systems such as F A T thirty two, E X T three, or E X T four. These file systems are typically located on storage devices like S D I O or e M M C, which are common integrated storage solutions in embedded systems and mobile devices. The validity of these "RoT images" is assessed.
+
+Finally, if all prior validation checks are successful, the system hands off control to the run-time environment, as specified in the boot loader configuration. This signifies the successful completion of the boot sequence, with the kernel and initrd loaded and ready to take over system control, initiating the full operating system load. Each "boot fail" state represents a critical failure in the boot process, necessitating diagnostic intervention.

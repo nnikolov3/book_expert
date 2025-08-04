@@ -1,0 +1,58 @@
+interfaces all comply with the PCI specification.
+
+Refer to the PCI Specification for more details. A list of all the
+applicable specifications is in the References section.
+
+It is interesting to note that in the UEFI system, the DXE phase does not
+execute the majority of drivers, but it is the BDS Phase that executes most of
+
+the required drives in UEFI to allow the system to boot.
+
+Graphics Initialization
+
+If the platform has a head, then the video BIOS or Graphics Output Protocol
+UEFI driver is normally the first option ROM to be executed in the string.
+Once the main console out is up and running, the console in can be
+
+configured.
+
+Input Devices
+
+Refer to the board schematics to determine which I/O devices are in the
+system. Typically, a system will contain one or more of the following
+
+devices.
+
+Embedded Controller (EC)
+
+An embedded controller is typically used in mobile or low-power systems.
+The EC contains separate firmware that controls the power management
+functions for the system, as well as PS/2 keyboard functionality. Refer to the
+
+specific EC datasheet for more details.
+
+Super 1/0 (SIO)
+Interfaces all comply with the P C I specification. Refer to the P C I Specification for more details. A list of all the applicable specifications is in the References section. It is interesting to note that in the U E F I system, the D X E phase does not execute the majority of drivers, but it is the B D S Phase that executes most of the required drives in U E F I to allow the system to boot.
+
+Graphics Initialization
+
+If the platform has a head, then the video B I O S or Graphics Output Protocol U E F I driver is normally the first option R O M to be executed in the string. Once the main console out is up and running, the console in can be configured.
+
+Input Devices
+
+Refer to the board schematics to determine which I O devices are in the system. Typically, a system will contain one or more of the following devices.
+
+Embedded Controller (EC)
+
+An embedded controller is typically used in mobile or low power systems. The E C contains separate firmware that controls the power management functions for the system, as well as P S slash two keyboard functionality. Refer to the specific E C datasheet for more details.
+
+Super I O (SIO)
+The content discusses system initialization and input device handling within a computer architecture context. The initial paragraph references compliance with the P C I specification, implying the use of the Peripheral Component Interconnect standard for system bus communication. It further points to a "References section" for detailed specifications. The text highlights an interesting aspect of the U E F I system, specifically the DXE phase's role in executing most of the required drivers to enable system boot.
+
+Following this, the section on "Graphics Initialization" explains the process of bringing graphics hardware online. It states that if a platform has a graphics card, the video B I O S or Graphics Output Protocol U E F I driver is typically the first option R O M to be executed. This sequence culminates in the main console becoming operational and configured.
+
+The "Input Devices" section directs the reader to consult board schematics to identify the specific I O devices present in a system. It notes that a typical system will feature one or more input devices.
+
+The "Embedded Controller (EC)" subsection defines the Embedded Controller as a component commonly found in mobile or low power systems. This controller is described as containing separate firmware responsible for system functions, including PS/2 keyboard functionality. For further details, reference to the specific E C datasheet is recommended.
+
+Finally, the mention of "Super I O (SIO)" suggests another integrated circuit, often found on motherboards, which consolidates various legacy I O functions like serial ports, parallel ports, and floppy disk controllers. While not elaborated upon, its presence indicates a layer of peripheral management.

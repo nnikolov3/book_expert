@@ -1,0 +1,265 @@
+OSD: Weak margin (4.34) for 606 blob text block, but using orientation anyway: 0
+Byte 21 Bits 7-4, Byte 23 Bits 7-0
+
+Minimum Active to Active/Refresh Time (tRAS) MTB Units
+
+Values defined from 1 lo 4095
+
+tRC
+
+(MTE units)
+400 O=190
+420 Ox TAG
+390 Ox 186
+405 Ox 195
+420 Dx 1A
+372 Ox 174
+JB4 Ox180
+396 Ox 18
+393 Ox 18S
+408 Ox 198
+360 Ox168
+370 Ox172
+380 0x17C
+390 Ox 186
+385 O=181
+358 Ox 166
+367 Ox 16F
+375 Ox177
+384 Ox 180
+377 Ox170
+347 O=15B
+354 Dx 162
+362 Ox 164
+369 O=x171
+
+MTB
+(ns)
+0.125
+0.125
+0.125
+0.125
+0.125
+0.125
+0.125
+0.125
+0.125
+
+0.125
+0.125%
+0.125
+0.125
+0.125
+0.125
+
+0.125
+0.125%
+0.125%
+0.125
+0.125
+
+0.125
+0.125
+0.125
+0.125
+
+tRC Offset
+(FTB units)1
+
+i] 0
+
+0
+
+0 LL]
+
+0 0
+
+( LL
+
+0 0
+
+0 LL
+
+0 0
+
+Ch LL
+
+0 0
+
+0 0
+
+0 0
+
+0 1]
+
+0 0
+
+i] Li]
+-50 0=CE
+-105  O=97
+-35 oxDD
+-90 Ox AG
+i] Li]
+-90 OxAG
+-30 oxE2
+-05 Ox=Al
+-35 0oxDD
+
+FTB
+
+(ns)
+
+0.001
+0.001
+0.001
+0.001
+0.001
+0.001
+0.001
+0.001
+0.001
+
+0.001
+0.001
+0.001
+0.001
+0.001
+0.001
+
+0.001
+0.001
+0.001
+0.001
+0.001
+
+0.001
+0.001
+0.001
+0.001
+
+tRC Result
+(ns)
+
+50
+R2.5
+48.75
+50.625
+52.5
+46.5
+48
+49.5
+49.125
+
+21
+
+45
+46.25
+47.5
+48.75
+48.125
+
+44.7
+45.77
+46.84
+47.91
+47.125
+
+43.285
+i. 22
+45.155
+46,09
+
+Use
+
+DDR3-800D0
+DDR3-800E
+DDR3-1066E
+DDR3-1066F
+DDR3-106606
+DDE3-1333F
+DDR3-133306
+DDE3-1333H2
+
+DDR3-1333H
+downhbin;
+
+DDR3-1333)
+DDR3-16000
+DDR3-1600H
+DDR3-1600]
+DDR3-1600K;
+
+DDR3-1600K
+dawnbin,
+
+ODDR3-1866]
+DDR3-1866K
+DDR3-1866L
+DDR3-1866M;
+
+DDR3-1B66M
+downbin;
+
+UDDE3-2133K
+DDR3-2133L
+
+DDR3-2133M
+DDR3-2133N
+Byte twenty one Bits seven to four, Byte twenty three Bits seven to zero. Minimum Active to Active Refresh Time t R A S M T B Units. Values defined from one to four thousand and ninety five.
+
+The table shows timing parameters for memory operations. The first column, t R C in M T B units, represents the timing value. The second column, M T B in nanoseconds, indicates the metric base. The third column, t R C Offset in F T B units, shows an offset value. The fourth column, F T B in nanoseconds, provides another timing metric. The fifth column, t R C Result, displays the calculated timing result. The sixth column, Use, specifies the memory type.
+
+For t R C values of four hundred, the M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is fifty, and the use is D D R three dash eight hundred D.
+
+When t R C is four hundred and twenty, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is fifty two point five, and the use is D D R three dash eight hundred E.
+
+For t R C of three hundred and ninety, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty eight point seven five, and the use is D D R three dash one zero six six E.
+
+When t R C is four hundred and five, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is fifty point six two five, and the use is D D R three dash one zero six six F.
+
+For t R C of four hundred and twenty, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is fifty two point five, and the use is D D R three dash one zero six six G.
+
+When t R C is three hundred and seventy two, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty six point five, and the use is D D R three dash one three three three F.
+
+For t R C of three hundred and eighty four, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty eight, and the use is D D R three dash one three three three G.
+
+When t R C is three hundred and ninety six, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty nine point five, and the use is D D R three dash one three three three H two.
+
+For t R C of three hundred and ninety three, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty nine point one two five, and the use is D D R three dash one three three three H downbin.
+
+When t R C is four hundred and eight, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is fifty one, and the use is D D R three dash one three three three I.
+
+For t R C of three hundred and sixty, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty five, and the use is D D R three dash one six zero zero G.
+
+When t R C is three hundred and seventy, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty six point two five, and the use is D D R three dash one six zero zero H.
+
+For t R C of three hundred and eighty, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty seven point five, and the use is D D R three dash one six zero zero I.
+
+When t R C is three hundred and ninety, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty eight point seven five, and the use is D D R three dash one six zero zero K two.
+
+For t R C of three hundred and eighty five, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty eight point one two five, and the use is D D R three dash one six zero zero K downbin.
+
+When t R C is three hundred and fifty eight, M T B is zero point one two five nanoseconds, t R C Offset is negative fifty, F T B is zero point zero zero one nanoseconds, t R C Result is forty four point seven five, and the use is D D R three dash one eight six six J.
+
+For t R C of three hundred and sixty seven, M T B is zero point one two five nanoseconds, t R C Offset is negative one zero five, F T B is zero point zero zero one nanoseconds, t R C Result is forty five point seven five, and the use is D D R three dash one eight six six K.
+
+When t R C is three hundred and seventy five, M T B is zero point one two five nanoseconds, t R C Offset is negative thirty five, F T B is zero point zero zero one nanoseconds, t R C Result is forty six point eight seven five, and the use is D D R three dash one eight six six L.
+
+For t R C of three hundred and eighty four, M T B is zero point one two five nanoseconds, t R C Offset is negative ninety, F T B is zero point zero zero one nanoseconds, t R C Result is forty seven point nine one, and the use is D D R three dash one eight six six M two.
+
+When t R C is three hundred and seventy seven, M T B is zero point one two five nanoseconds, t R C Offset is zero, F T B is zero point zero zero one nanoseconds, t R C Result is forty seven point one two five, and the use is D D R three dash one eight six six M downbin.
+
+For t R C of three hundred and forty seven, M T B is zero point one two five nanoseconds, t R C Offset is negative ninety, F T B is zero point zero zero one nanoseconds, t R C Result is forty three point two five, and the use is D D R three dash two one three three K.
+
+When t R C is three hundred and fifty four, M T B is zero point one two five nanoseconds, t R C Offset is negative thirty, F T B is zero point zero zero one nanoseconds, t R C Result is forty four point two two, and the use is D D R three dash two one three three L.
+
+For t R C of three hundred and sixty two, M T B is zero point one two five nanoseconds, t R C Offset is negative ninety five, F T B is zero point zero zero one nanoseconds, t R C Result is forty five point one five five, and the use is D D R three dash two one three three M.
+
+When t R C is three hundred and sixty nine, M T B is zero point one two five nanoseconds, t R C Offset is negative thirty five, F T B is zero point zero zero one nanoseconds, t R C Result is forty six point zero nine, and the use is D D R three dash two one three three N.
+This table details timing parameters for dynamic random access memory modules, specifically focusing on the tRC, or Minimum Active to Active/Refresh Time, and its constituent components. The values presented are derived from specific bit fields within a larger data structure, identified as Byte 21 Bits 7 through 4 and Byte 23 Bits 7 through 0. These fields are used to define a base timing unit, referred to as MTB units, where the values shown range from one to forty ninety five.
+
+The table columns represent key timing metrics and their resultant values. The first column, tRC (MTB units), indicates the base tRC value expressed in these defined units. Following this is the MTB column, which quantifies the unit of time in nanoseconds, or ns, used for the tRC measurement. For instance, a value of zero point one two five ns signifies the duration of one MTB unit. The next column, tRC Offset (FTB units), introduces an adjustment to the base tRC value, measured in FTB units. FTB, likely standing for Fine Timing Bits, represents a finer granularity of time measurement. The subsequent FTB (ns) column indicates the duration of one FTB unit in nanoseconds.
+
+The tRC Result column then provides the calculated effective tRC, likely derived from the base tRC, MTB, and tRC Offset values, expressed in nanoseconds. This is the actual timing parameter that governs memory operations. Finally, the Use column provides a designation for the specific memory type or configuration associated with each timing set, such as DDR3 eight hundred D, DDR3 eight hundred E, and progressively higher frequencies like DDR3 one thousand sixty six E through DDR3 two thousand one hundred thirty three N.
+
+Analyzing the data, we observe a correlation between the tRC values and the memory speed grades. For example, lower tRC results, such as fifty nanoseconds, are associated with DDR3 eight hundred D modules, while higher tRC results, like forty five nanoseconds, are seen with DDR3 one thousand six hundred G modules. The tRC Offset column shows variations, with some entries being zero, indicating no offset, and others displaying negative values, such as minus fifty or minus one hundred five. These negative offsets, when combined with the FTB conversion, effectively shorten the overall tRC, allowing for faster operation or accommodating specific memory controller configurations. The presence of entries like "downbin" suggests that certain configurations might represent binning or selection processes to meet specific performance targets. The consistent zero values in the FTB (ns) column for the tRC Offset indicate that the FTB unit itself is a fixed quantum of time, and the offset is a count of these quanta. The tRC Result column demonstrates how these offsets, when translated to nanoseconds using the FTB unit, modify the base timing. For instance, a tRC Offset of minus fifty with an FTB unit of zero point zero zero one ns would reduce the effective tRC by fifty nanoseconds. This table provides a critical mapping between encoded timing parameters in memory control registers and the actual temporal requirements for reliable memory operation across various DDR3 speed grades.

@@ -1,0 +1,47 @@
+Byte 27: Minimum Internal Read to Precharge Command Delay Time
+(tRTPmin)
+
+This byte defines the minimum SDRAM Internal Read to Precharge Delay
+Time in Medium Timebase (MTB) units. This value comes from the DDR3
+SDRAM datasheet. The value of this number may depend on the SDRAM
+page size; please refer to the DDR3 SDRAM datasheet section on Addressing
+to determine the page size for these devices. Controller designers must also
+note that at some frequencies, a minimum number of clocks may be required,
+resulting in a larger tRTPmin value than indicated in the SPD. For example,
+tRTPmin for DDR3-800 must be 4 clocks.
+
+Bits 7-0
+Internal Read to Precharge Delay Time (tRTP) MTB Units
+Values defined from 1 to 255
+
+Examples:
+tRTP (MTB units) Timebase (ns) IRTP Result (ns) Use
+60 Ox 3C 0.125 7.5 All DDR2 SDRAM speed
+
+bins
+
+Note: tRTP is at least 4 nCK independent of operating frequency.
+
+SPD Field #27: “Minimum Internal Read to Precharge Command Delay
+Time (tgrpmin)” Definition from JEDEC DDR3 SPD Specification
+
+Table 56 Electrical Characteristics and AC Operating Conditions
+(Continued) Notes 1-8 apply to the entire table
+Byte twenty seven: Minimum Internal Read to Precharge Command Delay Time (t R T P min). This byte defines the minimum S D R A M Internal Read to Precharge Delay Time in Medium Timebase units. This value comes from the D D R three S D R A M datasheet. The value of this number may depend on the S D R A M page size. Please refer to the D D R three S D R A M datasheet section on Addressing to determine the page size for these devices. Controller designers must also note that at some frequencies, a minimum number of clocks may be required, resulting in a larger t R T P min value than indicated in the S P D. For example, t R T P min for D D R three minus eight hundred must be four clocks.
+
+Bits seven through zero: Internal Read to Precharge Delay Time (t R T P) M T B Units. Values defined from one to two hundred fifty five.
+
+Examples: The table shows an example with sixty t R T P (M T B units), which corresponds to hexadecimal three C in timebase, resulting in seven point five nanoseconds for the t R T P result, and is used for all D D R three S D R A M speed bins.
+
+Note: t R T P is at least four n C K independent of operating frequency.
+
+S P D Field #twenty seven: “Minimum Internal Read to Precharge Command Delay Time (t R T P min)” Definition from J E D E C D D R three S P D Specification.
+
+Table fifty six: Electrical Characteristics and A C Operating Conditions (Continued). Notes one through eight apply to the entire table.
+The presented information details Byte 27 of a system's Serial Presence Detect, or S P D, which defines the minimum internal read to precharge command delay time, denoted as t R T Pmin. This timing parameter is critical for the correct operation of Double Data Rate 3 Synchronous Dynamic Random Access Memory, or D D R three S D Ram. The value for t R T Pmin is expressed in Medium Timebase, or M T B, units. The precise value of this timing parameter is often derived from the D D R three S D Ram datasheet, and controller designers must consult this documentation to accurately determine the appropriate page size for these memory devices. It is also noted that at certain operating frequencies, a larger t R T Pmin value might be necessary than what is indicated in the S P D. As an illustrative example, for D D R3-800 memory, the t R T Pmin is specified as four clock cycles.
+
+The specific bits that define this delay are Bits 7 through 0, and these are internally interpreted as the Internal Read to Precharge Delay Time in M T B units, with values ranging from one to two hundred fifty five. An example is provided to clarify the conversion: when t R T P is set to sixty M T B units, corresponding to a hexadecimal value of zero x three C, and the timebase is zero point one two five nanoseconds, the resulting t R T P value is seven point five nanoseconds. This particular setting is applicable to all D D R three S D Ram speed bins.
+
+A crucial note is that the t R T P value is at least four D D R three clock cycles, or n C K, and this minimum is independent of the operating frequency. This detail is vital for ensuring stable memory operation across different performance profiles.
+
+The document further references S P D Field number twenty seven, which is explicitly titled "Minimum Internal Read to Precharge Command Delay Time (t R T Pmin)". This field's definition originates from the J E D E C D D R3 S P D Specification. The information presented is part of a larger context, as indicated by "Table fifty six Electrical Characteristics and A C Operating Conditions (Continued)", suggesting that notes one through eight apply to the entire table, providing a comprehensive set of parameters for memory system design and validation.

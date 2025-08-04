@@ -1,0 +1,48 @@
+Advanced Initialization
+
+The advanced device initialization follows the early initialization and
+basically ensures that the DRAM is initialized. This second stage is focused
+on device- specific initialization. In a UEFI-based BIOS solution, advanced
+initialization tasks are also known as Dynamic Execute Environment (DXE)
+and Boot Device Selection (BDS) phases. The following devices must be
+initialized in order to enable an embedded system. Not all are applicable to all
+embedded systems, but the list is prescriptive for most and is particular to an
+
+SOC-based- on-Intel architecture.
+—General purpose 1/0 (GPIO)
+—Interrupt controller
+—I'imers
+—Cache initialization (could also be done during early initialization)
+—Serial ports, console in/out
+—Clocking and overclocking
+—PCI bus initialization
+—Graphics (optional)
+—USB
+
+—SATA
+Advanced Initialization
+
+The advanced device initialization follows the early initialization and basically ensures that the D Ram is initialized. This second stage is focused on device specific initialization. In a U E F I based B I O S solution, advanced initialization tasks are also known as Dynamic Execute Environment D X E and Boot Device Selection B D S phases. The following devices must be initialized in order to enable an embedded system. Not all are applicable to all embedded systems, but the list is prescriptive for most and is particular to an S o C based on Intel architecture.
+
+General purpose I O G P I O
+
+Interrupt controller
+
+Timers
+
+Cache initialization could also be done during early initialization
+
+Serial ports, console in out
+
+Clocking and overclocking
+
+P C I bus initialization
+
+Graphics optional
+
+U S B
+
+S A T A
+The document details the concept of "Advanced Initialization" which follows an "early initialization" phase, primarily ensuring that the dynamic random access memory or D Ram is functional. This advanced stage is further segmented into device specific initializations. Within a U E F I based basic input output system or B I O S solution, these advanced initialization tasks are also recognized as Dynamic Execute Environment or D X E and Boot Device Selection or B D S phases. The core objective is to prepare various peripheral devices to enable an embedded system's operation. While not all listed items are universally applicable to every embedded system, the provided list is generally prescriptive for most System on Chip or S o C based architectures, particularly those adhering to an Intel architecture.
+
+The list enumerates several critical components and functionalities that undergo initialization. General purpose input output or G P I O controllers are initialized to provide flexible digital input or output pins configurable for various tasks. Interrupt controllers are set up to manage hardware interrupt requests, ensuring efficient handling of asynchronous events from peripherals. Timers are configured to provide precise timekeeping and control for various system operations, such as scheduling or generating time delays. Cache initialization, which could also be performed during the earlier initialization stage, ensures that the processor's cache memory is properly set up for efficient data access. Serial ports and console input output mechanisms are initialized to facilitate communication with external devices or for debugging purposes. Clocking and overclocking configurations are established to control the system's clock frequencies, impacting overall processing speed. Peripheral component interconnect or P C I E bus initialization is crucial for establishing communication and data transfer pathways for devices connected via the P C I E standard. Graphics initialization ensures that the display hardware is ready for visual output. Lastly, the initialization of Universal Serial Bus or U S B and Serial ATA or S A T A interfaces prepares the system for connecting and communicating with a wide array of storage and peripheral devices.

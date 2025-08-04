@@ -1,0 +1,74 @@
+10.
+11.
+12.
+
+insert new terms.
+
+The south bridge will grab the cycle, and since it’s not directed at an
+internal resource, forwards it out on the PCI bus, depending on the south
+bridge.
+
+None of the devices on the PCI bus claims the cycle (network/sound
+card is shown). Therefore, since nobody else wants it, the south bridge
+figures that somebody ‘down below’ on the LPC bus wants it. This is
+called subtractive decoding. In the past, the ISA bridge in the system
+was the only subtractive decoding agent, but these days the LPC’s job is
+to make sure that we do not get an Abort.
+
+South bridge sends the cycle down to the LPC bus. The BIOS SPI chip
+knows this memory address is for him and claims it.
+
+Since BIOS is slow, it will have to tell south bridge to wait a minute for
+it to get data (wait states).
+
+BIOS returns data via LPC Memory Read Cycle.
+
+LPC bus is now freed (STOP sign removed). LPC Memory Read Cycle
+over.
+
+South bridge returns data to north bridge via Hublin.
+
+North bridge returns data to CPU via end of CPU Memory Read Cycle.
+
+CPU Bus now freed. Remove stop sign.
+
+This entire process is repeated until we have partial cache enabled or we
+
+finally have memory ready to shadow our remaining BIOS code and data
+
+into. There are ways around some of the delays that may be incurred on the
+way to and from the CPU and the SPI NVRAM chip such as PCI Delayed
+
+transactions, pipelining, or prefetching. But this isn’t the fast-boot chapter.
+The process begins when the south bridge will grab the cycle. Since it is not directed at an internal resource, it forwards the cycle out on the P C I bus, with the exact routing depending on the south bridge.
+
+Next, none of the devices on the P C I bus claim the cycle, for example, a network or sound card. Therefore, since nobody else wants it, the south bridge assumes that a component located "down below" on the L P C bus wants it. This technique is called subtractive decoding. In the past, the I S A bridge in the system was the only subtractive decoding agent, but these days the L P C's job is to make sure that an Abort condition is not encountered.
+
+Subsequently, the south bridge sends the cycle down to the L P C bus. The B I O S S P I chip knows this memory address is for him and claims it.
+
+Following this, since B I O S operations are slow, it will have to tell the south bridge to wait a minute, using wait states, for it to get data.
+
+Afterward, B I O S returns the data via an L P C Memory Read Cycle. The L P C bus is now freed, with the stop sign removed, indicating that the L P C Memory Read Cycle is over.
+
+Next, the south bridge returns the data to the north bridge via Hublin.
+
+Then, the north bridge returns data to the C P U via the end of the C P U Memory Read Cycle.
+
+Finally, the C P U Bus is now freed, and the stop sign is removed.
+
+This entire process is repeated until either partial cache is enabled or we finally have memory ready to shadow our remaining B I O S code and data into. There are ways around some of the delays that may be incurred on the way to and from the C P U and the S P I N V Ram chip. Such methods include P C I Delayed transactions, pipelining, or prefetching. However, this topic is not covered in the current fast boot chapter.
+The discussion outlines a fundamental sequence of events during system initialization, focusing on how a C P U accesses B I O S code, which is typically stored in a non volatile memory chip. This intricate process involves multiple components and illustrates core principles of bus arbitration, address decoding, and inter chip communication.
+
+Initially, a memory access cycle is initiated by the C P U. This cycle, intended for an address range that is not directly managed by the north bridge or allocated to main D Ram, traverses the system. The south bridge, acting as a crucial intermediary, "grabs" this cycle. Its role here is as a bus controller and bridge. Since the transaction is not targeted at an internal resource within the south bridge itself, it intelligently forwards the cycle onto the P C I bus. The specific path taken is contingent upon the south bridge's internal routing logic and its understanding of the system's memory map.
+
+A critical aspect of this transaction flow is the concept of subtractive decoding, illustrated in the subsequent step. When the memory access cycle is propagated onto the P C I bus, none of the devices directly connected to the P C I bus, such as network or sound cards, claim ownership of the requested address range. This non assertion of a claim signals to the south bridge that the transaction must be intended for a device on a lower priority or legacy bus. Consequently, the south bridge employs subtractive decoding: it assumes responsibility for any address request that is not explicitly claimed by a higher speed or more directly addressed component. Historically, this role was often performed by the I S A bridge. In contemporary architectures, the L P C controller, typically integrated within the south bridge, is responsible for this form of address resolution, ensuring that an unhandled transaction does not result in a system "Abort" signal, which would indicate a critical error.
+
+Having determined the target through subtractive decoding, the south bridge then translates and forwards the cycle onto the L P C bus. This is where the B I O S S P I chip, containing the essential boot firmware, recognizes the memory address as its own. It asserts the necessary L P C bus signals, thereby claiming the cycle and indicating its readiness to respond to the C P U's request.
+
+A key challenge in this interaction lies in the inherent speed disparity between the C P U and the non volatile B I O S memory. The B I O S S P I chip is significantly slower than the C P U's operating frequency. To synchronize these components, the B I O S chip signals to the south bridge that it requires additional time to retrieve the requested data. This is achieved by introducing "wait states" into the transaction, effectively pausing the bus cycle for a specified number of clock periods until the B I O S is prepared to provide the data. This mechanism ensures data integrity despite the speed mismatch.
+
+Once the B I O S has retrieved the data, it returns it to the south bridge via the L P C memory read cycle. Upon completion of this data transfer, the L P C bus is released, indicated by the removal of any "S T O P" signals, making the bus available for subsequent transactions. The south bridge then forwards this retrieved data to the north bridge using a high speed inter chip communication link, referred to as Hublin. This link is vital for efficient data exchange between the two primary chipset components. Finally, the north bridge, having received the data from the south bridge, relays it onto the C P U bus, thus completing the original C P U memory read cycle. The C P U bus is then freed, allowing the C P U to proceed with its next operation.
+
+This entire sequence of C P U initiated B I O S reads is iteratively executed during the early stages of system boot. The repetition continues until system resources, particularly the C P U's internal caches, are partially enabled, and crucially, until enough system R A M is initialized to allow for B I O S code "shadowing." Shadowing is a performance optimization where the B I O S firmware, initially executed from the slow N V Ram, is copied into the much faster D Ram. Subsequent B I O S code execution then proceeds from R A M, dramatically accelerating the boot process.
+
+Despite the necessary wait states and sequential nature of these transactions, various architectural techniques are employed to mitigate inherent delays. These include P C I delayed transactions, where a target device temporarily releases the bus if it is not immediately ready, allowing other bus traffic to proceed before the original transaction is retried. Pipelining is another technique, allowing multiple bus operations to overlap in their execution stages, thereby increasing throughput. Furthermore, prefetching mechanisms anticipate future data needs by speculatively loading B I O S code or data into faster cache levels or D Ram before explicit C P U requests, reducing perceived latency. While these optimizations significantly enhance system performance, the detailed exposition here focuses on the fundamental handshake and data flow, rather than an exhaustive treatment of all advanced fast boot methodologies.

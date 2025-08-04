@@ -1,0 +1,46 @@
+reaching the boot target itself. Since the device we were booting from was a
+SATA device for which the BIOS had a native UEFI driver, there was no
+need to launch an option ROM. This action alone saved approximately three
+seconds on the platform. More details associated with this trick and others are
+
+in the Additional Details section.
+
+Are We Required to Display an OEM Splash Screen?
+
+This is a crucial element for many platforms, especially from a marketing
+point of view. The display of the splash screen itself typically does not take
+that much time. Usually, initializing the video device to enable such a display
+takes a sizable amount of time. On the proof-of-concept platform, it would
+typically take 300 ms. An important question is how long does marketing
+want the logo to be displayed? The answer to this question will focus on what
+is most important for the OEM delivering the platform. Sometimes speed is
+paramount (as it was with this proof of concept), and the splash screen can be
+eliminated completely. Other times, the display of the logo is deemed much
+more important and all things stop while the logo is displayed. An engineer’s
+hands are usually tied by the decisions of the marketing infrastructure.
+
+One could leverage the UEFI event services to take advantage of the
+marketing-driven delay to accomplish other things, which effectively makes
+
+some of the initialization parallel.
+
+What Type of Boot Media Is Supported?
+
+In the proof-of-concept platform description, one element was a bit unusual.
+There was a performance and a standard configuration associated with the
+
+drive attached to the system. Though it may not be obvious, the choice of
+Reaching the boot target itself. Since the device we were booting from was a S A T A device for which the B I O S had a native U E F I driver, there was no need to launch an option R O M. This action alone saved approximately three seconds on the platform. More details associated with this trick and others are in the Additional Details section.
+
+Are We Required to Display an O E M Splash Screen?
+
+This is a crucial element for many platforms, especially from a marketing point of view. The display of the splash screen itself typically does not take that much time. Usually, initializing the video device to enable such a display takes a sizable amount of time. On the proof of concept platform, it would typically take three hundred milliseconds. An important question is how long does marketing want the logo to be displayed? The answer to this question will focus on what is most important for the O E M delivering the platform. Sometimes speed is paramount (as it was with this proof of concept), and the splash screen can be eliminated completely. Other times, the display of the logo is deemed much more important and all things stop while the logo is displayed. An engineer's hands are usually tied by the decisions of the marketing infrastructure. One could leverage the U E F I event services to take advantage of the marketing driven delay to accomplish other things, which effectively makes some of the initialization parallel.
+
+What Type of Boot Media Is Supported?
+
+In the proof of concept platform description, one element was a bit unusual. There was a performance and a standard configuration associated with the drive attached to the system. Though it may not be obvious, the choice of
+The presented text delves into aspects of system boot processes and user interface elements during initialization. Specifically, it touches upon the efficiency gains realized by utilizing a native UEFI driver for a Sata device, eliminating the need for an option R O M, which in this instance, saved approximately three seconds of platform boot time. This optimization highlights the impact of driver architecture on overall system responsiveness during the critical initial power-on sequence.
+
+A significant discussion point revolves around the implementation and necessity of an O E M splash screen. From a marketing perspective, the splash screen is a crucial element for branding, often involving the initialization of a video device to display a logo. The text notes that this process can consume a sizable amount of time, potentially around three hundred milliseconds in a proof-of-concept scenario. The critical question explored is the trade-off between marketing visibility and boot speed. The decision to display or eliminate a splash screen is influenced by what is deemed paramount for the O E M delivering the platform. If rapid boot times are the priority, the splash screen might be omitted entirely. Conversely, if branding is of higher importance, the splash screen might be retained, even if it extends the initialization period. The text also suggests that engineers can leverage U E F I event services to manage marketing-driven delays, potentially allowing other initialization tasks to proceed concurrently with the splash screen display, thus mitigating the perceived delay. This concurrency management is a key aspect of modern system design, aiming to optimize resource utilization and user experience.
+
+Furthermore, the text addresses the types of boot media supported, indicating a proof-of-concept platform that featured a standard configuration associated with a particular drive attached to the system. While not explicitly stated, this implies a consideration for the underlying hardware interfaces and their compatibility with the boot process, such as S A T A, N V M e, or other storage protocols. The selection of boot media directly influences the boot sequence and the availability of operating system loaders and associated files.

@@ -1,0 +1,65 @@
+There are several general types of memory regions described by the legacy
+
+interface:
+—Memory (1) — General DRAM available for OS consumption.
+—Reserved (2) —- DRAM address not for OS consumption.
+
+—ACPI Reclaim (3) — Memory that contains all ACPI tables to which
+firmware does not require runtime access. See the applicable ACPI
+
+specification for details.
+
+—ACPI NVS (4) — Memory that contains all ACPI tables to which
+firmware requires runtime access. See the applicable ACPI
+
+specification for details.
+
+—ROM (5) — Memory that decodes to nonvolatile storage (for example,
+flash).
+
+—IOAPIC (6) — Memory decoded by IOAPICs in the system (must also
+
+be uncached).
+
+—LAPIC (7) — Memory decoded by local APICs in the system (must also
+
+be uncached).
+
+Region Locations
+
+The following regions are typically reserved in a system memory map:
+—00000000-0009FFFF — Memory.
+
+—000A0000-000FFFFF — Reserved for legacy option ROMs and legacy
+There are several general types of memory regions described by the legacy interface.
+
+Memory one is General D Ram available for O S consumption.
+
+Reserved two is D Ram address not for O S consumption.
+
+A C P I Reclaim three is Memory that contains all A C P I tables to which firmware does not require runtime access. See the applicable A C P I specification for details.
+
+A C P I N V S four is Memory that contains all A C P I tables to which firmware requires runtime access. See the applicable A C P I specification for details.
+
+R O M five is Memory that decodes to nonvolatile storage, for example, flash.
+
+I O A P I six is Memory decoded by I O A P I Cs in the system, which must also be uncached.
+
+L A P I C seven is Memory decoded by local A P I Cs in the system, which must also be uncached.
+
+Region Locations
+
+The following regions are typically reserved in a system memory map:
+
+Zero zero zero zero zero zero zero zero to zero zero zero nine F F F F is Memory.
+
+Zero zero zero A zero zero zero zero to zero zero zero F F F F is Reserved for legacy option R O Ms and legacy.
+The document outlines various memory regions as defined by a legacy interface, categorized by their intended use and accessibility. These regions are crucial for understanding how hardware components are mapped and managed within a system's address space, particularly in contexts involving firmware and operating system interaction.
+
+The first category, "Memory (1)", signifies general D Ram available for the operating system's consumption. This is the primary working memory of the system. "Reserved (2)" denotes a region of D Ram addresses that are explicitly not for operating system consumption, suggesting these areas are reserved for specific hardware or firmware functions.
+
+The subsequent regions are related to the Advanced Configuration and Power Interface, or A C P I, which is a standard for device configuration and power management. "A C P I Reclaim (3)" identifies memory containing A C P I tables that do not require runtime access, meaning these tables can be utilized by the operating system after initial firmware configuration. Similarly, "A C P I N V S (4)" refers to memory containing A C P I tables that *do* require runtime access, implying dynamic interaction with these tables by the operating system. The "applicable A C P I specification for details" suggests that the exact nature and behavior of these regions are further elaborated in the A C P I standard documentation.
+
+"R O M (5)" represents memory that decodes to nonvolatile storage, commonly flash memory, used for firmware storage and execution. "IOAPIC (6)" denotes memory decoded by Input Output A P I Cs, which are interrupt controllers responsible for managing hardware interrupts from peripherals. The parenthetical note "(must also be uncached)" is significant, indicating that accesses to this memory region should bypass the CPU caches. This is often done to ensure that interrupt status is immediately visible and not subject to stale cached data, crucial for timely interrupt handling. "LAPIC (7)" is analogous, referring to memory decoded by local A P I Cs, which are typically associated with individual processor cores for managing interrupts within that core. Again, the "(must also be uncached)" directive highlights the importance of direct, immediate access to this memory for correct interrupt processing.
+
+The document then shifts to "Region Locations," specifying reserved address ranges within the system memory map. The range "hexadecimal zero zero zero zero zero zero zero zero to hexadecimal zero zero zero nine F F F F" is designated for "Memory." This typically encompasses the initial portion of the physical address space. The subsequent range, "hexadecimal zero zero A zero zero zero zero zero to hexadecimal zero zero zero F F F F F," is marked as "Reserved for legacy option R O Ms and legacy..." The ellipsis suggests that this region is reserved for older hardware components, such as option R O Ms or other legacy system devices, which may not conform to modern memory management standards. This reservation ensures that these older devices have access to their required address space without conflict with newer system components.

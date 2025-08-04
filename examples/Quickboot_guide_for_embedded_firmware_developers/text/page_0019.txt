@@ -1,0 +1,52 @@
+true. People said the same thing when Tiano originally came out 10 years ago
+—*“say goodbye to BIOS.” Some thought it would come true when Linux
+BIOS started, but they too have been disappointed. If the Linux multiverse is
+anything to go by, commercial distribution houses such as Red Hat, offering
+commercially, prepackaged products and support, continue to thrive even
+when parallel royalty-free and subscription-free alternatives exist on the same
+kernel and with many of the same products. Why? Because Linux isn’t free—
+people must roll up their sleeves and do the work upfront and continue to
+maintain it. The same thing can be said about system firmware. Commercial
+BIOS vendors like Insyde, Phoenix BIOS, AMI, ByoSoft, and others will
+continue to provide turn-key product quality and services to the computing
+industry in the future, regardless of the codebase being used. They provide
+
+value-added products, plain and simple.
+
+Consider Open-Source Alternatives
+
+For those who choose to take the plunge to create their own solution in whole
+or in part, free and open-source alternatives can be downloaded from the Web
+that offer a starting point and/or reference. Two of the well-known open-
+
+source products available to the market are Coreboot and Tiano.
+
+Tiano
+
+The Tiano core uses a BSD license and provides a flexible framework.
+Developers normally must get certain initialization codes from the silicon
+vendor individually, or they must reverse-engineer code that already exists on
+other platforms. Tiano, by default, also lacks the needed legacy interfaces to
+allow many older operating systems or PCI device option ROMs to be used.
+
+Developers can choose to create a Compatibility Support Module for legacy
+true. People said the same thing when Tiano originally came out ten years ago, saying 'say goodbye to B I O S.' Some thought it would come true when Linux B I O S started, but they too have been disappointed. If the Linux multiverse is anything to go by, commercial distribution houses such as Red Hat, offering commercially, prepackaged products and support, continue to thrive even when parallel royalty free and subscription free alternatives exist on the same kernel and with many of the same products. Why? Because Linux isn't free. People must roll up their sleeves and do the work up front and continue to maintain it. The same thing can be said about system firmware. Commercial B I O S vendors like Insyde, Phoenix B I O S, A M I, ByoSoft, and others will continue to provide turn key product quality and services to the computing industry in the future, regardless of the codebase being used. They provide value added products, plain and simple.
+
+Consider Open Source Alternatives
+
+For those who choose to take the plunge to create their own solution in whole or in part, free and open source alternatives can be downloaded from the Web that offer a starting point and or reference. Two of the well known open source products available to the market are Coreboot and Tiano.
+
+Tiano
+
+The Tiano core uses a B S D license and provides a flexible framework. Developers normally must get certain initialization codes from the silicon vendor individually, or they must reverse engineer code that already exists on other platforms. Tiano, by default, also lacks the needed legacy interfaces to allow many older operating systems or P C I E device option R O M S to be used. Developers can choose to create a Compatibility Support Module for legacy
+The foundational discussion revolves around system firmware, specifically the B I O S, and the emergence of open source alternatives. Historically, the B I O S, or Basic Input Output System, is the first software executed by a C P U when a computer is powered on. Its primary role is to initialize and test system hardware components, including the C P U, Ram, and storage devices, before loading the operating system. This critical software has traditionally been proprietary, developed and licensed by specialized vendors like Insyde, Phoenix B I O S, A M I, and ByoSoft. These commercial entities provide comprehensive, turn key solutions, ensuring robust compatibility and support across a wide range of hardware configurations. Their business model often involves licensing fees and support contracts, which are essential for maintaining product quality and providing ongoing services to the diverse computing industry.
+
+The proposition that open source alternatives might completely supersede proprietary firmware, akin to early predictions about Linux displacing all proprietary operating systems, has not materialized in the simplistic way some anticipated. While a vibrant open source ecosystem thrives around the Linux kernel, enabling royalty free and subscription free alternatives, commercial distribution houses, such as Red Hat, coexist by offering value added services, packaged products, and enterprise level support. This demonstrates that even with open source foundational components, there remains significant market value in professional integration, maintenance, and support. The same principle applies to system firmware; while the underlying codebase might be open, the labor intensive process of adapting, validating, and supporting it for specific hardware platforms still requires dedicated effort, often from commercial entities or collaborative developer communities.
+
+For organizations and developers seeking greater control, transparency, or customization over their system's boot process, open source firmware alternatives present a compelling option. Rather than relying on black box proprietary solutions, these open source projects offer a starting point for building custom firmware solutions, either in whole or in part. Two prominent examples within this domain are Coreboot and Tiano.
+
+Tiano, a significant open source firmware framework, operates under a B S D license. The B S D license is known for its permissive nature, which allows for substantial flexibility in its use and redistribution, even in proprietary products, provided that attribution is maintained. This licensing model fosters broader adoption and commercial integration compared to more restrictive licenses like the G P L. The core of Tiano provides a highly modular and flexible framework for building Unified Extensible Firmware Interface, or U E F I, firmware.
+
+A fundamental challenge in developing open source firmware, particularly for modern hardware, lies in obtaining the crucial initialization codes from silicon vendors. Chip manufacturers often provide these low level hardware initialization routines as binary blobs, meaning their source code is not openly available. Developers working with Tiano or similar projects must either obtain these proprietary codes directly from the silicon vendors under specific agreements or resort to reverse engineering. Reverse engineering, in this context, involves analyzing the binary firmware or hardware interfaces to deduce their functionality and protocol specifications, a complex and time intensive process.
+
+Furthermore, Tiano, by default, often lacks legacy interfaces necessary for supporting older operating systems or P C I E device option R O M S. P C I E, or Peripheral Component Interconnect Express, option R O M S contain firmware for specific P C I E devices, such as graphics cards or network adapters, which typically execute during the system boot process. To ensure compatibility with these older components or operating systems that rely on legacy B I O S services, developers utilizing Tiano can choose to create or integrate a Compatibility Support Module, commonly known as a C S M. This C S M effectively provides an emulation layer that bridges the modern U E F I environment with the traditional B I O S interfaces, allowing older software and hardware to function correctly. This illustrates a common trade off in system design: optimizing for modern architectures often necessitates explicit compatibility layers to support deprecated technologies.

@@ -1,0 +1,53 @@
+The shell environment features things like path, which is a list of places
+to search for a specified file by default, a series of aliases so that Is and dir are
+the same command, and environment variables so that %foo% can be
+automatically replaced by a predetermined (and configurable) value. There
+are also useful functions for finding files using wild card characters (? and *),
+finding the names of devices, and getting additional information on files.
+Configurable elements of these environment features can be changed and
+configured on the command line of the shell.
+
+A complicating factor is that the method used to access these features
+from the EFI Shell differs from the method used from the UEFI Shell 2.0.
+This means you may have to do extra work to support both types of UEFI
+Shells (or use the UDK 2010 Shell Library)
+
+You have to decide on tradeoffs:
+
+—Is it worth the feature set that the shell provides to require that the
+application run under it at all? Maybe writing a UEFI application
+
+instead of a shell application would be a better solution.
+
+—Is it worth the binary size increase to use the UDK 2010 library and
+support either of the two (EFI and UEFI) shells? The library will
+automatically detect the shell version and seamlessly handle the
+
+differences.
+
+—Is the target environment a single type of shell such that the library
+overhead could be minimized by directly using the protocols
+produced by the shell? Direct access will reduce the binary size, but
+it also increases the amount of work required for some actions
+
+(printing with color is a good example).
+The shell environment features things like path, which is a list of places to search for a specified file by default, a series of aliases so that L S and dir are the same command, and environment variables so that percent foo percent can be automatically replaced by a predetermined and configurable value. There are also useful functions for finding files using wild card characters question mark and asterisk, finding the names of devices, and getting additional information on files. Configurable elements of these environment features can be changed and configured on the command line of the shell.
+
+A complicating factor is that the method used to access these features from the E F I Shell differs from the method used from the U E F I Shell two point zero. This means you may have to do extra work to support both types of U E F I Shells or use the U D K two thousand ten Shell Library.
+
+You have to decide on tradeoffs:
+
+Is it worth the feature set that the shell provides to require that the application run under it at all? Maybe writing a U E F I application instead of a shell application would be a better solution.
+
+Is it worth the binary size increase to use the U D K two thousand ten library and support either of the two E F I and U E F I shells? The library will automatically detect the shell version and seamlessly handle the differences.
+
+Is the target environment a single type of shell such that the library overhead could be minimized by directly using the protocols produced by the shell? Direct access will reduce the binary size, but it also increases the amount of work required for some actions printing with color is a good example.
+The shell environment provides a sophisticated mechanism for interacting with a computing system, offering features such as path searching for specified files. This functionality is augmented by a series of aliases, which allow for the substitution of one command with another, akin to how the 'ls' and 'dir' commands function. Furthermore, environment variables, such as '%foo%', are dynamically replaced with predetermined or configurable values. The shell also incorporates utility functions designed for file system operations, including the identification of files that match wildcard patterns, denoted by symbols like '?' for a single character and '*' for any sequence of characters. This capability extends to enumerating devices and retrieving supplementary information about files. The configurable elements of these environmental features can be modified and established through the shell's command line interface.
+
+A pertinent complication arises from the differing methodologies employed by various shell implementations to access these environmental features. Specifically, the method used by the U E F I Shell differs from that utilized by the U E F I Shell version two point zero. This divergence necessitates additional development effort to ensure compatibility and support for both types of U E F I shells, or by leveraging the U D K two thousand and ten Shell Library.
+
+Consequently, a critical decision point involves evaluating trade-offs. One consideration is whether the overhead incurred by a particular feature set, which the shell requires an application to run under, justifies its implementation. An alternative approach might involve developing a U E F I application directly, potentially offering a more streamlined solution.
+
+Another significant trade-off concerns the binary size implications of adopting the U D K two thousand and ten library to support both the E F I and U E F I shells. While this library may offer a convenient way to automatically detect the shell version and seamlessly handle inter-shell differences, it introduces an increase in the overall binary footprint.
+
+The final trade-off examined relates to the target environment and the potential advantages of a single shell type. By exclusively using one type of shell, the overhead associated with the library could be minimized. Direct access methods, while reducing the binary size, may conversely increase the computational workload for certain actions. A practical example illustrating this concept is the printing of output with color, which can involve more processing than a simple text output.

@@ -1,0 +1,45 @@
+—Control registers CR1 through CR4
+—The memory type range registers (MTRRS)
+
+With these data structures, code modules, and system registers initialized, the
+processor can be switched to protected mode by loading control register CRO
+with a value that sets the PE flag (bit 0).
+
+From this point onward, it is likely that the system will not enter 16b
+Real mode again, Legacy Option ROMs and Legacy OS/BIOS interface
+notwithstanding, until the next hardware reset is experienced.
+
+More details about protected mode and real mode switching can be
+found in the Intel 64 and IA-32 Intel Architecture Software Developer’s
+Manual, Volume 3A: System Programming Guide, Chapter 9.
+
+Cache as RAM and No Eviction Mode. Since no DRAM is available, the
+code initially operates in a stackless environment. Most modern processors
+have an internal cache that can be configured as RAM (Cache as RAM, or
+CAR) to provide a software stack. Developers must write extremely tight
+code when using CAR because an eviction would be paradoxical to the
+system at this point in the boot sequence; there is no memory to maintain
+coherency with at this time. There is a special mode for processors to operate
+in cache as RAM called “no evict mode” (NEM), where a cache line miss in
+the processor will not cause an eviction. Developing code with an available
+software stack is much easier, and initialization code often performs the
+
+minimal setup to use a stack even prior to DRAM initialization.
+
+Processor Speed Correction. The processor may boot into a slower mode
+than it can perform for various reasons. It may be considered less risky to run
+in a slower mode, or it may be done to save additional power. It will be
+
+necessary for the BIOS to initialize the speed step technology of the
+Control registers CR one through CR four. The memory type range registers M T R R S. With these data structures code modules and system registers initialized the processor can be switched to protected mode by loading control register CR zero with a value that sets the PE flag bit zero. From this point onward it is likely that the system will not enter sixteen bit Real mode again Legacy Option ROMs and Legacy OS or BIOS interface notwithstanding until the next hardware reset is experienced. More details about protected mode and real mode switching can be found in the Intel sixty four and IA thirty two Intel Architecture Software Developer's Manual Volume three A System Programming Guide Chapter nine.
+
+Cache as R A M and No Eviction Mode. Since no D R A M is available the code initially operates in a stackless environment. Most modern processors have an internal cache that can be configured as R A M Cache as R A M or C A R to provide a software stack. Developers must write extremely tight code when using C A R because an eviction would be paradoxical to the system at this point in the boot sequence there is no memory to maintain coherency with at this time. There is a special mode for processors to operate in cache as R A M called no evict mode N E M where a cache line miss in the processor will not cause an eviction. Developing code with an available software stack is much easier and initialization code often performs the minimal setup to use a stack even prior to D R A M initialization.
+
+Processor Speed Correction. The processor may boot into a slower mode than it can perform for various reasons. It may be considered less risky to run in a slower mode or it may be done to save additional power. It will be necessary for the BIOS to initialize the speed step technology of the
+The text delves into fundamental aspects of processor initialization and operation, particularly concerning the transition from legacy modes to protected mode and the management of processor caches. It begins by referencing control registers, specifically CR1 through CR4, which are integral components of the Intel x86 architecture for managing processor features and operating modes. The mention of memory type range registers, or M T R R s, highlights their role in defining memory attributes, such as cacheability, across different memory regions.
+
+The processor's transition to protected mode is described as being initiated by loading specific data structures, code modules, and system registers. A key element in this process is the control register CR0, where a particular bit, the P E flag, signals the activation of protected mode. Once this transition occurs, the system is likely to enter a sixteen bit operational state, with interactions involving Legacy Option R O M s and the Legacy OS/BIOS interface. The text notes that this state persists until the next hardware reset. Further details on protected mode and real mode switching are available in the Intel 64 and I A thirty two Intel Architecture Software Developer's Manual, specifically Volume three A, Chapter nine, indicating a reliance on comprehensive architectural documentation for deeper understanding.
+
+A significant section addresses the concept of "Cache as R A M and No Eviction Mode." This describes a scenario where, in the absence of D Ram, the processor's internal cache can be configured and utilized as main memory. Developers leveraging this configuration must manage code execution within strict timing constraints, as the cache's primary function is data buffering, not permanent storage. An eviction, which occurs when a cache line needs to be replaced to make room for new data, would be paradoxical in this "Cache as R A M" context. This mode is designed to prevent evictions, ensuring data integrity. The text mentions that processors typically operate with a "no evict mode," often referred to as N E M, specifically to maintain coherency within the cache hierarchy. The implication here is that by disabling eviction, the cache essentially functions as a dedicated R A M pool. Developing code for this scenario, especially for initialization routines, is presented as more straightforward because it circumvents the complexities of cache coherency protocols and eviction handling, allowing for a minimal setup prior to D Ram initialization.
+
+Finally, the concept of "Processor Speed Correction" is introduced. This refers to the processor's ability to initiate its operation in a slower speed mode for various reasons. Such a strategy might be employed as a less risky approach to system startup or to conserve power, particularly during the initial phases of operation. The Basic Input/Output System, or B I O S, plays a crucial role in this process by initializing the speed step technology, which allows for dynamic adjustment of the processor's clock frequency and voltage to optimize performance and power consumption. This mechanism is fundamental to modern power management techniques in computing systems.

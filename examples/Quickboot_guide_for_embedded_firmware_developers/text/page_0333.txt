@@ -1,0 +1,75 @@
+CTRL, CMD, Base - 200 . 125 w 65 a5 » [13
+ADDR setup (Specification)
+to CK. CK Vis@1 V/ns ACLTS 75 - 300 . 2&0 220 - [11
+CTRL, CMD, Base - 350 . = 2 Ps
+ADDR setup (Specification) AC150 S00 - 425 - 3&0 330 - Pp
+to CK, CKH Vied@®@1 V/ns
+CTRL, CMD, Base " 275 200 - 140 120 - ps
+ABER sul a] DC 100 375 = 300 = 2&0 220 - ns
+to CK, CEM Vio@1 V/ns
+Mistimum CTRL, CMD, ADDR PW P00 i} 280 ~ 430 S50 ~ ”
+pulse width
+ACYMAIE trimmers READ oF ‘RCD See Speed Bin Tables (page 72) for 'RCD ns
+WRITE delay
+PRECHARGE command period ‘RP see Speed Bin Tables (page 7 2) Tor 'RP ns
+ARTI ATE LP RRCUARGE RAS See Speed Bin Tables (page 72) for 'RAS ns
+command period
+ALTIATE ei VIVATE Re See Speed Bin Tables (page 72) for "RC ns
+command
+
+‘RED MIiN= MIiM= MIM= MIM= i
+ACTIVATE- to
+
+1KB page greater of greater of greater of greater of
+ACTIVATE size GCK or 10ns 4CK or 7.5ns 40K or dns 4LK or 6ns
+iri
+aramid IKE page MiN= MiN= CK
+period sire greater of greater of
+SCR or 100% &CK ar 7.50%
+Four 1KB page :
+ACTIVATE dian FAW 40 RR 37.5 = 30 = 30 i ns
+Wows 2e5 page 50 - 11] - 45 - & - nS
+we
+
+Write recovery time "WE MIN =15ns; MAX =n/a ns
+Delay from start of internal "WTH MIN = greater of 4CK or 7.5ns; MAX = n/a CK
+WRITE transaction to
+internal READ command
+READ-to-PRECHARGE time ‘RTI MIM = greater of SCK or 7.5ns; MAX = n/a CK
+CASH to CASH command delay “CCD MIN = &CK: MAX =n/a CK
+Auto precharge write ‘DAL MIN = WR+RP/'CKE (AVG): MAX =n/a CK
+recovery + precharge time
+MODE REGISTER SET "MRD MIN = SCK; MAX = nfa CK
+command cycle time
+MODE REGISTER SET ‘MOD MIN = greater of 12CK or 15ns: MAX = n/a CK
+command update delay
+
+SPD Field #19: “Minimum Row Active to Row Active Delay Time
+The table shows various timing parameters and their corresponding values. For the CTRL, CMD, ADDR setup to CK, CK pair, the base value is not specified, but the setup time is given as one hundred seventy five nanoseconds for AC one hundred seventy five, with a minimum of two hundred picoseconds, a maximum of one hundred twenty five picoseconds, and a further specified value of sixty five picoseconds. The ADDR setup to CK, CK pair for AC one hundred seventy five has a base specification of Vdd at one volt per nanosecond, with a setup time of three hundred seventy five nanoseconds, a minimum of three hundred picoseconds, a maximum of two hundred forty picoseconds.
+
+The CTRL, CMD, ADDR setup to CK, CK pair shows a base value that is not specified, with the setup time being three hundred fifty nanoseconds, and a maximum of three hundred twenty picoseconds. The AC one hundred fifty specification for this pair is five hundred picoseconds with a minimum of four hundred twenty five picoseconds and a maximum of three hundred forty picoseconds.
+
+The CTRL, CMD, ADDR setup to CK, CK pair with an IH specification has a setup time of two hundred seventy five picoseconds, a minimum of two hundred picoseconds, and a maximum of one hundred forty picoseconds. The DC one hundred specification for this pair is three hundred seventy five picoseconds with a minimum of three hundred picoseconds and a maximum of two hundred twenty picoseconds.
+
+The minimum CTRL, CMD, ADDR pulse width is nine hundred picoseconds with a minimum of seven hundred eighty picoseconds and a maximum of six hundred twenty picoseconds.
+
+The ACTIVATE to internal READ or WRITE delay, referred to as RCD, is noted as being found in See Speed Bin Tables on page seventy two for RCD, with a unit of nanoseconds. The PRECHARGE command period, RP, also references See Speed Bin Tables on page seventy two for RP, with a unit of nanoseconds. The ACTIVATE to PRECHARGE command period, RAS, refers to See Speed Bin Tables on page seventy two for RAS, with a unit of nanoseconds. The ACTIVATE to ACTIVATE command period, RC, references See Speed Bin Tables on page seventy two for RC, with a unit of nanoseconds.
+
+The ACTIVATE to ACTIVATE command, RRD, has a minimum value that is the greater of four clock cycles or ten nanoseconds. For a one KB page size, the minimum is the greater of four clock cycles or ten nanoseconds. For a two KB page size, the minimum is the greater of four clock cycles or seven point five nanoseconds. For a one KB page size, the minimum is the greater of four clock cycles or six nanoseconds, and for a two KB page size, the minimum is also the greater of four clock cycles or six nanoseconds. The FAW or four ACTIVATE windows parameter has values of forty picoseconds, thirty seven point five picoseconds, and thirty picoseconds.
+
+The data presents values for WR and WTR, which represent write recovery time and write delay from start of internal write transaction to internal read command respectively. For WR, the minimum is fifteen nanoseconds and the maximum is not applicable. For WTR, the minimum is the greater of four clock cycles or seven point five nanoseconds, and the maximum is not applicable.
+
+The READ to PRECHARGE time, RTP, has a minimum that is the greater of four clock cycles or seven point five nanoseconds. The CAS to CAS command delay, CCD, has a minimum of four clock cycles and a maximum that is not applicable. The DAL or auto precharge write recovery plus precharge time has a minimum equal to WR plus RP divided by clock cycles, with the maximum not applicable.
+
+The MODE REGISTER SET command cycle time, MRD, has a minimum of four clock cycles and a maximum that is not applicable. The MODE REGISTER SET command update delay, MOD, has a minimum that is the greater of twelve clock cycles or fifteen nanoseconds, with the maximum not applicable.
+
+SPD Field number nineteen is "Minimum Row Active to Row Active Delay Time".
+The table presented details various timing parameters for memory operations, likely within a dynamic random access memory (D Ram) system. These parameters are critical for ensuring reliable data transfer and system stability. The entries describe setup and hold times for control and address signals relative to the clock signal, denoted as C K. For instance, the 'ADDR setup to C K, C K#' parameters, with values like two hundred picoseconds and one hundred twenty five picoseconds, specify the minimum time an address signal must be stable before the active clock edge. The 'CTRL, CMD, ADDR setup to C K, C K#' entries, with values such as sixty five picoseconds, indicate the setup time for command and address signals.
+
+Other critical parameters include pulse width specifications. The 'Minimum CTRL, CMD, ADDR pulse width' is given as nine hundred to seven hundred eighty to six hundred picoseconds, defining the minimum duration these signals must remain asserted. The table also outlines delays associated with different command sequences, such as 'ACTIVATE to internal READ or WRITE delay' and 'PRECHARGE command period'. These are often expressed in nanoseconds, or referenced to speed bin tables for more detailed specifications. The 'ACTIVATE to PRECHARGE command period' and 'ACTIVATE to ACTIVATE command period' represent crucial timing intervals that dictate how quickly a memory bank can transition between operations.
+
+The 'ACTIVATE to ACTIVATE command' parameter is further broken down by page size, with values dependent on the minimum of a certain number of clock cycles, represented as C K, or a fixed nanosecond value. For example, for a one K B page size, the delay is specified as the greater of four C K cycles or ten nanoseconds. For a two K B page size, it's the greater of four C K cycles or seven point five nanoseconds. This highlights a common design principle where timing requirements scale with data density or operational modes.
+
+The 'Four ACTIVATE windows' parameter, measured in clock cycles, represents the maximum number of ACTIVATE commands that can be issued within a specific window, with values ranging from forty down to thirty. This is followed by various recovery and delay timings, such as 'Write recovery time', 'Delay from start of internal WRITE transaction to internal READ command', and 'READ to PRECHARGE time'. These parameters, measured in nanoseconds or clock cycles, are vital for internal refresh cycles and data integrity. For example, the 'Write recovery time' is minimum fifteen nanoseconds and maximum not applicable, while 'WR' and 'WTR' parameters are also defined with similar logic, often referencing clock cycles or specific nanosecond values. The 'CAS# to CAS# command delay' is defined as four C K cycles, indicating a critical timing constraint between consecutive Column Address Strobe commands. Finally, the 'MODE REGISTER SET command cycle time' and 'MODE REGISTER SET command update delay' specify the minimum cycle time and update delay for configuring the memory device, with values such as twelve C K cycles or fifteen nanoseconds.
+
+The concluding line, "SPD Field #19: 'Minimum Row Active to Row Active Delay Time'", identifies the specific data point being described, which is a fundamental parameter in memory controllers ensuring proper row activation sequencing. This parameter, often abbreviated as tRRD, dictates the minimum number of clock cycles between successive row activation commands to different rows within the memory array, critical for managing internal charge leakage and ensuring data retention. The presented values for tRRD would typically be dependent on the memory technology and operating conditions.

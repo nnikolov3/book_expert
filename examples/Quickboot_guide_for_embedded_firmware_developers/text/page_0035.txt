@@ -1,0 +1,59 @@
+advancement was the addition of the RealTime Clock, SMBus
+controller to talk to things like thermal chips, embedded controllers,
+and so on. There was an enhanced version of the PIIX4 where
+something kind of important was fixed. And there was a mobile
+version of the component where extra power management features
+were added for helping keep your laps cooler in a remarkably deep
+
+green way.
+—PIIX5 never left the starting line.
+
+—PIIX6 was gearing up for adding IEEE1394, but was shelved for bigger
+
+and better platform architecture advances.
+
+oWith the first ICH, ICHO, Intel added many basics, each with system
+
+firmware impact:
+—DMI to PCI bridge—external PCI bus.
+—Serial ATA (SATA) for hard drives and SSDs.
+
+—USB 1.1, USB 2.0, and soon USB 3.0—up to 14 ports and 2 integrated
+hubs.
+
+—Intel® High Definition Audio (more bits, less noise).
+—Serial Presence Interface (SPI) to connect to the NOR based NVRAM.
+
+—Low Pin Count (LPC) Interface to get to the Super IO or Embedded
+
+Controllers and replace the ISA bus from a software point of view.
+
+—PCI Express Root Ports to get to PCle bus(es). These can be configured
+
+in a variety of different combinations from x1 to x16 lane widths.
+The text begins by describing an advancement, which was the addition of the Real Time Clock and the S M Bus controller. These components allowed communication with devices such as thermal chips and embedded controllers. An enhanced version of the P two I X four also featured a significant fix. Furthermore, a mobile version of the component was introduced with extra power management features, designed to help keep laptops cooler in a remarkably efficient way.
+
+The P two I X five program never progressed beyond the initial stages.
+
+The P two I X six was being developed to include I triple E thirteen ninety four, but its development was put on hold in favor of larger and more advanced platform architecture improvements.
+
+With the introduction of the first I C H, specifically I C H zero, Intel incorporated several fundamental features, each having an impact on the system's firmware. These features included: a D M I to P C I bridge, supporting an external P C I bus; Serial A T A, or S A T A, for connecting hard drives and S S D s; U S B one dot one, U S B two dot zero, and soon U S B three dot zero, supporting up to fourteen ports and two integrated hubs; Intel High Definition Audio, offering improved bit depth and reduced noise; a Serial Presence Interface, or S P I, to connect to N O R based N V Ram; a Low Pin Count, or L P C, Interface for accessing the Super I O or Embedded Controllers, effectively replacing the I S A bus from a software perspective; and P C I Express Root Ports, providing connectivity to P C I E buses. These ports can be configured in various combinations, ranging from by one to by sixteen lane widths.
+The evolution of chipset architectures in computing systems is marked by a continuous drive for increased integration, enhanced peripheral support, and optimized power management. Early advancements, exemplified by the P I I X four chipset, focused on foundational system components. A critical addition was the Real Time Clock, a specialized clock that keeps track of the current time and date, even when the main system power is off, typically powered by a small battery. This component is essential for file system timestamps, scheduling tasks, and cryptographic operations. Alongside this, the S M Bus controller was integrated, facilitating communication with low speed devices such as thermal chips for temperature monitoring and embedded controllers responsible for various system management functions, including fan speed control and power state transitions. The P I I X four also saw an enhanced version, implying silicon revisions to address design issues or improve performance characteristics. Furthermore, a mobile variant of this component introduced specific power management features, crucial for reducing power consumption and heat generation in portable devices, enabling more efficient operation and contributing to a "deep green" system design.
+
+Subsequent iterations, such as the conceptual P I I X five, did not proceed to market, indicating potential shifts in architectural strategy or market demand. The P I I X six, while initially slated to incorporate the I triple E one three nine four standard, often known as FireWire, ultimately saw this feature deferred in favor of broader, more impactful platform architecture advances. This highlights the strategic decisions made in chipset development, balancing the adoption of new peripheral standards against the overall system design goals and the competitive landscape.
+
+A significant architectural shift occurred with the introduction of the first I C H, or I C H Zero, which consolidated numerous essential system I O functions into a single chip, moving away from a more distributed Southbridge architecture. This integration profoundly impacted the system's firmware and overall capabilities.
+
+One fundamental aspect of this integration was the D M I to P C I bridge. The D M I is Intel's proprietary high speed point to point interconnect, linking the C P U's Northbridge (or integrated memory controller) to the I C H, which serves as the Southbridge. The P C I bridge enabled the I C H to interface with and support existing P C I expansion cards, ensuring backward compatibility while introducing newer technologies.
+
+Storage capabilities were significantly enhanced with the inclusion of Serial A T A support for hard drives and S S D s. Serial A T A, a serial bus interface, offered several advantages over its predecessor, Parallel A T A, including higher data transfer rates, simpler cabling, and hot plugging capabilities, facilitating more flexible and robust storage configurations.
+
+The integration of U S B controllers also progressed significantly. Initially supporting U S B one point one, the I C H rapidly evolved to include U S B two point zero, and in subsequent designs, U S B three point zero. Each revision brought substantial increases in data transfer bandwidth, from twelve megabits per second for U S B one point one, to four hundred eighty megabits per second for U S B two point zero, and five gigabits per second for U S B three point zero. The ability to support up to fourteen U S B ports with two integrated hubs demonstrated the chip's robust I O expandability for a wide array of peripheral devices.
+
+Audio fidelity was addressed through the adoption of Intel High Definition Audio, a specification that provides higher quality audio output and input than previous integrated audio solutions. This standard enables greater bit depth and higher sampling rates, resulting in "more bits and less noise," translating to a richer and clearer audio experience for users.
+
+For system boot and configuration, the Serial Presence Interface, or S P I, was utilized to connect to N O R based N V Ram. S P I is a synchronous serial communication interface commonly used to interact with flash memory devices that store the system's B I O S or U E F I firmware. N O R flash is particularly suitable for this application due to its byte alterability and fast read times, crucial for system initialization.
+
+A pivotal change in low speed peripheral connectivity was the introduction of the Low Pin Count, or L P C, interface. This serial bus effectively replaced the legacy I S A bus, providing a simplified, lower pin count pathway for communication with Super I O chips. Super I O devices typically manage slower peripherals like keyboard and mouse controllers, serial ports, and hardware monitoring functions. From a software perspective, the L P C interface was designed to maintain compatibility with existing I S A based software models, easing the transition for operating systems and applications.
+
+Finally, the I C H incorporated P C I Express Root Ports. P C I Express, or P C I E, is a high speed serial expansion bus that fundamentally changed how components communicate within a system, replacing the parallel P C I and A G P buses. The "Root Ports" serve as the initial interface point within the P C I E hierarchy, allowing for the connection of various P C I E devices. A key feature of P C I E is its modularity in terms of lane configurations. These root ports could be configured with varying lane widths, from x one, providing a single serial lane, up to x sixteen, offering sixteen concurrent lanes. This flexible configuration allows for optimal bandwidth allocation to different types of expansion cards, such as graphics processing units requiring high bandwidth, or network cards needing fewer lanes. This capability underpins the modern system's ability to scale performance and support a diverse ecosystem of high performance peripheral devices.

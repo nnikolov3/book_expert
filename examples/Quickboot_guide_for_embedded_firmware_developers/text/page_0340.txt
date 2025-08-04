@@ -1,0 +1,32 @@
+Significant Byte
+
+The lower nibble of Byte 21 and the contents of Byte 22 combined create a
+12-bit value that defines the minimum SDRAM Active to Precharge Delay
+Time in Medium Timebase (MTB) units. The most significant bit is Bit 3 of
+
+Byte 21, and the least significant bit is Bit 0 of Byte 22. This value comes
+from the DDR3 SDRAM datasheet.
+
+Byte 21 Bits 3-0, Byte 22 Bits 7-0
+Minimum Active to Precharge Time (tRAS) MTB Units
+Values defined from 1 to 4095
+
+Examples:
+tRAS (MTB units) MTB (ns) tRAS Result (ns) Use
+300 Ox 12C 0.125 37.5 DOR3-800D
+
+F300 Ox 120 0.125 37.5 DDR3-BOOE
+Significant Byte. The lower nibble of Byte twenty one and the contents of Byte twenty two combined create a twelve bit value that defines the minimum S D R Am Active to Precharge Delay Time in Medium Timebase M T B units. The most significant bit is Bit three of Byte twenty one, and the least significant bit is Bit zero of Byte twenty two. This value comes from the D D R three S D R Am datasheet.
+
+Byte twenty one Bits three to zero, Byte twenty two Bits seven to zero: Minimum Active to Precharge Time T R A S M T B Units. Values defined from one to four thousand ninety five.
+
+Examples:
+
+The table shows data for t R A S in M T B units, M T B in nanoseconds, and the calculated t R A S Result in nanoseconds, along with its intended Use.
+
+The first row shows a t R A S value of three hundred M T B units, which corresponds to zero point one two five nanoseconds for M T B. The resulting t R A S is thirty seven point five nanoseconds, used for D D R three eight hundred D.
+
+The second row shows the same t R A S value of three hundred M T B units and M T B of zero point one two five nanoseconds. The t R A S Result is also thirty seven point five nanoseconds, used for D D R three eight hundred E.
+The presented text describes the composition of a 12-bit value used to define the minimum Active to Precharge Delay Time, or tRAS, in Medium Timebase units for DDR3 SDRAM. Specifically, it explains that the lower nibble of Byte 21, combined with the contents of Byte 22 which spans Bits 7 down to 0, collectively form this 12-bit parameter. The most significant bit of this 12-bit value is Bit 0 of Byte 22, and the least significant bit is Bit 0 of Byte 21. This parameter is crucial for memory timing and is sourced from the DDR3 SDRAM datasheet, with values ranging from one to 4095.
+
+The example table further illustrates this concept by showing specific instances of tRAS values in Medium Timebase units, their corresponding nanosecond durations, and their typical use cases. The first row of the table shows a tRAS value of 300, specified in Medium Timebase units, represented as zero x one two C in hexadecimal. This translates to zero point one two five nanoseconds for the Medium Timebase unit, resulting in a tRAS of thirty seven point five nanoseconds. This particular timing configuration is associated with DDR3-800D memory. The second row mirrors the first, indicating that a tRAS value of 300, again expressed as zero x one two C in Medium Timebase units, with a zero point one two five nanosecond timebase, yields a tRAS result of thirty seven point five nanoseconds, and this timing is suitable for DDR3-800E memory modules. These examples highlight the direct correlation between the encoded tRAS value, the timebase duration, and the actual latency in nanoseconds, which is critical for system initialization and proper memory operation. The definition of the tRAS parameter is fundamental in the memory controller's task of managing the state transitions within the SDRAM modules, ensuring data integrity and optimal performance.

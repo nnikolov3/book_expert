@@ -1,0 +1,46 @@
+Image too small to scale!! (2x36 vs min width of 3)
+Line cannot be recognized!!
+FSR |
+Graphics - esssasnasennenes
+or ctwivath LI DOR. fl
+| oom |
+Channel B
+Usg24 ! = Power Management
+« Clock Genarabon
+GPIO .
+SMBus 2.0PC
+6 Serial ATA Ports [= S&T
+| Somme FT] Fan Sona cono
+pa ol TN | Hh
+Codec(s)
+| PciBus B- Four pot Masters
+
+Figure 3.1: The Hardware Components of an Intel® Architecture PC
+
+Two basic technologies cover NVRAM types—NAND and NOR.
+Figure three point one illustrates the hardware components of an Intel Architecture P C.
+
+At the top, the Processor connects to the North Bridge, also known as the M C H, via the F S B. The North Bridge manages several key interfaces. For graphics, it can connect directly to a Display or to a Graphics Card. The Graphics Card itself then connects to a Display and also links back to the North Bridge via P C I Express. The North Bridge also manages system memory, connecting to D D R two modules through Channel A and Channel B, each independently accessing a D D R two module.
+
+The North Bridge communicates with the South Bridge, or I C H slash P C H, through a D M I Interface and a Controller Link.
+
+The South Bridge provides connectivity for a variety of peripherals and system functions. On its left side, it connects to U S B two point zero, supporting ten Ports, G P I O, and six Serial A T A Ports. It also connects to S P I Flash via an S P I interface, and to Intel High Definition Audio Codec(s).
+
+On its right side, the South Bridge manages Power Management, Clock Generation, S M Bus two point zero slash I two C, and S S T for Fan Speed Control. It also connects to Nineveh, which is the L A N interface, via an L C I connection.
+
+The South Bridge provides various bus interfaces, including a P C I E Bus supporting five with L A N or six P C I E Slots, and a P C I Bus which supports Four P C I Masters.
+
+At the bottom of the South Bridge, an L P C Interface connects to Flash B I O S, S I O, and T P M.
+
+Additionally, the document states that two basic technologies cover N V Ram types, specifically N A N D and N O R.
+The diagram delineates the architectural blueprint of a typical Intel personal computer, illustrating the hierarchical organization and interconnectivity of its principal hardware components. At the apex, the Processor, the computational core, interfaces directly with the North Bridge, designated as the M C H or Memory Controller Hub, via the F S B, or Front Side Bus. This F S B is the primary conduit for data, addresses, and control signals, enabling high speed communication between the C P U and the memory subsystem.
+
+The North Bridge functions as the high speed traffic controller, orchestrating interactions with critical performance sensitive components. Central to its role is the integrated memory controller, which manages access to the system memory, depicted here as D D R two modules connected through Channel A and Channel B. This dual channel configuration exemplifies a common technique to double the memory bandwidth by allowing the C P U to simultaneously access two independent memory modules, significantly enhancing data throughput for memory intensive operations. Furthermore, the North Bridge facilitates graphics capabilities, offering two distinct paths: either integrated graphics directly driving a display, or a high bandwidth P C I E, or P C I Express, connection to a dedicated Graphics Card, which then renders output to a display. P C I E represents a paradigm shift from shared parallel buses to a point to point serial communication standard, providing vastly superior bandwidth and lower latency crucial for modern G P U S and other high speed peripherals.
+
+Below the North Bridge lies the South Bridge, often referred to as the I C H, or I O Controller Hub, or P C H, Platform Controller Hub. Communication between the North Bridge and South Bridge occurs via a dedicated interconnect, typically a D M I, or Direct Media Interface, or Controller Link, which is an optimized proprietary bus ensuring efficient data exchange between the high speed domain and the more diverse, slower peripheral domain. The South Bridge is the nexus for a multitude of I O functions and slower peripherals. It incorporates ten U S B two point zero ports, providing ubiquitous connectivity for a wide array of external devices. Additionally, it integrates G P I O, or General Purpose I O, pins, offering versatile digital control capabilities. Six Serial A T A ports are provided for connecting mass storage devices such as S S D S or H D D S, utilizing a serial interface for efficient data transfer.
+
+The South Bridge also manages the S P I, or Serial Peripheral Interface, Flash memory, which typically stores the Flash B I O S, or Basic Input Output System. This non volatile memory contains the firmware necessary for system boot up and hardware initialization. The underlying text specifies that two basic technologies cover N V Ram, or Non Volatile Ram, types: N A N D, or N A N D, and N O R, or N O R. S P I Flash is generally N O R type flash memory, distinguished by its byte addressability and rapid random read access, making it ideal for executing boot code directly. In contrast, N A N D flash offers higher density and faster block programming and erase operations, primarily used for data storage applications rather than code execution.
+
+Further functionalities integrated within or connected to the South Bridge include the Intel High Definition Audio Codec, responsible for processing and outputting high fidelity audio. Critical system management functions are also handled, encompassing Power Management, which controls the various power states and distribution to optimize energy consumption, and Clock Generation, which provides the precise timing signals essential for the synchronous operation of all digital components. The S M Bus two point zero, or System Management Bus two point zero, and I two C, or I squared C, interfaces enable low speed communication with various system management devices, such as temperature sensors and fan controllers. The S S T, or System Sense Technology, module specifically facilitates Fan Speed Control, an integral part of thermal regulation. Network connectivity is provided by the Nineveh L A N, or Local Area Network, controller.
+
+For system expandability, the South Bridge provides P C I E bus connections for five or six P C I E slots, allowing for the integration of additional high bandwidth expansion cards. It also maintains support for legacy devices through the P C I bus, connecting to four P C I Masters for older expansion cards. The L P C, or Low Pin Count, interface serves as a bridge for legacy I O devices, connecting to the S I O, or Super I O, chip, which typically consolidates functions like serial ports, parallel ports, and floppy disk controllers, and also connects to the Flash B I O S. Finally, a T P M, or Trusted Platform Module, is integrated, offering hardware based security features such as cryptographic key storage and secure boot capabilities, enhancing the system's overall security posture. This architectural decomposition reveals a sophisticated interplay of components and bus technologies, meticulously designed to balance performance, cost, and expandability in a personal computing platform.

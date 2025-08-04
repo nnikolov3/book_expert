@@ -1,0 +1,55 @@
+prior to hiding the function. Also, the USB functionality is disabled in the
+
+controller’s registers:
+
+—Clear the Run/Stop bit and verify that the HCHalted bit becomes set
+(EHCI and UHCI)
+
+—Set the Interrupt disable bit, PCI Cig offset 04h[10] (EHCI and UHCI)
+
+—Clear Asynchronous schedule enable bit, USB20 MEM_BASE 20h[5],
+and Periodic schedule enable bit, USB20 MEM_BASE 20h[4]
+
+—Wake capabilities (UHCI, GPEO_EN, and EHCI, D26/D29:F0:62h)
+
+Once set, the device will be disabled until the next platform reset occurs. The
+policy to disable the EHCI functionality is not a dynamic one. This restriction
+
+also applies to subsequent warm boots.
+
+Disabling USB Ports
+
+System BIOS may choose to disable individual USB ports to save power or
+for security purposes. Each of the USB ports has a corresponding bit within
+the PCH USB Port Disable Override Register (RCBA + 359Ch). The PCH
+USB Port Disable Override Register can be locked by setting the Write
+Enable bit of the PCH USB Per-Port Register Write Control Register,
+PMBASE + 3Ch|[1]. Refer to the PCH datasheet for more details on these
+
+registers.
+
+USB Wake from ACPI Sx (S3, S4, S5 to S0)
+
+The EHCI host controllers may generate the wake from the internally routed
+Prior to hiding the function, the U S B functionality is disabled in the controller's registers. These steps include clearing the Run slash Stop bit and verifying that the H C Halted bit becomes set for E H C I and U H C I controllers. Additionally, the Interrupt disable bit should be set at P C I Config offset hexadecimal zero four index ten, for both E H C I and U H C I. The Asynchronous schedule enable bit at U S B twenty Memory Base hexadecimal twenty index five, and the Periodic schedule enable bit at U S B twenty Memory Base hexadecimal twenty index four, must be cleared. Finally, the Wake capabilities, including U H C I, G P E zero Enable, and E H C I, at D twenty six slash D twenty nine colon F zero colon hexadecimal sixty two, are managed. Once these settings are configured, the device will remain disabled until the next platform reset occurs. The policy for disabling E H C I functionality is not dynamic, and this restriction also applies to subsequent warm boots.
+
+Regarding Disabling U S B Ports, the System B I O S may opt to disable individual U S B ports for power saving or security reasons. Each U S B port has a corresponding bit within the P C H U S B Port Disable Override Register, located at R C B A incremented by hexadecimal three five nine C. This P C H U S B Port Disable Override Register can be locked by setting the Write Enable bit of the P C H U S B Per-Port Register Write Control Register, found at P M Base incremented by hexadecimal three C index one. For more detailed information on these registers, refer to the P C H datasheet.
+
+For U S B Wake from A C P I S x, specifically S three, S four, and S five to S zero power states, the E H C I host controllers are capable of generating the wake signal from the internally routed connections.
+The management of Universal Serial Bus, or U S B, functionality at the foundational hardware layer involves intricate interactions with various registers and control mechanisms, primarily orchestrated by the system's B I O S or firmware. Prior to effectively rendering a U S B host controller non-operational, a methodical sequence of register manipulations is imperative to ensure system stability and proper state transitions.
+
+The initial step in this process involves controlling the operational state of the U S B host controllers, specifically targeting the E H C I and U H C I implementations. This is achieved by clearing the Run slash Stop bit within the host controller's command register. Clearing this bit signals the host controller to cease all ongoing operations and transition into a halted state. Critical to this process is the verification that the H C Halted bit, a status indicator, subsequently becomes set. This confirmation ensures that the controller has indeed entered the desired quiescent state, preventing any race conditions or unexpected behavior during subsequent configuration changes. Failure to verify this state could lead to undefined system behavior, as operations might still be pending when further modifications are attempted.
+
+Following the halting procedure, it is crucial to manage the interrupt landscape. This necessitates setting the Interrupt disable bit, located at P C I Configuration Space offset hexadecimal zero four, specifically at bit index ten, for both E H C I and U H C I controllers. Disabling interrupts is a fundamental practice in hardware configuration; it prevents the host controller from generating erroneous or unexpected interrupt requests during its disabled phase. Such spurious interrupts could otherwise consume C P U cycles, interfere with other system operations, or even lead to system instability if not properly handled by the operating system's interrupt service routines. This register setting ensures a clean separation of concerns and prevents unintended side effects.
+
+Further control over the U S B two point zero controller's operational modes involves disabling its scheduling capabilities. This is accomplished by clearing two distinct bits within the U S B two zero M E M underscore B A S E register. Specifically, the Asynchronous schedule enable bit, found at offset twenty hexadecimal, bit index five, and the Periodic schedule enable bit, at offset twenty hexadecimal, bit index four, must be cleared. These bits govern the host controller's ability to process asynchronous transfers, typically used for bulk and control data, and periodic transfers, essential for interrupt and isochronous data streams. By disabling these fundamental scheduling mechanisms, the controller is effectively prevented from initiating or managing any U S B data transfers, thereby completing its functional disablement. This granular control is vital for power management and for isolating the U S B subsystem when it is not required.
+
+Finally, the system's wake capabilities via U S B must be addressed. This involves configuring specific bits related to wake events across various components, including U H C I, G P E zero underscore E N, and E H C I controllers. The intricate hexadecimal notation D two six slash D two nine colon F zero colon six two hexadecimal points to a specific P C I device, function, and register location responsible for enabling or disabling wake-on-U S B functionality. Disabling these wake capabilities ensures that activity on U S B ports, such as a connected device detecting a data line change or a user input, cannot cause the system to transition from a low-power A C P I state back to the fully operational S zero state. This is crucial for power conservation policies and security measures, preventing unauthorized wake-ups.
+
+It is important to understand the persistence model of these configurations. Once these low-level register settings are established, the U S B functionality remains disabled until the next full platform reset occurs. This implies that the policy for disabling E H C I functionality is not dynamic; it cannot be altered on the fly by software during normal operation. Furthermore, this restriction extends to subsequent warm boots, meaning software-initiated reboots without a complete power cycle will not revert these settings. This behavior underscores that these are deeply embedded hardware configurations, typically managed by the B I O S or other firmware, designed to persist across minor system restarts to maintain consistent system behavior and security postures.
+
+Beyond disabling the entire host controller, granular control over individual U S B ports is also a critical capability, often implemented by the system B I O S for power management or enhanced security. For instance, the B I O S may selectively disable specific U S B ports to conserve power by eliminating quiescent current consumption or to mitigate security risks by preventing unauthorized device connections. Each U S B port on the Platform Controller Hub, or P C H, which acts as the system's southbridge and manages various I O interfaces, has a corresponding control bit. These bits are located within the P C H U S B Port Disable Override Register, accessible via the Root Complex Base Address, or R C B A, plus an offset of three five nine C hexadecimal. Setting the appropriate bit in this register for a given port effectively disables it.
+
+To ensure the integrity and persistence of these port-specific disablement settings, a further security mechanism is often employed: the P C H U S B Per Port Register Write Control Register. This register can be locked by setting its Write Enable bit, located at the Power Management Base Address, or P M B A S E, plus an offset of three C hexadecimal, at bit index one. Once this bit is set, the U S B Port Disable Override Register becomes write protected, rendering any attempts to modify its contents futile until a full system reset. This write protection mechanism is a fundamental security practice, preventing malicious software or an unprivileged operating system from re-enabling U S B ports that the B I O S, operating at a higher privilege level, intended to keep disabled for security or power reasons. Detailed specifications for these registers and their bit definitions are typically found in the P C H datasheet, the definitive technical document for the platform controller.
+
+Finally, the system's ability to wake from various A C P I sleep states via U S B activity is a significant power management feature. The A C P I specification defines a spectrum of power states, ranging from S zero, the fully operational state, through S three and S four, which represent suspend to Ram and suspend to disk respectively, to S five, the soft-off state. The E H C I host controllers are specifically designed with logic to detect activity on U S B ports even when the majority of the system is in a low-power state. Upon detecting a predefined event, such as a mouse movement or keyboard input, these controllers can generate an internally routed wake signal. This signal propagates through the platform's power management circuitry, triggering a transition from a low-power state, such as S three, S four, or S five, back to the fully active S zero state. This mechanism is crucial for user experience, allowing peripherals to bring the system out of sleep, while also requiring careful management to balance responsiveness with power efficiency and security.

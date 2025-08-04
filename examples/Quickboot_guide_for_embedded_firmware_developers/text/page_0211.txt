@@ -1,0 +1,49 @@
+saved 0.5 seconds. Upon launching the platform OS, the OS still could
+interact with plugged- in USB devices without a problem because the OS
+drivers will normally reset the USB controllers and re-enumerate the USB
+bus/devices to suit its own needs. No wonder the OS takes so long to boot ...
+what else may the OS reinitialize and re-enumerate during a cold or warm
+boot?
+
+Platform policy ultimately affects how an engineer responds to the
+
+remaining questions.
+
+Case Study Summaries
+
+We have experimented with boot times and presented case studies in the Intel
+
+Developer’s Forum (IDF) in the past. Here are two examples.
+
+Example 1
+
+The overall performance numbers used in this example are measured in
+microseconds and the total boot time is described in seconds. Total boot time
+is measured as the time between the CPU coming out of reset and the handoff
+
+to the next boot agent.
+
+The hardware used was:
+—1.8 Ghz Intel® Atom™-based netbook design
+—1 GB DDR2 memory
+
+—2 MB flash
+Saved zero point five seconds. Upon launching the platform O S, the O S still could interact with plugged in U S B devices without a problem because the O S drivers will normally reset the U S B controllers and re enumerate the U S B bus devices to suit its own needs. No wonder the O S takes so long to boot. What else may the O S reinitialize and re enumerate during a cold or warm boot? Platform policy ultimately affects how an engineer responds to the remaining questions.
+
+Case Study Summaries
+
+We have experimented with boot times and presented case studies in the Intel Developer's Forum I D F in the past. Here are two examples.
+
+Example one
+
+The overall performance numbers used in this example are measured in microseconds and the total boot time is described in seconds. Total boot time is measured as the time between the C P U coming out of reset and the handoff to the next boot agent.
+
+The hardware used was:
+One point eight Ghz Intel Atom T M based netbook design.
+One G B D D R two memory.
+Two M B flash.
+The text discusses the operational behavior of an operating system, specifically concerning its interaction with USB devices during the boot process. It highlights a scenario where an operating system might delay or fail to interact with plugged-in USB devices, necessitating a re-enumeration of USB controllers and devices. This re-enumeration process, which involves the OS identifying and configuring attached hardware, can significantly prolong the system's boot time, particularly in scenarios involving a "cold" or "warm" boot. The underlying principle here is the dynamic enumeration and configuration of hardware by the operating system. When a device is connected or reconnected, the OS must perform a series of operations to recognize its type, interface, and capabilities, often involving the execution of specific driver code. This process is critical for ensuring that all peripherals are correctly initialized and ready for use. The text implies that certain platform policies or OS configurations might optimize for different scenarios, potentially impacting the efficiency of this device enumeration.
+
+The document then transitions to a "Case Study Summaries" section, indicating an empirical approach to understanding boot times. It references experiments and case studies from the Intel Developer's Forum, suggesting a focus on real-world performance analysis and optimization. The text explicitly states that boot times are measured in microseconds, and the "total boot time" is defined as the interval from the CPU reset event to the handoff to the next boot agent. This definition is crucial for benchmarking and understanding the sequential phases of system initialization.
+
+The case study, "Example 1," provides details about the hardware configuration used in an experiment. The system under consideration is a netbook with an Intel Atom processor running at three point two gigahertz. It is equipped with one gigabyte of D D R two memory and two megabyte flash storage. This specific hardware configuration provides a concrete context for analyzing boot performance, as the processor architecture, memory speed, and storage technology all contribute significantly to the overall boot duration. The type of memory, D D R two, indicates a specific generation of Double Data Rate Synchronous Dynamic Random Access Memory, which has implications for memory bandwidth and latency. The flash storage, often used for firmware or embedded operating systems due to its non-volatility and speed, also plays a vital role in the initial loading of system software.

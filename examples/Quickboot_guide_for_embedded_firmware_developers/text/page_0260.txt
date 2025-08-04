@@ -1,0 +1,54 @@
+When looking at memory configuration, the higher frequency memory will
+provide faster boots. Like the processor, the simpler the physical makeup of
+the memory, the faster the boot will be. Fewer banks of memory will boot
+faster than greater numbers of memory. If the memory’s overall size is
+smaller, then the runtime performance will be limited. Balance the smaller
+number of banks with high bit technology memory to allow for a small but
+
+agile memory footprint.
+
+Fast and Safe Memory Initialization
+
+Since 2010, with the Intel® Core™ series CPU, fast memory initialization
+flow has been available for typical boot. To accomplish this, for the first boot
+with a new memory stick and/or a new processor, there is an involved and
+intensive (time-consuming) training algorithm executed to tune the DDR3
+parameters. If the same CPU and DIMM combination are booted
+subsequently, major portions of the memory training can be bypassed.
+
+In fast memory initialization, the MRC is expected to support three
+
+primary flows:
+
+1. Full (slow) Memory Initialization. Create memory timing point when
+CPU and memory are new and never seen before.
+
+2. Fast Memory Initialization. If CPU and DIMM have not changed since
+previous the boot, this flow is used to restore previous settings.
+
+3. Warm Reset. Power was not removed from DIMM. This flow is used
+
+during platform reset and S3 resume.
+
+The three flows can be used in conjunction with the Fast Boot states;
+however, they may operate independently of the main Fast Boot UEFI flag
+
+setting.
+When looking at memory configuration, the higher frequency memory will provide faster boots. Like the processor, the simpler the physical makeup of the memory, the faster the boot will be. Fewer banks of memory will boot faster than greater numbers of memory. If the memory's overall size is smaller, then the runtime performance will be limited. Balance the smaller number of banks with high bit technology memory to allow for a small but agile memory footprint.
+
+Fast and Safe Memory Initialization
+
+Since two thousand and ten, with the Intel Core series C P U, fast memory initialization flow has been available for typical boot. To accomplish this, for the first boot with a new memory stick and or a new processor, there is an involved and intensive time consuming training algorithm executed to tune the D D R three parameters. If the same C P U and D I M M combination are booted subsequently, major portions of the memory training can be bypassed. In fast memory initialization, the M R C is expected to support three primary flows:
+
+One. Full slow memory initialization. Create memory timing point when C P U and memory are new and never seen before.
+Two. Fast memory initialization. If C P U and D I M M have not changed since previous the boot, this flow is used to restore previous settings.
+Three. Warm reset. Power was not removed from D I M M. This flow is used during platform reset and S three resume.
+
+The three flows can be used in conjunction with the Fast Boot states; however, they may operate independently of the main Fast Boot U E F I flag setting.
+The efficiency of a system's boot process is intrinsically linked to its memory configuration. Specifically, higher memory frequencies contribute to faster boot times. This is analogous to how a faster processor enhances overall computational speed. The complexity of the memory system's physical makeup also plays a role; simpler configurations generally lead to faster boots. Furthermore, the number of memory banks affects performance. While a larger number of banks might seem beneficial, if the memory's overall size is constrained, a smaller number of banks, especially when paired with high-bandwidth memory technology, can result in a more agile memory footprint and improved runtime performance.
+
+The advent of fast and safe memory initialization is a significant advancement, particularly with Intel Core series C P Us since two thousand and ten. This capability streamlines the typical boot process. Initially, when a new memory module or processor is installed, the first boot involves an involved and time-consuming memory training algorithm. This process is crucial for tuning parameters, such as those for D D R three memory. However, with fast memory initialization, significant portions of this memory training can be bypassed, leading to a considerably reduced boot time. The Memory Controller Hub, or M R C, is designed to support three primary flows for fast memory initialization.
+
+The first flow, termed "Full (slow) Memory Initialization," is executed when the C P U and memory configuration are new and have not been previously detected by the system. This process establishes the memory timing points, ensuring correct operation. The second flow, "Fast Memory Initialization," is employed when the C P U and memory modules have not undergone changes since the last boot. In this scenario, the system utilizes previously saved settings, significantly accelerating the initialization process. The third flow is "Warm Reset." This flow is invoked when power has not been removed from the D I M Ms, such as during a platform reset or after an S three sleep state resume.
+
+These three distinct flows can be utilized in conjunction with Fast Boot states. Importantly, they can also operate independently, providing flexibility in how the system's memory is initialized within the context of the main Fast Boot U E F I flag settings. This tiered approach to memory initialization optimizes boot performance based on the system's current state and configuration changes.

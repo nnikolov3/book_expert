@@ -1,0 +1,56 @@
+4. EHCI requires detection for companion controller (UHCI) initialization.
+
+5. Check number of ports, scan connection status.
+a.If devices/hubs are connected, do a root port reset.
+
+b.Root port reset is driven for a required time. This short duration is
+needed to suppress any possible resume signals from the devices
+during initialization. Per the EHCI version, the BIOS needs to track
+duration and clear the bit at the proper time. (XHCI version will
+clear the bit by itself and the BIOS only needs to poll.)
+
+6.The BIOS must poll for port enable bit to be set. While the
+specification says 2 ms, the completion will happen sooner than
+that for Intel PCHs.
+
+7.Perform speed detection.
+8.Perform a reset; recovery timing is 10 ms.
+
+9. EHCI version — proceed to get a descriptor to know what is connected
+
+to root port. Two potential answers:
+
+—Hub — if Hub, configure it for address, wait 10 ms per specification
+(may not need to for Intel component). Get delay needed for power
+
+on delay. Wait for that delay then configure each of the ports
+
+—Root port 0 index — ID as hub. Then configure USB network
+
+downstream
+
+It is recommended that the BIOS enable all the root ports in parallel, to avoid
+
+the otherwise additive serial time delays and then go deeper into the
+E H C I requires detection for companion controller U H C I initialization. Check number of ports, and scan connection status. If devices or hubs are connected, do a root port reset. Root port reset is driven for a required time. This short duration is needed to suppress any possible resume signals from the devices during initialization. Per the E H C I version, the B I O S needs to track duration and clear the bit at the proper time. The X H C I version will clear the bit by itself and the B I O S only needs to poll.
+
+The B I O S must poll for port enable bit to be set. While the specification says two milliseconds, the completion will happen sooner than that for Intel P C H s. Perform speed detection. Perform a reset; recovery timing is ten milliseconds.
+
+The E H C I version proceeds to get a descriptor to know what is connected to the root port. There are two potential answers:
+
+First, regarding a Hub: if it is a Hub, configure it for address, then wait ten milliseconds per specification. This wait may not be needed for an Intel component. Obtain the delay needed for power on. Wait for that delay, then configure each of the ports.
+
+Second, regarding Root port zero index: identify it as a hub. Then configure the U S B network downstream.
+
+It is recommended that the B I O S enable all the root ports in parallel, to avoid the otherwise additive serial time delays and then go deeper into the.
+The initialization of Universal Serial Bus host controllers, specifically the Enhanced Host Controller Interface, or E H C I, mandates a crucial detection process for any coexisting companion controllers, such as the Universal Host Controller Interface, or U H C I. This initial step ensures proper handoff or coexistence, particularly in systems that support both U S B one point zero or one point one, and U S B two point zero. Following this, the system must enumerate the connected U S B ports and ascertain their current connection status.
+
+Should any U S B devices or hubs be detected as physically connected to the root ports, a root port reset is initiated. This reset operation is time critical, designed to last for a specific, short duration. The brevity of this reset is deliberate, serving to suppress any potential resume signals that U S B devices might issue during their initialization phase. Such spurious signals, if not adequately suppressed, could lead to incorrect device states or enumeration failures. For the E H C I specification, the Basic Input Output System, or B I O S, is responsible for tracking the reset's duration and ensuring that the relevant status bit, indicating the completion of the reset, is cleared at the precisely stipulated time. In contrast, for the eXtensible Host Controller Interface, or X H C I, the controller itself manages this bit clearance, alleviating the B I O S of this responsibility, requiring only a polling mechanism.
+
+Upon completion of the reset sequence, the B I O S must actively poll for the port enable bit to be set, indicating that the U S B port has successfully transitioned to an enabled state and is ready for device communication. While the U S B specification typically mandates a maximum of two milliseconds for this completion, in actual implementations, particularly with Intel Platform Controller Hubs, or P C H s, this process often completes more rapidly, showcasing efficient hardware design. Following this, a critical phase of speed detection occurs. This involves the U S B host and the connected device negotiating the operational speed, whether it be low speed, full speed, or high speed, to ensure optimal data transfer rates.
+
+A subsequent reset operation might be performed, with a defined recovery timing of ten milliseconds. This delay ensures that the U S B bus and the connected devices have sufficient time to stabilize after the reset, preventing transient errors during subsequent communication. For an E H C I version, the system then proceeds to retrieve a descriptor from the connected device via the root port. This descriptor is a fundamental data structure in the U S B protocol, containing vital information about the device's type, capabilities, and configuration. Its acquisition is paramount for the host to properly identify and configure the connected hardware.
+
+There are two primary approaches when a U S B hub is connected. In the first approach, if the connected device is identified as a hub, the system configures it with a unique U S B address. This addressing is crucial for directed communication across the U S B bus. Following this, a pause of ten milliseconds is observed, as per U S B specification requirements. This delay might not be strictly necessary for all Intel components, but it is a robust protocol adherence. Additionally, any power on delays required for the hub to stabilize its internal circuitry must be accounted for. After these delays, each individual port on the newly configured hub is then configured. The second approach, applicable if the root port at index zero is identified as a hub, involves configuring this root hub and then proceeding to configure the U S B network downstream.
+
+It is strongly recommended that the B I O S initiate the enablement of all U S B root ports in parallel rather than sequentially. This concurrent enablement is a crucial optimization strategy designed to mitigate the cumulative effect of additive serial time delays. If enablement were performed sequentially, the total boot time and device availability would be significantly prolonged. By parallelizing this initial hardware configuration, the system can achieve a much faster and more efficient setup, allowing for deeper traversal and configuration of the U S B topology without incurring unnecessary latency.

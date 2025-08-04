@@ -1,0 +1,40 @@
+This field must also be extracted from the datasheet and divided by the
+
+Medium Timebase Divisor. In our example:
+
+1. The tgp value found in the Micron MT41J256M8 datasheet for our
+specific SDRAM chip gives 7.5 ns.
+
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+3.
+7.5ns/0.125 ns = 60 = 0x3C.
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+19 0x13 Min. Row Active to Row Active Delay (tgromin) Ox3C 7.5ns
+
+Byte 19: Minimum Row Active to Row Active Delay Time (tRRDmin)
+
+This byte defines the minimum SDRAM Row Active to Row Active Delay
+Time in Medium Timebase units. This value comes from the DDR3 SDRAM
+datasheet. The value of this number may be dependent on the SDRAM page
+size; please refer to the DDR3 SDRAM datasheet section on Addressing to
+determine the page size for these devices. Controller designers must also note
+that at some frequencies, a minimum number of clocks may be required,
+resulting in a larger tRRDmin value than indicated in the SPD. For example,
+tRRDmin for DDR3-800 must be 4 clocks.
+
+Bits 7-0
+Min. Row Active to Row Active Delay (trrpmin)
+This field must also be extracted from the datasheet and divided by the Medium Timebase Divisor. In our example: one. The t R R D value found in the Micron MT4 one J two five six M eight datasheet for our specific S D R A M chip gives seven point five ns. Two. This number must be divided by the Medium Timebase Divisor, the value in zero hexadecimal F is zero B. In our example, this is zero point one two five ns. Three. Seven point five ns divided by zero point one two five ns is sixty, which is hexadecimal three C.
+
+The table shows different data fields. The first row indicates that for Byte index nineteen, the Byte in Hexadecimal is zero hexadecimal thirteen. The Field Name is Minimum Row Active to Row Active Delay, denoted as t R R Dmin. The Typical Value is zero hexadecimal three C, and the Definition is seven point five ns.
+
+Byte nineteen: Minimum Row Active to Row Active Delay Time, t R R Dmin. This byte defines the minimum S D R A M Row Active to Row Active Delay Time in Medium Timebase units. This value comes from the D D R three S D R A M datasheet. The value of this number may be dependent on the S D R A M page size; please refer to the D D R three S D R A M datasheet section on Addressing to determine the page size for these devices. Controller designers must also note that at some frequencies, a minimum number of clocks may be required, resulting in a larger t R R Dmin value than indicated in the S P D. For example, t R R Dmin for D D R three dash eight hundred must be four clocks.
+
+Bits seven to zero: Minimum Row Active to Row Active Delay, t R R Dmin.
+This text elaborates on the determination of the Minimum Row Active to Row Active Delay, denoted as t R R D min, within the context of Synchronous Dynamic Random Access Memory, or S D Ram. The process involves extracting a specific time value from a component's datasheet and then dividing it by a Medium Timebase Divisor.  In the provided example, a t R R D value of seven point five nanoseconds is found in the Micron M T four one two five six M eight S D Ram chip datasheet. This value is then divided by a Medium Timebase Divisor, which in this instance is zero point one two five nanoseconds, yielding a result of sixty.  This result, sixty, is represented in hexadecimal as hexadecimal three C.
+
+A table illustrates this calculation and definition. The first column, "Byte (Dec)", indicates the byte offset, which is nineteen. The second column, "Byte (Hex)", shows the hexadecimal representation of this byte offset, hexadecimal thirteen. The third column, "Field Name", specifies the purpose of this byte: "Min. Row Active to Row Active Delay (t R R D min)". The fourth column, "Typ. Value", presents the typical programmed value for this field, which is hexadecimal three C. The final column, "Definition", reiterates the field's meaning.
+
+The text further details that Byte nineteen specifically defines the minimum S D Ram Row Active to Row Active Delay in terms of Medium Timebase units. This value is sourced from the D D R three S D Ram datasheet, with its specific interpretation potentially influenced by the page size of the memory device. Consequently, controller designers must consider that at certain frequencies, a minimum number of clock cycles might be necessary, leading to a t R R D min value that exceeds the figure stated in the Serial Presence Detect, or S P D. As an example, for D D R three eight hundred memory, a minimum of four clock cycles is stipulated for this parameter. The designation "Bits seven to zero" indicates that the entire byte is dedicated to representing the Minimum Row Active to Row Active Delay.

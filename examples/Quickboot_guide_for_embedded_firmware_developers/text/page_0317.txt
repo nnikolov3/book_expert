@@ -1,0 +1,48 @@
+3. Reserved settings are not allowed.
+
+SPD Field #12: “Cycle Time (t-xmin)” Example from Micron
+MT41J256M8 Datasheet
+
+SPD Field 0x0E and 0x0F: CAS Latencies Supported
+
+The supported CAS latencies can be found in the SDRAM datasheet as
+shown above. Each supported CAS latency must have its bit set in fields 14
+and 15.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+14 0x0E CAS Latencies Supported (CL&-CL11) Ox1E LL=5 6,78
+15 0x0F CAS Latencies Supported (CL12-CL18) 0=00 Cl=5,6,7.8
+
+From the JEDEC Specification:
+
+Byte 14: CAS Latencies Supported, Least Significant Byte
+
+Byte 15: CAS Latencies Supported, Most Significant Byte
+
+These bytes define which CAS Latency (CL) values are supported. The range
+is from CL = 4 through CL = 18 with one bit per possible CAS Latency. A 1
+in a bit position means that CL is supported, a 0 in that bit position means it
+is not supported. Since CL = 6 is required for all DDR3 speed bins, bit 2 of
+SPD byte 14 is always 1. These values come from the DDR3 SDRAM
+datasheet.
+Three. Reserved settings are not allowed.
+
+S P D Field number twelve: Cycle Time t c K min Example from Micron M T four one J two five six M eight Datasheet.
+
+S P D Field zero x zero E and zero x zero F: C A S Latencies Supported.
+
+The supported C A S latencies can be found in the S D R A M datasheet as shown above. Each supported C A S latency must have its bit set in fields fourteen and fifteen.
+
+The table shows the byte values, field names, typical values, and definitions for supported C A S latencies. For byte fourteen, represented as zero x zero E in hexadecimal, the field name is C A S Latencies Supported C L four to C L eleven. The typical value is zero x one E, and the definition is C L equals five, six, seven, or eight. For byte fifteen, represented as zero x zero F in hexadecimal, the field name is C A S Latencies Supported C L twelve to C L eighteen. The typical value is zero x zero zero, and the definition is C L equals five, six, seven, or eight.
+
+From the J E D E C Specification: Byte fourteen: C A S Latencies Supported, Least Significant Byte. Byte fifteen: C A S Latencies Supported, Most Significant Byte. These bytes define which C A S Latency C L values are supported. The range is from C L is equal to four through C L is equal to eighteen with one bit per possible C A S Latency. A one in a bit position means that C L is supported, a zero in that bit position means it is not supported. Since C L is equal to six is required for all D D R three speed bins, bit two of S P D byte fourteen is always one. These values come from the D D R three S D R A M datasheet.
+This page details specific fields within the Serial Presence Detect, or S P D, standard, which is crucial for system firmware to identify and configure installed memory modules. Specifically, it focuses on S P D Field number twelve, related to cycle time, and S P D fields zero E and zero F, which define supported C A S Latencies for S D Ram.
+
+S P D Field twelve, as exemplified by Micron's M T four one J two fifty six M eight data sheet, pertains to the minimum clock cycle time, often denoted as t C K min. This parameter is fundamental to determining the maximum operating frequency of the memory module, as it represents the shortest valid clock pulse width.
+
+The subsequent sections delve into the representation of C A S Latency, or C L, values. C L is a critical timing parameter in synchronous dynamic random access memory, S D Ram, indicating the number of clock cycles between the memory controller issuing a read command and the data becoming available on the output pins. The S P D fields zero E and zero F are utilized for this purpose. Field zero E, corresponding to Byte fourteen, is designated as the Least Significant Byte for C A S Latencies Supported, covering C L values from four through eleven. Field zero F, Byte fifteen, serves as the Most Significant Byte and extends this support for C L values from twelve through eighteen.
+
+The table provided illustrates the direct mapping between these S P D bytes and the supported C L values. For Byte fourteen, the hexadecimal value zero E hex is associated with a typical value of one E hex, which translates to supporting C L values of five, six, seven, and eight. For Byte fifteen, the hexadecimal value zero F hex is associated with a typical value of zero zero hex, indicating support for C L values of five, six, seven, and eight as well.
+
+The J E D E C specification elaborates on this bit field encoding. Within the context of these bytes, each bit position corresponds to a specific C L value, starting from C L equals four up to C L equals eighteen. A '1' in a bit position signifies that the corresponding C L value is supported by the memory module, while a '0' indicates it is not. For instance, if C L equals six is a requirement for all D D R three speed bins, it implies that the bit corresponding to C L six must be set to '1' in the relevant S P D field. The document further notes that for D D R three speed bins, bit two of S P D byte fourteen is consistently set to '1', which aligns with the supported C L values described. This mechanism allows the system's memory controller to dynamically ascertain the capabilities of the installed memory and configure it optimally for performance and stability.

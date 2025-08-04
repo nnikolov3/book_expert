@@ -1,0 +1,60 @@
+The code for a simple Hello World UEFI application follows:
+
+EF1 STATUS EFI1API
+UefiMain (
+
+IN EF1 HANDLEImageHandle, IN EFI_ SYSTEM TABLE *SystemTable
+
+)
+{
+
+SystemTable->ConQut->0OutputString (SystemTable-
+>ConCut, L"Hello World™):;
+return (EF1l SUCCESS) ;
+}
+The same done as a UEFI Shell application would replace the call to
+OutputString with a call to ShellPrintEx(-1,-1,L.“Hello World”).
+As you can see the application in its simplest form is actually quite
+similar in the UEFI application and in the UEFI Shell application forms. The
+difference becomes more apparent as we look at the code used to open a file.
+
+The UEFI Shell application opening a file named file.txt:
+
+gShellProtocol->0penFileByName (L"File. txt”, Handle, EFI
+
+FILLE MODE HEAD);
+
+The UEFI application opening a file named file.txt and for simplicity we are
+
+not even trying to search a path for the file (pseudo code):
+The code for a simple Hello World U E F I application follows:
+E F I _ S T A T U S E F I A P I
+U e f i M a i n (
+I N E F I _ H A N D L E I m a g e H a n d l e, I N E F I _ S Y S T E M _ T A B L E * S y s t e m T a b l e
+)
+{
+S y s t e m T a b l e-> C o n O u t-> O u t p u t S t r i n g ( S y s t e m T a b l e-
+> C o n O u t, L" H e l l o W o r l d");
+r e t u r n ( E F I _ S U C C E S S ) ;
+}
+The same done as a U E F I Shell application would replace the call to
+OutputString with a call to ShellPrintEx(-one,-one,L"Hello World").
+As you can see the application in its simplest form is actually quite
+similar in the U E F I application and in the U E F I Shell application forms. The
+difference becomes more apparent as we look at the code used to open a file.
+The U E F I Shell application opening a file named file.txt:
+g S h e l l P r o t o c o l-> O p e n F i l e B y N a m e ( L" F i l e. t x t", & H a n d l e, E F I _
+F I L E _ M O D E _ R E A D);
+The U E F I application opening a file named file.txt and for simplicity we are
+not even trying to search a path for the file (pseudo code):
+The provided text outlines the fundamental structure of a simple "Hello World" application within the Unified Extensible Firmware Interface, or U E F I, environment. It contrasts this with a similar operation in the U E F I Shell, highlighting the core principles of interacting with the system and performing output.
+
+At a high level, the U E F I environment provides an Application Programming Interface, or A P I, that allows applications to interact with the underlying hardware and system services. The initial code snippet demonstrates a typical entry point for a U E F I application, `UefiMain`. This function receives a handle, `IN EFI_HANDLE ImageHandle`, representing the image of the current application, and a pointer to the system table, `IN EFI_SYSTEM_TABLE *SystemTable`. The system table is a crucial data structure in U E F I, acting as a central repository of pointers to various services provided by the U E F I firmware.
+
+The code then accesses the console output device through the system table. Specifically, it dereferences the `SystemTable` pointer to access the console output interface, `ConOut`. This console output interface is a pointer to a structure that defines operations for interacting with the console, such as printing strings. The `OutputString` function is invoked, which takes the console output device pointer and a string as arguments. The string itself is represented as `L"Hello World"`, indicating a Unicode, wide-character string literal. The `L` prefix signifies a wide string literal, commonly used for U T F sixteen encoding in many programming languages and environments. Following the output operation, the function returns `EFI_SUCCESS`, signaling that the operation completed without errors. This return value is an enumeration within the E F I S TATUS type, a standard way to represent the outcome of U E F I services.
+
+The text then explains that a similar operation in the U E F I Shell would involve a different function call: `ShellPrintEx`. This function, part of the U E F I Shell's programmatic interface, is also used for outputting text to the console. The signature shown, `ShellPrintEx(-1,-1,L"Hello World")`, suggests it might take parameters for line wrapping or other formatting options, with `-1` possibly indicating default behavior. The core similarity lies in the goal of displaying the string "Hello World".
+
+The explanation then shifts to the context of file operations within U E F I, noting that the difference between a general U E F I application and a U E F I Shell application becomes more apparent when file I O is involved. The code snippet provided for file handling shows a function call to `gShellProtocol->OpenByName`. This indicates that the U E F I Shell environment provides a specific protocol, `gShellProtocol`, which encapsulates shell-specific services. `OpenByName` is a method within this protocol used to open a file by its name. The parameters provided are `"File.txt"` as the filename and `EFI_FILE_MODE_READ` as the desired file mode, signifying that the file should be opened for reading. The `&Handle` parameter would likely be a pointer to a variable that receives a file handle upon successful opening, and `EFI_` is a prefix commonly used for U E F I defined types and constants, with `FILE_MODE_READ` being one such constant.
+
+The final statement points out that the U E F I application, in its simplified example, is not actively searching for a file path. This implies that the `OpenByName` function in the U E F I Shell, or perhaps a similar underlying mechanism for general U E F I applications, might have built-in logic to locate files based on certain conventions or search paths, whereas a more fundamental U E F I approach might require explicit path specification. This distinction highlights the layered nature of the U E F I architecture, where the shell provides a higher level of abstraction and convenience over the core firmware services.

@@ -1,0 +1,73 @@
+has to violate any of the EFI platform initialization design specifications.
+It does mean that you have to go through each module and ask the big
+questions: Can I eliminate it entirely? Can I reduce the corner cases? Are
+
+there going to be variables in this equation or bit field? (See Figure 10.2.)
+
+Loading a Boot Target
+
+The logic associated with the BDS optimization focuses solely on what is the
+minimal behavior associated with initializing the platform and launching the
+OS loader. When customizing the platform BDS, you can avoid calling
+routines that attempt to connect all drivers to all devices recursively, such as
+BdsConnectAll(), and instead connect only the devices directly associated
+
+with the boot target. Figure 10.3 shows an example of that logic.
+
+. Mop Pi POACS BUPei1FN Wilkai Primary, Master VHD{Part3, Sagan 100m IP EFRBoo” “OSLoader afi”
+i Te ’ |
+po fat 0 i F.
+* 5 | if |
+
+go and neste he pct Dove, [ tnszn ma partion Dee Id ;
+=o . h = J i
+
+L! :
+fu #
+mn, ze me A Doves |
+
+LY
+bs
+
+|
+|
+
+i
+f
+f i
+
+d
+Ff
+
+EM EE -
+
+er
+
+(mono |
+
+Figure 10.3: Deconstructing the BDS Launch of the Boot Target
+
+Organize the Flash Effectively
+In a BIOS that complies with the PI specification, there is a flash component
+
+concept known as a firmware volume (FV). This is typically an accumulation
+has to violate any of the E F I platform initialization design specifications. It does mean that you have to go through each module and ask the big questions: Can I eliminate it entirely? Can I reduce the corner cases? Are there going to be variables in this equation or bit field? (See Figure 10.2.)
+
+Loading a Boot Target
+
+The logic associated with the B D S optimization focuses solely on what is the minimal behavior associated with initializing the platform and launching the O S loader. When customizing the platform B D S, you can avoid calling routines that attempt to connect all drivers to all devices recursively, such as BdsConnectAll(), and instead connect only the devices directly associated with the boot target. Figure 10.3 shows an example of that logic.
+
+The figure displays a diagram illustrating the deconstruction of the B D S launch of the boot target. It starts with a box labeled "Acpi P N P 0 A 0 3. 0 P c i (1 F /1)/A t a (P rimary,Master)/H D (P a r t 3, S i g 0 0 110011) / E F i : B o o t / O S L o a d e r . e f i". From this, a dashed arrow points to a box labeled "Connect P C I root bridge and InstallOpRom". This box has a downward arrow leading to "Connect Consoles". Following that, another downward arrow leads to "Diagnostics". From "Diagnostics", a dashed arrow curves around to a box labeled "Boot". There are also several boxes that branch off from different points in the diagram. "Initialize the P C I Device" branches from "Connect P C I root bridge and InstallOpRom". "Initialize the Partition Driver" also branches from the same starting point. "Initialize the A T A Device" branches from "Initialize the P C I Device". "Initialize the P C I Root Bridge" branches from "Connect Consoles". "Initialize the File System Driver" branches from "Initialize the P C I Root Bridge". Finally, a dashed arrow from "Boot" leads to "Launch O S Loader". A dashed oval encompasses "Connect P C I root bridge and InstallOpRom" and "Connect Consoles", and another dashed oval encompasses "Boot" and "Launch O S Loader".
+
+Figure 10.3: Deconstructing the B D S Launch of the Boot Target
+
+Organize the Flash Effectively
+
+In a B I O S that complies with the P I specification, there is a flash component concept known as a firmware volume (F V). This is typically an accumulation
+The presented text delves into aspects of system initialization, particularly focusing on the boot process and device initialization within a system utilizing the Unified Extensible Firmware Interface, or U E F I, and the Boot Device Selection, or B D S, process. It raises questions about the efficiency and design choices in initialization routines, specifically whether certain modules can be eliminated or if corner cases in an equation or bit field are problematic.
+
+The core of the technical explanation revolves around the diagram illustrating the deconstruction of the B D S launch of a boot target. This diagram visually represents a sequence of operations crucial for bringing a system to an operational state after power-on. It begins with connecting the P C I root bridge and installing the Op R O M, which are fundamental steps for enumerating and configuring peripheral devices on the Peripheral Component Interconnect bus. Following this, the system establishes console connections, enabling interaction with the user or management interfaces. A diagnostics phase is depicted, likely involving checks of critical hardware components to ensure their integrity and functionality. Finally, the process culminates in the "Boot" phase, which leads to the "Launch O S Loader" operation.
+
+The diagram also shows parallel initialization paths. One path involves initializing the P C I device, suggesting specific configuration steps for individual P C I peripherals. Another path initializes the partition, which is a prerequisite for accessing storage devices and their logical organization. A critical component is the initialization of the A T A device, which interfaces with Advanced Technology Attachment storage controllers, typically for hard disk drives and solid state drives. Furthermore, the diagram highlights the initialization of the P C I root bridge again, potentially representing re-enumeration or final configuration after certain devices have been initialized. The initialization of the file system driver is another vital step, enabling the operating system to read from and write to storage volumes. The dashed lines indicate dependencies and data flow between these initialization stages. The overall architecture suggests a layered approach to system startup, where foundational hardware components are brought online before higher-level services like storage access and operating system loading.
+
+The text also introduces the concept of firmware volume, or F V, within the context of a B I O S that adheres to the P I specification. A firmware volume is a defined structure within a flash memory component that stores firmware images and related data. This accumulation of firmware code is essential for the system's initial boot sequence and provides the underlying software interface to hardware. The concept implies a structured organization of firmware, allowing for modularity and efficient management of code and data during the initialization process. The efficiency of this process is paramount, as it directly impacts the system's boot time and overall responsiveness. The B D S optimization mentioned aims to streamline this by focusing on minimal behavior, suggesting a strategy to avoid exhaustive recursive device discovery in favor of directly connecting devices essential for the operating system to launch.

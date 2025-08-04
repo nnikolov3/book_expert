@@ -1,0 +1,56 @@
+The manufacturer’s part number is written in ASCII format within these
+bytes. Unused digits are coded as ASCII blanks (0x20).
+
+SPD Field 0x92 and 0x93: Module Revision Code
+
+Down-on-board memory designs should set these bytes to 0x00.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+1456-147 Dx92-0x93 Module Revision Code 0x 0000
+
+Bytes 146-147: Module Revision Code
+
+This refers to the module revision code. While the SPD specification will not
+attempt to define the format for this information, the individual manufacturer
+may keep track of the revision code and its appropriate decode represented in
+this byte.
+
+SPD Field 0x94 and 0x95: DRAM Manufacturer ID Code
+
+Use the same value used for fields 0x75-0x76 (the SDRAM component
+manufacturer ID extracted from the JEP-106 JEDEC specification).
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+148-149 0x94=0x95 DRAM Manufacturer IDCode Ox802C Micron Technology
+
+Byte 148: DRAM Manufacturer ID Code, Least Significant Byte
+Byte 149: DRAM Manufacturer ID Code, Most Significant Byte
+This two-byte field indicates the manufacturer of the DRAM on the module,
+The manufacturer's part number is written in A S C I I format within these bytes. Unused digits are coded as A S C I I blanks, hexadecimal two zero.
+
+S P D Field hexadecimal ninety two and hexadecimal ninety three: Module Revision Code
+
+Down on board memory designs should set these bytes to hexadecimal zero zero.
+
+The table shows byte ranges, their hexadecimal values, the field name, typical value, and definition. For byte range one hundred forty six to one hundred forty seven, the hexadecimal value is hexadecimal ninety two to hexadecimal ninety three. The field name is Module Revision Code. The typical value is hexadecimal zero zero zero zero. The definition is represented by ellipses.
+
+Bytes one hundred forty six to one hundred forty seven: Module Revision Code. This refers to the module revision code. While the S P D specification will not attempt to define the format for this information, the individual manufacturer may keep track of the revision code and its appropriate decode represented in this byte.
+
+S P D Field hexadecimal ninety four and hexadecimal ninety five: D R A M Manufacturer I D Code
+
+Use the same value used for fields hexadecimal seventy five to hexadecimal seventy six, which is the S D R A M component manufacturer I D extracted from the J E P one hundred six J E D E C specification.
+
+The table shows byte ranges, their hexadecimal values, the field name, typical value, and definition. For byte range one hundred forty eight to one hundred forty nine, the hexadecimal value is hexadecimal ninety four to hexadecimal ninety five. The field name is D R A M Manufacturer I D Code. The typical value is hexadecimal eight zero two C. The definition is Micron Technology.
+
+Byte one hundred forty eight: D R A M Manufacturer I D Code, Least Significant Byte.
+
+Byte one hundred forty nine: D R A M Manufacturer I D Code, Most Significant Byte.
+
+This two byte field indicates the manufacturer of the D R A M on the module.
+The manufacturer's part number is encoded in ASCII format, with unused digits represented by ASCII blank characters, which correspond to the hexadecimal value zero two zero. This section details specific fields within the SPD, or Serial Presence Detect, mechanism, a standard for identifying memory modules.
+
+The first SPD field discussed covers bytes zero nine two and zero nine three, designated for the Module Revision Code. Down-on board memory designs are expected to set these specific bytes to zero zero zero. A table illustrates this, showing bytes one hundred forty six through one hundred forty seven representing the Module Revision Code, with a typical value of zero zero zero zero. The interpretation of this revision code is left to the individual manufacturer, indicating a degree of proprietary information or design flexibility within the SPD standard.
+
+Following this, the SPD details fields zero x nine four and zero x nine five, which are reserved for the DRAM Manufacturer ID Code. The value stored in these bytes is also used for fields zero x seventy five through zero x seventy six, and this manufacturer identification is extracted from the J E D E C specification, specifically the J E D E P one o six standard. This two-byte field is further broken down into two parts: byte one hundred forty eight represents the DRAM Manufacturer ID Code, Least Significant Byte, and byte one hundred forty nine represents the DRAM Manufacturer ID Code, Most Significant Byte. Together, these two bytes serve to uniquely identify the manufacturer of the DRAM component on the module. The example provided shows the value zero x eight o two C, associated with Micron Technology, illustrating how a specific hexadecimal value maps to a recognized manufacturer. This systematic identification is crucial for system firmware to correctly configure and manage memory modules, ensuring compatibility and optimal performance.

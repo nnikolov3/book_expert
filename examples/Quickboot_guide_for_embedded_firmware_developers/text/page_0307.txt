@@ -1,0 +1,47 @@
+Bit 7:6 Bits 5:3 Bits 2:0
+Reserved Number of Ranks SDRAM Device Width
+0 00 = 1 Rank 000 = 4 bits
+001 = 2 Ranks 001 = 8 bits
+010 = 3 Ranks 010 = 16 bits
+011 = 4 Ranks 011 = 32 bits
+All others reserved All others reserved
+
+AAicron’ 2Gb: x4, x8, x16 DDR3 SDRAM
+
+Features
+DDR3 SDRAM
+
+MT41J512M4 — 64 Meg = 4 = 8 Banks
+MT41J256M8 — 32 Meg x 8/x 8 Banks
+MT41J128M16 — 16 Meg x 16 x 8 Banks
+
+SPD Field #7: “Ranks & Device DQ Count” Example from Micron
+MT41J256M8 Datasheet
+
+The SDRAM device width also can be easily discerned by looking at the
+schematics and noting the number of data lines used by each SDRAM device.
+SDRAM devices use four, eight, sixteen, or thirty-two data signals. The
+Number of Ranks is trickier to calculate. This parameter is not associated
+with the SDRAM chips, but is a parameter relating to the DIMM itself. It is
+the number or rank signals or chip selects used in the DIMM equivalent. The
+proper value to use must be extracted from the schematics. Note the specific
+chip select pins being used on a given channel. If only CSO is routed to the
+SDRAM chips, then the down-on-board memory solution is single rank (1
+rank). If both CSO and CS1 are routed to all of the SDRAM chips, the down-
+on-board memory solution is dual rank (two ranks). Some server chipsets
+
+also support quad-rank DIMMs.
+Bits seven through six, bits five through three, and bits two through zero define the characteristics of SDRAM devices. The combination of bits seven through six, where zero zero indicates one rank, zero one indicates two ranks, one zero indicates three ranks, and one one indicates four ranks, specifies the reserved number of ranks. All other combinations are reserved. Bits two through zero define the SDRAM device width: zero zero zero corresponds to four bits, zero zero one to eight bits, zero one zero to sixteen bits, and zero one one to thirty-two bits. All other combinations are reserved.
+
+The image displays information about DDR3 SDRAM, specifically from Micron. It lists three modules: M T four one J five one two M four, which is sixty four M e g by four by eight banks; M T four one J two five six M eight, which is thirty two M e g by eight by eight banks; and M T four one J one two eight M sixteen, which is sixteen M e g by sixteen by eight banks. The capacity is also indicated as two gigabytes with x four, x sixteen DDR3 SDRAM features.
+
+SPD Field number seven, titled "Ranks & Device DQ Count" example from Micron's M T four one J two five six M eight datasheet, explains that the SDRAM device width can be determined by examining the schematics and the number of data lines used by each SDRAM device. SDRAM devices are available with four, eight, sixteen, or thirty-two data signals. The number of ranks is more complex to calculate. This parameter is not directly associated with the SDRAM chip itself but relates to the number of rank signals or chip selects used in the DIMM equivalent. The proper value to use must be extracted from the schematics. If chip select pins are used on a given channel and only C S zero is routed to the SDRAM chips, then the down-on-board memory solution is single rank, meaning one rank. If both C S zero and C S one are routed to all of the SDRAM chips, the down-on-board memory solution is dual rank, meaning two ranks. Some server chipsets also support quad-rank DIMMs.
+The provided image details aspects of SDRAM (Synchronous Dynamic Random Access Memory) configuration, specifically focusing on bit fields within SPD (Serial Presence Detect) data and a practical example of determining memory ranks.
+
+At the top, a breakdown of bit fields within an SPD entry is presented. Bits seven through six are reserved. Bits five through three define the "Reserved Number of Ranks." This field uses a three bit binary encoding to specify the number of ranks on the memory module. Specifically, a binary value of zero zero zero indicates one rank, zero zero one indicates two ranks, zero one zero indicates three ranks, and zero one one indicates four ranks. Any other combinations are reserved. The bits zero through two define the "SDRAM Device Width." This three bit field specifies the data width of the individual SDRAM chips. A binary value of zero zero zero corresponds to four bits, zero zero one to eight bits, zero one zero to sixteen bits, and zero one one to thirty-two bits. The "All others reserved" note applies to both fields, indicating that values not explicitly defined are not to be used.
+
+Below this bit field breakdown, a Micron logo is displayed alongside "DDR3 SDRAM Features" and specific memory part numbers: MT41J512M4, MT41J256M8, and MT41J128M16. These part numbers are accompanied by specifications indicating their configuration: sixty four Megabytes by four bits, thirty two Megabytes by eight bits, and sixteen Megabytes by sixteen bits, respectively, all with eight banks. The notation "2Gb: x4, x8, x16 DDR3 SDRAM" indicates the total capacity and possible data interface widths for this generation of DDR3 SDRAM.
+
+The core of the technical explanation is provided in "SPD Field #7: 'Ranks & Device DQ Count' Example from Micron MT41J256M8 Datasheet." This section elaborates on the significance of these fields for understanding memory configurations. The SDRAM device width, as indicated by the lower three bits, can be readily determined from the schematics or by observing the number of data lines connected to each SDRAM device. SDRAM devices typically utilize four, eight, sixteen, or thirty-two data signals.
+
+The "Number of Ranks" parameter, however, is presented as being trickier to ascertain. This parameter is not an intrinsic property of the DIMM (Dual In-line Memory Module) itself but rather relates to how the SDRAM chips are accessed. Determining the correct value necessitates referencing the schematics to understand how the chip select pins are utilized on a given memory channel. For instance, if only one chip select pin (CS0) is routed to the SDRAM chips, it implies a single rank configuration. If both CS0 and CS1 are routed to all SDRAM chips, it signifies a dual rank configuration. The text notes that some server chipsets also support quad rank DIMMs, implying further complexity in chip select routing for higher rank counts. This understanding is crucial for the memory controller to correctly address and manage data transfers within the memory system, optimizing performance and data integrity.

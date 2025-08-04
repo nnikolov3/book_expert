@@ -1,0 +1,59 @@
+may be tied to keeping the implementation as 16-bit real mode
+code. Changing into any protected mode in a Virtual x86 task
+
+throws an exception.
+
+—Depending on the policies of the operating system, it may also be
+required that a service (in the case of PCIBIOS32, not really a real
+mode interrupt) completely reside in one 4-KB page of memory.
+
+Failure to do so may result in page faults.
+
+—No two operating systems utilize the exact same set of real mode
+interrupts (if they even do), and there is no documentation on
+
+which services are required for any given operating system.
+
+So, how are you supposed to know what to implement if you were to design
+
+your firmware from scratch? Debug.
+
+Debugging Methods
+Although the number of real mode interrupt debug methods is vast, this
+section outlines a few helpful hints that may allow the reader a little help in
+
+this complex area.
+
+—IVT Hardware Breakpoints. To determine when a real mode interrupt
+is called, use hardware breakpoints on the Interrupt Vector Table
+entries for the real mode interrupts in question. Providing the
+operating system has not overridden the debug registers, you’ll get
+
+a hit every time a specific interrupt is called.
+
+—Common Real Mode Interrupt Handler. If you have the flexibility to do
+so, have all the real mode interrupts utilize one common handler,
+
+which takes an interrupt vector. This allows one hardware
+may be tied to keeping the implementation as sixteen bit real mode code. Changing into any protected mode in a Virtual X eighty six task throws an exception.
+
+Depending on the policies of the operating system, it may also be required that a service, in the case of P C I B I O S thirty two, not really a real mode interrupt, completely reside in one four K B page of memory. Failure to do so may result in page faults.
+
+No two operating systems utilize the exact same set of real mode interrupts, if they even do, and there is no documentation on which services are required for any given operating system.
+
+So, how are you supposed to know what to implement if you were to design your firmware from scratch? Debug.
+
+Debugging Methods. Although the number of real mode interrupt debug methods is vast, this section outlines a few helpful hints that may allow the reader a little help in this complex area.
+
+I V T Hardware Breakpoints. To determine when a real mode interrupt is called, use hardware breakpoints on the Interrupt Vector Table entries for the real mode interrupts in question. Providing the operating system has not overridden the debug registers, you will get a hit every time a specific interrupt is called.
+
+Common Real Mode Interrupt Handler. If you have the flexibility to do so, have all the real mode interrupts utilize one common handler, which takes an interrupt vector. This allows one hardware
+The text delves into the intricacies of operating system design and debugging, particularly concerning legacy modes of computation such as the 16-bit real mode found in x86 architectures.  The discussion highlights potential challenges when transitioning from this historical mode to more modern protected modes, noting that such transitions, particularly into a virtual x86 task, can be complicated and might result in exceptions if not managed correctly.  A key issue identified is the management of real mode interrupts, where the operating system's policies dictate how these interrupts are handled.  Specifically, it is mentioned that some operating systems might require a service, as seen with P C I E in a real mode interrupt context, and that the failure to properly handle these interrupts, especially if they are contained within a four K B page of memory, could lead to page faults.
+
+A significant point of contention in operating system design is the lack of standardization regarding real mode interrupts. The text points out that no two operating systems utilize the exact same set of real mode interrupts, and critically, there is often no readily available documentation that specifies the required services for any given operating system's interrupt handling. This absence of a universally defined interrupt interface poses a considerable challenge for developers aiming to design firmware from scratch, necessitating a debugging approach to ascertain the correct interrupt protocols.
+
+The document then transitions into discussing debugging methods relevant to this domain. It posits that the number of real mode interrupt debugging techniques is extensive, but it aims to provide a focused set of hints to aid understanding in this complex area. Two primary methods are introduced: I V T hardware breakpoints and a common real mode interrupt handler.
+
+Regarding I V T hardware breakpoints, the principle involves utilizing hardware breakpoints situated on the Interrupt Vector Table. This technique is employed to detect when a real mode interrupt occurs. By setting these breakpoints, one can effectively monitor the execution flow and examine the state of registers when real mode interrupts are triggered. The effectiveness of this method is contingent on whether the operating system has overridden the default debug registers; if the operating system has indeed done so, these breakpoints may not accurately capture every instance of a specific interrupt.
+
+The second debugging strategy discussed is the implementation of a common real mode interrupt handler. The advantage of this approach lies in its flexibility, allowing developers to consolidate the handling of various real mode interrupts into a single, unified handler. This common handler is typically associated with an interrupt vector, a mechanism that directs the processor to the appropriate handler routine upon interrupt occurrence. This centralized handling strategy permits a more streamlined approach to managing interrupt-driven events in legacy modes.

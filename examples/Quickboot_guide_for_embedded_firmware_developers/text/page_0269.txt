@@ -1,0 +1,54 @@
+driver does not wait for HDD to spin up. It needs to allow data access (read)
+to OS boot loader as soon as cached data in SSD are available.
+
+The fastest HDD (at the writing of this chapter) takes about 1.4 to 3
+seconds from power-up to data availability. That is far slower than the 800
+
+ms power- up to data availability on Intel SSD (X25M).
+
+Minimizing USB Latency
+
+Intel integrated USB host controller and integrated hubs have much smaller
+latencies than the generic host controller and hub settings spelled out in the
+USB specifications. The BIOS can be optimized for the integrated
+components (as they are always present in the platform), by replacing the
+default USB specification timing with Intel PCH USB timing, as published in
+the PCH USB BIOS writer’s guide.
+
+For example, the minimum time needed to enumerate all the USB ports
+on PCH (as if they are empty) is approximately 450 ms. Using Intel PCH
+
+silicon-specific timing guideline can cut that down by more than half.
+
+Power Management
+
+The following section describes power management.
+
+Minimizing Active State Power Management Impact
+
+On several buses in the platform, there is a recommendation for active state
+power management (ASPM). The ASPM setting is important in extending
+
+battery life during runtime; however, there is nonzero latency in ASPM state
+The driver does not wait for H D D to spin up. It needs to allow data access read to O S boot loader as soon as cached data in S S D are available. The fastest H D D at the writing of this chapter takes about one point four to three seconds from power up to data availability. That is far slower than the eight hundred milliseconds power up to data availability on Intel S S D X twenty five M.
+
+Minimizing U S B Latency
+
+Intel integrated U S B host controller and integrated hubs have much smaller latencies than the generic host controller and hub settings spelled out in the U S B specifications. The B I O S can be optimized for the integrated components as they are always present in the platform by replacing the default U S B specification timing with Intel P C H U S B timing as published in the P C H U S B B I O S writer's guide.
+
+For example, the minimum time needed to enumerate all the U S B ports on P C H as if they are empty is approximately four hundred fifty milliseconds. Using Intel P C H silicon specific timing guideline can cut that down by more than half.
+
+Power Management
+
+The following section describes power management.
+
+Minimizing Active State Power Management Impact
+
+On several buses in the platform there is a recommendation for active state power management A S P M. The A S P M setting is important in extending battery life during runtime. However there is nonzero latency in A S P M state
+The provided text delves into performance considerations within a computing system, specifically focusing on storage device access times and Universal Serial Bus, or U S B, latency, culminating in a discussion on power management.
+
+Regarding storage, the text contrasts the behavior of Hard Disk Drives, or H D D s, with Solid State Drives, or S S D s. It highlights that unlike an H D D, which requires a mechanical spin up period before data access is possible, the driver for an S S D does not enforce such a wait. This is because S S D s offer immediate data availability. The performance gap is quantified by noting that the fastest H D D s, at the time of writing, exhibit a power up to data availability time of approximately one point four to three seconds, which is significantly slower, by roughly eight hundred milliseconds, compared to the instant availability on an Intel S S D X twenty five M. This illustrates a fundamental difference in access latency driven by the underlying storage technology: mechanical versus solid state.
+
+The discussion then shifts to minimizing U S B latency. It points out that integrated U S B host controllers and hubs, as found in Intel platforms, tend to have much smaller latencies than generic host controllers and hubs. The Universal Serial Bus, or U S B, Basic Input Output System, or B I O S, plays a crucial role here, as it can be optimized for integrated components. This optimization involves leveraging specific U S B specification timings, as documented in the P C H U S B B I O S writer's guide. As an example, the minimum time required to enumerate all U S B ports, which occurs when devices are connected and their presence is detected, is approximately four hundred fifty milliseconds for a P C H. Utilizing Intel P C H silicon specific timing guidelines can reduce this by more than half, demonstrating the impact of hardware specific tuning on interface performance.
+
+The document then transitions to the broader topic of Power Management. It introduces the concept of Active State Power Management, or A S P M, which is a critical factor in extending battery life during runtime. The text mentions that A S P M is recommended for active state power management on several buses within the platform. While A S P M is important for energy conservation, it is acknowledged that there is a non zero latency associated with entering and exiting the A S P M state, implying a trade off between power savings and responsiveness. This highlights a common challenge in power management design: balancing energy efficiency with system performance and immediate availability.

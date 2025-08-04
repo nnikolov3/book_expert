@@ -1,0 +1,53 @@
+Timers
+
+There are a variety of timers that can be employed on today’s Intel
+
+Architecture system.
+
+Programmable Interrupt Timer (PIT)
+The PIT (8254) resides in the IOH/ICH and contains the system timer, also
+referred to as IRQO. Refer to the chipset datasheet for more details.
+
+High Precision Event Timer (HPET)
+
+HPET resides in the IOH/ICH and contains three timers. Typically, the boot
+loader does not need to do any initialization of HPET and the functionality is
+used only by the OS. Refer to the Chipset BIOS Writer's Guide for more
+
+details.
+
+Real Time Clock (RTC)
+
+The RTC resides in the IOH/ICH and contains the system time
+(seconds/minutes/hours/and so on). These values are contained in CMOS,
+which is explained later. The RTC also contains a timer that can be utilized
+
+by firmware. Refer to the appropriate chipset datasheet for more details.
+
+System Management TCO Timer
+The TCO timers reside in the IOH/ICH and contain the Watch Dog Timer
+(WDT), which can be used to detect system hangs and will reset the system.
+
+Note: It is important to understand that for debugging any type of firmware
+
+on Intel architecture chipsets that implement a TCO Watch Dog Timer, it
+Timers. There are a variety of timers that can be employed on today's Intel Architecture system.
+
+Programmable Interrupt Timer (P I T). The P I T eight two five four resides in the I O H slash I C H and contains the system timer, also referred to as I R Q zero. Refer to the chipset datasheet for more details.
+
+High Precision Event Timer (H P E T). H P E T resides in the I O H slash I C H and contains three timers. Typically, the boot loader does not need to do any initialization of H P E T and the functionality is used only by the O S. Refer to the Chipset B I O S Writer's Guide for more details.
+
+Real Time Clock (R T C). The R T C resides in the I O H slash I C H and contains the system time (seconds slash minutes slash hours and so on). These values are contained in C M O S, which is explained later. The R T C also contains a timer that can be utilized by firmware. Refer to the appropriate chipset datasheet for more details.
+
+System Management T C O Timer. The T C O timers reside in the I O H slash I C H and contain the Watch Dog Timer (W D T), which can be used to detect system hangs and will reset the system.
+
+Note: It is important to understand that for debugging any type of firmware on Intel architecture chipsets that implement a T C O Watch Dog Timer, it
+The discussion herein pertains to various timer mechanisms integral to modern Intel architecture systems. These timers serve critical functions in system operation, event scheduling, and fault tolerance.
+
+The Programmable Interrupt Timer, commonly known as P I T, identified as component 8254, is situated within the I O H I C H. Its primary role is to act as a system timer and is typically associated with interrupt request zero, denoted as I R Q zero. The P I T's functionality is deeply rooted in generating periodic interrupts that can be leveraged by the operating system for tasks requiring precise timing.
+
+The High Precision Event Timer, or H P E T, also resides in the I O H I C H and comprises three distinct timer units. A significant characteristic of the H P E T is that its initialization is handled by the system's firmware, specifically the Chipset B I O S Writer's Guide, rather than requiring explicit intervention from the operating system upon system boot. This design choice offloads initial setup complexity from the O S, allowing it to focus on its core responsibilities. The H P E T is crucial for applications demanding high-resolution timing and event synchronization.
+
+The Real Time Clock, or R T C, is another component housed within the I O H I C H. It is responsible for maintaining the system's temporal state, including seconds, minutes, and hours. The R T C's timekeeping information is typically stored in C M O S memory, which is a non-volatile memory type that can retain data even when system power is removed. The R T C can also incorporate additional timer capabilities that are utilized by the system's firmware. Further details regarding its implementation and usage can be found in the appropriate chipset datasheets.
+
+Lastly, the System Management T C O Timer, often referred to as the Watch Dog Timer or W D T, is also integrated within the I O H I C H. The W D T serves a vital purpose in detecting and recovering from system hangs or frozen states. It operates on a countdown principle; if the timer is not periodically reset by the system's software before it expires, it is programmed to trigger a system reset. This mechanism is a fundamental component of system reliability and fault tolerance, ensuring that the system can automatically recover from unrecoverable software errors. It is important to note that for debugging purposes, understanding the behavior and configuration of the W D T, especially as implemented in firmware on Intel architecture chipsets, is paramount.

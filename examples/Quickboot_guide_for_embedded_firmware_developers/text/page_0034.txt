@@ -1,0 +1,50 @@
+datasheet.” This is where legacy gets to some very deep layers in the code.
+As the parts have morphed over time, the code to support them has as well.
+Formally known as the 82371FB (PIIX) PCI/ISA/IDE Xcelerators are
+multifunction PCI devices implementing a PCI-to-ISA bridge function and a
+PCI IDE function. As a PCI-to-ISA bridge, the PIIX integrates many
+common I/O functions found in ISA-based PC systems—a seven-channel
+DMA controller, two 8259 interrupt controllers, an 8254 timer/counter, and
+power management support. In addition to compatible transfers, each DMA
+channel supports type F transfers. Programmable chip select decoding is
+provided for the BIOS chip, real time clock, and keyboard controller.
+Edge/Level interrupts and interrupt steering are supported for PCI plug and
+play compatibility. The PIIX supports two IDE connectors for up to four IDE
+devices providing an interface for IDE hard disks and CD ROMs. The PIIX
+provides motherboard plug and play compatibility. PIIX implements two
+steerable DMA channels (including type F transfers) and up to two steerable
+interrupt lines. Even with the oldest device you’d realistically want to
+examine, that’s a lot of programming in the BIOS to get the I/O setup to run
+“anything.” Perhaps the coolest BIOS-centric pieces it had was the SMM
+interrupt controller, used back then for advanced power management (APM).
+The PIIX generations of south bridges continued to expand its list of
+
+integrated devices and expansion buses:
+
+—The PIIX3 added IOAPIC, USB UHCI, PCI 2.1, and upgraded DMA
+and IDE capabilities. There was a PIIX2 in between which
+supported PIO Mode 4, but it didn’t have the legs of the PIIX3 and
+
+was soon overtaken.
+
+—The PIIX4 added ACPI and DMA to the IDE controllers. Prior to this,
+
+the CPU was involved in all PIO mode transfers. Another important
+datasheet. This is where legacy gets to some very deep layers in the code. As the parts have morphed over time, the code to support them has as well.
+
+Formally known as the eight two three seven one F B, P I I X, P C I I S A I D E Xcelerators are multifunction P C I devices implementing a P C I to I S A bridge function and a P C I I D E function. As a P C I to I S A bridge, the P I I X integrates many common I O functions found in I S A based P C systems, specifically, a seven channel D M A controller, two eight two five nine interrupt controllers, an eight two five four timer counter, and power management support. In addition to compatible transfers, each D M A channel supports type F transfers. Programmable chip select decoding is provided for the B I O S chip, real time clock, and keyboard controller. Edge or Level interrupts and interrupt steering are supported for P C I plug and play compatibility. The P I I X supports two I D E connectors for up to four I D E devices providing an interface for I D E hard disks and C D R O Ms. The P I I X provides motherboard plug and play compatibility. P I I X implements two steerable D M A channels, including type F transfers, and up to two steerable interrupt lines. Even with the oldest device you would realistically want to examine, that is a lot of programming in the B I O S to get the I O setup to run anything. Perhaps the coolest B I O S centric pieces it had was the S M M interrupt controller, used back then for advanced power management, A P M.
+
+The P I I X generations of south bridges continued to expand its list of integrated devices and expansion buses. For instance, the P I I X three added I O A P I C, U S B U H C I, P C I two point one, and upgraded D M A and I D E capabilities. There was a P I I X two in between which supported P I O Mode four, but it did not have the legs of the P I I X three and was soon overtaken. Subsequently, the P I I X four added A C P I and D M A to the I D E controllers. Prior to this, the C P U was involved in all P I O mode transfers. Another important
+The provided text delves into the intricate architecture of a foundational component in personal computing, specifically the PIIX, or the 82371FB, which served as a crucial P C I to I S A bridge and a multifunction P C I device. This component was instrumental in bridging the performance gap and ensuring compatibility between the then-modern P C I bus, a faster and more efficient standard for connecting peripherals, and the legacy I S A bus, a slower, older standard common in earlier P C systems. The PIIX effectively translated commands and data between these two disparate bus architectures, allowing newer systems to utilize existing I S A expansion cards and peripherals.
+
+At its core, the PIIX integrated a comprehensive suite of input output functions traditionally found as discrete chips on I S A based motherboards. This integration was a significant step towards consolidating system logic, a precursor to modern system on chip, or S o C, designs. Key among these integrated functions was a seven channel D M A controller. D M A, or Direct Memory Access, is a critical mechanism that enables peripheral devices to transfer data directly to and from system R a m without requiring the constant intervention of the C P U. This dramatically improves system efficiency by freeing the C P U to execute other computational tasks while data transfers occur in parallel. The text specifically mentions support for type F transfers, which refers to a specific, optimized D M A transfer mode, enhancing data throughput.
+
+Further illustrating its role as a central input output hub, the PIIX incorporated two 8259 interrupt controllers, which are responsible for managing hardware interrupt requests from various devices, prioritizing them, and signaling the C P U when attention is required. This system ensures that critical events, such as data arriving from a network card or a key press, are processed promptly. An 8254 timer slash counter was also integrated, providing precise timing and counting capabilities essential for operating system scheduling, audio generation, and various other system functions. The PIIX additionally provided support for robust power management, including the early forms of Advanced Power Management, or A P M, which enabled the B I O S to control system power states and conserve energy. This was often facilitated through System Management Mode, or S M M, a special C P U operating mode used by the B I O S for system level control.
+
+The chipset also offered programmable chip select decoding, which provides flexibility in assigning addresses to various hardware components, and crucial support for the B I O S chip itself, enabling system boot up and hardware initialization. A real time clock maintained time and date information, even when the system was powered off, and an integrated keyboard controller managed input from the keyboard. The PIIX introduced support for both edge and level triggered interrupts, and critically, interrupt steering for P C I devices. P C I typically uses level triggered interrupts, which can be shared by multiple devices. Interrupt steering allows the B I O S or operating system to dynamically route these shared P C I interrupts to available interrupt request, or I R Q, lines, optimizing resource utilization and enabling plug and play compatibility for P C I peripherals.
+
+The PIIX prominently featured an I D E interface, supporting two connectors for up to four I D E devices, typically hard disks and C D R o m s. This made it the primary controller for mass storage devices in systems of that era. Earlier I D E operations often relied on Programmed Input Output, or P I O, modes, where the C P U would directly manage each step of the data transfer. This C P U centric approach limited performance.
+
+The subsequent generations of the PIIX chipset, referred to as south bridges in the broader system architecture context, continued to evolve, expanding their integrated capabilities. The PIIX3, for instance, introduced several significant advancements. It added an I O A P I C, or I O Advanced Programmable Interrupt Controller, which is a more sophisticated interrupt management system capable of handling a larger number of interrupts and supporting symmetric multiprocessing by distributing interrupt loads across multiple C P Us. The PIIX3 also brought native U S B U H C I, or Universal Host Controller Interface, support, marking the widespread adoption of the Universal Serial Bus standard and eliminating the need for separate U S B expansion cards. Furthermore, it incorporated P C I two point one, an updated P C I specification, and featured upgraded D M A and I D E capabilities, suggesting faster transfer modes and improved efficiency. While the PIIX2 had notably supported P I O Mode four for I D E, the PIIX3's overall enhancements and focus on D M A likely rendered the specific P I O mode less critical in the competitive landscape, indicating a shift towards more efficient, C P U independent data transfers.
+
+The evolution culminated with the PIIX4, which introduced A C P I, or Advanced Configuration and Power Interface. A C P I superseded A P M by providing a more powerful and flexible framework for power management and system configuration, allowing the operating system to exert much finer control over power states, plug and play functionality, and thermal management. Crucially, the PIIX4 explicitly added D M A capabilities to the I D E controllers, directly addressing the performance bottleneck of earlier P I O modes. Prior to this, the C P U was heavily involved in all P I O mode transfers, a significant overhead that limited system throughput. The integration of D M A into the I D E path in PIIX4 represented a pivotal shift, offloading mass storage data transfers from the C P U and significantly improving overall system performance and responsiveness. This iterative enhancement of the PIIX series reflects the continuous drive in computer architecture to integrate functionality, reduce C P U overhead, and improve system performance through dedicated hardware accelerators and standardized interfaces.

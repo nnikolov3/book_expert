@@ -1,0 +1,66 @@
+Note: 1. Thermal sensor compliant with TSE2002 specifications.
+
+SPD Field #32: “Module Thermal Sensor” Definition from JEDEC DDR?3
+SPD Specification
+
+SPD Field 0x21: SDRAM Device Type
+
+Set this field to 0x00.
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+33 0x21 SDRAM Device Type Ox 00 Narmal DRAM
+
+Byte 33: SDRAM Device Type
+This byte describes the type of SDRAM Device on the module.
+
+Bit-7 Bits 6-4 Bits 3-2 Bit 1-0
+SDRAM Device Type Die Count Reserved Signal Loading2
+0 = Standard Monolithic 000 = Not specified 0 = Undefined 00= Not specified
+DRAM Device 001 = Single die 01 = Multiload stack
+1 = Non-3tandard Devicel 010 = 2 die 10 = Single load stack
+011 = 4 die 11 = Reserved
+100 = 8 die
+All others settings re-
+served
+
+SPD Field #33: “SDRAM Device Type” Definition from JEDEC DDR3
+SPD Specification
+
+SPD Field 0x22—-0%x3B: Reserved
+Note: 1. Thermal sensor compliant with TSE2002 specifications.
+
+S P D Field #32: "Module Thermal Sensor" Definition from JEDEC DDR3 S P D Specification
+
+S P D Field 0x21: S D R A M Device Type
+
+Set this field to 0x00.
+
+The table shows a single row of data. The Byte (Decimal) column is 33, and the Byte (Hex) column is 0x21. The Field Name is S D R A M Device Type, the Typ. Value is 0x00, and the Definition is Normal D Ram.
+
+Byte 33: S D R A M Device Type
+
+This byte describes the type of S D R A M Device on the module.
+
+The table breaks down the S D R A M Device Type field by bit range. Bit 7 is for S D R A M Device Type. Bits 6 to 4 are for Die Count. Bits 3 to 2 are Reserved. Bit 1 to 0 are for Signal Loading 2.
+
+For S D R A M Device Type, bit 7: 0 equals Standard Monolithic D Ram Device, and 1 equals Non Standard Device 1.
+
+For Die Count, bits 6 to 4: 000 equals Not specified, 001 equals Single die, 010 equals two die, 011 equals four die, 100 equals eight die, and all others settings reserved.
+
+For Reserved, bits 3 to 2: 00 equals Not specified, 01 equals Multiload stack, 10 equals Single load stack, and 11 equals Reserved.
+
+S P D Field #33: "S D R A M Device Type" Definition from JEDEC DDR3 S P D Specification
+
+S P D Field 0x22–0x3B: Reserved
+The presented information details aspects of the Serial Presence Detect, or S P D, specification, a crucial mechanism for how system memory modules, specifically D R A M, communicate their capabilities and characteristics to the host system's motherboard and central processing unit. This communication is fundamental for system initialization and proper memory configuration, ensuring compatibility and optimal performance.
+
+Specifically, the document highlights S P D Field number thirty two, pertaining to the "Module Thermal Sensor" definition within the JEDEC D D R three S P D Specification. It also elaborates on S P D Field zero times twenty one, which defines the "S D R A M Device Type." The field at byte address thirty three is dedicated to this classification. The typical value for this field is hexadecimal zero zero, which the specification defines as representing a "Normal D R A M" device.
+
+The subsequent breakdown of Byte thirty three further elucidates the "S D R A M Device Type" field. This byte is structured into distinct bit fields, each conveying specific information about the memory device. Bit seven, for instance, acts as a primary discriminator. A value of zero in bit seven indicates a "Standard Monolithic D R A M Device," while a value of one signifies a "Non Standard Device." This fundamental categorization allows the system to understand whether it is dealing with a conventional memory chip or a specialized implementation.
+
+Following this, bits six through four are designated for the "Die Count." This field employs a three bit encoding scheme. A value of binary zero zero zero signifies that the die count is "Not specified," implying that this information is not explicitly defined or is irrelevant for this particular device type. Binary zero zero one represents a "Single die" configuration. Binary zero one zero indicates "two die," and binary zero one one denotes "four die." A value of binary one zero zero specifies "eight die." Any other bit patterns within this field are designated as "Reserved," meaning they are not used for defining the die count and should be treated as undefined or reserved for future use.
+
+Bits three through two of Byte thirty three are allocated to the "Die Count," presented as a two bit field. A value of binary zero zero indicates "Not specified." Binary zero one represents a "Single die" configuration. Binary one zero signifies "two die." Binary zero one one denotes "four die." A value of binary one zero zero signifies "eight die." All other settings are reserved.
+
+Finally, bits one through zero of Byte thirty three are designated as "Reserved." The value binary zero zero is defined as "Undefined" for this particular field. Binary zero one signifies "Multiload stack," indicating a specific signal loading configuration. Binary one zero signifies "Single load stack," another signal loading arrangement. The value binary one one is also marked as "Reserved." These reserved fields are crucial for maintaining backward compatibility and allowing for future extensions to the S P D specification without invalidating existing configurations.
+
+The document also references S P D Field number thirty three, "S D R A M Device Type," again linking it to the JEDEC D D R three S P D Specification. This reiteration reinforces the importance of this field for proper memory identification. Lastly, S P D Field zero times twenty two through zero times thirty three is designated as "Reserved," indicating a contiguous block of bytes within the S P D data structure that is not currently assigned a specific function. These reserved regions are essential for future standardization efforts and potential enhancements to memory module functionality and reporting.

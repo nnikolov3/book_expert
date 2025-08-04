@@ -1,0 +1,46 @@
+Setting the Programming Interface
+
+The SATA controller supports three combinations of programming interfaces
+to access the maximum number of 6/4 SATA ports: a combination of legacy
+and native IDE, native IDE only, and AHCI.
+
+Using the combination of the legacy and native IDE is possible only
+when the SATA controller is operating in IDE mode. The programming
+interface is selected by setting the PCI standard programming interface
+register, D31:F2:09h, appropriately. There are two native mode enable bits in
+the PI register to control the primary and secondary channels of SATAI,
+D31:F2:09h[2,0]; these bits must always be programmed identically. The PI
+register is found in both the SATA functions, but only SATA1 can be set to
+use legacy IDE, SATAZ2 supports native IDE only, and the PI register is read-
+only. If legacy IDE use is intended, the system BIOS must set the decode-
+enable bits in the IDE Timing Registers (D31:F2:40h[15] and
+D31:F5:42h[15]).
+
+When the SATA controller is configured as RAID or AHCI mode, the
+PI register becomes read-only and the controller can use native IDE access
+mechanisms until the AE bit, ABAR 04h[31] is set. It is important to realize
+that in RAID and AHCI mode, native IDE will allow access only to the first
+four ports of the controller; to access the maximum of six ports, AHCI access
+
+mechanisms must be used.
+
+Initializing Registers in AHCI Memory-Mapped Space
+
+When the SATA controller is configured to operate in RAID or AHCI mode,
+
+the system BIOS must initialize the following memory-mapped AHCI
+registers specified by ABAR, D31:F2:24h:
+Setting the Programming Interface
+
+The S A T A controller supports three combinations of programming interfaces to access the maximum number of six slash four S A T A ports: a combination of legacy and native I D E, native I D E only, and A H C I. Using the combination of the legacy and native I D E is possible only when the S A T A controller is operating in I D E mode. The programming interface is selected by setting the P C I standard programming interface register, D thirty one colon F two colon zero nine hexadecimal, appropriately. There are two native mode enable bits in the P I register to control the primary and secondary channels of S A T A one, D thirty one colon F two colon zero nine hexadecimal bracket two comma zero bracket; these bits must always be programmed identically. The P I register is found in both the S A T A functions, but only S A T A one can be set to use legacy I D E. S A T A two supports native I D E only, and the P I register is read only. If legacy I D E use is intended, the system B I O S must set the decode enable bits in the I D E Timing Registers D thirty one colon F two colon four zero hexadecimal bracket one five bracket and D thirty one colon F five colon four two hexadecimal bracket one five bracket. When the S A T A controller is configured as R A I D or A H C I mode, the P I register becomes read only and the controller can use native I D E access mechanisms until the A E bit, A B A R zero four hexadecimal bracket three one bracket is set. It is important to realize that in R A I D and A H C I mode, native I D E will allow access only to the first four ports of the controller; to access the maximum of six ports, A H C I access mechanisms must be used.
+
+Initializing Registers in A H C I Memory Mapped Space
+
+When the S A T A controller is configured to operate in R A I D or A H C I mode, the system B I O S must initialize the following memory mapped A H C I registers specified by A B A R, D thirty one colon F two colon two four hexadecimal.
+The S A T A controller serves as a crucial interface between the host system and S A T A storage devices. Its flexibility is manifested through support for three distinct programming interfaces, each dictating how the controller communicates with the operating system or B I O S. These interfaces include a combination mode offering both legacy I D E and native I D E, a native I D E only mode, and the more advanced A H C I mode. The maximum number of S A T A ports supported varies depending on the specific configuration, typically six or four.
+
+The ability to operate in a combined legacy and native I D E mode is contingent upon the S A T A controller being configured for I D E operation. This selection is fundamentally governed by specific settings within the P C I standard programming interface register, identified as D thirty one, F two, hexadecimal zero nine. Within this register, the two native mode enable bits, located at D thirty one, F two, hexadecimal zero nine, bits two through zero, are instrumental in controlling the primary and secondary S A T A channels. A critical design principle here is that these bits must be programmed identically to ensure consistent behavior across the channels. While the P I register is discoverable through both S A T A functions, it is important to note that only S A T A one can be configured to utilize legacy I D E. S A T A two, conversely, is restricted to supporting native I D E exclusively, and its P I register is designated as read-only. For scenarios requiring legacy I D E functionality, the system B I O S assumes the responsibility of setting the decode enable bits within the I D E Timing Registers, specifically at D thirty one, F two, hexadecimal forty, bit fifteen, and D thirty one, F five, hexadecimal forty two, bit fifteen. This B I O S intervention ensures backward compatibility with older I D E device drivers or operating system kernel modules.
+
+When the S A T A controller transitions into R A I D or A H C I mode, a significant change occurs in its programmability: the P I register becomes read-only. This design choice prevents accidental or unauthorized modification of the controller's fundamental operating mode once the more advanced features of R A I D or A H C I are activated. In these advanced modes, the controller primarily utilizes native I D E access mechanisms, provided that the A E bit, which signifies A H C I Enable, is set in the A B A R hexadecimal zero four, bit thirty one. It is a vital architectural consideration that in both R A I D and A H C I modes, native I D E access is inherently limited to the first four ports of the controller. To fully leverage the maximum six ports available on the controller, or indeed any ports beyond the initial four, specialized A H C I access mechanisms must be employed. This bifurcation in access methods underscores the differing capabilities and complexity between the I D E compatibility layers and the full A H C I specification.
+
+The initialization of registers within the A H C I memory mapped space is a critical step in the controller's operational readiness when configured for R A I D or A H C I mode. In such configurations, the system B I O S is mandated to perform this initialization. The specific memory-mapped A H C I registers requiring initialization are identified by the A B A R, which points to the base address of the controller's register block, at D thirty one, F two, hexadecimal twenty four. This B I O S driven initialization sequence is fundamental to establishing the proper operational context and ensuring that the operating system can correctly discover and interact with the A H C I controller and its connected S A T A devices through the standardized A H C I register set.

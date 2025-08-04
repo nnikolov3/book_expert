@@ -1,0 +1,31 @@
+Hardware debuggers utilize the debug registers (DRO-DR7) in the processor
+to control all hardware interrupts. Since these are public processor registers,
+anybody can modify them. That includes a boot loader or an operating
+system. It may seem logical that you should be able to set hardware
+breakpoints on memory accesses to debug boot loader and operating system
+use of firmware tables. However, if a boot loader or operating system
+chooses to overwrite the DRO-DRY7 register while the target is running, the
+breakpoints will basically disappear. Therefore, care must be taken when
+
+attempting to debug firmware table usage.
+
+Summary
+
+If you understand the hardware capabilities at your disposal, have the
+appropriate tools, and understand the applicable specifications, you should be
+able to apply the techniques described in this chapter to make your way
+through debugging your firmware from the reset vector through the entire
+
+boot process.
+Hardware debuggers utilize the debug registers, D R zero through D R seven, in the processor to control all hardware interrupts. Since these are public processor registers, anybody can modify them. That includes a boot loader or an operating system. It may seem logical that you should be able to set hardware breakpoints on memory accesses to debug boot loader and operating system use of firmware tables. However, if a boot loader or operating system chooses to overwrite the D R zero through D R seven register while the target is running, the breakpoints will basically disappear. Therefore, care must be taken when attempting to debug firmware table usage.
+
+Summary
+
+If you understand the hardware capabilities at your disposal, have the appropriate tools, and understand the applicable specifications, you should be able to apply the techniques described in this chapter to make your way through debugging your firmware from the reset vector through the entire boot process.
+Hardware debuggers represent a critical class of diagnostic tools, affording an unparalleled level of introspection and control over a running processor. These sophisticated instruments fundamentally rely on dedicated hardware features within the central processing unit, or C P U, specifically, a set of special function registers known as debug registers, typically D R zero through D R seven in many architectures. These registers are the architectural underpinning for features such as hardware breakpoints and watchpoints, enabling the debugger to halt C P U execution or trigger an exception when specific memory accesses or instruction fetches occur.
+
+The critical insight here is that these debug registers are, by design, publicly accessible processor registers. While their modification usually requires elevated privilege levels, such as kernel mode, this accessibility implies that any sufficiently privileged software component can read from or write to them. This includes foundational system software components like the boot loader, which is responsible for the initial setup of the hardware and loading the operating system, and the operating system itself, which manages system resources and execution flow.
+
+The apparent logical expectation is that one should be able to establish hardware breakpoints on memory locations pertinent to, for instance, firmware tables used during the boot process or by the operating system. However, a significant challenge arises from the "public" nature of these debug registers. If a boot loader or the operating system, during its initialization sequence or routine operation, chooses to modify or overwrite the D R zero through D R seven registers for its own internal purposes, perhaps for hardware performance monitoring or internal debugging hooks, then any breakpoints previously set by the external hardware debugger will become defunct. They will simply disappear because the underlying configuration in the debug registers has been altered. This dynamic creates a race condition or a contention for these shared hardware resources, making robust debugging of low-level firmware or operating system components particularly intricate. Therefore, meticulous care and a deep understanding of the system's initialization sequence and the software's interaction with these debug registers are absolutely essential when attempting to diagnose issues related to firmware table usage, or any other early system behavior that could inadvertently manipulate this critical debugger state.
+
+A comprehensive understanding of the system's inherent hardware capabilities and the precise specifications governing its operation is paramount. Possessing this knowledge, coupled with proficiency in the specialized tools and techniques for low-level system analysis, empowers an engineer to effectively navigate the complexities of firmware debugging. This entails tracing the execution flow from the very first instruction executed after a system reset, known as the reset vector, through the entire intricate process of system initialization and beyond. Such a holistic approach is indispensable for diagnosing subtle issues that manifest during the nascent stages of system operation, where conventional software debugging methodologies are often insufficient or entirely unavailable.

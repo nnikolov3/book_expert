@@ -1,0 +1,36 @@
+Chapter 10
+Bootstrapping Embedded
+
+Capitalists are no more capable of self-sacrifice than a man is capable of
+
+lifting himself up by his own bootstraps.
+—Vladimir Lenin
+
+Bootstrapping to a computing device is the act of bringing the system up
+without any manual entry. It may be an antiquated term, but most operating
+systems are not native software on Intel® architecture (which start at
+OxFFFFFFFOh) and cannot bootstrap themselves. BIOS and boot loaders
+have one main task to do—the bare minimum required to initialize enough
+hardware, and then get out of the way for the more robust operating system to
+take over. In some cases, the BIOS or bootloader should query the user or
+system for preferences, perform scans for bootable partitions, enumerate
+expansion buses, or run diagnostics in the case of a unit failure. These are
+usages where the OS seems unreachable or something seems incorrect with
+the hardware, but people typically just want to get to the OS to run their
+application or answer their email or phone or play the latest YouTubeT video
+from the Internet; they do not want to wait for a BIOS to boot.
+
+As a system designer, you can look at the Apple iPadf for the latest
+industry benchmark in bootstrapping. As with most embedded computing
+
+devices, it doesn’t boot, it turns on. While the comparison may not be fair in
+Chapter 10 Bootstrapping Embedded. Capitalists are no more capable of self sacrifice than a man is capable of lifting himself up by his own bootstraps. — Vladimir Lenin. Bootstrapping to a computing device is the act of bringing the system up without any manual entry. It may be an antiquated term, but most operating systems are not native software on Intel architecture, which start at hex FFFF FFFF F F zero h and cannot bootstrap themselves. B I O S and boot loaders have one main task to do—the bare minimum required to initialize enough hardware, and then get out of the way for the more robust operating system to take over. In some cases, the B I O S or bootloader should query the user or system for preferences, perform scans for bootable partitions, enumerate expansion buses, or run diagnostics in the case of a unit failure. These are usages where the O S seems unreachable or something seems incorrect with the hardware, but people typically just want to get to the O S to run their application or answer their email or phone or play the latest You Tube video from the Internet; they do not want to wait for a B I O S to boot. As a system designer, you can look at the Apple i Pad for the latest industry benchmark in bootstrapping. As with most embedded computing devices, it doesn't boot, it turns on. While the comparison may not be fair in
+Chapter ten, Bootstrapping Embedded systems, discusses the fundamental process of initiating a computing device. The core concept of bootstrapping, in this context, refers to the sequence of operations that bring a system from an unpowered state to a fully operational one, typically involving the loading and execution of an operating system. This process is foundational to all computing, from massive servers to small embedded devices.
+
+The text explains that bootstrapping to a computing device is essentially the act of bringing the system up without manual intervention. It highlights that while this might seem straightforward, it involves a complex interplay of hardware and software. The phrase "antiquated term" suggests that the underlying principles remain, even as the implementation evolves. The mention of Intel architecture and its starting address of hexadecimal FF FF FF FF F zero h signifies the initial memory location where the processor begins execution upon power-up. This address is typically hardwired into the processor's reset vector.
+
+The role of the BIOS, or Basic Input Output System, and bootloaders is central to this process. Their primary task is to initialize essential hardware components, often referred to as the "bare minimum required to initialize enough hardware." This initialization phase is crucial for establishing a stable environment for the operating system. Once this minimal hardware is ready, the BIOS or bootloader hands over control to the operating system, allowing it to take over and manage the system's resources.
+
+The text further elaborates on the functionalities of BIOS or bootloaders. They can query the user for preferences, scan for bootable partitions on storage devices, enumerate expansion buses to detect connected hardware, and perform diagnostics in case of a unit failure. These capabilities are vital for system recovery and configuration. The scenario where the operating system seems unreachable or malfunctioning is a critical use case. In such situations, the BIOS or bootloader can be used to run applications directly from the hardware, bypass the primary operating system, or even facilitate network-based recovery, such as retrieving applications or answering queries from the internet. This demonstrates the resilience and fallback mechanisms inherent in the bootstrapping process.
+
+The analogy to the Apple iPad is used to illustrate the concept of bootstrapping in modern embedded computing devices. The statement that "it doesn't boot, it turns on" implies a seamless and immediate user experience, where the boot process is largely hidden from the end-user. This is achieved through highly optimized and integrated hardware and software designs, often found in consumer electronics. While acknowledging that such comparisons might not be entirely fair due to differences in complexity and purpose, it effectively conveys the ideal of a user-friendly, instant-on computing experience, which is a significant goal in embedded system design. The underlying technical challenge is to ensure that all necessary hardware is correctly initialized and that the appropriate software is loaded and executed with minimal delay and user interaction.

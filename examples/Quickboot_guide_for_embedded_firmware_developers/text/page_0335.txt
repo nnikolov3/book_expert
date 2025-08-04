@@ -1,0 +1,57 @@
+Bits 7-0
+Min. Row Active to Row Active Delay (trgrpmin)
+Values defined from 1 to 255
+
+If tRPmin cannot be divided evenly by the MTB, this byte must be rounded
+up to the next larger integer and the Fine Offset for tRPmin (SPD byte 37)
+
+used for correction to get the actual value.
+
+tRP MTE tRP Offset (FTB FTB tRP Use
+
+(MTB units) (ns) units)1 (ns) Result (ns)
+
+104 Ox64 0.125 0 LL] 0.007 12.5 DDR3-8000
+
+120 Ox 78 0.125 0 0 0.001 15 DDR3-800E
+
+pl ELT 0.125 0 LL 0.001 11.25 DDR3-1066E
+
+10% D=6H9 0.125 i 0 0.001 13.125 DDR3-1066F
+
+1.240) Ox 8 0.125 0 LL] 0.0401 15 DDR3-106606
+
+Bi Ou Gd 0.125% 0 0 0.001 10.5 DDR3-1333F
+
+9h Ox G0 0.125 0 0 0.001 12 DDR3-133306
+Oxil 0.12% 0 LL] 0.001 13.5
+
+108
+
+DDR3-1333H:
+Bits seven to zero represent the Minimum Row Active to Row Active Delay, denoted as t R R D min. The values are defined from one to two hundred fifty five. If t R P min cannot be divided evenly by the M T B, this byte must be rounded up to the next larger integer and the Fine Offset for t R P min, S P D byte thirty seven, is used for correction to get the actual value.
+
+The table shows various parameters related to memory timing. The first column, t R P, is in M T B units. The subsequent columns include M T B in nanoseconds, t R P Offset F T B in units one, F T B in nanoseconds, t R P Result in nanoseconds, and finally the Use.
+
+For a t R P value of one hundred, which is hexadecimal sixty four, the M T B is zero point one two five nanoseconds. The t R P Offset F T B is zero, and the F T B is zero point zero zero one nanoseconds, resulting in a t R P Result of twelve point five nanoseconds for D D R three dash eight hundred D.
+
+When the t R P is one hundred twenty, represented as hexadecimal seventy eight, the M T B is zero point one two five nanoseconds. The t R P Offset F T B is zero, the F T B is zero point zero zero one nanoseconds, and the t R P Result is fifteen nanoseconds, used for D D R three dash eight hundred E.
+
+A t R P value of ninety, or hexadecimal five A, with an M T B of zero point one two five nanoseconds, zero t R P Offset F T B, and zero point zero zero one nanoseconds F T B, yields a t R P Result of eleven point two five nanoseconds for D D R three dash one thousand sixty six E.
+
+For a t R P of one hundred five, or hexadecimal sixty nine, the M T B is zero point one two five nanoseconds. The t R P Offset F T B is zero, the F T B is zero point zero zero one nanoseconds, and the t R P Result is thirteen point one two five nanoseconds, corresponding to D D R three dash one thousand sixty six F.
+
+Another entry with t R P as one hundred twenty, hexadecimal seventy eight, shows an M T B of zero point one two five nanoseconds, zero t R P Offset F T B, and zero point zero zero one nanoseconds F T B. The t R P Result is fifteen nanoseconds, used for D D R three dash one thousand sixty six G.
+
+Finally, a t R P of eighty four, hexadecimal fifty four, with an M T B of zero point one two five nanoseconds, zero t R P Offset F T B, and zero point zero zero one nanoseconds F T B, results in a t R P Result of ten point five nanoseconds for D D R three dash one thousand three hundred thirty three F. An entry with t R P ninety six, hexadecimal sixty, and M T B zero point one two five nanoseconds, has zero t R P Offset F T B and zero point zero zero one nanoseconds F T B, yielding a t R P Result of twelve nanoseconds for D D R three dash one thousand three hundred thirty three G. The last entry shows a t R P of one hundred eight, hexadecimal sixty C, M T B zero point one two five nanoseconds, zero t R P Offset F T B, zero point zero zero one nanoseconds F T B, and a t R P Result of thirteen point five nanoseconds for D D R three dash one thousand three hundred thirty three H subscript two.
+This document details the calculation of the minimum Row Active to Row Active Delay, denoted as tRRDmin, for Double Data Rate 3 (DDR3) Synchronous Dynamic Random Access Memory (SD Ram). The values are represented by bits seven through zero, and the defined range for these values is from one to two hundred fifty-five.
+
+A crucial aspect of the calculation involves the Mean Time Between (MTB) failures and a Fine Time Base (FTB) offset. The text explains that if the tRRDmin cannot be divided evenly by the MTB, the result must be rounded up to the next larger integer. This integer, along with the Fine Offset for tRRDmin (which is referenced as S P D byte thirty seven), is used to derive the actual time value.
+
+The provided table illustrates this relationship through several examples. The columns are labeled: tRP (in M T B units), M T B (in nanoseconds), tR P Offset (F T B units) one, F T B (in nanoseconds), tR P Result (in nanoseconds), and Use.
+
+Let's analyze a specific row to understand the mechanics. Consider the row with tR P as one hundred. The M T B is zero hexadecimal six four, which translates to one hundred in decimal. The M T B (nanoseconds) value is zero point one two five. The tR P Offset (F T B units) one is zero, and the F T B (nanoseconds) is zero point zero zero one. The calculated tR P Result (nanoseconds) is twelve point five. The corresponding use is D D R three dash eight hundred D.
+
+Another example shows tR P as one hundred and twenty. The M T B is zero hexadecimal seven eight, or one hundred and twenty in decimal. The M T B (nanoseconds) is zero point one two five. The tR P Offset is zero, and the F T B is zero point zero zero one nanoseconds. The resulting tR P is fifteen nanoseconds, associated with D D R three dash eight hundred E.
+
+Observing the table, we see consistent M T B values of zero point one two five nanoseconds. The tR P values are given in M T B units, which are effectively discrete steps. The tR P Offset and F T B columns, often showing zero and zero point zero zero one respectively, suggest a fine-tuning mechanism. The tR P Result, in nanoseconds, appears to be calculated based on the tR P value, the M T B unit value, and potentially the offset, though in these examples with zero offset, the calculation seems simpler. For instance, when tR P is one hundred and M T B is zero point one two five nanoseconds, the result is twelve point five nanoseconds. This suggests a direct scaling where tR P (in M T B units) multiplied by the M T B value in nanoseconds gives the base result, and then any offsets are applied. However, in the provided examples, the tR P values in M T B units, when multiplied by the M T B nanosecond value, do not directly yield the tR P Result. For example, one hundred M T B units times zero point one two five nanoseconds is twelve point five nanoseconds. This appears to be the direct result in this specific case. For one hundred and twenty M T B units, twelve point five nanoseconds, the result is fifteen nanoseconds. This indicates that the tR P value in M T B units might be directly related to a base timing, and the M T B column in nanoseconds represents the smallest increment or granularity of that timing. The F T B and tR P Offset columns are likely involved when more precise adjustments are needed. The table provides a mapping from these parameters to specific D D R three memory types and their performance characteristics, such as D D R three dash one thousand and thirty three H two. This data is critical for system configuration and ensuring stable operation of memory interfaces by adhering to timing specifications.

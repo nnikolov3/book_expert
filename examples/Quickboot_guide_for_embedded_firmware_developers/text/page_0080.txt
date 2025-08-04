@@ -1,0 +1,54 @@
+the PCI pre-OS key points, but are by no means exhaustive (please download
+and read/memorize these specifications). Also, it should be well understood
+that exceptions will occur for specific devices, as with any standard.
+
+Understanding the PCI Local Bus Specification is the first step to
+understanding the bus transactions and protocols necessary to communicate
+with hardware or software driver designers and help debug platform level
+issues. There are several PCI standard configuration header registers listed in
+the specification that are key to PCI enumeration, which must be completed
+prior to a common off-the-shelf OS to load properly on the platform. Several
+devices are PCI enumerated in the OS.
+
+Some real-time operating systems may have enough a priori knowledge
+of the PCI subsystem to hard code the needed values in order to boot and load
+drivers and may not require full PCI enumeration. While some of off- the-
+shelf operating systems repeat some of the PCI enumeration during OS load
+time, without a basic level PCI enumeration, none of the devices on the Intel
+architecture platform will function, including the OS storage device. Full
+enumeration on today’s components only takes 20 milliseconds (ms) and the
+flexibility it provides outweighs hardcoding of values per board/system.
+
+Besides the main PCI Local specification, there are also PCI Bridge
+specifications, PCI Hot Plug specifications, and PCI Power Management
+specifications that play roles in pre-OS PCI programming and compatibility.
+Up to a point in PCI history, most of the pre-OS required details are outlined
+in the PCI BIOS Specification 2.1.
+
+Here are some of the basic requirements from the PCI-SIG
+
+specifications for pre-OS firmware and BIOS.
+
+Note: Again, this laundry list does not replace the PCI specification. Please
+
+get the specifications and read copiously! Read The Friendly Manual!
+The P C I pre O S key points, but are by no means exhaustive. Please download and read and memorize these specifications. Also, it should be well understood that exceptions will occur for specific devices, as with any standard.
+
+Understanding the P C I Local Bus Specification is the first step to understanding the bus transactions and protocols necessary to communicate with hardware or software driver designers and help debug platform level issues. There are several P C I standard configuration header registers listed in the specification that are key to P C I enumeration, which must be completed prior to a common off the shelf O S to load properly on the platform. Several devices are P C I enumerated in the O S.
+
+Some real time operating systems may have enough a priori knowledge of the P C I subsystem to hard code the needed values in order to boot and load drivers and may not require full P C I enumeration. While some of off the shelf operating systems repeat some of the P C I enumeration during O S load time, without a basic level P C I enumeration, none of the devices on the Intel architecture platform will function, including the O S storage device. Full enumeration on today’s components only takes twenty milliseconds, and the flexibility it provides outweighs hardcoding of values per board or system.
+
+Besides the main P C I Local specification, there are also P C I Bridge specifications, P C I Hot Plug specifications, and P C I Power Management specifications that play key roles in pre O S P C I programming and compatibility. Up to a point in P C I history, most of the pre O S required details are outlined in the P C I B I O S Specification two point one.
+
+Here are some of the basic requirements from the P C I S I G specifications for pre O S firmware and B I O S.
+
+Note: Again, this laundry list does not replace the P C I specification. Please get the specifications and read copiously! Read The Friendly Manual!
+The underlying technical concepts discussed revolve around the crucial initial configuration of Peripheral Component Interconnect, or P C I, devices during the pre-operating system boot phase of a computer system. The P C I Local Bus Specification serves as the foundational document, detailing the communication protocols, electrical signaling, and mechanical form factors for devices connected to the P C I bus. For hardware engineers and software driver developers, a deep understanding of these specifications is indispensable for correctly designing P C I compliant hardware and writing the associated low level software that interacts with these devices. This knowledge is also pivotal for debugging complex platform level issues that can arise from misconfigurations or protocol violations.
+
+Central to P C I device management is the concept of P C I enumeration. This is the methodical process by which the system's firmware, typically the B I O S, discovers and configures all P C I peripherals connected to the system's bus hierarchy. Each P C I device presents a standardized set of configuration header registers. These registers contain critical identifying information such as the vendor I D, device I D, class code, and most importantly, base address registers, or B A R s, which define memory or I O address spaces required by the device. The firmware reads these registers to identify the device and then allocates system resources, such as memory ranges, I O port ranges, and interrupt lines, to ensure proper operation. This intricate process must be completed accurately prior to the loading of a common off the shelf operating system, as the operating system relies on this preconfigured environment to detect and interact with the hardware.
+
+While a full P C I enumeration is standard practice for general purpose operating systems, real time operating systems or embedded systems may employ alternative strategies. Due to their strict deterministic behavior requirements and often static hardware configurations, these systems might hard code the necessary P C I configuration values directly into their boot firmware or kernel. This approach bypasses the dynamic enumeration process, potentially reducing boot time and complexity in scenarios where hardware configurations are immutable. However, most modern off the shelf operating systems will re-enumerate P C I devices even after the B I O S has performed its initial configuration. This re-enumeration allows the operating system to construct its own internal device tree, enforce its own resource allocation policies, and handle dynamic events such as hot plugging of devices.
+
+The necessity of even a basic P C I enumeration cannot be overstated. Without this fundamental discovery and configuration, essential components on an Intel architecture platform, including the primary operating system storage device, which is typically a P C I or P C I E based Solid State Drive or Hard Disk Drive, would not be initialized. Consequently, the operating system would be unable to load or function. Despite its complexity, a full P C I enumeration on contemporary hardware is remarkably efficient, often completing within twenty milliseconds. This rapid execution demonstrates that the significant flexibility gained from dynamic enumeration, allowing systems to adapt to diverse hardware configurations without requiring firmware updates for each unique setup, generally outweighs any potential performance penalty compared to rigid, hardcoded configurations.
+
+Beyond the core P C I Local specification, several complementary P C I specifications govern specific aspects of device behavior and system interaction. The P C I Bridge specifications define how P C I buses can be interconnected and how transactions propagate across different bus segments within a hierarchical structure. The P C I Hot Plug specifications detail the protocols and mechanisms for safely adding or removing P C I devices while the system is operational, a feature that demands sophisticated resource management and electrical isolation techniques. Furthermore, the P C I Power Management specifications establish the framework for devices to enter various low power states, contributing to system energy efficiency. Historically, many of the foundational details for pre-operating system P C I programming were codified within the P C I B I O S Specification two point one. Adherence to these specifications, as defined by the P C I Special Interest Group, or P C I S I G, for both firmware and B I O S implementations, is not merely a recommendation but a fundamental requirement for ensuring platform stability, interoperability, and compliance across the vast ecosystem of P C I devices.

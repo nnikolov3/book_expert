@@ -1,0 +1,51 @@
+The typ value found in the Micron MT41J256M8 datasheet for our
+specific SDRAM chip gives 13.1 ns.
+
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+3.
+13.1 ns/0.12 5ns = 104.8 (round up) = 0x69.
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+18 0x12 RASH to CASE Delay (lecomin) 0x69 13.125n%
+
+Byte 18: Minimum RAS# to CAS# Delay Time (tRCDmin)
+
+This byte defines the minimum SDRAM RAS# to CAS# Delay in Medium
+Timebase (MTB) units. This value comes from the DDR3 SDRAM
+datasheet.
+
+Bits 7-0
+Minimum RAS# to CAS# Delay (tRCD) MTB Units
+Values defined from 1 to 255
+
+If tRCDmin cannot be divided evenly by the MTB, this byte must be rounded
+up to the next larger integer and the Fine Offset for tRCDmin (SPD byte 36)
+
+used for correction to get the actual value.
+
+Examples:
+The t R C D value found in the Micron M T 41 J 2 5 6 M 8 datasheet for our specific S D R A M chip gives thirteen point one nanoseconds.
+
+two. This number must be divided by the Medium Timebase Divisor, the value in zero hexadecimal B. In our example this is zero point one two five nanoseconds.
+
+three. Thirteen point one nanoseconds divided by zero point one two five nanoseconds equals one hundred and four point eight, rounded up, which equals hexadecimal six nine.
+
+The table shows byte information. Byte eighteen has a hexadecimal value of twelve. The field name is R A S hash to C A S hash Delay, t R C Dmin. The typical value is hexadecimal six nine, and the definition is thirteen point one two five nanoseconds.
+
+Byte eighteen: Minimum R A S hash to C A S hash Delay Time, t R C Dmin. This byte defines the minimum S D R A M R A S hash to C A S hash Delay in Medium Timebase M T B units. This value comes from the D D R 3 S D R A M datasheet.
+
+Bits seven to zero: Minimum R A S hash to C A S hash Delay, t R C D, M T B Units. Values defined from one to two hundred and fifty five.
+
+If t R C Dmin cannot be divided evenly by the M T B, this byte must be rounded up to the next larger integer and the Fine Offset for t R C Dmin S P D byte thirty six used for correction to get the actual value.
+
+Examples:
+The provided text details the calculation and interpretation of a specific timing parameter, tRCDmin, related to Synchronous Dynamic Random Access Memory (SDRAM). The value of tRCDmin, which signifies the minimum time delay between the Row Address Strobe (RAS) and the Column Address Strobe (CAS) signals, is initially presented as thirteen point one nanoseconds, as found in the Micron MT41J256M8 SDRAM datasheet.
+
+To derive this value in a specific format, a calculation is performed. This involves dividing the tRCD value by a "Medium Timebase Divisor." The text indicates this divisor is hexadecimally represented as zero X 0 B, which is equivalent to eleven in decimal. The result of this division, thirteen point one nanoseconds divided by eleven, is approximately zero point one two five nanoseconds. However, the subsequent calculation in point three suggests a division by zero point one two five nanoseconds, leading to one hundred and four point eight, which is then rounded up to one hundred and five. This rounded value is then presented in hexadecimal as zero X 69. This suggests a potential discrepancy or a different interpretation of the "Medium Timebase Divisor" within the context of the calculation shown.
+
+The table provided further clarifies the representation of this timing parameter. It shows that for Byte eighteen, which corresponds to hexadecimal twelve, the Field Name is "RAS# to CAS# Delay (tRC Dmin)". The Typ. Value, or typical value, is given as zero X 69, and its Definition is thirteen point one two five nanoseconds. This confirms that the calculated hexadecimal value of zero X 69 corresponds to the actual timing parameter in nanoseconds.
+
+The text then elaborates on "Byte 18: Minimum RAS# to CAS# Delay (tRC Dmin)". It explains that this byte defines the minimum SDRAM RAS# to CAS# Delay, expressed in Medium Timebase (MTB) units. This value is sourced from the DDR3 SDRAM datasheet. Specifically, "Bits 7–0" of this byte represent the "Minimum RAS# to CAS# Delay (tRC D) MTB Units," with values defined from one to two hundred and fifty five.
+
+A crucial detail is provided regarding the calculation when tRCDmin cannot be divided evenly by the MTB. In such cases, the value must be rounded up to the next larger integer. This rounded value, along with the "Fine Offset for tRC Dmin," which is indicated as SPD byte thirty six, is used for correction to obtain the actual timing value. This rounding mechanism is a common practice in digital systems to maintain discrete representations of continuous or fractional timing values within a fixed bit-width.

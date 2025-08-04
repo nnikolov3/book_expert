@@ -1,0 +1,44 @@
+Chapter 4
+Silicon-Specific Initialization
+
+Since when has the world of computer software design been about what
+people want? This is a simple question of evolution. The day is quickly
+coming when every knee will bow down to a silicon fist, and you will all
+
+beg your binary gods for mercy.
+
+—Bill Gates
+
+So if developers strive to be binary gods, as Bill Gates puts it, then they really
+need to know what they are doing when it comes to silicon initialization.
+Hopefully they have more than a binary to start from. They are going to need
+code and proper documentation.
+
+When initializing silicon should be easy: “It’s a few rdmsrs, and a wrmsr
+for the processor. It is a OxCFC here and a 0xCF8 there with the standard
+config space for PCI device, a peek and a poke to some special-sauce
+registers. Then just glob on the expansion ROMs or blobs for the add-in
+devices and voila you are done, right?” Such would be the case in a perfect
+world.
+
+While silicon initialization is a process in which the BIOS or system
+firmware must set a few bits and enable the system in the correct sequence,
+the nuances of the silicon and the recent changes must be updated every
+
+design cycle.
+Chapter four: Silicon specific Initialization.
+
+Since when has the world of computer software design been about what people want? This is a simple question of evolution. The day is quickly coming when every knee will bow down to a silicon fist, and you will all beg your binary gods for mercy. This quote is attributed to Bill Gates.
+
+So, if developers strive to be binary gods, as Bill Gates puts it, then they really need to know what they are doing when it comes to silicon initialization. Hopefully, they have more than a binary to start from. They are going to need code and proper documentation.
+
+When initializing silicon, it should be easy. One might think it is just a few read model specific registers and a write model specific register for the processor. It is a hexadecimal C F C here and a hexadecimal C F eight there with the standard configuration space for P C I device, a peek and a poke to some special sauce registers. Then, just glob on the expansion R O M S or blobs for the add in devices, and voila, you are done, right? Such would be the case in a perfect world.
+
+While silicon initialization is a process in which the B I O S or system firmware must set a few bits and enable the system in the correct sequence, the nuances of the silicon and the recent changes must be updated every design cycle.
+The fundamental process of silicon specific initialization is an intricate dance between hardware and low level software, essential for bringing any complex digital system from a dormant state to operational readiness. This is not merely about powering on a component; it is about meticulously configuring the core computational unit, its memory hierarchy, and its peripheral interfaces to a precise state where it can reliably execute higher level programs. The increasing sophistication of modern processors and system on chips necessitates a deep understanding of their internal architectures and the exact sequences required to activate their features.
+
+At the very heart of this process lies direct manipulation of hardware registers. Instructions such as `rdmsr` and `wrmsr`, common in architectures like X eighty six, exemplify this granular control. These instructions allow the C P U to read from and write to Model Specific Registers, which govern critical aspects of processor operation, including core frequencies, cache policies, power states, and virtualization extensions. The precision required extends to accessing specific configuration spaces, such as those defined by the P C I E standard. For instance, interacting with hexadecimal C F eight and hexadecimal C F C, which are I O ports on many chipsets, permits the system firmware to discover and configure P C I E devices. This involves what is colloquially termed "peeking and poking" — direct reads and writes to device specific configuration registers to establish communication parameters, assign memory mapped I O ranges, and enable device functionalities.
+
+The complexity is further amplified by the prevalence of proprietary firmware components. Add in devices, ranging from G P U s to network controllers, often contain their own expansion R O M s or rely on opaque "blobs" of binary code. These blobs, supplied by hardware vendors, encapsulate highly specific and often undocumented initialization sequences that are vital for the device to function correctly. This phenomenon underscores a significant challenge in system development, as it necessitates integrating black box software components whose internal operations are not transparent. The system firmware, typically the B I O S or the Unified Extensible Firmware Interface, bears the primary responsibility for orchestrating this complex boot process. It must execute a precise series of operations: setting crucial configuration bits, initializing internal C P U modules, training D Ram, and enumerating the P C I E topology. The correctness of this sequence is paramount, as an improper order can lead to system instability, device malfunction, or complete failure to boot. For example, Ram must be properly initialized before it can be used for general purpose data storage, and the P C I E root complex must be brought online before any P C I E device connected to it can be detected.
+
+Moreover, the iterative nature of silicon design introduces an ongoing requirement for firmware updates. Each new revision, or stepping, of a C P U or S o C may introduce subtle architectural changes, new features, or hardware errata that demand corresponding modifications to the initialization code. This tight coupling between hardware and software development cycles means that firmware teams must continuously adapt their code to the evolving nuances of the silicon, a process that is integral to every design cycle and ensures the long term viability and stability of the platform.

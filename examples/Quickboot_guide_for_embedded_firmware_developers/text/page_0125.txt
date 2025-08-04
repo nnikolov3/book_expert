@@ -1,0 +1,43 @@
+firmware or tell the firmware to do something. These real mode interrupts
+
+serve a wide range of functions including:
+—Video Services (INT 0x10)
+—System Services (INT 0x15)
+—I/O Services (various)
+
+As with just about everything in life, there are both good and bad things
+
+about real mode interrupts. Let’s look at the good things first:
+
+—Once a real mode interrupt is defined, its meaning rarely changes. This
+means that once firmware supports a real mode interrupt, it rarely
+
+has to change.
+
+—The state of the system is well known at the invocation of a real mode
+
+interrupt.
+Now for the bad things:
+
+—There’s a prevalent lack of documentation on many of these real mode
+interrupts. Since real mode interrupts were an easy way to create
+interfaces between the operating system and firmware, vendors are
+free to define any services they desire, as long as it wouldn’t trash
+any expectations set on other real mode interrupt calls existing in
+the industry. Therefore, many of these are specific to designs and
+
+PC types, and the documentation on them cannot be found readily.
+
+—Because any operating system may choose to execute a real mode
+
+interrupt in a Virtual x86 task, implementers of real mode interrupts
+Firmware is used to tell the firmware to do something. These real mode interrupts serve a wide range of functions, including video services accessed via interrupt hexadecimal one zero, system services accessed via interrupt hexadecimal one five, and various I O services.
+
+As with just about everything in life, there are both good and bad things about real mode interrupts. Let's look at the good things first. Once a real mode interrupt is defined, its meaning rarely changes. This means that once firmware supports a real mode interrupt, it rarely has to change. Additionally, the state of the system is well known at the invocation of a real mode interrupt.
+
+Now for the bad things. There is a prevalent lack of documentation on many of these real mode interrupts. Since real mode interrupts were an easy way to create interfaces between the operating system and firmware, vendors were free to define any services they desired, as long as it would not conflict with any expectations set on other real mode interrupt calls existing in the industry. Therefore, many of these are specific to particular designs and P C types, and the documentation on them cannot be found readily. Furthermore, because any operating system may choose to execute a real mode interrupt in a Virtual x eighty six task, implementers of real mode interrupts...
+The text discusses the functionality and characteristics of real mode interrupts, which are fundamental mechanisms for handling asynchronous events and invoking services within a computing system. Firmware or other system components utilize these interrupts to signal specific conditions or request operations. The document categorizes these services into three primary groups: Video Services, typically associated with interrupt vector hexadecimal zero F; System Services, with a noted example of interrupt vector hexadecimal zero X fifteen; and I O Services, which encompass a broader, more varied range of functions.
+
+The advantages of real mode interrupts are highlighted by their stability and predictability. Once a real mode interrupt is defined and its behavior established, it rarely changes. This immutability provides a stable interface, ensuring that software designed to interact with it will continue to function reliably without needing frequent updates due to changes in the interrupt's purpose or execution. Furthermore, the state of the system, particularly concerning the invocation of a real mode interrupt, is well-known and predictable. This predictability is crucial for system design and debugging, as it allows developers to understand and anticipate the system's behavior when an interrupt occurs.
+
+Conversely, the document outlines several drawbacks associated with real mode interrupts. A significant issue is the prevalence of limited documentation for many of these interrupts. This lack of comprehensive documentation makes it challenging for developers to understand how to properly interface with them. Since real mode interrupts historically provided a straightforward method for creating interfaces between the operating system and firmware, vendors were often afforded the latitude to define their services as they saw fit. However, this flexibility came at the cost of potential conflicts; vendors could define their interrupts without necessarily considering or avoiding interference with existing interrupt handlers, potentially leading to unpredictable behavior or system instability. Consequently, many of these interrupts are highly specific to particular hardware designs and original equipment manufacturer implementations, making their documentation difficult to find and generalize. Another concern arises from the operating system's ability to execute a real mode interrupt within a virtual x86 task. This flexibility, while offering potential benefits in virtualization scenarios, implies that the implementation of real mode interrupts can vary significantly depending on the virtualized environment and the operating system's interpretation of these legacy mechanisms.

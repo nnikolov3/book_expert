@@ -1,0 +1,40 @@
+Chapter 3
+System Firmware Terms and
+Concepts
+
+For anyone new to Intel® architecture, the concepts behind three-letter
+acronyms can be a bit overwhelming. This chapter explains numerous
+concepts that should help set up the basic terminology used in future
+chapters. Many concepts are introduced, and it is best to refer to this chapter
+
+as you progress through the book.
+
+Typical PC/Intel® Architecture Overview
+
+By design, Intel architecture is unique and somewhat complicated. To boot,
+firmware must initialize the hardware by using either a Basic Input Output
+System (BIOS) or a custom boot loader solution. Certain subsystems, either
+integrated in silicon or added as a peripheral, may require additional
+
+firmware, which is obtained from that vendor.
+
+Figure 3.1 illustrates the hardware components that typically make up a
+PC. The BIOS or boot loader is typically kept in flash.
+
+Memory Types
+Chapter three. System Firmware Terms and Concepts.
+
+For anyone new to Intel architecture, the concepts behind three letter acronyms can be a bit overwhelming. This chapter explains numerous concepts that should help set up the basic terminology used in future chapters. Many concepts are introduced, and it is best to refer to this chapter as you progress through the book.
+
+Typical P C / Intel Architecture Overview.
+
+By design, Intel architecture is unique and somewhat complicated. To boot, firmware must initialize the hardware by using either a Basic Input Output System, or B I O S, or a custom boot loader solution. Certain subsystems, either integrated in silicon or added as a peripheral, may require additional firmware, which is obtained from that vendor. Figure three point one illustrates the hardware components that typically make up a P C. The B I O S or boot loader is typically kept in flash.
+
+Memory Types.
+The third chapter of this work delves into the foundational concepts and terminology essential for comprehending system firmware, particularly within the domain of Intel architecture. Understanding these fundamental elements is critical, as they form the bedrock for more intricate discussions on system operation and design. The complexity inherent in modern computing systems, especially those built upon the Intel I S A, necessitates a clear delineation of its constituent parts and their interplay, which can initially present a steep learning curve due to the proliferation of technical acronyms and specialized jargon.
+
+A personal computer based on Intel architecture, or indeed any contemporary computing system, commences its operation through a meticulously orchestrated sequence of events known as the boot process. This sequence relies heavily on firmware, which is a specific class of software permanently embedded into hardware components, typically residing in non-volatile memory like flash. The firmware's primary responsibility is to initialize the system's hardware components, bringing them to a known, functional state from which a higher-level operating system can then assume control. This initialization phase is paramount because without it, the C P U would be unable to access memory, communicate with peripherals, or execute any meaningful instructions.
+
+The foundational component facilitating this initial hardware setup is conventionally known as the Basic Input Output System, or B I O S. Alternatively, a custom boot loader solution may fulfill this role, especially in more specialized or embedded systems. Regardless of its specific implementation, this firmware acts as the critical bridge between the raw hardware and the sophisticated software layers that constitute a functional computing environment. It performs essential tasks such as power-on self-test, or P O S T, memory configuration, and peripheral detection and initial setup. Certain subsystems within the broader computing architecture may feature their own dedicated firmware, either integrated directly into the silicon of the main chip or supplied as a separate peripheral component, necessitating additional vendor-specific firmware loads during the boot sequence to ensure their proper operation. The integrity and correctness of this initial firmware are therefore paramount to the stability and security of the entire system.
+
+The discussion then transitions to the topic of memory types, a crucial concept in understanding how data and instructions are stored and accessed within a computing system. Different memory technologies possess distinct characteristics in terms of speed, volatility, cost, and capacity, each optimized for specific roles within the memory hierarchy. The interplay between these various memory types, from high-speed, low-latency caches to slower, high-capacity persistent storage, dictates the overall performance and efficiency of the system, fundamentally influencing how data is moved, processed, and retained.

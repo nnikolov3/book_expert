@@ -1,0 +1,55 @@
+support to ATAPI SATA devices, which the RAID option ROM does not
+handle.
+
+PCH supports stable image-compatible ID. When the alternative ID
+enable, D31 :F2 :Reg 9Ch [7], is not set, the PCH SATA controller will
+report Device ID as 2822h for a desktop SKU.
+
+Enable Ports
+
+It has been observed that some SATA drives will not start spin-up until the
+SATA port is enabled by the controller. In order to reduce drive detection
+time, and hence the total boot time, system BIOS should enable the SATA
+port early during POST (for example, immediately after memory
+initialization) by setting the Port x Enable (PxE) bits of the Port Control and
+Status register, D31:F2:Reg 92h and D31:F5:Reg 92h (refer 1 requirement),
+
+to initiate spin- up of such drives.
+
+Memory Map
+
+In addition to defining the caching behavior of different regions of memory
+for consumption by the OS, it is also firmware’s responsibility to provide a
+“map” of the system memory to the OS so that it knows what regions are
+actually available for its consumption.
+
+The most widely used mechanism for a legacy boot loader or a legacy
+OS to determine the system memory map is to use real-mode interrupt
+service 15h, function E8h, sub-function 20h (INT15/E820), which firmware
+must implement (see http://www.uruk.org/orig-grub/mem64mb.html).
+
+Region Types
+Support to ATAPI SATA devices, which the RAID option R O M does not handle.
+
+P C H supports stable image compatible I D. When the alternative I D enable, D thirty one F two Reg nine Ch bracket seven, is not set, the P C H SATA controller will report Device I D as two eight two two h for a desktop S K U.
+
+Enable Ports
+
+It has been observed that some SATA drives will not start spin up until the SATA port is enabled by the controller. In order to reduce drive detection time, and hence the total boot time, system B I O S should enable the SATA port early during P O S T, for example, immediately after memory initialization, by setting the Port x Enable bracket P x E bracket bits of the Port Control and Status register, D thirty one F two Reg nine two h and D thirty one F five Reg nine two h, refer one requirement, to initiate spin up of such drives.
+
+Memory Map
+
+In addition to defining the caching behavior of different regions of memory for consumption by the O S, it is also firmware's responsibility to provide a "map" of the system memory to the O S so that it knows what regions are actually available for its consumption.
+
+The most widely used mechanism for a legacy boot loader or a legacy O S to determine the system memory map is to use real mode interrupt service fifteen h, function E eight h, sub function twenty h bracket I N T fifteen E eight twenty bracket, which firmware must implement, see http colon slash slash www dot uruk dot org slash orig grub slash mem sixty four mb dot html.
+
+Region Types
+The text describes aspects of system initialization and memory management, particularly concerning SATA devices and the broader system memory map.
+
+Firstly, it addresses the support for ATAPI SATA devices and the RAID option ROM, indicating that the PCH (Platform Controller Hub) provides stable image compatible identification. It specifies a particular configuration where the alternative ID is not set, leading the PCH SATA controller to report a Device ID of two eight two two hexadecimal for a desktop SKU. This detail highlights how hardware identifiers are critical for the system's firmware and operating system to correctly recognize and interface with peripheral devices.
+
+The "Enable Ports" section discusses a behavior observed in some SATA drives that require the SATA port to be explicitly enabled by the controller for spin-up. To optimize boot time and streamline drive detection, the system BIOS is advised to enable the SATA port early during the POST process, specifically after memory initialization. This is achieved by manipulating the Port x Enable, or PxE, bits within the Port Control and Status register. The text cites D31:F2:Reg nine two h and D31:F5:Reg nine two h as the relevant register locations for this configuration, referencing a specific requirement. This exemplifies low-level hardware configuration that impacts system boot performance.
+
+The "Memory Map" section delves into the system's memory map, explaining its dual role. Beyond defining the caching behavior of different memory regions for consumption by the operating system, it is also the firmware's responsibility to provide this memory map to the OS. This map informs the OS about which memory regions are available for its use. It further elaborates on the mechanism used for legacy boot loaders or operating systems to determine the system memory map. This is typically achieved by utilizing the real-mode interrupt service fifteen hexadecimal, function E eight hexadecimal, sub-function twenty hexadecimal, which translates to INT15/E820h. Firmware implementations are expected to support this interrupt to provide the memory map details. A URL is provided, suggesting further reading on this specific interrupt.
+
+Finally, the "Region Types" heading indicates that the following content would detail the different classifications or categories of memory regions within the system's memory map, crucial for resource allocation and management by the operating system.

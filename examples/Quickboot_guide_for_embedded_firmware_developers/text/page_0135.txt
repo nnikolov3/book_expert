@@ -1,0 +1,46 @@
+UnicodeCollation, and will use lots more (for example, Simple-FileSystem or
+BlocklO) if they are present. See the documentation for each UEFI
+application to verify exactly what protocols are required for that application.
+
+The EFI Shell is a nonstandard shell. That means there is no predefined
+behavior for a given command and that there is no predefined set of
+commands that must be present. In practice, there is a de-facto standard for
+both risk factors due to the prevalence of a single implementation of the EFI
+Shell dominating in the marketplace. The EFI Shell provides all the standard
+features already discussed above, but unlike the UEFI Shell there are only
+two different versions of the EFI Shell to allow for customizing the size
+requirement. This means that fine-tuning of the binary size cannot occur.
+
+The UEFI Shell 2.0 is the successor to the EFI Shell. This is a standards-
+based version of a UEFI-compliant shell. It has all the commands the EFI
+Shell had, but many of these commands have been extended and enhanced
+and some new commands have also been added to the UEFI Shell. This
+means that all script files that were written for the EFI Shell will work on the
+UEFI Shell, but this is not always the case in reverse. It is possible (and
+recommended) to write the scripts using the new features if the target shell
+will always be the UEFI Shell, as they greatly simplify and enhance the
+capabilities of the script files.
+
+Two changes in the UEFI Shell are very significant for script files. The
+first is the concept of levels and profiles for the shell. These are sets of
+commands that can be queried for availability before they are called. This is
+important because if you can’t call the shell command GetMtc to get the
+monotonic tic count or DrvDiag to initiate a driver diagnostic then you may
+want to verify that it is present in the shell before you call it. With the old EFI
+Shells you couldn’t test for this condition and had to rely on the platform to
+
+have the correct version of the shell, but in the newer UEFI Shells, you can
+Unicode Collation, and will use lots more for example, Simple File System or Block I O if they are present. See the documentation for each U E F I application to verify exactly what protocols are required for that application.
+
+The E F I Shell is a nonstandard shell. That means there is no predefined behavior for a given command and that there is no predefined set of commands that must be present. In practice, there is a de facto standard for both risk factors due to the prevalence of a single implementation of the E F I Shell dominating in the marketplace. The E F I Shell provides all the standard features already discussed above, but unlike the U E F I Shell, there are only two different versions of the E F I Shell to allow for customizing the size requirement. This means that fine tuning of the binary size cannot occur.
+
+The U E F I Shell two point zero is the successor to the E F I Shell. This is a standards based version of a U E F I compliant shell. It has all the commands the E F I Shell had, but many of these commands have been extended and enhanced and some new commands have also been added to the U E F I Shell. This means that all script files that were written for the E F I Shell will work on the U E F I Shell, but this is not always the case in reverse. It is possible and recommended to write the scripts using the new features if the target shell will always be the U E F I Shell, as they greatly simplify and enhance the capabilities of the script files.
+
+Two changes in the U E F I Shell are very significant for script files. The first is the concept of levels and profiles for the shell. These are sets of commands that can be queried for availability before they are called. This is important because if you cannot call the shell command Get Mtc to get the monotonic tic count or Drv Diag to initiate a driver diagnostic, then you may want to verify that it is present in the shell before you call it. With the old E F I Shells, you couldn't test for this condition and had to rely on the platform to have the correct version of the shell, but in the newer E F I Shells, you can.
+The discussion pertains to the Unified Extensible Firmware Interface, or U E F I, and its associated shell environment, specifically focusing on its evolution and scripting capabilities. The text begins by referencing Unicode Collation and its potential for increased usage with components like Simple File System or Block I O, emphasizing the need for applications to verify protocol requirements.
+
+A core concept introduced is the EFI Shell, characterized as a nonstandard shell with no predefined behavior for commands, although a de facto standard has emerged due to the prevalence of a single implementation. This dominance has led to the EFI Shell providing a consistent set of features, enabling customization of binary size, which in turn allows for fine tuning of the executable.
+
+The evolution to UEFI Shell 2.0 is highlighted as a significant advancement. This version is a standards-based, U E F I compliant shell, incorporating all commands from its predecessor and introducing new ones. Importantly, script files written for the EFI Shell can typically operate on UEFI Shell 2.0, although the reverse is not always true. This compatibility is further enhanced by the ability to write scripts using new features, which simplifies and improves the capabilities of script files.
+
+Two key changes in UEFI Shell are identified as highly significant for scripting. The first is the introduction of levels and profiles for the shell, which define sets of commands that can be queried for availability. This is crucial for tasks like driver diagnostics, where a command such as GetMtc is used to obtain a monotonic tick count. The text explains that without knowing if a command is present, attempting to execute it on older EFI Shells could lead to unpredictable behavior. In contrast, newer UEFI Shells provide mechanisms to verify command availability before execution, ensuring a more robust and predictable scripting experience. The ability to query for command existence allows scripts to adapt to different shell environments and perform conditional execution, thereby increasing their portability and reliability across various system configurations.

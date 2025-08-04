@@ -1,0 +1,46 @@
+to be ideal for execution of operating system and applications during runtime.
+Memory DIMMs required a memory controller, formerly in the north bridge
+of the chipset, now integrated into the processor. Memory initialization can
+take between several milliseconds to several seconds, depending on the
+transition state of the system (coming from off or a sleep state). During the
+normal boot flow, once main memory is initialized by the system BIOS, the
+shadowing of the “rest of the BIOS” can take place. The memory is divided
+into a memory map for various usages by different subsystems; not all
+memory is used or available by the operating system. Eventually, the OS is
+loaded into main memory and the system is then “booted” from a BIOS point
+of view. Of course, the OS may need to load the drivers and applications ...
+
+but that is its own book.
+
+Complementary Metal-Oxide Semiconductor (CMOS)
+
+In a BIOS context, the 512 bytes of CMOS is RTC battery-backed SRAM
+that is in the south bridge of the chipset. Although it is not NVRAM, it is
+used to store the setup menu and other user-dependent or board data that
+needs to be retained across power state transitions (when the system is off).
+Depending on the system BIOS implementation, CMOS may not be used
+except for clock data storage. Over time, the setup menu data became too
+complex, and the bitmap of 512 bytes got too tight. Tiano-based iterations
+
+started use of flash memory storage that is not limited by SRAM sizes.
+
+System BIOS Flash Memory (NVRAM, FWH, or SPI)
+
+A small nonvolatile RAM (NVRAM) chip is used for storing BIOS code
+data. Flash Memory is used to store the BIOS or boot loader. One advantage
+To be ideal for execution of operating system and applications during runtime, memory D I M M S required a memory controller, formerly in the north bridge of the chipset, now integrated into the processor. Memory initialization can take between several milliseconds to several seconds, depending on the transition state of the system, coming from off or a sleep state. During the normal boot flow, once main memory is initialized by the system B I O S, the shadowing of the “rest of the B I O S” can take place. The memory is divided into a memory map for various usages by different subsystems; not all memory is used or available by the operating system. Eventually, the O S is loaded into main memory and the system is then “booted” from a B I O S point of view. Of course, the O S may need to load the drivers and applications, but that is its own book.
+
+Complementary Metal-Oxide Semiconductor (C M O S)
+
+In a B I O S context, the five hundred twelve bytes of C M O S is R T C battery backed S Ram that is in the south bridge of the chipset. Although it is not N V Ram, it is used to store the setup menu and other user dependent or board data that needs to be retained across power state transitions, when the system is off. Depending on the system B I O S implementation, C M O S may not be used except for clock data storage. Over time, the setup menu data became too complex, and the bitmap of five hundred twelve bytes got too tight. Tiano based iterations started use of flash memory storage that is not limited by S Ram sizes.
+
+System B I O S Flash Memory (N V Ram, F W H, or S P I)
+
+A small nonvolatile R A M (N V Ram) chip is used for storing B I O S code data. Flash Memory is used to store the B I O S or boot loader. One advantage
+The process of system initialization hinges on the efficient and reliable preparation of main memory for subsequent operation by the operating system and user applications. Historically, the memory controller, a crucial component for managing access to synchronous dynamic Ram D I M M S, was physically situated within the north bridge component of the chipset architecture. However, modern system designs have largely integrated this critical function directly into the processor itself, thereby minimizing latency and optimizing data transfer pathways. The time required for full memory initialization can vary significantly, ranging from several milliseconds to several seconds, a duration dependent primarily on the specific power state from which the system is transitioning. For instance, a cold boot from an off state typically involves a more exhaustive memory integrity check and initialization sequence compared to resuming from a lower power sleep state.
+
+During a normal system boot sequence, the B I O S, or Basic Input Output System, assumes responsibility for initializing the main memory. Following this, a process known as "shadowing" may occur, where portions of the B I O S code residing in slower R O M are copied into the faster Ram. This technique significantly accelerates subsequent B I O S operations, as instruction fetches and data access are performed from the higher speed Ram rather than the original, slower R O M. Concurrently, the system establishes a comprehensive memory map, which logically segments the available physical Ram into distinct regions for various subsystems and functions. It is crucial to understand that not all initialized memory is immediately made available to the operating system; specific regions are reserved for hardware components, system firmware, and other specialized uses. Ultimately, once the B I O S completes its initial setup phase and memory is properly configured and mapped, the operating system is "booted" from a B I O S perspective. This involves the B I O S transferring control to the operating system's boot loader, which then proceeds to load the necessary device drivers and core operating system components into the main memory, leading to a fully functional computational environment.
+
+Complementary Metal Oxide Semiconductor, or C M O S, in the context of system B I O S, refers specifically to a small, battery backed S Ram chip, typically located within the south bridge or platform controller hub on older system architectures. While it is not inherently N V Ram, meaning its data is volatile without power, its battery backing provides the necessary continuous power to retain configuration data. This five hundred twelve bytes of S Ram serves as a persistent storage mechanism for the Real Time Clock data and other user dependent or board specific settings that must endure across system power transitions, even when the system is completely off. Such settings include the system date and time, boot order preferences, and various hardware configuration parameters accessed via the B I O S setup menu. However, depending on the precise B I O S implementation, C M O S S Ram may not be utilized for all configuration data, especially clock data storage, which might reside in a dedicated R T C chip. As B I O S functionalities evolved and setup menus became increasingly complex, the inherent size limitation of five hundred twelve bytes for C M O S S Ram proved insufficient. This constraint led to the adoption of more expansive, truly non-volatile flash memory solutions, particularly with the advent of U E F I, or Unified Extensible Firmware Interface, and Tiano based firmware iterations, which are not constrained by the minuscule storage capacities of C M O S S Ram.
+
+System B I O S Flash Memory, often interchangeably referred to as N V Ram, F W H for Firmware Hub, or S P I for Serial Peripheral Interface flash, represents a small, non-volatile Ram chip primarily dedicated to storing the B I O S code itself or the boot loader program. Unlike the battery backed S Ram used for configuration data, flash memory is intrinsically non-volatile, meaning it retains its stored data without the need for continuous power. This characteristic makes it an ideal medium for the foundational firmware that initiates the entire system boot process.

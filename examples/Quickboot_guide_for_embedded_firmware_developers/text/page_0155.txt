@@ -1,0 +1,55 @@
+GPIOs). The boot list can be used for giving priority to recovery, validation,
+
+or manufacturing OS over the production boot image.
+
+The Partition Table
+
+This is described in an earlier chapter.
+
+The File System
+
+Which file system is being used? There have been new file systems coming
+out about every year since 1964. The two we are going to talk about are FAT
+and EXT.
+
+Microsoft provides a license for FAT to UEFI developers through the
+UEFI forum. Those using an EFI solution should receive that as part of the
+EDK. FAT stands for the file allocation table and has been around for many
+years in different bit-wise fashions. FAT12, FAT16, and FAT32 before
+NTFS took over. While FAT12 is reserved for floppies, FAT32 handles up to
+2 TB of data.
+
+Linux developed an alternative known as EXT, which is gaining favor in
+open-source communities. There are variations of both FAT and EXT;
+developers have to look at the requirements to determine which makes sense
+
+for them.
+
+Booting via the Legacy OS Interface
+
+There are three basic steps to loading a legacy OS: consuming the MBR,
+loading the legacy OS loader, and performing the hand off to the operating
+General purpose input output ports, or G P I O s. The boot list can be used for giving priority to recovery, validation, or manufacturing O S over the production boot image.
+
+The Partition Table
+
+This is described in an earlier chapter.
+
+The File System
+
+Which file system is being used? There have been new file systems coming out about every year since nineteen sixty four. The two we are going to talk about are F A T and E X T.
+
+Microsoft provides a license for F A T to U E F I developers through the U E F I forum. Those using an E F I solution should receive that as part of the E D K. F A T stands for the file allocation table and has been around for many years in different bit wise fashions. F A T twelve, F A T sixteen, and F A T thirty two before N T F S took over. While F A T twelve is reserved for floppies, F A T thirty two handles up to two T B of data.
+
+Linux developed an alternative known as E X T, which is gaining favor in open source communities. There are variations of both F A T and E X T; developers have to look at the requirements to determine which makes sense for them.
+
+Booting via the Legacy OS Interface
+
+There are three basic steps to loading a legacy O S: consuming the M B R, loading the legacy O S loader, and performing the hand off to the operating system.
+The boot list, in the context of system initialization and operating system selection, can be configured to establish a priority order for booting. This priority mechanism allows for the selection of specific operating system images for purposes such as system recovery, validation of system integrity, or the installation of manufacturing operating systems, all in preference to the standard production boot image.
+
+The concept of a Partition Table is a fundamental element in storage device organization, defining how data is logically divided and managed on a disk. This topic is typically explored in detail in earlier sections of technical documentation to establish a foundational understanding of disk geometry and management.
+
+The File System, a critical component of any operating system, governs how data is stored, organized, and accessed on storage devices. The evolution of file systems has seen continuous innovation since the inception of computing. For instance, the File Allocation Table, or F A T, file system, originating from early computing eras, has seen various iterations, including F A T twelve, F A T sixteen, and F A T thirty two. F A T twelve, historically associated with floppy disks, has limitations in capacity, whereas F A T thirty two supports significantly larger storage volumes, up to two terabytes. Microsoft provides licensing for F A T to U E F I developers, indicating its continued relevance in certain system initialization contexts, particularly when integrated with E F I solutions and the Extended Disk Kernel, or E D K. Furthermore, the F A T architecture is characterized by its bit wise fashion, influencing its operational characteristics. In parallel, alternative file systems have emerged, such as the EXT file system, popular within the Linux and open source communities. The choice between F A T variants and EXT often depends on the specific requirements of the system, including factors like data capacity, performance needs, and compatibility.
+
+Booting via a Legacy O S Interface outlines a three-step process for initiating a system using an older operating system paradigm. This process typically involves the consumption of the Master Boot Record, or M B R, which contains essential boot code and partition information, followed by the loading of a legacy O S loader. The final step is the performance of a hand off, where control of the system is transferred from the loader to the operating system kernel, enabling the system to commence its operational state.

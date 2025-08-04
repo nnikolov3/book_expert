@@ -1,0 +1,42 @@
+If using Tiano implementations, EFI PERF Monitor functions can be
+added quickly to various EFI code modules in all phases of the Tiano boot
+
+flow.
+
+“In the PEI phase, we use PEI PERF _START(), PEI_PERF_END(),
+PEI_SER_PERF_START(), and PEI_SER_PERF_END().
+
+—In the DXE, BDS, and Shell phases, we use PERF_ENABLE(), PERF_
+START(), PERF_END(), and finally PERF_UPDATE().
+
+These logging routines will dump data into a reserved memory location from
+
+a cold boot for retrieval later.
+You also need to know how to get around a few limitations:
+
+1. The first limitation is that when you are doing CPU or memory
+initialization, a reset is required to either the CPU or the platform. When
+this happens, the timers may also get reset. Finding a scratchpad region
+that is “sticky,” which means it maintains its data across a warm reset or
+cold boot, is required such that you can save/restore the TSC for
+accurate measurement/logging across the entire boot path, instead of
+from just the last reset executed by the firmware.
+
+2. Some basic framework processing overhead can happen outside of the
+instrumented routines that will not be counted. Between main PEI or
+DXE cores operating, the processes in between may not be fully
+instrumented in a particular code base. While this should not be the case,
+a few milliseconds here or there could slip through the cracks.
+
+3. Over the course of a system S3 sleep/resume cycle, all the timers are
+reset and you must reserve a memory region from the OS that you can
+
+access when memory is “active.” As S3 has been on the order of several
+If using Tiano implementations, E F I performance monitor functions can be added quickly to various E F I code modules in all phases of the Tiano boot flow. In the P E I phase, we use P E I underscore P E R F underscore S T A R T, P E I underscore P E R F underscore E N D, P E I underscore S E R underscore P E R F underscore S T A R T, and P E I underscore S E R underscore P E R F underscore E N D. In the D X E, B D S, and Shell phases, we use P E R F underscore E N A B L E, P E R F underscore S T A R T, P E R F underscore E N D, and finally P E R F underscore U P D A T E. These logging routines will dump data into a reserved memory location from a cold boot for retrieval later. You also need to know how to get around a few limitations: One. The first limitation is that when you are doing C P U or memory initialization, a reset is required to either the C P U or the platform. When this happens, the timers may also get reset. Finding a scratchpad region that is sticky, which means it maintains its data across a warm reset or cold boot, is required such that you can save or restore the T S C for accurate measurement or logging across the entire boot path, instead of from just the last reset executed by the firmware. Two. Some basic framework processing overhead can happen outside of the instrumented routines that will not be counted. Between main P E I or D X E cores operating, the processes in between may not be fully instrumented in a particular code base. While this should not be the case, a few milliseconds here or there could slip through the cracks. Three. Over the course of a system S three sleep or resume cycle, all the timers are reset and you must reserve a memory region from the O S that you can access when memory is active. As S three has been on the order of several.
+The Tiano implementation of the Extensible Firmware Interface, or E F I, allows for the integration of performance monitoring functions across various code modules within the Tiano boot flow. During the PEI phase, specific functions such as P E I underscore P E R F underscore S T A R T, P E I underscore P E R F underscore E N D, P E I underscore S E R underscore P E R F underscore S T A R T, and P E I underscore S E R underscore P E R F underscore E N D are utilized to instrument code execution. Subsequently, in the D X E, B D S, and Shell phases, the instrumentation is managed using P E R F underscore E N A B L E, P E R F underscore S T A R T, P E I underscore P E R F underscore E N D, and P E R F underscore U P D A T E functions. The data gathered by these logging routines is typically stored in a reserved memory location, facilitating retrieval after a cold boot.
+
+Several limitations are pertinent when working with such performance logging mechanisms. Firstly, during C P U or memory initialization, a reset is often required for either the C P U or the platform. This reset operation can also affect the timers. If a scratchpad region is employed, which is designed to retain its data across a warm reset or cold boot by saving and restoring the T S C for accurate measurement and logging throughout the entire boot path, this functionality might be compromised if the reset is executed by the firmware rather than the last executed instruction. This scenario can lead to inaccurate performance metrics, as the saved state might not reflect the complete execution timeline.
+
+Secondly, a portion of the basic framework processing overhead may not be accounted for. This occurs when instrumented routines execute outside the main PEI or D X E core operations. Consequently, some processes might not be fully instrumented within the context of a particular code base. This oversight can result in minor inaccuracies, potentially on the order of a few milliseconds, where events might slip through the instrumentation gaps.
+
+Thirdly, system sleep and resume cycles, such as the S3 sleep state, introduce complexities. During an S3 sleep/resume cycle, all timers are typically reset. This necessitates the reservation of a memory region by the O S that remains accessible and active even when the system is in a low power state. The S3 state, in particular, is designed to allow for the preservation of system context such that upon resuming, the system can continue from where it left off. The implications of timer resets and memory accessibility during these power management transitions are critical for maintaining accurate performance logging across various operational states.

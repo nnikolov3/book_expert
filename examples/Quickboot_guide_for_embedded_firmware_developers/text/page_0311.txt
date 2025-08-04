@@ -1,0 +1,73 @@
+DIMM equivalent
+
+SPD Field 0x08: Module Bus Width
+
+This field is set tO 0x0OBh (72 bits) if the design is implementing ECC.
+Otherwise, set this field to 0x03h.
+
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+
+& 0x08 Module Bus Width O=0B 72 bits [ECC
+
+Byte 8: Module Memory Bus Width
+This byte describes the width of the SDRAM memory bus on the module.
+Bits 2-0 encode the primary bus width. Bits 4-3 encode the bus extensions
+
+such as parity or ECC.
+
+Bit 7:5 Bits 4:3 Bits 2:0
+Reserved Bus width extension, in bits Primary bus width, in bits
+000 = 0 bits (no extension) 000 = 8 bits
+
+001 = 8 bits 001 = 16 bits
+All others reserved 010 = 32 bits
+011 = 64 bits
+
+All others reserved
+Examples:
+—64-bit primary bus, no parity or ECC (64 bits total width): xxx 000 011
+
+—64-bit primary bus, with 8 bit ECC (72 bits total width): xxx 001 011
+D I M M equivalent
+
+S P D Field zero times zero eight: Module Bus Width
+
+This field is set to zero times zero B, seventy two bits, if the design is implementing E C C. Otherwise, set this field to zero times zero three h.
+
+The table shows data for a single byte of the S P D information. The first column, Byte (Dec), indicates the byte number in decimal, which is eight. The second column, Byte (Hex), shows the hexadecimal representation, zero times zero eight. The Field Name is Module Bus Width, and the Typical Value is zero times zero B. The Definition column specifies seventy two bits, including E C C.
+
+Byte eight: Module Memory Bus Width
+
+This byte describes the width of the S D R A M memory bus on the module. Bits two through zero encode the primary bus width. Bits four through three encode the bus extensions such as parity or E C C.
+
+Bit seven through five: Reserved
+
+Bus width extension, in bits.
+
+Bit four through three: Primary bus width
+
+Zero zero zero is equal to zero bits.
+Zero zero one is equal to eight bits.
+All others reserved.
+
+Bit two through zero: Primary bus width
+
+Zero zero zero is equal to eight bits.
+Zero zero one is equal to sixteen bits.
+Zero one zero is equal to thirty two bits.
+Zero one one is equal to sixty four bits.
+All others reserved.
+
+Examples:
+
+Sixty four bit primary bus, no parity or E C C, sixty four bits total width: x x x zero zero zero zero one one.
+Sixty four bit primary bus, with eight bit E C C, seventy two bits total width: x x x zero zero one zero one one.
+This document describes a specific field within the Serial Presence Detect, or S P D, data structure, designated as Field Zero x zero eight, which pertains to the Module Bus Width. This field is critical for a system to understand the data transfer capabilities of a dynamic random access memory, or D Ram, module.
+
+The S P D specification indicates that if a system is implementing Error Correction Code, or E C C, then this field, specifically byte zero x zero eight, should be set to zero x zero B, which corresponds to seventy two bits. Otherwise, if E C C is not implemented, the field should be set to zero x zero three, which signifies thirty two bits. This binary encoding within the byte provides a standardized method for hardware to query and configure memory bus widths.
+
+The table provided details the structure of this byte, illustrating that byte eight, also referenced as byte zero x zero eight, defines the Module Bus Width. The value zero x zero B is associated with seventy two bits, implying the presence of an E C C mechanism.
+
+Further breakdown of this byte reveals specific bit fields that encode the memory bus width. Bits two through zero are dedicated to encoding the primary bus width. For instance, a value of binary zero zero zero within these three bits signifies zero bits for the primary bus, a value of binary zero zero one indicates eight bits, binary zero one zero represents thirty two bits, and binary zero one one denotes sixty four bits. Any other combination within these bits is reserved.
+
+Bits four and three of this byte are designated for encoding bus extensions. These extensions are typically related to parity or error correction mechanisms. The document illustrates that a reserved bus width extension, or a value of binary zero zero zero in bits seven through five, combined with the primary bus width encoding, defines the overall bus configuration. For example, a sixty four bit primary bus with no parity or E C C, totaling sixty four bits, would be represented by a specific bit pattern. Conversely, a sixty four bit primary bus with an eight bit E C C, resulting in a total of seventy two bits, would be encoded differently. These examples highlight how combinations of bit fields in the S P D data allow for granular specification of memory module characteristics, enabling system compatibility and error detection.

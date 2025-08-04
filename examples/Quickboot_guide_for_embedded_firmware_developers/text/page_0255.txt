@@ -1,0 +1,43 @@
+series 6 and 7 chipsets support 50 MHz DOFR (Dual Output Fast Read).
+There are also components that will support Quad Fast Read. As the SPI
+interface is normally a bottleneck on boot speed, this small change can mean
+a lot to overall performance, and it is a relatively small difference on the bill
+
+of material.
+
+Flash Component Accesses
+
+Besides configuring for faster read access and prefetch enabling, further
+optimizations can be done to reduce its accesses. For example: BIOS option
+setup data could be a few kilobytes in size and, each time a setup option is
+referenced, it could cost about 1 ms for 33 MHz SPI, and there could be
+several references. Optimization can also be done by reinstalling the read-
+only variable PPI with a new version, which has a copy of the setup data in
+CAR/memory and thus the setup data is read only once from the SPI. It could
+also be cached in memory for S3 needs to prevent unnecessary SPI access
+
+during S3 resume.
+
+SPI Prefetch and Buffer
+
+It is possible to enable the buffers on the components to prefetch data from
+the flash device. If the chipset is capable, set up the SPI Prefetch as early as
+the SEC phase. It is recommended to do performance profiling to compare
+prefetch-enabled boot time of each of the individual UEFI modules to
+determine potential impact. The time when firmware volumes are shadowed
+
+can be particularly interesting to examine.
+Series six and seven chipsets support fifty megahertz DOFR, which stands for Dual Output Fast Read. There are also components that will support Quad Fast Read. As the S P I interface is normally a bottleneck on boot speed, this small change can mean a lot to overall performance, and it is a relatively small difference on the bill of material.
+
+Flash Component Accesses.
+
+Besides configuring for faster read access and prefetch enabling, further optimizations can be done to reduce its accesses. For example, BIOS option setup data could be a few kilobytes in size and, each time a setup option is referenced, it could cost about one millisecond for thirty three megahertz S P I, and there could be several references. Optimization can also be done by reinstalling the read only variable P P I with a new version, which has a copy of the setup data in C A R memory and thus the setup data is read only once from the S P I. It could also be cached in memory for S three needs to prevent unnecessary S P I access during S three resume.
+
+S P I Prefetch and Buffer.
+
+It is possible to enable the buffers on the components to prefetch data from the flash device. If the chipset is capable, set up the S P I Prefetch as early as the S E C phase. It is recommended to do performance profiling to compare prefetch enabled boot time of each of the individual U E F I modules to determine potential impact. The time when firmware volumes are shadowed can be particularly interesting to examine.
+The text discusses performance characteristics related to flash memory access, particularly through the Serial Peripheral Interface, or S P I, bus. Series six and seven chipsets are highlighted for their support of fifty megahertz D O F R, which stands for Dual Output Fast Read. This particular capability is crucial for components that support Quad Fast Read, a technology that significantly increases data transfer rates compared to older SPI modes. The S P I interface, in general, is often identified as a bottleneck during the system boot process. The magnitude of its impact is characterized as potentially significant for overall performance, though the text suggests that differences in S P I speeds might represent a relatively small cost difference in the final material of a product.
+
+Further elaborating on flash component accesses, the text emphasizes the role of optimizations, specifically faster read access and prefetch enabling. These techniques aim to reduce the number of times the system needs to access flash memory directly. An example provided is the boot process initialization, where BIOS option setup data, typically a few kilobytes in size, might be referenced multiple times. Each such reference can incur a latency, estimated at around one millisecond for thirty three megahertz S P I. To mitigate this, optimizations can include reconfiguring the system to use a variable P P I, or Program Program Input, with a new version. This new version might contain a copy of the setup data in the system's main memory, often referred to as C A R memory, thereby enabling the setup data to be read only once from the S P I flash. Moreover, this data can be cached in main memory to prevent redundant S P I accesses, particularly relevant during system resume events like the S three power state.
+
+The section on S P I prefetch and buffer further details how performance can be enhanced. It posits that it is possible to prefetch data from flash memory into buffers on system components, provided the chipset supports such functionality. The system's S E C phase, or System Expansion Controller phase, is identified as an opportune time to initiate S P I prefetching. The recommendation is to perform performance profiling to compare the boot times of individual U E F I modules under prefetch enabled conditions. This analysis can reveal potential performance impacts, especially when firmware volumes are shadowed, a technique that can be particularly instructive to examine for its influence on boot performance.

@@ -1,0 +1,58 @@
+Basic Types of Initialization
+
+For BIOS, there are four types of programming:
+
+Bit setting, per industry specification or per designer
+Standard algorithms, per specification
+
+Custom routines, per designer
+
+al SE
+
+Expansion ROMs, per vendor
+
+Simple Bits
+
+“Bit banging” is slang for the sequence of reading/modifying/writing to
+registers in the silicon. This can be to CPU model-specific registers (MSRSs)
+or to PCI or I/O or memory-mapped I/O. The register/bit settings are
+normally done in a priority order as dictated by logic to speed up the system
+initialization, or it is done out of simple fear in doing a workaround as early
+as possible to avoid the errata condition, but the order may not matter.
+Normally these bits are set once at boot time and never looked at again. It is
+possible that the bits are also locked when set to avoid tampering by malware
+
+during runtime.
+
+Standard Algorithms, Minding the Ps and Qs
+
+Standard routines are programmed to follow industry specifications, such as
+PCI, ACPI, USB, JEDEC, or others. This is done with the assumption that
+the silicon being programmed is designed exactly per the specification. If this
+is the case, then the algorithms should never change once written and that
+
+standard easily can go from component to component, device to device, year
+Basic Types of Initialization
+
+For B I O S, there are four types of programming: first, bit setting, per industry specification or per designer; second, standard algorithms, per specification; third, custom routines, per designer; and fourth, expansion R O Ms, per vendor.
+
+Simple Bits
+
+"Bit banging" is slang for the sequence of reading, modifying, and writing to registers in the silicon. This can be to C P U model specific registers, or M S R s, or to P C I or I O or memory mapped I O. The register or bit settings are normally done in a priority order as dictated by logic to speed up the system initialization, or it is done out of simple fear in doing a workaround as early as possible to avoid the errata condition, but the order may not matter. Normally these bits are set once at boot time and never looked at again. It is possible that the bits are also locked when set to avoid tampering by malware during runtime.
+
+Standard Algorithms, Minding the Ps and Qs
+
+Standard routines are programmed to follow industry specifications, such as P C I, A C P I, U S B, J E D E C, or others. This is done with the assumption that the silicon being programmed is designed exactly per the specification. If this is the case, then the algorithms should never change once written and that standard easily can go from component to component, device to device, year.
+System initialization, particularly within the B I O S or Basic I O System, involves several distinct programming paradigms, each serving a critical function in bringing hardware to a coherent operational state. These methods can be broadly categorized into four types.
+
+The first category involves **bit setting**, which is the most granular form of hardware configuration. This process entails directly manipulating individual bits or fields within hardware registers to control specific functions, enable or disable features, or establish operational modes. These settings are often dictated by industry specifications, ensuring interoperability and adherence to established standards, or they may be defined by the silicon designer to configure proprietary features or optimize performance for a specific chip revision. The precision of bit manipulation is paramount, as incorrect settings can lead to system instability or malfunction.
+
+The second category encompasses **standard algorithms**, which are predefined sequences of operations designed to adhere to widely accepted industry specifications. Examples include protocols like P C I for peripheral component interconnect, A C P I for advanced configuration and power interface, U S B for universal serial bus, and J E D E C standards for memory modules. The fundamental premise behind these algorithms is that the underlying silicon hardware is meticulously designed to comply precisely with these specifications. Consequently, the initialization algorithms, once written and thoroughly validated against the standard, are expected to remain stable and unchanging across different components, various devices, and even successive product generations. This adherence to standards is crucial for guaranteeing component compatibility and predictable system behavior.
+
+The third type involves **custom routines**, which are proprietary algorithms developed by the hardware designer or vendor. These routines are typically employed when a standard algorithm does not suffice, perhaps to leverage unique hardware features, implement specific performance optimizations, or provide workarounds for silicon errata that cannot be addressed by specification-compliant methods alone. The use of custom routines allows for greater flexibility and differentiation but can also introduce complexity in terms of compatibility and maintenance across diverse hardware platforms.
+
+Finally, **expansion R O M s** represent a fourth category. These are Read Only Memories located on peripheral devices, such as graphics cards or network adapters, which contain firmware responsible for initializing that specific expansion hardware. During the system boot process, the main B I O S typically discovers these expansion R O M s and executes their code, allowing the peripheral devices to configure themselves before the main O S loads. This modular approach enables specialized hardware to carry its own initialization logic, enhancing system expandability and versatility.
+
+A pervasive technique within low-level initialization is termed **bit banging**. This informal term describes the sequential reading, modifying, and writing of individual bits or bit fields within hardware registers. The targets for such operations include C P U model-specific registers, which control core processor functionalities; P C I configuration space, which holds parameters for P C I devices; or other memory-mapped I O registers, where hardware components expose their configuration and control interfaces through addresses in the system's memory map.
+
+The meticulous sequencing of register and bit settings during initialization is often governed by a strict priority order. This is driven by logical dependencies, where the configuration of one component might precondition the proper operation of another. Such prioritized initialization aims to expedite the overall system bring up. In some cases, bit banging is performed early in the boot sequence to implement immediate workarounds for identified silicon errata. While the precise ordering for these workarounds might not always be critically dependent, performing them early ensures that the system operates correctly from the outset, mitigating the impact of design flaws. Typically, these crucial bit settings are applied only once at boot time and are not subsequently revisited during normal operation. Furthermore, certain registers or bit configurations may be deliberately locked after being set to prevent unauthorized modification by malicious software or accidental alteration during runtime, thereby enhancing system stability and security.

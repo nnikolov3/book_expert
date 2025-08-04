@@ -1,0 +1,40 @@
+'CK, both CL and CWL requirement settings need to be fulfilled.
+3. Reserved settings are not allowed.
+SPD Field #22: “Minimum Active to Precharge Delay Time (tg sgmin)”
+Example from Micron MT41J256M8 Datasheet
+SPD Field 0x17: Min. Active to Active Refresh Delay (tg min) LSB
+
+This is another field that must be extracted from the datasheet and divided by
+
+the Medium Timebase Divisor. In our example:
+
+1.
+The ty value found in the Micron MT41J256M8-187E datasheet for
+our specific SDRAM chip gives 50.625 ns.
+
+2.
+This number must be divided by the Medium Timebase Divisor, the
+value in 0x0B. In our example this is 0.125 ns.
+
+3.
+50.625 ns/0.125 ns = 405 = 00195.
+
+4.
+
+The LSB, 0x95, goes into SPD field #23 (0x17).
+T C K, both C L and C W L requirement settings need to be fulfilled. Three. Reserved settings are not allowed. S P D Field Number twenty two, Minimum Active to Precharge Delay Time T R A S min, Example from Micron M T four one J two five six M eight Datasheet. S P D Field zero hexadecimal one seven, Min Active to Active Refresh Delay T R C min L S B. This is another field that must be extracted from the datasheet and divided by the Medium Timebase Divisor. In our example: One. The T R C value found in the Micron M T four one J two five six M eight one eight seven E datasheet for our specific S D Ram chip gives fifty point six two five nanoseconds. Two. This number must be divided by the Medium Timebase Divisor, the value in zero hexadecimal B. In our example, this is zero point one two five nanoseconds. Three. Fifty point six two five nanoseconds divided by zero point one two five nanoseconds is equal to four zero five, which is equal to zero hexadecimal one nine five. Four. The L S B, zero hexadecimal nine five, goes into S P D field twenty three, zero hexadecimal one seven. Five.
+The presented information details the extraction and interpretation of specific timing parameters from Serial Presence Detect (S P D) data, particularly concerning D Ram memory modules. This process is crucial for system initialization and proper memory controller configuration.
+
+The text begins by referencing the need to fulfill 'C K', both 'C L' and 'C W L' requirement settings. 'C K' likely refers to the clock signal, and 'C L' and 'C W L' are standard abbreviations for CAS Latency and 'C W L' Latency, respectively, which are critical timing parameters governing data access in synchronous dynamic random access memory.
+
+The document then highlights that reserved settings are not allowed, emphasizing the importance of adhering to defined standards for S P D fields to ensure interoperability and correct system behavior.
+
+A specific S P D field, identified as S P D Field number twenty two, is introduced with the description "Minimum Active to Precharge Delay Time (t RAS min)". This parameter, denoted as 't RAS min', represents the minimum time interval required between the activation of a row and the subsequent precharge command for that same row in a D Ram. The text notes this as an example derived from a Micron M T four one J two fifty six M eight Datasheet.
+
+Subsequently, S P D Field zero ex seventeen is discussed, labeled as "Min. Active to Active Refresh Delay (t RC min) L S B". This field pertains to the minimum time between consecutive active commands to different rows or the minimum time between an active command and a refresh command, crucial for maintaining data integrity in D Ram. The 'L S B' designation indicates that this field likely represents the least significant bits of a larger time value or is interpreted in a specific bit-order convention. The extraction of this field requires consideration of a "Medium Timebase Divisor."
+
+The methodology for calculating the value for this field is then illustrated. First, the 't RC' value is obtained from a specific D Ram chip's datasheet, stated as fifty point six two five nanoseconds for a Micron M T four one J two fifty six M eight chip. This raw value must then be processed. The text explains that this number is divided by the "Medium Timebase Divisor," and in the given example, this divisor results in a value of zero point one two five nanoseconds. This division yields a result of four hundred five.
+
+The calculation is shown as: fifty point six two five nanoseconds divided by zero point one two five nanoseconds equals four hundred five. This decimal value of four hundred five is then represented in hexadecimal as zero hex one nine five. This suggests that the S P D field stores a scaled or quantized representation of the timing parameter.
+
+Finally, the least significant bits, specifically zero hex nine five, are stated to be placed into S P D Field twenty three, which is represented as zero ex seventeen. This indicates a bit manipulation or field assignment process where portions of the calculated timing information are stored in designated S P D locations. This systematic extraction and mapping of timing parameters are vital for the system's memory controller to correctly configure the D Ram, ensuring optimal performance and stability by adhering to the memory standard's timing requirements.

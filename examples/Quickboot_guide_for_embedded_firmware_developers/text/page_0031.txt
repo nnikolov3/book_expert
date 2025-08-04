@@ -1,0 +1,49 @@
+The Front Side Bus
+
+The front side bus (FSB), which had been between the CPU and the North
+Bridge, was a proprietary parallel bus that normally linked to the PCI host
+controller in the north bridge, or the memory controller hub (MCH), as it is
+sometimes referred to in documentation. With the integration of the north
+bridge into the processor on the Nehalem processor, the front side bus is no
+longer visible externally, and its functionality has been replaced with
+invisible fabric internal to the chip. Instead of the FSB being the connection
+between the CPU and the rest of the system, it is now via one of a few serial
+interfaces. Intel QPI is the new name for interprocessor connections and to
+IOH and PCH components; it is the DMI or ESI link, or similar.
+
+The North Bridge, PClIset, AGPset, MCH, Uncore, System
+Agent
+
+It has had a string of names over the years, but the primary interface to the
+processor on older chipsets contains the PCI host controller (PCI Bus0, DevO0,
+FuncO0), the memory controller, a graphics port, and/or integrated graphics.
+
+As part of the North Bridge, the PCI Host Controller converts FSB
+signals to the appropriate PCI bus traffic. It has been the home of the PCI
+configuration space, which controls the memory controller. For that reason,
+people seem to consider them one in the same, which we can grant if it is
+known that the memory controller hub (MCH) serves other important
+purposes.
+
+Another part of the North Bridge, the Memory Controller is kind of self-
+explanatory. Memory has been evolving steadily every product generation or
+
+so. The general rule is: the faster the access times and the larger the memory
+The Front Side Bus
+
+The front side bus, F S B, which had been between the C P U and the North Bridge, was a proprietary parallel bus that normally linked to the P C I host controller in the north bridge, or the memory controller hub, M C H, as it is sometimes referred to in documentation. With the integration of the north bridge into the processor on the Nehalem processor, the front side bus is no longer visible externally, and its functionality has been replaced with invisible fabric internal to the chip. Instead of the F S B being the connection between the C P U and the rest of the system, it is now via one of a few serial interfaces. Intel Q P I is the new name for interprocessor connections and to I O H and P C H components; it is the D M I or E S I link, or similar.
+
+The North Bridge, P C I set, A G P set, M C H, Uncore, System Agent
+
+It has had a string of names over the years, but the primary interface to the processor on older chipsets contains the P C I host controller, P C I Bus zero, Dev zero, Func zero, the memory controller, a graphics port, and or integrated graphics.
+
+As part of the North Bridge, the P C I Host Controller converts F S B signals to the appropriate P C I bus traffic. It has been the home of the P C I configuration space, which controls the memory controller. For that reason, people seem to consider them one in the same, which we can grant if it is known that the memory controller hub, M C H, serves other important purposes.
+
+Another part of the North Bridge, the Memory Controller is kind of self explanatory. Memory has been evolving steadily every product generation or so. The general rule is: the faster the access times and the larger the memory.
+The Front Side Bus, or F S B, represented a foundational architectural element in computer systems, serving as a proprietary parallel bus primarily responsible for communication between the central processing unit, or C P U, and the North Bridge. This North Bridge component, often termed the Memory Controller Hub, or M C H, facilitated the C P U's interface with main system memory and high-speed peripherals. The C P U would issue memory requests or peripheral commands across the F S B to the North Bridge, which then arbitrated and routed these requests to the appropriate device or memory module. The inherent parallelism of the F S B architecture allowed for significant bandwidth in its era, but it was also susceptible to timing skew across its multiple data lines, limiting frequency scaling.
+
+A pivotal shift in system architecture occurred with the integration of the North Bridge's functions directly into the C P U package, exemplified by Intel's Nehalem processor microarchitecture. This transition rendered the external Front Side Bus obsolete. Its functionality was subsumed by internal, high-speed serial interconnects, forming an invisible fabric within the chip. Instead of an external F S B connecting the C P U to an external North Bridge, the communication pathway to the rest of the system, including memory and I O, evolved into a few dedicated serial interfaces. Intel's Quick Path Interconnect, or Q P I, became the successor for interprocessor communication in multi-socket systems and for connecting the C P U to the I O H, or I O Hub, and P C H, or Platform Controller Hub, components. Similarly, the Direct Media Interface, or D M I, and the Extended Serial Interconnect, or E S I link, served as the primary interchip links for integrating the C P U with peripheral controllers, enabling a more efficient, lower-latency, and scalable system design by reducing the number of hops and increasing point to point bandwidth.
+
+The North Bridge itself has undergone a significant nomenclature evolution, having been known by various designations over time, including P C I Set, A G P Set, Memory Controller Hub, or M C H, and in more contemporary Intel architectures, the Uncore or System Agent. Historically, this component served as the principal interface for the processor on older chipset designs. It typically integrated key controllers such as the P C I host controller, often identified as P C I Bus zero, Dev zero, Func zero, the central memory controller, a dedicated Accelerated Graphics Port for external graphics cards, and in many instances, an integrated graphics processing unit. The P C I Host Controller within the North Bridge played a crucial role by translating the F S B signals into the appropriate protocol and electrical signaling required for P C I bus traffic. It also managed the P C I configuration space, allowing the operating system to discover and configure connected P C I devices. Furthermore, the memory controller component, often synonymous with the Memory Controller Hub, was responsible for managing the flow of data between the C P U and the dynamic random access memory, or D Ram, modules.
+
+The functional convergence of the P C I host controller and the memory controller within the North Bridge often led to their being conceptually treated as a single entity, given their shared critical role in system operations. The memory controller, as a core component of the North Bridge's legacy, has experienced continuous advancements across product generations. Its evolution is characterized by a fundamental principle: engineering improvements aim to simultaneously decrease memory access times, thereby reducing latency, while also increasing the total addressable memory capacity. This dual progression reflects ongoing innovations in D Ram technology, memory controller design, and the integration of these controllers closer to or directly onto the C P U die, minimizing signal propagation delays and maximizing data throughput. The move from an external North Bridge to an integrated System Agent within the C P U has dramatically enhanced memory subsystem performance, reducing C P U stalls related to data fetching and improving overall system responsiveness and capability.

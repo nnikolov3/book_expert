@@ -1,0 +1,50 @@
+use different nomenclature) are being used as data signals on one of the
+SDRAM chips, then the memory subsystem on the board is implementing
+ECC Support. Some of the SPD fields must be set to indicate that the DIMM
+supports ECC.
+
+SDRAM Width Determination
+
+The DRAM width can be determined by carefully analyzing the number of
+data signals, DDR_DQ[63:0], that are routed into each SDRAM chip. It will
+either be four, eight, sixteen, or thirty-two. This will indicate the DRAM
+width for the DRAM chip in this DIMM equivalent.
+
+The DRAM width is part of SPD field 7, and often there are slight
+timing differences in the datasheet depending on the width of the specific
+DRAM being used.
+
+SDRAM Chip Datasheet
+
+The vendor and exact part number of the SDRAM chips used in the design is
+extracted from the schematics. The full datasheet must be obtained in order to
+calculate all of the needed SPD fields.
+
+SDRAM Architecture Analysis Example
+
+Figure A.2 shows a typical memory-down implementation. Sixteen SDRAM
+
+chips are split evenly across two of three available channels. All the SDRAM
+chips on a given channel are connected to a single chip select signal. Since
+each SDRAM chip is connected to eight data signals, this design consists of
+two single-rank DIMM equivalents using x8 width MT41J256M8HX-187-
+use different nomenclature) are being used as data signals on one of the SDRAM chips, then the memory subsystem on the board is implementing ECC Support. Some of the SPD fields must be set to indicate that the DIMM supports ECC.
+
+SDRAM Width Determination
+
+The DRAM width can be determined by carefully analyzing the number of data signals, DDR DQ [63:0], that are routed into each SDRAM chip. It will either be four, eight, sixteen, or thirty two. This will indicate the DRAM width for the DRAM chip in this DIMM equivalent. The DRAM width is part of SPD field seven, and often there are slight timing differences in the datasheet depending on the width of the specific DRAM being used.
+
+SDRAM Chip Datasheet
+
+The vendor and exact part number of the SDRAM chips used in the design is extracted from the schematics. The full datasheet must be obtained in order to calculate all of the needed SPD fields.
+
+SDRAM Architecture Analysis Example
+
+Figure A dot two shows a typical memory down implementation. Sixteen SDRAM chips are split evenly across two of three available channels. All the SDRAM chips on a given channel are connected to a single chip select signal. Since each SDRAM chip is connected to eight data signals, this design consists of two single rank DIMM equivalents using X eight width MT41J256M8HX-187-
+The discussion centers on the intricacies of Synchronous Dynamic Random Access Memory, or S D Ram, specifically focusing on how its data width is determined and how S D Ram chip datasheets are utilized in system design.  When a memory subsystem employs different nomenclature for its S D Ram chips, the presence of Error Correction Code, or E C C, support is a key consideration, with certain fields within the Serial Presence Detect, or S P D, needing to be configured to indicate this capability.
+
+The determination of the S D Ram data width involves a careful analysis of the number of data signals, such as those identified by the notation D D R underscore D Q open bracket six three colon zero close bracket, which are routed to each individual S D Ram chip. This width can manifest as four, eight, sixteen, or thirty two bits, and this value directly corresponds to the data width of the particular S D Ram chip used within a Dual Inline Memory Module, or D I M M, equivalent. Furthermore, the S D Ram width is often specified in S P D field seven, and slight timing variations may exist in the datasheet depending on the inherent width of the specific S D Ram being integrated.
+
+To accurately design and implement a memory subsystem, it is crucial to consult the S D Ram chip datasheet. This document provides essential information, including the vendor and the precise part number of the S D Ram chips designated for use in the design. This data is typically extracted from the system's schematics. A comprehensive understanding of the full datasheet is necessary to correctly calculate all the required S P D fields.
+
+An example of S D Ram architecture analysis is presented, referencing a figure that illustrates a typical memory down implementation. This implementation involves sixteen S D Ram chips distributed evenly across two of three available memory channels. Each of these S D Ram chips is connected to a single chip select signal. The design then logically comprises two single rank D I M M equivalents, utilizing a format characterized by eight bits of width, specifically referencing a part number like M T forty one J two hundred fifty six M eight H X dash one eight seven, which indicates a particular configuration of memory capacity and speed.

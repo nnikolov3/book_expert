@@ -1,0 +1,40 @@
+where the resume time is about 1 second and the power is several hundred
+mW? Obviously, it depends on the resume times, power requirements, and
+usage model tradeoffs. But the faster response times from lower power states
+can prove extremely beneficial. Another example is Enhanced Intel
+SpeedStep® Technology, where the CPU can dynamically enter a lower
+power state and run at a lower frequency until the performance is required.
+Average power is a key factor when working on more ecologically sensitive,
+green infrastructures, from servers to sensors. Responsiveness capabilities
+provide an ability to lower power overall and create more easily sustainable
+
+technology.
+
+Boot Time Analysis
+
+In order to properly measure the responsiveness of a system, a stopwatch
+doesn’t work. Counting aloud “one Mississippi, two Mississippi, three
+Mississippi...,” doesn’t work either. For the right level of granularity, there
+are timers on both the Intel processors (Time Stamp Counter, TSC, with
+millisecond timing) and in the chipsets (High Performance Event Timers,
+HPET, microsecond timing) that can be implemented as part of a logging
+mechanism in the firmware. While firmware or hardware architecture limit
+the straight usage of either, it is possible to incorporate a mechanism with
+reasonable accuracy for the need of boot time analysis. Logging of the
+various milestones in the boot flow can be added by outputting to a serial port
+as an example. A temporary storage location in local memory reserved from
+the OS known location is preferred, though, for two reasons: no port
+requirements and no additive delay creating an observer effect. This data can
+also be dropped into an ACPI table for the log to be retrieved and reviewed
+
+later.
+The resume time is about one second and the power is several hundred milliwatt. Obviously, it depends on the resume times, power requirements, and usage model tradeoffs. But the faster response times from lower power states can prove extremely beneficial. Another example is Enhanced Intel SpeedStep technology, where the C P U can dynamically enter a lower power state and run at a lower frequency until the performance is required. Average power is a key factor when working on more ecologically sensitive, green infrastructures, from servers to sensors. Responsiveness capabilities provide an ability to lower power overall and create more easily sustainable technology.
+
+Boot Time Analysis
+
+In order to properly measure the responsiveness of a system, a stopwatch doesn't work. Counting aloud "one Mississippi, two Mississippi, three Mississippi..." doesn't work either. For the right level of granularity, there are timers on both the Intel processors (Time Stamp Counter, T S C, with millisecond timing) and in the chipsets (High Performance Event Timers, H P E T, microsecond timing) that can be implemented as part of a logging mechanism in the firmware. While firmware or hardware architecture limit the straight usage of either, it is possible to incorporate a mechanism with reasonable accuracy for the need of boot time analysis. Logging of the various milestones in the boot flow can be added by outputting to a serial port as an example. A temporary storage location in local memory reserved from the O S known location is preferred, though, for two reasons: no port requirements and no additive delay creating an observer effect. This data can also be dropped into an A C P I table for the log to be retrieved and reviewed later.
+The discussion begins by analyzing system resume times and power consumption, noting that a resume time of approximately one second corresponds to several hundred milliwatt power draw. This highlights the inherent trade-offs between performance and power efficiency, particularly in how quickly a system can return from lower power states. Enhanced Intel SpeedStep technology is cited as an example of dynamic frequency scaling, where the C P U reduces its operating frequency when performance demands are lower, thereby conserving power. Average power consumption is presented as a critical metric across diverse computing environments, from large-scale server infrastructures to individual sensor devices, influencing the adoption of more sustainable and energy-efficient technologies.
+
+The subsequent section focuses on "Boot Time Analysis," which is fundamentally about measuring and understanding the responsiveness of a computing system from a cold start. The text explains that traditional methods, like counting "one Mississippi, two Mississippi," are insufficient for precise measurements due to their inherent lack of granularity. For accurate boot time analysis, specific hardware timers are essential. The Intel processors utilize the Time Stamp Counter, or T S C, for high-resolution timing. Similarly, chipsets often incorporate High Performance Event Timers, or H P E T, which provide microsecond-level timing accuracy. These timers are typically integrated into the system's firmware and hardware architecture.
+
+The ability to accurately log various milestones during the boot process is crucial for analyzing its performance. This logging can be implemented through firmware or specific hardware mechanisms to ensure reasonable accuracy. The output of these logged events can be directed to a serial port or, more ideally, to a temporary memory location reserved by the O S. The latter approach is preferred for two primary reasons: it avoids the potential for I O latency introduced by a serial port, and it mitigates the risk of additive delay that could skew the timing measurements, thereby creating an observer effect. The collected boot time data can then be stored in an A C P I table for later retrieval and analysis, providing valuable insights into system startup performance and potential bottlenecks.

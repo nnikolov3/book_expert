@@ -1,0 +1,28 @@
+The lower nibble of the MSB, 0x01, goes into bits [7:4] of SPD field
+
+#21 (0x15).
+Byte (Dec) Byte (Hex) Field Name Typ. Value Definition
+23 0x17 Min. Active to Active Refresh Delay (taemin) LSB 0x95 C0625
+
+Byte 23: Minimum Active to Active/Refresh Delay Time (tRCmin), Least
+Significant Byte
+
+The upper nibble of Byte 21 and the contents of Byte 23 combined create a
+12-bit value that defines the minimum SDRAM Active to Active/Refresh
+Delay Time in Medium Timebase (MTB) units. The most significant bit is
+Bit 7 of Byte 21, and the least significant bit is Bit 0 of Byte 23. This value
+comes from the DDR3 SDRAM datasheet.
+The lower nibble of the M S B, hexadecimal zero one, goes into bits seven to four of S P D field number twenty one, hexadecimal zero times one five.
+
+The table shows information for Byte twenty three. For Byte twenty three, the decimal value is twenty three, and the hexadecimal value is hexadecimal zero times seventeen. The field name is Minimum Active to Active Refresh Delay, represented as t R C m i n, L S B. The typical value is hexadecimal zero times ninety five, and the definition is fifty point six two five.
+
+Byte twenty three: Minimum Active to Active Refresh Delay Time t R C m i n, Least Significant Byte. The upper nibble of Byte twenty one and the contents of Byte twenty three combined create a twelve bit value that defines the minimum S D R A M Active to Active Refresh Delay Time in M T B units. The most significant bit is Bit seven of Byte twenty one, and the least significant bit is Bit zero of Byte twenty three. This value comes from the D D R three S D R A M datasheet.
+The provided text describes the interpretation of specific bytes within the Serial Presence Detect, or S P D, data structure, commonly used in computer systems to convey information about system memory. Specifically, it details the meaning of byte twenty three and its relationship to byte twenty one, in the context of SDRAM timing parameters.
+
+The statement "The lower nibble of the MSB, zero x zero one, goes into bits seven to four of S P D field number twenty one, zero x one five" describes how bits are organized and assigned from one byte to another within the S P D data. A nibble refers to four bits, which is half of a byte. The "MSB" typically stands for Most Significant Byte when referring to multi-byte values, but here it seems to refer to the most significant nibble of a particular byte. The hexadecimal value zero x zero one, representing the binary value binary zero zero zero zero zero zero zero one, is being dissected. Its most significant nibble, which is zero zero zero zero, is being mapped to bits seven through four of a field identified as S P D field number twenty one, and this specific field is associated with the hexadecimal value zero x one five. This indicates a precise bit-level mapping where data is segmented and distributed across different bytes within the S P D structure.
+
+The table presented provides a structured breakdown of this information, listing the byte number in decimal, its hexadecimal representation, the field name, a typical value, and a definition. Byte twenty three (decimal) is represented as hexadecimal zero x seventeen. The field name associated with this byte is "Min. Active to Active Refresh Delay (tRCmin) LSB". This indicates that byte twenty three holds the Least Significant Significant Byte of the tRCmin timing parameter. The typical value for this byte is shown as hexadecimal zero x ninety five. The definition clarifies that tRCmin is a measure of the minimum time interval between two consecutive row activation commands in SDRAM, a critical parameter for memory stability and performance.
+
+The text further elaborates on this: "Byte twenty three: Minimum Active to Active Refresh Delay Time (tRCmin), Least Significant Byte". This explicitly states the role of byte twenty three in representing the least significant portion of the tRCmin timing value. It then explains how this parameter is constructed: "The upper nibble of Byte twenty one and the contents of Byte twenty three combined create a twelve bit value that defines the minimum SDRAM Active to Active Refresh Delay Time in Medium Timebase (MTB) units." This reveals that the full twelve-bit representation of tRCmin is formed by concatenating the upper nibble of byte twenty one with the entire byte twenty three. The "upper nibble" of byte twenty one would constitute bits seven through four of byte twenty one, and byte twenty three would represent bits zero through seven of the complete tRCmin value. The "Medium Timebase" (MTB) is a unit of time used to express these memory timings, the specific duration of which is defined by the memory controller and memory type.
+
+The text continues to specify the bit allocation within this twelve-bit value: "The most significant bit is Bit seven of Byte twenty one, and the least significant bit is Bit zero of Byte twenty three." This clarifies the bit ordering. Bit seven of byte twenty one is the most significant bit of the twelve-bit tRCmin value, and bit zero of byte twenty three is the least significant bit. This arrangement implies that byte twenty one contributes the higher-order bits and byte twenty three contributes the lower-order bits to form the complete tRCmin value. Finally, it is noted that "This value comes from the DDR3 SDRAM datasheet," underscoring that these specific byte assignments and their interpretation are defined by the relevant J E D E C standards for DDR3 SDRAM modules. This is crucial for system firmware, such as the BIOS or UEFI, to correctly configure and operate the memory subsystem.

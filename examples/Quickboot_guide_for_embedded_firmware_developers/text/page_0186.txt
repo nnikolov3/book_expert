@@ -1,0 +1,59 @@
+Manual, Volume 2A for details on the information available with the CPUID
+instruction on various processor families.
+
+Detection of additional packages must be done “blindly.” If a design
+must accommodate more than one physical package, the BSP needs to wait a
+certain amount of time for all potential APs in the system to “log in.” Once a
+timeout occurs or the maximum expected number of processors “log in,” it
+
+can be assumed that there are no more processors in the system.
+
+Startup Inter-Processor Interrupt (SIPI)
+
+In order to wake up secondary threads or cores, the BSP sends a SIPI to each
+thread and core. This SIPI is sent by using the BSP’s LAPIC, indicating the
+physical address from which the application processor (AP) should start
+executing. This address must be below 1 MB of memory and must be aligned
+
+on a 4-KB boundary.
+
+AP Wakeup State
+
+Upon receipt of the SIPI, the AP starts executing the code pointed to by the
+SIPI message. As opposed to the BSP, when the AP starts code execution it is
+in real mode. This requires that the location of the code that the AP starts
+
+executing is located below 1 MB.
+
+Wakeup Vector Alignment
+
+The starting execution point of the AP has another important and commonly
+forgotten architectural restriction. The entry point to the AP initialization
+code must be aligned on a 4-KB boundary. Refer to the Intel® 64 and IA-32
+Architectures Software Developer’s Manual, Volume 3A section “MP
+
+Initialization Protocol Algorithm for Intel Xeon Processors.”
+Manual Volume two A for details on the information available with the C P U I D instruction on various processor families.
+
+Detection of additional packages must be done blindly. If a design must accommodate more than one physical package, the B S P needs to wait a certain amount of time for all potential A Ps in the system to log in. Once a timeout occurs or the maximum expected number of processors log in, it can be assumed that there are no more processors in the system.
+
+Startup Inter Processor Interrupt (S I P I)
+
+In order to wake up secondary threads or cores, the B S P sends a S I P I to each thread and core. This S I P I is sent by using the B S P's L A P I C, indicating that the physical address from which the application processor A P should start executing. This address must be below one M B of memory and must be aligned on a four K B boundary.
+
+A P Wakeup State
+
+Upon receipt of the S I P I, the A P starts executing the code pointed to by the S I P I message. As opposed to the B S P, when the A P starts code execution it is in real mode. This requires that the location of the code that the A P starts executing is located below one M B.
+
+Wakeup Vector Alignment
+
+The starting execution point of the A P has another important and commonly forgotten architectural restriction. The entry point to the A P initialization code must be aligned on a four K B boundary. Refer to the Intel sixty four and I A thirty two Architectures Software Developer's Manual, Volume three A section MP Initialization Protocol Algorithm for Intel Xeon Processors.
+The document details aspects of multiprocessor system initialization, focusing on the interaction between a Boot Strap Processor, referred to as the BSP, and Application Processors, or APs.
+
+The initial section discusses the process of detecting additional processor packages. A key consideration for system designers is accommodating more than one physical package, necessitating a mechanism for the BSP to wait for all potential APs to signal their readiness, often termed "log in." This waiting process involves a timeout, and if the maximum expected number of processors do not log in within this timeframe, it is assumed that no further processors are available in the system. This process is crucial for dynamic resource allocation and ensuring all available processing units are correctly integrated.
+
+A critical mechanism for activating these APs is the Startup Inter Processor Interrupt, or SIPI. The BSP initiates this process by sending a SIPI to each thread and core that needs to be woken up. The SIPI contains the physical address of the code that the AP should start executing. This target address has specific constraints: it must reside within the first megabyte of memory and be aligned to a four kilobyte boundary. This alignment requirement is common in many memory architectures, facilitating efficient address translation and data fetching by the memory management unit.
+
+Following the reception of a SIPI, an AP enters the AP Wakeup State. Upon receiving the SIPI message, the AP begins executing the code located at the address provided. This is distinct from the BSP's operation, which might execute in a protected mode or real mode. The AP's execution is initiated in a mode compatible with its startup code. The document specifies that the location of this startup code must be within the first megabyte of memory.
+
+Finally, the concept of Wakeup Vector Alignment is introduced. The starting execution point for an AP has an important architectural restriction: it is the entry point for the AP's initialization code. This entry point must be aligned on a four kilobyte boundary. This guideline is further elaborated by referencing Volume 3A of the Intel 64 and IA-32 Architectures Software Developer's Manual, specifically section "MP Initialization Protocol Algorithm for Intel Xeon Processors." This emphasizes the adherence to established protocols for ensuring correct and predictable processor initialization in complex systems.

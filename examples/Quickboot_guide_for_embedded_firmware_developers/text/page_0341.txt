@@ -1,0 +1,73 @@
+tRAS (MTB units) MTE (ns) tRAS Result (ns) Use
+
+300 Ox 120 0.125 37.5 DDR3-1066E
+3090) Oxi2( 0.125 37.5 DDR3-1066F
+300 Ox l2C 0.125 37.5 DDR3-10660
+288 Oul20 0.125 36 DDR3-1333F
+288 Ox120 0.125 36 DDR3-13336
+288 Qu] 20 0.125 36 DDR3-1333H
+288 Ox 120 0.125 36 DDR3-1333)
+280 Ox118 0.125 35 DDR3-160006
+280 O=118 0.125 35 DOR3-1600H
+280 Ox118 0.125 35 DDR3-1600]
+280 O=118 0.125 35 DDR3-14600K
+272 0=110 0.125 34 DDR3-1866)
+272 Ox110 0.125 34 DOR3-1866K
+272 O=110 0.125 34 DDR3-1866L
+272 Ox110 0.125 34 DDR3-1866M
+264 D=108 0.125 33 DDR3-2133K
+264 Ox108 0.125 33 DODR3-2133L
+264 Ox108 0.125% 33 DDE3-2133M
+264 Ou 108 0.125 33 DDR3-2133N
+
+SPD Field #22: “Minimum Active to Precharge Delay Time (tRASmin)”
+
+Definition from JEDEC DDR3 SPD Specification
+
+Table 53 DDR3-1066 Speed Bins
+The table shows tRAS in M T B units, M T B in nanoseconds, tRAS result in nanoseconds, and the Use.
+
+The first row shows tRAS in M T B units as three hundred, M T B as zero point one two five nanoseconds, tRAS result as thirty seven point five nanoseconds, and the Use as D D R three dash one zero six six E.
+
+The second row shows tRAS in M T B units as three hundred, M T B as zero point one two five nanoseconds, tRAS result as thirty seven point five nanoseconds, and the Use as D D R three dash one zero six six F.
+
+The third row shows tRAS in M T B units as three hundred, M T B as zero point one two five nanoseconds, tRAS result as thirty seven point five nanoseconds, and the Use as D D R three dash one zero six six G.
+
+The fourth row shows tRAS in M T B units as two hundred eighty eight, M T B as zero point one two five nanoseconds, tRAS result as thirty six nanoseconds, and the Use as D D R three dash one three three three F.
+
+The fifth row shows tRAS in M T B units as two hundred eighty eight, M T B as zero point one two five nanoseconds, tRAS result as thirty six nanoseconds, and the Use as D D R three dash one three three three G.
+
+The sixth row shows tRAS in M T B units as two hundred eighty eight, M T B as zero point one two five nanoseconds, tRAS result as thirty six nanoseconds, and the Use as D D R three dash one three three three H.
+
+The seventh row shows tRAS in M T B units as two hundred eighty eight, M T B as zero point one two five nanoseconds, tRAS result as thirty six nanoseconds, and the Use as D D R three dash one three three three J.
+
+The eighth row shows tRAS in M T B units as two hundred eighty, M T B as zero point one two five nanoseconds, tRAS result as thirty five nanoseconds, and the Use as D D R three dash one six zero zero G.
+
+The ninth row shows tRAS in M T B units as two hundred eighty, M T B as zero point one two five nanoseconds, tRAS result as thirty five nanoseconds, and the Use as D D R three dash one six zero zero H.
+
+The tenth row shows tRAS in M T B units as two hundred eighty, M T B as zero point one two five nanoseconds, tRAS result as thirty five nanoseconds, and the Use as D D R three dash one six zero zero I.
+
+The eleventh row shows tRAS in M T B units as two hundred eighty, M T B as zero point one two five nanoseconds, tRAS result as thirty five nanoseconds, and the Use as D D R three dash one six zero zero K.
+
+The twelfth row shows tRAS in M T B units as two hundred seventy two, M T B as zero point one two five nanoseconds, tRAS result as thirty four nanoseconds, and the Use as D D R three dash one eight six six J.
+
+The thirteenth row shows tRAS in M T B units as two hundred seventy two, M T B as zero point one two five nanoseconds, tRAS result as thirty four nanoseconds, and the Use as D D R three dash one eight six six K.
+
+The fourteenth row shows tRAS in M T B units as two hundred seventy two, M T B as zero point one two five nanoseconds, tRAS result as thirty four nanoseconds, and the Use as D D R three dash one eight six six L.
+
+The fifteenth row shows tRAS in M T B units as two hundred seventy two, M T B as zero point one two five nanoseconds, tRAS result as thirty four nanoseconds, and the Use as D D R three dash one eight six six M.
+
+The sixteenth row shows tRAS in M T B units as two hundred sixty four, M T B as zero point one two five nanoseconds, tRAS result as thirty three nanoseconds, and the Use as D D R three dash two one three three K.
+
+The seventeenth row shows tRAS in M T B units as two hundred sixty four, M T B as zero point one two five nanoseconds, tRAS result as thirty three nanoseconds, and the Use as D D R three dash two one three three L.
+
+The eighteenth row shows tRAS in M T B units as two hundred sixty four, M T B as zero point one two five nanoseconds, tRAS result as thirty three nanoseconds, and the Use as D D R three dash two one three three M.
+
+The nineteenth row shows tRAS in M T B units as two hundred sixty four, M T B as zero point one two five nanoseconds, tRAS result as thirty three nanoseconds, and the Use as D D R three dash two one three three N.
+
+S P D Field number twenty two is defined as Minimum Active to Precharge Delay Time, also known as tRASmin, with the definition from J E D E C D D R three S P D Specification. Table fifty three shows D D R three dash one zero six six speed bins.
+The provided text and table detail the tRASmin parameter for DDR3 memory modules, specifically referencing SPD Field #22 from the JEDEC DDR3 SPD Specification. tRASmin denotes the minimum active to precharge delay time, a critical timing parameter that dictates the minimum duration a row must remain active before it can be precharged. This delay is crucial for ensuring data integrity and proper operation of the dynamic random access memory (D-Ram) cells.
+
+The table presents several data points correlating tRAS (in Memory Timing Base units) with the corresponding tRAS result in nanoseconds, and categorizes these by specific DDR3 module designations. The Memory Timing Base unit, often referred to as clock cycles for a specific memory frequency, is a fundamental concept in memory timing specifications. A value like "0 times 12C" in the "MTB (ns)" column, when interpreted within the context of DDR3, would represent twelve clock cycles, where the clock cycle duration is determined by the memory's operating frequency. For instance, at one thousand twenty five megahertz, a clock cycle is approximately zero point nine seven six nanoseconds. Therefore, twelve clock cycles would translate to approximately eleven point seven nanoseconds. The table demonstrates that for DDR3-1066E, F, and G modules, with a tRAS of three hundred units, the minimum active to precharge delay is thirty seven point five nanoseconds. As the tRAS units decrease, such as to two hundred eighty eight units (corresponding to twelve clock cycles at a higher frequency like one thousand three hundred thirty three megahertz), the tRASmin value also decreases, observed as thirty six nanoseconds for DDR3-1333F and G, and thirty six nanoseconds for DDR3-1333H and J. This trend continues for DDR3-1600 modules where a tRAS of two hundred eighty units (twelve clock cycles at one thousand six hundred megahertz) results in thirty five nanoseconds tRASmin. Further down, for DDR3-1866 modules with two hundred seventy two units (twelve clock cycles at one thousand eight hundred sixty six megahertz), the tRASmin is thirty four nanoseconds. Finally, for DDR3-2133 modules with two hundred sixty four units (twelve clock cycles at two thousand one hundred thirty three megahertz), the tRASmin is thirty three nanoseconds.
+
+This relationship highlights a fundamental principle: as memory frequencies increase, the period of each clock cycle shortens, allowing for a lower number of clock cycles to represent the same absolute time duration. Consequently, the absolute time for tRASmin also decreases with higher clock frequencies, provided the number of clock cycles remains consistent. The table also illustrates how different memory speed bins, indicated by the DDR3 designations with appended letters (e.g., DDR3-1066E, DDR3-1333F), are associated with specific timing parameters, reflecting the performance and overclocking potential of these modules. The consistency across different speed bins for a given frequency, such as the thirty five nanosecond tRASmin for various DDR3-1600 variants, demonstrates the standardized nature of these timing specifications. The SPD (Serial Presence Detect) is a standardized mechanism used by computer motherboards to read information about the memory modules installed, including their timings, capacity, and other characteristics, directly from a small EEPROM chip on the memory module itself. This data is crucial for the system's BIOS or UEFI to correctly configure the memory controller for optimal performance and stability.

@@ -1,0 +1,54 @@
+and I/O space may be enabled. Additionally, the system firmware can also
+
+hide controllers, disable ports, and arm for ACPI wake events.
+
+Hiding USB Controllers’ PCI Space
+Depending on the number of ports routed and utilized on the platform, some
+number or types of USB controllers may be hidden or disabled to save PCI
+resources and, depending on the chip, for power savings. When a device is
+hidden, an OS is incapable of both discovering and using the hidden device
+via PCI configuration space. To hide a host controller, the BIOS must
+program the Function Disable register at (RCBA + 3418h). See the PCH
+datasheet for a description of the register.
+
+When disabling UHCI host controllers, the USB 2.0 EHCI Structural
+Parameters Registers must be updated by the system BIOS with coherent
+information in “Number of Companion Controllers” and “N_Ports” fields,
+
+which are:
+—(Device26)/(Device29):F0:04h[ 15:12]
+—D26/29:F0:04h] 3:0], respectively.
+
+It is important to note a quirk here that the BIOS cannot configure the device
+to provide UHCI support only in the Intel USB controllers on the PCH. This
+configuration is prevented per the PCI Specification requirements; that is,
+PCI devices must always implement function 0. Therefore, the UHCI host
+controller support must always be accompanied by support by at least one
+EHCI host controller (D29/26 Function #0).
+
+To ensure that a disabled USB function cannot initiate transactions for
+USB transfers or be the target of memory or I/O requests, the system BIOS
+
+must also ensure the controller memory, and I/O control bits are disabled
+And I O space may be enabled. Additionally, the system firmware can also hide controllers, disable ports, and arm for A C P I wake events.
+
+Hiding U S B Controllers’ P C I Space
+
+Depending on the number of ports routed and utilized on the platform, some number or types of U S B controllers may be hidden or disabled to save P C I resources and, depending on the chip, for power savings. When a device is hidden, an O S is incapable of both discovering and using the hidden device via P C I configuration space. To hide a host controller, the B I O S must program the Function Disable register at R C B A plus hexadecimal three four one eight. See the P C H datasheet for a description of the register.
+
+When disabling U H C I host controllers, the U S B two point zero E H C I Structural Parameters Registers must be updated by the system B I O S with coherent information in the fields named "Number of Companion Controllers" and "N-Ports". These fields are found at Device twenty six or Device twenty nine, Function zero, offset hexadecimal zero four, for bit positions fifteen through twelve; and for bit positions three through zero, respectively, at the same location.
+
+It is important to note a quirk here: the B I O S cannot configure the device to provide U H C I support only in the Intel U S B controllers on the P C H. This configuration is prevented per the P C I Specification requirements; that is, P C I devices must always implement function zero. Therefore, U H C I host controller support must always be accompanied by support by at least one E H C I host controller, specifically Device twenty nine slash twenty six, Function number zero.
+
+To ensure that a disabled U S B function cannot initiate transactions for U S B transfers or be the target of memory or I O requests, the system B I O S must also ensure the controller memory and I O control bits are disabled.
+The initialization and configuration of a computer system's hardware are critically dependent on the interaction between the system's firmware, commonly known as the B I O S, and the fundamental architectural constructs of I O space and peripheral interconnects. I O space represents a dedicated address range distinct from physical memory, through which the C P U communicates directly with peripheral devices using specialized instructions. The B I O S, operating at this foundational layer, possesses the capability to selectively enable or disable various hardware components and their associated I O ports, and to configure them for sophisticated power management operations, such as arming devices for A C P I wake events. A C P I, the Advanced Configuration and Power Interface, is a crucial industry standard that enables the O S to manage system power states and hardware configuration dynamically.
+
+A specific example of this low level hardware control involves the management of U S B host controllers within the P C I E ecosystem. P C I E, or Peripheral Component Interconnect Express, is a high speed serial bus that serves as the primary interconnect for many modern peripherals. Devices connected via P C I E occupy a configuration space, which is a collection of registers that the B I O S and subsequently the O S query to discover, configure, and operate these devices. The system firmware can intentionally obscure certain U S B host controllers from this P C I E configuration space. This deliberate act of "hiding" a controller serves dual purposes: primarily to conserve finite P C I E resources, which include address ranges, I O ports, and interrupt lines, and secondarily to achieve power savings by deactivating unused or redundant hardware paths. When a U S B host controller is hidden in this manner, the operating system is inherently rendered incapable of either detecting its presence or initiating any interaction with it.
+
+The technical mechanism for hiding a U S B host controller involves the B I O S directly manipulating specific hardware registers. For instance, to disable a host controller, the B I O S must program a `Function Disable` register located at a specific offset from the Root Complex Base Address, denoted as `R C B A increment by three four one eight hexadecimal`. The `R C B A` typically points to the base address of a chipset's root complex, which is the foundational component managing P C I E bus traffic. Such direct register programming is a hallmark of B I O S operations, occurring long before the operating system takes control.
+
+Furthermore, the process of disabling older U H C I, or Universal Host Controller Interface, devices – typically associated with U S B one point zero and one point one – necessitates a coordinated update to the U S B two point zero E H C I, or Enhanced Host Controller Interface, Structural Parameters Registers. These E H C I registers encapsulate critical information about the U S B two point zero controller's topology, including the `Number of Companion Controllers` and the total `N Ports`. The B I O S must ensure that these fields are updated coherently to reflect the true hardware configuration. Specifically, the `Number of Companion Controllers` is found in the E H C I structural parameters at the P C I E configuration space address for `Device twenty six slash Device twenty nine`, at hexadecimal address F zero zero four, specifically within bits fifteen through twelve. Concurrently, the `N Ports` field, indicating the number of physical U S B ports, is located at the same P C I E device and hexadecimal address F zero zero four, but within bits three through zero. This meticulous register management is vital for maintaining system integrity and correct hardware enumeration for any subsequently loaded operating system.
+
+A nuanced architectural constraint exists within Intel U S B controllers on the P C H, or Platform Controller Hub, concerning U H C I support. The B I O S is intrinsically prevented from configuring a device to provide U H C I support as a standalone entity. This limitation is dictated by the fundamental P C I E Specification, which mandates that all P C I E devices must always implement `Function zero`. Function zero typically represents the primary or default operational mode of a multifunction P C I E device. Consequently, if U H C I host controller support is to be enabled or present, it must invariably be accompanied by the presence of at least one E H C I host controller, often identified as `D twenty nine slash twenty six Function number zero`. This ensures compliance with the P C I E standard, even as the system firmware manages the visibility and functionality of older U S B controllers.
+
+The implications of a disabled U S B function are profound and far reaching. A controller configured in such a state becomes entirely inert: it cannot initiate any U S B data transfers, nor can it serve as the target for memory or I O requests from the C P U or other system components. To prevent any unintended side effects, such as residual power consumption or spurious interrupts, the system B I O S has the added responsibility of ensuring that all associated controller memory and I O control bits are likewise transitioned to a disabled state. This complete hardware quiescence guarantees that the logical disabling of the U S B function is perfectly mirrored by its physical state, upholding system stability and optimizing power efficiency.

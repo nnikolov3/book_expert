@@ -1,0 +1,53 @@
+open any protocols; it can interact only with shell commands and
+applications.
+
+The power behind script files is that they can do large amounts of
+repetitive work with less overhead than required for an application and that
+they can fully exercise shell commands and applications with much less
+development overhead than an application. Script files require no compiler or
+any development tools at all. They can even be edited via the edit command
+
+in the shell and then rerun without using any other software.
+
+For example, the following loop will do some desired action 300 times in a
+
+rOwW.
+
+echo “2 - START”
+FOR %a RUN [1 300)
+echo “some desired action” ENDFOR
+
+echo “2 - END”
+
+This same script could be made more generic by modifying it to use the first
+parameter to the script itself as the termination condition. This means that the
+script will run some arbitrary number of times that is controllable at the time
+
+the script is launched.
+
+echo “2 - START”
+
+FOR %a RUN (1 %1)
+
+echo “some desired action” ENDFOR
+echo “2 - END”
+Open any protocols; it can interact only with shell commands and applications. The power behind script files is that they can do large amounts of repetitive work with less overhead than required for an application and that they can fully exercise shell commands and applications with much less development overhead than an application. Script files require no compiler or any development tools at all. They can even be edited via the edit command in the shell and then rerun without using any other software.
+
+For example, the following loop will do some desired action three hundred times in a row:
+
+ECHO "two - START"
+FOR percentage A RUN (one three hundred)
+ECHO "some desired action" ENDFOR
+ECHO "two - END"
+
+This same script could be made more generic by modifying it to use the first parameter to the script itself as the termination condition. This means that the script will run some arbitrary number of times that is controllable at the time the script is launched.
+
+ECHO "two - START"
+FOR percentage A RUN (one percentage one)
+ECHO "some desired action" ENDFOR
+ECHO "two - END"
+The provided text discusses the advantages of script files in computing, particularly their ability to automate repetitive tasks with low overhead compared to full applications. Script files interact directly with the shell, circumventing the need for compilers or extensive development tools. They can be edited and re-executed efficiently, making them a powerful mechanism for task automation.
+
+The text then illustrates this with a code example demonstrating a loop structure. The first script snippet shows a `FOR` loop that iterates a specified number of times, in this case, three hundred times, executing an `echo` command within each iteration. The `echo "2 - START"` and `echo "2 - END"` lines demarcate the beginning and end of the loop's execution, while `echo "some desired action"` represents the core operation performed during each iteration. This constructs a sequential execution flow where a particular action is repeated a fixed number of times, a fundamental concept in procedural programming for batch processing or simulation.
+
+The text further proposes a modification to this script to enhance its genericity. By incorporating a parameter, such as `%1`, as the termination condition for the loop, the script becomes adaptable. Instead of being hardcoded to run a fixed number of times, it can execute an arbitrary number of iterations determined at runtime when the script is invoked. This introduces the concept of parameterization in scripting, allowing for dynamic control over program execution and greater flexibility in handling variable workloads. The second code snippet reflects this by replacing the hardcoded loop count with a variable parameter, `%1`, demonstrating how to make scripts more dynamic and responsive to external input. This parameterization is a key aspect of writing reusable and adaptable software components.

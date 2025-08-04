@@ -1,0 +1,45 @@
+Byte 14: CAS Latencies Supported Low Byte
+
+Bit 7 Bit 6 Bit 5 Bit 4 Bit 3 Bit 2 Bit 1 Bit 0
+
+CL=11 CL=10 CL=9 CL=8 (L=7 CL=6& CL=75 CL=4&
+
+0 orl Dorl Qorl Qorl Darl 1 Dori 0 or 1
+Byte 15: CAS Latencies Supported High Byte
+
+Bit 7 Bit 6 Bit 5 Bit 4 Bit 3 Bit 2 Bit 1 Bit 0
+
+Reserved CL=18 CL=17 CL=16 CL=15 CL=14 CL=13 CL=12
+
+0 Qorl Qorl Dor Darl Qorl Dor 0 or 1
+
+For each bit position
+
+0 means this CAS Latency is not supported
+
+1 means this CAS Latency is supported.
+
+SPD Field #14 and #15: “CAS Latencies Supported” Definition from
+JEDEC DDR3 SPD Specification
+
+Table 53 DDR3-1066 Speed Bins
+Byte fourteen: CAS Latencies Supported Low Byte. This section details CAS latencies supported by the memory module. For Bit seven, CAS latency is eleven or zero or one. For Bit six, CAS latency is ten or zero or one. For Bit five, CAS latency is nine or zero or one. For Bit four, CAS latency is eight or zero or one. For Bit three, CAS latency is seven or zero or one. For Bit two, CAS latency is six or one. For Bit one, CAS latency is five or zero or one. For Bit zero, CAS latency is four or zero or one.
+
+Byte fifteen: CAS Latencies Supported High Byte. This section details further CAS latencies. The reserved bit is zero. For Bit seven, CAS latency is eighteen or zero or one. For Bit six, CAS latency is seventeen or zero or one. For Bit five, CAS latency is sixteen or zero or one. For Bit four, CAS latency is fifteen or zero or one. For Bit three, CAS latency is fourteen or zero or one. For Bit two, CAS latency is thirteen or zero or one. For Bit one, CAS latency is twelve or zero or one. For Bit zero, it is zero or one.
+
+For each bit position, a value of zero means this CAS Latency is not supported, and a value of one means this CAS Latency is supported.
+
+SPD Field number fourteen and number fifteen define "CAS Latencies Supported" from the JEDEC DDR three S P D Specification.
+
+Table fifty three DDR three ten sixty six Speed Bins.
+The presented material details the configuration of memory modules, specifically focusing on the "CAS Latencies Supported" fields within the Serial Presence Detect, or S P D, data structure, as defined by the JEDEC DDR3 S P D Specification. This information is crucial for system initialization and optimization, allowing the C P U to understand the operational capabilities of the installed memory.
+
+The data is presented across two tables, Byte fourteen and Byte fifteen, each representing an eight bit field. These bytes are further divided into individual bits, labeled from Bit seven down to Bit zero. Each bit position within these bytes is associated with a specific Column Address Strobe, or C A S, latency value, indicating whether that particular latency is supported by the memory module.
+
+In Byte fourteen, starting from Bit seven and proceeding to Bit zero, the C A S latencies supported are C L equals eleven, C L equals ten, C L equals nine, C L equals eight, C L equals seven, C L equals six, C L equals five, and C L equals four. For each of these bit positions, the value can be either zero or one, signifying support or non-support, respectively.
+
+Byte fifteen similarly maps bits to C A S latencies. From Bit seven to Bit zero, these are designated as Reserved, C L equals eighteen, C L equals seventeen, C L equals sixteen, C L equals fifteen, C L equals fourteen, C L equals thirteen, and C L equals twelve. Again, each bit position can hold a zero or a one. The "Reserved" bit at Bit seven of Byte fifteen is explicitly shown as having a value of zero, indicating it is not used for C A S latency information in this context.
+
+The accompanying text clarifies the encoding: a zero in a bit position means the corresponding C A S latency is not supported by the memory module, while a one indicates that the C A S latency is supported. This binary encoding allows for a compact representation of a range of supported latencies. C A S latency is a fundamental timing parameter in dynamic random access memory, or D Ram, modules, representing the delay between the memory controller issuing a C A S command and the first data bit being available. Lower C A S latencies generally lead to higher memory bandwidth and improved system performance.
+
+The "SPD Field #14 and #15: 'CAS Latencies Supported' Definition from JEDEC DDR3 SPD Specification" title indicates that this bit mapping is a standard mechanism for reporting memory characteristics. Table fifty three, "DDR3-1066 Speed Bins," further contextualizes this data, suggesting that the supported latencies are directly related to the operational speed or frequency of the DDR3 memory modules. The number one hundred six ty six is a reference to the data transfer rate, typically measured in MegaTransfers per second. The speed bins likely correspond to different operational frequencies and voltage configurations for the DDR3 memory. By reading these S P D fields, the system's firmware or operating system can determine the optimal timing parameters to configure the memory controller, ensuring stable and efficient operation.

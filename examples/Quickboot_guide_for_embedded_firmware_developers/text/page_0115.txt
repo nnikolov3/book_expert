@@ -1,0 +1,50 @@
+show hexadecimal status codes sent by the firmware. These displays are
+typically driven by an agent that captures I/O writes to ports 0x80—0x83 and
+shows the values on the displays.
+
+The amount of information that can be conveyed through hexadecimal
+number displays is rather limited. The most prevalent use of these codes is to
+indicate “I got here” to the user. A system crash or hang can sometimes be
+debugged by using the last POST code as an indication of “this is the last
+known good point” and understanding what is being done immediately after
+that point. If you have the capability of run control over a target, it is also
+possible to capture a sequence of POST codes to illustrate the logic flow of
+the firmware, which can allow for POST codes to be used for more than one
+purpose.
+
+BIOS companies typically have a list of standard architectural POST
+codes common across all platforms. This list is usually documented fairly
+extensively for customer consumption. If it’s not, what good are the POST
+
+codes unless you have the entire firmware source code base?
+
+Extending POST Code Usefulness
+Consider a platform that only has two seven-segment displays that display the
+I/O traffic to port 0x80, no serial port, and no ITP port. A fatal error
+condition may occur. That fatal error could be caused by a number of things.
+Since the platform has only two seven-segment displays, only 256 static error
+codes or status codes are possible.
+
+If an error is fatal, there’s really nothing for the platform to do once the
+error is encountered, is there? Instead of simply sending a non-descriptive
+byte out I/O port 0x80 and halting, consider sending more information. How?
+Instead of halting, use the system to cycle through more bytes of data that
+may further help diagnose the problem.
+show hexadecimal status codes sent by the firmware. These displays are typically driven by an agent that captures I O writes to ports hexadecimal eight zero through hexadecimal eight three and shows the values on the displays.
+
+The amount of information that can be conveyed through hexadecimal number displays is rather limited. The most prevalent use of these codes is to indicate “I got here” to the user. A system crash or hang can sometimes be debugged by using the last P O S T code as an indication of “this is the last known good point” and understanding what is being done immediately after that point. If you have the capability of run control over a target, it is also possible to capture a sequence of P O S T codes to illustrate the logic flow of the firmware, which can allow for P O S T codes to be used for more than one purpose.
+
+B I O S companies typically have a list of standard architectural P O S T codes common across all platforms. This list is usually documented fairly extensively for customer consumption. If it’s not, what good are the P O S T codes unless you have the entire firmware source code base?
+
+Extending P O S T Code Usefulness. Consider a platform that only has two seven-segment displays that display the I O traffic to port hexadecimal eight zero, no serial port, and no I T P port. A fatal error condition may occur. That fatal error could be caused by a number of things. Since the platform has only two seven-segment displays, only two hundred fifty six static error codes or status codes are possible.
+
+If an error is fatal, there’s really nothing for the platform to do once the error is encountered, is there? Instead of simply sending a non-descriptive byte out I O port hexadecimal eight zero and halting, consider sending more information. How? Instead of halting, use the system to cycle through more bytes of data that may further help diagnose the problem.
+System boot processes on computing platforms fundamentally rely on a sequence of diagnostic messages, commonly referred to as P O S T codes, which are transmitted by the firmware. These hexadecimal status codes serve as critical indicators of progress and potential issues during the hardware initialization phase. The mechanism typically involves a dedicated hardware agent, often integrated into the chipset or a Super I O controller, which continuously monitors I O write operations to a specific range of memory mapped ports. In this context, the addresses hexadecimal eighty through hexadecimal eighty three are frequently designated for such diagnostic output. When the firmware writes a byte to one of these ports, the agent captures this data and drives external displays, most commonly two character seven segment displays, to show the current status code to system integrators or debug engineers.
+
+The inherent bandwidth limitation of these simple hexadecimal displays means the amount of information conveyed is severely constrained. Despite this, their primary utility lies in providing rudimentary progress feedback. A common diagnostic practice involves observing the last P O S T code displayed before a system crash or hang. This code identifies the "last known good point" in the firmware execution flow, thereby narrowing down the potential location of a fault. Furthermore, if advanced debugging capabilities such as run control are available on the target system, it becomes possible to not only observe the current P O S T code but also to capture and analyze a sequence of these codes. This sequential observation allows for a dynamic tracing of the firmware's logical flow, providing a richer context for problem diagnosis beyond a single static error indicator. Such a capability transforms P O S T codes from mere status flags into a valuable tool for low level software execution analysis.
+
+Leading B I O S development companies typically adhere to an architectural standard for P O S T codes, ensuring a degree of commonality across various hardware platforms. These standardized code lists are usually well documented, making them accessible for customer use in troubleshooting. The absence of such documentation or the inability to access the complete firmware source code significantly diminishes the practical value of P O S T codes, as their specific meanings become inscrutable.
+
+Consider a practical scenario involving platform diagnostics with severe I O constraints. Imagine a system featuring only two seven segment displays for output, mapped to I O port hexadecimal eighty, with no access to a serial port for textual output or an I T P port for intrusive, low level debugging. In such an environment, a fatal error condition can arise from myriad causes. Given the two seven segment displays, the system can only convey up to two hundred fifty six distinct static error or status codes, representing a very limited diagnostic resolution.
+
+If a fatal error occurs and the system enters an unrecoverable state, the default behavior might be to halt operations after emitting a single, non descriptive byte to I O port hexadecimal eighty. However, this approach squanders the opportunity to leverage the system's remaining operational capacity for more detailed diagnostics. A more sophisticated strategy would involve the firmware, instead of immediately halting, cycling through a predetermined sequence of bytes, each written to I O port hexadecimal eighty. This dynamic sequence can encode substantially more diagnostic information than a single static P O S T code. For instance, the sequence could represent a multi byte error descriptor, a stack trace, or a series of register values. This approach effectively uses the time dimension to increase the information density of the extremely limited I O channel, thereby providing richer data that can significantly aid in diagnosing the underlying problem, even in the most resource constrained environments.

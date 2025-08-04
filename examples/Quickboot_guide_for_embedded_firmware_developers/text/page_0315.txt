@@ -1,0 +1,43 @@
+If tCKmin cannot be divided evenly by the MTB, this byte must be rounded
+up to the next larger integer and the Fine Offset for tCKmin (SPD byte 34)
+
+used for correction to get the actual value.
+
+tCKmin tCKmin Offset tCKmin
+
+(MTB units) MTB(ns) [(FTB units)l FTB{ns) Result{ns) Use
+
+20 0x14 0.125 i) 0 0.001 2.5 DDR3-800 (400 MHz clock)
+15 Ox0F 0.125 0 0 0.001 1.875% DDR3-1066 (533 MHz clock)
+12 0x0C 0.125% 0 0 0.001 1.5 DDR3-1333 (667 MHz clock)
+10 OxoA 0,125 Cr 0 0,001 1.25 DDR3-1600 (B00 MHz clock)
+Hl Ox 0s 125 0d Onl A 0.001 1.071 DDR3-1866 (933 MHz clock)
+a8 0x08 0.12% “fd OxC2 0.001 0.938 DDR3-2133 (1067 MHz clock)
+
+Notes: 1. See SPD byte 34
+
+Table 53 DDR3-1066 Speed Bins
+If t C Kmin cannot be divided evenly by the M T B, this byte must be rounded up to the next larger integer and the Fine Offset for t C Kmin S P D byte thirty four used for correction to get the actual value.
+
+The table shows t C Kmin values based on different parameters. The first column indicates the row number, followed by the t C Kmin value in M T B units. The next column shows the M T B in nanoseconds. Then, the t C Kmin Offset is presented in F T B units and a corresponding value. Following this are the F T B in nanoseconds, the t C Kmin Result in nanoseconds, and the intended use.
+
+Specifically, for row twenty, the t C Kmin is hexadecimal fourteen, M T B is zero point one two five, t C Kmin Offset is zero, the corresponding value is zero, F T B is zero point zero zero one, the result is two point five, and the use is D D R three eight hundred four hundred megahertz clock.
+
+For row fifteen, the t C Kmin is hexadecimal zero F, M T B is zero point one two five, t C Kmin Offset is zero, the corresponding value is zero, F T B is zero point zero zero one, the result is one point eight seven five, and the use is D D R three one thousand sixty six five hundred thirty three megahertz clock.
+
+For row twelve, the t C Kmin is hexadecimal zero C, M T B is zero point one two five, t C Kmin Offset is zero, the corresponding value is zero, F T B is zero point zero zero one, the result is one point five, and the use is D D R three one thousand three hundred thirty three six hundred sixty seven megahertz clock.
+
+For row ten, the t C Kmin is hexadecimal zero A, M T B is zero point one two five, t C Kmin Offset is zero, the corresponding value is zero, F T B is zero point zero zero one, the result is one point two five, and the use is D D R three one thousand six hundred eight hundred megahertz clock.
+
+For row nine, the t C Kmin is hexadecimal zero nine, M T B is zero point one two five, t C Kmin Offset is negative fifty four, the corresponding value is hexadecimal zero C A, F T B is zero point zero zero one, the result is one point zero seven one, and the use is D D R three one thousand eight hundred sixty six nine hundred thirty three megahertz clock.
+
+For row eight, the t C Kmin is hexadecimal zero eight, M T B is zero point one two five, t C Kmin Offset is negative sixty two, the corresponding value is hexadecimal zero C two, F T B is zero point zero zero one, the result is zero point nine three eight, and the use is D D R three two thousand one hundred thirty three one thousand sixty seven megahertz clock.
+
+Notes: One. See S P D byte thirty four.
+
+Table fifty three D D R three one thousand sixty six Speed Bins.
+The text describes a method for calculating tCKmin, a crucial timing parameter for memory devices, specifically within the context of DDR3 memory. When the tCKmin value, likely representing the minimum clock cycle time, cannot be perfectly divided by the MTB, which stands for "Memory Clock Period," a rounding mechanism is employed. Specifically, if there is a remainder after division, the result is rounded up to the next whole integer. This rounded integer, along with a "Fine Offset for tCKmin," which is specified to be found in SPD byte 34, is then used for correction to determine the actual, precise tCKmin value.
+
+The accompanying table, labeled "Table 53 DDR3-1066 Speed Bins," provides empirical data illustrating this concept across various DDR3 memory frequencies. The columns detail tCKmin in both MTB units and nanoseconds, along with an offset value in FTB or "Fine Time Base" units, and the final tCKmin result in nanoseconds, correlated with specific DDR3 uses or speeds. For instance, the entry for DDR3-800, operating with a four hundred megahertz clock, has a tCKmin of two point five nanoseconds, derived from an MTB value of zero point one two five and an offset of zero. More illustrative is the row for DDR3-1066, running at five hundred thirty three megahertz. Here, the MTB is also zero point one two five nanoseconds. The table indicates a tCKmin in MTB units of fifteen, implying a calculated value. The offset is zero, and the resultant tCKmin is one point eight seven five nanoseconds. This suggests that in this case, the initial calculation might have resulted in a value that, when converted or interpreted, did not require rounding up.
+
+However, the context of the text emphasizes the rounding process. Consider the entries with non-zero offsets in FTB units, such as the row for DDR3-1866 operating at nine hundred thirty three megahertz. This entry shows an MTB value of zero point one two five nanoseconds, a tCKmin of nine in MTB units, an offset of negative fifty four in FTB units, which corresponds to zero x C A in hexadecimal, and a resulting tCKmin of one point zero seven one nanoseconds. Another example is DDR3-2133 at one thousand sixty seven megahertz, with an MTB of zero point one two five nanoseconds, a tCKmin of eight in MTB units, and an offset of negative sixty two FTB units, represented as zero x C two in hexadecimal, yielding a final tCKmin of zero point nine three eight nanoseconds. These examples highlight how the fine offset, represented in FTB units which are likely fractional parts of the MTB, allows for precise adjustment of the tCKmin value beyond what the integer MTB units alone can represent. The system likely calculates an initial tCKmin based on the MTB units and then applies the fine offset to achieve the final, accurate timing specification for each memory speed bin. The "Notes: 1. See SPD byte 34" reinforces that the fine offset, a key component for precise tCKmin determination, is stored in a specific location within the Serial Presence Detect (SPD) data, a standard mechanism for memory modules to communicate their capabilities to the system.
