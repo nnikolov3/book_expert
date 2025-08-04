@@ -68,7 +68,7 @@ check_resampled_files()
 	local wav_dir="$2"
 
 	if [[ ! -d $resampled_dir ]]; then
-		return 0
+		return 1
 	fi
 
 	wav_count=$(find "$wav_dir" -maxdepth 1 -name "*.wav" -type f | wc -l)
@@ -76,9 +76,9 @@ check_resampled_files()
 
 	if [[ $resampled_count -gt 0 && $resampled_count -eq $wav_count ]]; then
 		log_info "Found resampled wav files"
-		return 1
-	else
 		return 0
+	else
+		return 1
 	fi
 }
 
@@ -124,7 +124,7 @@ merge_wav_files()
 	check_resampled_files "$persistent_resample_dir" "$original_wav_dir"
 	resample_status="$?"
 	# Check if resampled files already exist
-	if [[ $resample_status -eq 1 ]]; then
+	if [[ $resample_status -eq 0 ]]; then
 		log_info "Resampled files exist for $pdf_name, using existing files"
 
 		# Get sorted list of existing resampled files
@@ -161,12 +161,12 @@ merge_wav_files()
 
 			log_info "Resampling: $base_name"
 
-			ffmpeg_output=$(ffmpeg -i "$input_file" \
+			ffmpeg -i "$input_file" \
 				-ar 48000 -ac 1 -c:a pcm_s32le \
 				-af "aresample=async=1:first_pts=0" \
 				-rf64 auto \
 				-hide_banner -loglevel error -y \
-				"$resampled_file")
+				"$resampled_file"
 			ffmpeg_exit="$?"
 
 			if [[ $ffmpeg_exit -ne 0 ]]; then
@@ -174,7 +174,7 @@ merge_wav_files()
 				return 1
 			fi
 
-			rsync_output=$(rsync -a "$resampled_file" "$persistent_file" 2>&1)
+			rsync -a "$resampled_file" "$persistent_file"
 			rsync_exit="$?"
 
 			if [[ $rsync_exit -ne 0 ]]; then
@@ -198,12 +198,12 @@ merge_wav_files()
 	fi
 
 	# Merge all resampled files
-	ffmpeg_output=$(ffmpeg -f concat -safe 0 -i "$concat_list_file" \
+	ffmpeg -f concat -safe 0 -i "$concat_list_file" \
 		-c copy -avoid_negative_ts make_zero \
 		-fflags +genpts -max_muxing_queue_size 4096 \
 		-rf64 auto \
 		-hide_banner -loglevel error -y \
-		"$output_file" 2>&1)
+		"$output_file"
 	ffmpeg_exit="$?"
 
 	if [[ $ffmpeg_exit -ne 0 ]]; then

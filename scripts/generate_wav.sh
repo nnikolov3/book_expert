@@ -356,13 +356,8 @@ main()
 	mkdir -p "$LOG_DIR_GLOBAL"
 	LOG_FILE_GLOBAL="$LOG_DIR_GLOBAL/log_$(date +'%Y%m%d_%H%M%S').log"
 	touch "$LOG_FILE_GLOBAL"
-	local activate_status
-	activate_status=$(source "${CUR_PYTHON_PATH_GLOBAL}/activate")
+	source "${CUR_PYTHON_PATH_GLOBAL}/activate"
 	# Activate Python virtual environment
-	if [[ $activate_status -ne 0 ]]; then
-		log_error "Failed to activate virtual environment"
-		exit 1
-	fi
 
 	# Source logging utilities
 	local -r logger="helpers/logging_utils_helper.sh"

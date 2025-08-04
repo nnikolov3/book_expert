@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Combines sequential pages (1+2+3, 4+5+6, etc.) into unified text files
+# Combines sequential pages with overlap (1+2+half of 3, then 3+4+half of 5, etc.) into unified text files
 # Validates text directory by comparing with PNG directory
 # Processes incomplete directories with proper retry logic
 
@@ -180,7 +180,43 @@ get_next_start_index()
 	fi
 }
 
-process_text_group()
+get_half_text_content()
+{
+	# All local variables declared at the top
+	local char_count=0
+	local file_path="$1"
+	local half_char_count=0
+	local line=""
+	local line_count=0
+	local total_chars=0
+	local total_lines=0
+
+	if [[ ! -f $file_path ]]; then
+		printf '%s' ""
+		return 1
+	fi
+
+	# Count total characters and lines in the file
+	total_chars=$(wc -c <"$file_path")
+	total_lines=$(wc -l <"$file_path")
+
+	# Calculate half the character count
+	half_char_count=$((total_chars / 2))
+
+	# Read file line by line until we reach approximately half the content
+	char_count=0
+	line_count=0
+
+	while IFS= read -r line && [[ $char_count -lt $half_char_count ]]; do
+		printf '%s\n' "$line"
+		char_count=$((char_count + ${#line} + 1)) # +1 for newline
+		line_count=$((line_count + 1))
+	done <"$file_path"
+
+	return 0
+}
+
+process_text_group_overlapping()
 {
 	# All local variables declared at the top
 	local api_response_file=""
@@ -188,6 +224,7 @@ process_text_group()
 	local combined_text=""
 	local desc=""
 	local first_file="$1"
+	local half_third_content=""
 	local jq_exit=""
 	local output_file_path=""
 	local output_index="$4"
@@ -202,7 +239,7 @@ process_text_group()
 	local write_exit=""
 
 	# Build file description
-	desc="$first_file"
+	desc="$(basename "$first_file")"
 	unified_file="unified_${output_index}.txt"
 
 	if [[ -n $second_file ]] && [[ $second_file != "" ]]; then
@@ -210,19 +247,25 @@ process_text_group()
 	fi
 
 	if [[ -n $third_file ]] && [[ $third_file != "" ]]; then
-		desc="$desc + $(basename "$third_file")"
+		desc="$desc + HALF of $(basename "$third_file")"
 	fi
 
 	log_info "Processing: $desc -> $unified_file"
 
-	# Combine text files
+	# Combine text files with overlap logic
 	combined_text=$(<"$first_file")
-	if [[ -n $second_file ]] && [[ $second_file != "" ]]; then
-		combined_text="$combined_text\n$(<"$second_file")"
+
+	if [[ -n $second_file ]] && [[ $second_file != "" ]] && [[ -f $second_file ]]; then
+		combined_text="$combined_text"$'\n'$(<"$second_file")
 	fi
-	if [[ -n $third_file ]] && [[ $third_file != "" ]]; then
-		combined_text="$combined_text\n$(<"$third_file")"
+
+	if [[ -n $third_file ]] && [[ $third_file != "" ]] && [[ -f $third_file ]]; then
+		half_third_content=$(get_half_text_content "$third_file")
+		if [[ -n $half_third_content ]]; then
+			combined_text="$combined_text"$'\n'"$half_third_content"
+		fi
 	fi
+
 	system_prompt="$UNIFY_TEXT_PROMPT_GLOBAL"
 	user_prompt="TEXT: $combined_text"
 
@@ -320,8 +363,6 @@ process_text_group()
 unify_text()
 {
 	# All local variables declared at the top
-	local candidate=""
-	local end_file=0
 	local first_file=""
 	local group_result=""
 	local i=0
@@ -343,20 +384,20 @@ unify_text()
 		log_info "Resuming from unified index $start_index"
 	fi
 
-	log_info "Processing $total_files text files in groups of 3"
+	log_info "Processing $total_files text files with overlapping pattern (2 full + half of 3rd)"
 	print_line
 
-	# Calculate starting file position based on start_index
-	i=$((start_index * 3))
+	# Calculate starting position: each group advances by 2 files
+	i=$((start_index * 2))
 	output_index="$start_index"
 
-	# Process files in groups of 3 starting from calculated position
-	for (( ; i < total_files; i += 3)); do
+	# Process files with overlap: 1+2+half of 3, then 3+4+half of 5, etc.
+	while [[ $i -lt $total_files ]]; do
 		first_file="${RESULT_ARRAY_GLOBAL[i]}"
 		second_file=""
 		third_file=""
 
-		# Check if files exist and are readable
+		# Check if first file exists and is readable
 		if [[ ! -r $first_file ]]; then
 			log_error "Cannot read file: $first_file"
 			return 1
@@ -364,31 +405,35 @@ unify_text()
 
 		# Check if second file exists
 		if [[ $((i + 1)) -lt $total_files ]]; then
-			candidate="${RESULT_ARRAY_GLOBAL[$((i + 1))]}"
+			local candidate="${RESULT_ARRAY_GLOBAL[$((i + 1))]}"
 			if [[ -r $candidate ]]; then
 				second_file="$candidate"
 			fi
 		fi
 
-		# Check if third file exists
+		# Check if third file exists (for half content)
 		if [[ $((i + 2)) -lt $total_files ]]; then
-			candidate="${RESULT_ARRAY_GLOBAL[$((i + 2))]}"
+			local candidate="${RESULT_ARRAY_GLOBAL[$((i + 2))]}"
 			if [[ -r $candidate ]]; then
 				third_file="$candidate"
 			fi
 		fi
 
-		if [[ $((i + 3)) -le $total_files ]]; then
-			end_file=$((i + 3))
+		# Determine the range description for logging
+		local end_display=""
+		if [[ -n $third_file ]]; then
+			end_display="$((i + 2)) (half)"
+		elif [[ -n $second_file ]]; then
+			end_display="$((i + 1))"
 		else
-			end_file="$total_files"
+			end_display="$((i))"
 		fi
 
-		log_info "Processing group $output_index: files $((i + 1))-$end_file of $total_files"
+		log_info "Processing group $output_index: files $((i + 1))-$end_display of $total_files"
 		print_line
 
-		# Call existing process_text_group function
-		process_text_group "$first_file" "$second_file" "$third_file" "$output_index" "$storage_dir"
+		# Call the overlapping process function
+		process_text_group_overlapping "$first_file" "$second_file" "$third_file" "$output_index" "$storage_dir"
 		group_result="$?"
 
 		if [[ $group_result -eq 0 ]]; then
@@ -396,6 +441,9 @@ unify_text()
 		else
 			log_warn "Failed to process group $output_index"
 		fi
+
+		# Advance by 2 files for overlap (next group starts at position i+2)
+		i=$((i + 2))
 		output_index=$((output_index + 1))
 	done
 
@@ -585,7 +633,7 @@ main()
 	LOG_DIR_GLOBAL=$($config_helper "logs_dir.unify_text")
 	MAX_API_RETRIES_GLOBAL=$($config_helper "retry.max_retries")
 	RETRY_DELAY_SECONDS_GLOBAL=$($config_helper "retry.retry_delay_seconds")
-	UNIFY_TEXT_PROMPT_GLOBAL=$(config_helper "prompts.unify_text.prompt")
+	UNIFY_TEXT_PROMPT_GLOBAL=$($config_helper "prompts.unify_text.prompt")
 	FAILED_LOG_GLOBAL="$LOG_DIR_GLOBAL/failed_pages.log"
 
 	# Reset directories

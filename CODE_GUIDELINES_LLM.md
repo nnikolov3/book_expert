@@ -2,6 +2,15 @@
 
 **FOLLOW THESE RULES STRICTLY** - These guidelines ensure robust, maintainable scripts that handle edge cases gracefully and pass all linter checks.
 
+## Code design principles:
+1) Do more with less.
+2) Small is fast.
+3) Tested is robust.
+4) Elegance is simplicity.
+5) Readbility and clarity pave the path forward.
+6) Make it explicit.
+7) Correctness over speed.                           
+
 ## 1. Script Initialization and Safety
 
 ### Strict Mode Settings
@@ -410,7 +419,7 @@ function call_api() {
 - [ ] No unreachable code
 - [ ] No useless echo
 - [ ] Clear scope
-- [ ] EVerything is quoted correctly
+- [ ] Everything is quoted correctly
 - [ ] Follows modern Bash practices
 
 These guidelines ensure robust, maintainable BASH scripts that handle edge cases gracefully and provide clear debugging information when issues arise.
