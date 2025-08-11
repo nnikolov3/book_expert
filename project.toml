@@ -49,7 +49,7 @@ narration_text_concat = "/tmp/logs/final_text"
 
 # ========================================================================
 [settings]
-dpi = 600
+dpi = 1200
 workers = 16
 overlap_chars = 2000
 skip_blank_pages = true
