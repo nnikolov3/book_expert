@@ -1,17 +1,17 @@
-# Comprehensive BASH Code Guidelines for LLMs
+# Code Guidelines for LLMs
 
-**FOLLOW THESE RULES STRICTLY** - These guidelines ensure robust, maintainable scripts that handle edge cases gracefully and pass all linter checks.
+FOLLOW THESE RULES STRICTLY - These guidelines ensure robust, maintainable scripts that handle edge cases gracefully and pass all linter checks.
 
-## Code design principles:
-1) Do more with less.
-2) Small is fast.
-3) Tested is robust.
-4) Elegance is simplicity.
-5) Readbility and clarity pave the path forward.
-6) Make it explicit.
-7) Correctness over speed.                           
+## Core Principles
+- **Simplicity**: Do more with less. Elegance lies in simplicity. Keep it simple.
+- **Correctness**: Tested is robust. Correctness over speed. Do the job correctly with least changes.
+- **Readability**: Code is self-documenting. Clear names, small functions, explicit intent.
+- **Consistency**: Regularity favors consistency. Follow established patterns.
+- **Safety**: Explicit over implicit. Safe by default with strict error checking.
+- **Maintainability**: No hardcoded values. Remove unused code. Comments explain "why", not "what".
+- **Quality**: ALWAYS lint and format. Pass all shellcheck validations.
 
-## 1. Script Initialization and Safety
+## BASH-SPECIFIC REQUIREMENTS
 
 ### Strict Mode Settings
 ```bash
@@ -22,8 +22,8 @@ set -euo pipefail
 ```
 
 ### Error Handling Philosophy
-- **NEVER redirect to `/dev/null`** - This hides critical debugging information
-- **NEVER suppress error output** - Always capture and handle errors explicitly
+- NEVER redirect to `/dev/null` - This hides critical debugging information
+- NEVER suppress error output - Always capture and handle errors explicitly
 - Use proper exit code checking instead of hiding failures
 
 ```bash
@@ -34,22 +34,27 @@ if ! command -v "$dep" >/dev/null 2>&1; then
 
 # ✅ GOOD - Captures errors for debugging
 value=$(yq -r "$key" "$CONFIG_FILE")
-if [[ $value ]]; then  ..
+if [[ $value ]]; then
+    # process value
+fi
 
-if [[ -n command -v "$dep" ]]; then
+if command -v "$dep" >/dev/null; then
+    # dependency exists
+fi
 ```
 
-## 2. Variable Management
+## Variable Management
 
 ### Declaration and Scope Rules
-- **Always declare variables before assignment** to prevent undefined variable errors
+- Always declare variables before assignment to prevent undefined variable errors
 - Use `declare` at global scope and `local` inside functions
-- **Global variables must contain "GLOBAL" in their name** for clarity
-- **Initialize all variables explicitly** - no implicit empty values
-- **Declare and assign on separate lines** for better error tracking
-- **ALL variables must be declared at the top** - global variables at the top of the script, local variables at the top of functions
-- **LONG COMMANDS SHOULD BE MULTILINE**
-- **Variables should hint the type** primerily if it is an array, or a reference- **Initialize the variable in the correct order to avoid unbound variables**
+- Global variables must contain "GLOBAL" in their name for clarity
+- Initialize all variables explicitly - no implicit empty values
+- Declare and assign on separate lines for better error tracking
+- ALL variables must be declared at the top - global variables at the top of the script, local variables at the top of functions
+- LONG COMMANDS SHOULD BE MULTILINE
+- Variables should hint their type, primarily for arrays or references
+- Initialize variables in dependency order to avoid unbound variable errors
 
 ```bash
 # ✅ GOOD - Global variables at top of script
@@ -75,12 +80,12 @@ function process_data() {
         echo "Valid JSON response"
     fi  
 
-	tesseract_output=$(tesseract \
-		"$png_file" \
-		stdout -l "$TESSERACT_LANG_GLOBAL" \
-		--dpi "$DPI_GLOBAL" \
-		--oem 3 \
-		--psm 1)  
+  tesseract_output=$(tesseract \
+    "$png_file" \
+    stdout -l "$TESSERACT_LANG_GLOBAL" \
+    --dpi "$DPI_GLOBAL" \
+    --oem 3 \
+    --psm 1)  
 }
 
 # ❌ AVOID - Variables scattered throughout
@@ -102,10 +107,12 @@ SOME_VAR=$(...) # Unclear scope and purpose
 jq_check_output=$(echo "$full_response" | head -1 | jq -e '.choices[0].delta' 2>&1)
 jq_check_exit="$?"
 if [[ $jq_check_exit -eq 0 ]]; then  # Redundant check without output validation
+    echo "Valid JSON"
+fi
 ```
 
 ### Variable Naming and Usage
-- **All variables must be declared at the top** of their scope (script or function)
+- All variables must be declared at the top of their scope (script or function)
 
 - Quote all variables, especially `"$?"` when assigning exit codes
 - Use meaningful, descriptive names
@@ -135,14 +142,14 @@ function bad_function() {
 }
 ```
 
-## 3. Control Flow and Conditionals
+## Control Flow and Conditionals
 
 ### Explicit Control Structures
-- **Use explicit `if/then/fi` blocks** for all conditionals - never one-liners
-- **Ensure all control blocks are properly closed** (`if/fi`, `while/done`, `for/done`)
-- **Capture command output explicitly before testing conditions**
-- **Always assign exit codes to variables** instead of using `$?` directly
-- **Avoid using `$?` when possible** - prefer direct command testing
+- Use explicit `if/then/fi` blocks for all conditionals - never one-liners
+- Ensure all control blocks are properly closed (`if/fi`, `while/done`, `for/done`)
+- Capture command output explicitly before testing conditions
+- Always assign exit codes to variables instead of using `$?` directly
+- Avoid using `$?` when possible - prefer direct command testing
 
 ```bash
 # ✅ GOOD - Explicit output capture and testing
@@ -156,7 +163,7 @@ if [[ "$exit_code" -eq 0 ]]; then
 fi
 
 # ✅ Direct command testing when output not needed
-if [[ "$(some_command)" -eq 0 ]]; then   
+if some_command; then   
     echo "Command succeeded"
 fi
 
@@ -164,22 +171,35 @@ fi
 if some_command; then process; fi  # One-liner
 if (( i++ )); then                 # Compound arithmetic in condition
 if [[ $? -eq 0 ]]; then           # Direct $? usage
-BAD
-  convert_to_mp3 "$final_wav" "$final_mp3"
 
-	if [[ $? -eq 0 ]]; then   # capture the exit code prior.
-		log_success "Completed project: $pdf_name"
-		return 0
-	else
-		log_error "Failed to convert to MP3 for $pdf_name"
-		return 1
-	fi
+# ❌ BAD - Direct $? usage
+convert_to_mp3 "$final_wav" "$final_mp3"
+if [[ $? -eq 0 ]]; then   # Should capture exit code first
+    log_success "Completed project: $pdf_name"
+    return 0
+else
+    log_error "Failed to convert to MP3 for $pdf_name"
+    return 1
+fi
+
+# ✅ GOOD - Capture exit code explicitly
+local convert_result=""
+local convert_exit=""
+convert_result=$(convert_to_mp3 "$final_wav" "$final_mp3" 2>&1)
+convert_exit="$?"
+if [[ "$convert_exit" -eq 0 ]]; then
+    log_success "Completed project: $pdf_name"
+    return 0
+else
+    log_error "Failed to convert to MP3 for $pdf_name: $convert_result"
+    return 1
+fi
 ```
 
 ### Arithmetic and Comparisons
 - Use `i=$((i + 1))` instead of `((i++))`
-- **Prefer `[[ ]]` over `[ ]`** for test conditions
-- **Prefer `[[ $var -eq 0 ]]` over `((var == 0))`** for arithmetic operations
+- Prefer `[[ ]]` over `[ ]` for test conditions
+- Prefer `[[ $var -eq 0 ]]` over `((var == 0))` for arithmetic operations
 
 ```bash
 # ✅ GOOD
@@ -195,12 +215,12 @@ for ((i++; i < max; i++)); do  # Non-portable and unclear
 if ((var == 0)); then          # Less reliable than [[ ]]
 ```
 
-## 4. File Operations and I/O
+## File Operations and I/O
 
 ### Safe File Operations
-- **Use atomic file operations** (`mv`, `flock`) to prevent race conditions in parallel processing
-- **Prefer `rsync` over `cp`** for file copying operations
-- **Use `cmd < file` instead of `cat file | cmd`** (avoid useless cat)
+- Use atomic file operations (`mv`, `flock`) to prevent race conditions in parallel processing
+- Prefer `rsync` over `cp` for file copying operations
+- Use `cmd < file` instead of `cat file | cmd` (avoid useless cat)
 - Implement solid but efficient retry logic for critical operations
 
 ```bash
@@ -223,8 +243,8 @@ cat "$input_file" | while read line; do  # Useless cat
 ```
 
 ### printf Best Practices
-- **Never use variables directly in printf format strings**
-- **Always use `printf '%s' "$VARIABLE"`** for string output
+- Never use variables directly in printf format strings
+- Always use `printf '%s' "$VARIABLE"` for string output
 
 ```bash
 # ✅ GOOD
@@ -235,13 +255,13 @@ printf '%d files processed\n' "$count"
 printf "$message"  # Dangerous - treats variable as format string
 ```
 
-## 5. Configuration Management
+## Configuration Management
 
 ### Configuration Variables
-- **Configuration file variables should be readonly** (`declare -r`)
-- **API keys and sensitive data must be readonly**
-- **No hardcoded values** - use configuration variables
-- **Everything should be parameterized** and moved to project.toml
+- Configuration file variables should be readonly (`declare -r`)
+- API keys and sensitive data must be readonly
+- No hardcoded values - use configuration variables
+- Everything should be parameterized and moved to project.toml
 
 ```bash
 # ✅ GOOD - Readonly configuration
@@ -256,13 +276,13 @@ timeout=30                   # Hardcoded magic number
 dpi=600                      # Should be configurable
 ```
 
-## 6. Directory Structure Standards
+## Directory Structure Standards
 
 ### Standard Directory Layout
 - `INPUT_GLOBAL`: Location where raw PDF files exist
 - `OUTPUT_GLOBAL`: Location where all produced artifacts are stored
-- **All artifacts saved under**: `$OUTPUT_GLOBAL/$PDF_NAME/<artifact_type>/`
-- **Maintain consistent directory structure** across all operations
+- All artifacts saved under: `$OUTPUT_GLOBAL/$PDF_NAME/<artifact_type>/`
+- Maintain consistent directory structure across all operations
 
 ```bash
 # ✅ GOOD - Consistent structure
@@ -283,12 +303,12 @@ for pdf_file in "$INPUT_GLOBAL"/*.pdf; do
 done
 ```
 
-## 7. Error Handling and Debugging
+## Error Handling and Debugging
 
 ### Debugging Best Practices
-- **Enable strict error checking** with `set -u` to catch unbound variables
-- **Clean up unused variables** and maintain detailed comments
-- **Avoid unreachable code** or redundant commands
+- Enable strict error checking with `set -u` to catch unbound variables
+- Clean up unused variables and maintain detailed comments
+- Avoid unreachable code or redundant commands
 - Use `grep -q` for silent boolean checks
 
 ```bash
@@ -314,15 +334,7 @@ if grep -q "pattern" "$file"; then
 fi
 ```
 
-## 8. Code Quality and Maintenance
-
-### Code Organization
-- **Keep code concise, clear, and self-documented**
-- **Comments should explain intent, not just mechanics**
-- **Do more with less** - avoid adding code without clear purpose
-- **Lint all scripts with `shellcheck`** for correctness
-- **Update comments when code changes** to maintain consistency
-- **Remove unused variables - always**
+## Code Quality and Maintenance
 
 ```bash
 # ✅ GOOD - Self-documenting with clear intent and proper variable organization
@@ -354,13 +366,13 @@ function process_pdf_pipeline() {
 }
 ```
 
-## 9. API and External Commands
+## API and External Commands
 
 ### External Command Handling
-- **Avoid mixing different API calls** in the same function
-- **Capture both output and exit codes** for external commands
-- **Implement proper error handling** for all external dependencies
-- **Always consult the latest documentation** for APIs
+- Avoid mixing different API calls in the same function
+- Capture both output and exit codes for external commands
+- Implement proper error handling for all external dependencies
+- Always consult the latest documentation for APIs
 
 ```bash
 # ✅ GOOD - Proper external command handling with variables at top
@@ -389,37 +401,20 @@ function call_api() {
 }
 ```
 
-## 10. Summary Principles
+## Compliance Checklist
 
-### Core Design Philosophy
-1. **Explicit over implicit** - declare intentions clearly
-2. **Safe by default** - use strict error checking  
-3. **Self-documenting** - code should explain itself
-4. **Atomic operations** - prevent race conditions
-5. **No hidden failures** - never suppress error output
-6. **Consistent structure** - follow established patterns
-7. **Maintainable** - keep comments current with code changes
-8. **Parameterized** - avoid hardcoded values
-9. **Debuggable** - provide clear error messages and logging
-10. **Linter-compliant** - pass all shellcheck validations
-
-### Quick Reference Checklist
-- [ ] All variables declared before use
-- [ ] **Global variables at top of script, local variables at top of functions**
-- [ ] Global variables contain "GLOBAL" in name
-- [ ] No redirection to `/dev/null`
-- [ ] Exit codes captured in variables
-- [ ] All control blocks properly closed
-- [ ] Configuration values are readonly
-- [ ] File operations are atomic
-- [ ] Error messages are descriptive
-- [ ] Code passes shellcheck validation
-- [ ] Comments explain intent, not mechanics
-- [ ] No unused variables
-- [ ] No unreachable code
-- [ ] No useless echo
-- [ ] Clear scope
-- [ ] Everything is quoted correctly
-- [ ] Follows modern Bash practices
-
-These guidelines ensure robust, maintainable BASH scripts that handle edge cases gracefully and provide clear debugging information when issues arise.
+**Before submitting any bash script, verify:**
+- [ ] Variables declared at top of scope (global/function)
+- [ ] Global variables suffixed with "_GLOBAL"
+- [ ] No `/dev/null` redirections
+- [ ] Exit codes captured in variables before testing
+- [ ] All control blocks closed (if/fi, while/done, for/done)
+- [ ] Configuration values are readonly (`declare -r`)
+- [ ] File operations are atomic (use `mv`, `flock`, `rsync`)
+- [ ] Error messages are descriptive and logged to stderr
+- [ ] Passes shellcheck validation
+- [ ] No unused variables or unreachable code
+- [ ] All variables properly quoted
+- [ ] Uses `printf '%s'` instead of `printf "$var"`
+- [ ] Functions do one thing well (Single Responsibility)
+- [ ] Clear, intention-revealing names
