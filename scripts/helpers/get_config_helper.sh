@@ -19,7 +19,13 @@ if [[ ! -f $CONFIG_FILE ]]; then
 	exit 1
 fi
 
-VALUE="$(yq -r ".${KEY} // \"\"" "$CONFIG_FILE" || true)"
+VALUE="$(yq -r ".${KEY} // \"\"" "$CONFIG_FILE" 2>&1)"
+yq_exit="$?"
+
+if [[ "$yq_exit" -ne 0 ]]; then
+	echo "ERROR: yq failed to parse config file for key '$KEY': $VALUE" >&2
+	exit 1
+fi
 
 if [[ -n $VALUE ]]; then
 	echo "$VALUE"

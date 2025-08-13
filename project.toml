@@ -15,6 +15,8 @@ input_dir = "/home/niko/Dev/book_expert/data/raw"
 output_dir = "/home/niko/Dev/book_expert/data"
 python_path = "/home/niko/Dev/book_expert/.venv/bin"
 ckpts_path = "/home/niko/Dev/book_expert/F5-TTS/ckpts/"
+png_to_text = "/home/niko/Dev/book_expert/logs/png_to_text"
+clean_text = "/home/niko/Dev/book_expert/logs/clean_text"
 
 [directories]
 polished_dir = "polished"
@@ -36,6 +38,7 @@ text_to_chunks = "/tmp/text_to_chunks"
 chunks_to_wav = "/tmp/chunks_to_wav"
 combine_chunks = "/tmp/combine_chunks"
 narration_text_concat = "/tmp/final_text_concat"
+clean_text = "/tmp/clean_up_text.processing/clean_text"
 
 [logs_dir]
 pdf_to_png = "/tmp/logs/pdf_to_png"
@@ -49,7 +52,7 @@ narration_text_concat = "/tmp/logs/final_text"
 
 # ========================================================================
 [settings]
-dpi = 1200
+dpi = 200
 workers = 16
 overlap_chars = 2000
 skip_blank_pages = true
@@ -57,9 +60,11 @@ blank_threshold = 1000
 force = 1
 
 [tesseract]
-language = "eng+equ"
+language = "equ+eng+osd+equ+eng"
+oem = 3  # auto (LSTM + legacy fallback for compatibility)
+psm = 3  # fully automatic page segmentation (no OSD, more robust)
 skip_blank_pages = true  # Enable blank page detection
-blank_threshold = 1000  # Standard deviation threshold
+blank_threshold = 1000
 
 [google_api]
 api_key_variable = "GEMINI_API_KEY"
@@ -82,6 +87,20 @@ timeout_duration = 300
 
 [text_concatenation]
 text_type = "unified_text"  # Options: "final_text" or "unified_text"
+
+[blank_detection]
+method = "hybrid"  # or "entropy", "whitespace", "colors", "standard_deviation", "mean"
+entropy_threshold = 0.01
+white_percent_threshold = 99
+unique_colors_threshold = 50
+std_dev_threshold = 0.01
+mean_threshold = 0.95
+fast_non_white_threshold = 0.005
+fast_fuzz_percent = 5
+
+# ========================================================================
+[clean]
+helper_script = "/home/niko/Dev/book_expert/scripts/helpers/clean_text_with_sed_helper.sh"
 
 # ========================================================================
 [retry]

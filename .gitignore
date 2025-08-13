@@ -1,10 +1,15 @@
 # Python virtual environments
 .venv/
 
+# Claude Code configuration
+.claude/
+
+# AI models and binaries
+models/
+bin/
 
 # Data and output directories (do not track generated content)
 data/*/
-
 
 # Exclude intermediate and result files
 data/*/png/
@@ -16,6 +21,13 @@ data/*/mp3/
 data/*/concat/
 data/raw
 
+# Vector database and embeddings
+*.vector
+*.embedding
+*.index
+*.db
+vector_store/
+embeddings/
 
 # Exclude any sensitive config, if present
 project.local.toml

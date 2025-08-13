@@ -1,0 +1,87 @@
+# Fast Tesseract OCR Cleanup Rules
+# Optimized for common OCR errors in academic/technical documents
+# Format: MODE|SEARCH|REPLACE (s=string, r=regex)
+
+# ========================================================================
+# WHITESPACE AND FORMATTING CLEANUP (FAST)
+# ========================================================================
+# Remove trailing whitespace
+r|[ \t]+$||
+# Remove leading whitespace  
+r|^[ \t]+||
+# Normalize multiple spaces to single space
+r|[ \t]{2,}| |
+# Fix excessive newlines
+r|\n{3,}|\n\n|
+# Remove carriage returns
+r|\r||
+# Fix hyphenated line breaks (common in PDFs)
+r|([a-z])-\s*\n\s*([a-z])|$1$2|
+# Fix punctuation separated by newlines
+r|\n([,.;:?!])|$1|
+
+# ========================================================================
+# COMMON OCR CHARACTER MISRECOGNITION (VERY FAST STRING REPLACEMENTS)
+# ========================================================================
+# Common ligatures
+s|ﬁ|fi|
+s|ﬂ|fl|
+s|ﬀ|ff|
+s|ﬃ|ffi|
+s|ﬄ|ffl|
+
+# Quote normalization
+s|"|"|
+s|"|"|
+s|'|'|
+s|'|'|
+
+# Dash normalization
+s|—|--|
+s|–|--|
+s|…|...|
+
+# Common digit/letter confusion
+s| 0 | O |
+s| O | 0 |
+s| 1 | I |
+s| I | 1 |
+s| 5 | S |
+s| S | 5 |
+
+# ========================================================================
+# TECHNICAL DOCUMENT SPECIFIC
+# ========================================================================
+# Fix common technical abbreviations for TTS
+s|I/O|I O|
+s|CPU|C P U|
+s|GPU|G P U|
+s|RAM|R A M|
+s|ROM|R O M|
+s|API|A P I|
+s|URL|U R L|
+s|HTML|H T M L|
+s|HTTP|H T T P|
+s|USB|U S B|
+s|SSD|S S D|
+s|HDD|H D D|
+
+# Mathematical symbols to text
+s|±|plus or minus|
+s|×|times|
+s|÷|divided by|
+s|≤|less than or equal to|
+s|≥|greater than or equal to|
+s|≠|not equal to|
+s|∞|infinity|
+s|°|degrees|
+
+# ========================================================================
+# FINAL CLEANUP (FAST)
+# ========================================================================
+# Remove double spaces that might have been created
+r|  +| |
+# Remove space before punctuation
+r| +([,.;:?!])|$1|
+# Ensure single space after punctuation
+r|([,.;:?!])([A-Za-z])|$1 $2|

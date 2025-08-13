@@ -1,0 +1,276 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+function clean_tesseract_text_file() {
+
+    # ALL locals at top
+
+    local input_file="${1:-}"
+
+    if [[ -z "$input_file" ]]; then
+        echo "clean_text_with_sed_helper: missing input file" >&2
+        return 1
+    fi
+
+    if [[ ! -f "$input_file" ]]; then
+        echo "clean_text_with_sed_helper: file not found: $input_file" >&2
+        return 1
+    fi
+
+    sed \
+        -e 's/[ \t]*$//' \
+        -e 's/^[ \t]*//' \
+        -e 's/[ \t]\+/ /g' \
+        -e 's/\r//g' \
+        -e '/^[ \t]*$/d' \
+        -e 's/ﬁ/fi/g' \
+        -e 's/ﬂ/fl/g' \
+        -e 's/ﬀ/ff/g' \
+        -e 's/ﬃ/ffi/g' \
+        -e 's/ﬄ/ffl/g' \
+        -e 's/ﬆ/st/g' \
+        -e 's/ﬅ/ft/g' \
+        -e 's/—/--/g' \
+        -e 's/–/--/g' \
+        -e 's/…/.../g' \
+        -e "s/'/'/g" \
+        -e "s/'/'/g" \
+        -e 's/"/"/g' \
+        -e 's/"/"/g' \
+        -e 's/\b[Ll] [Ll] [Mm]\b/LLM/g' \
+        -e 's/\b[Aa] [Ii]\b/AI/g' \
+        -e 's/\b[Mm] [Ll]\b/ML/g' \
+        -e 's/\b[Nn] [Ll] [Pp]\b/NLP/g' \
+        -e 's/\b[Rr] [Ll]\b/RL/g' \
+        -e 's/\b[Ii] [Tt] [Gg]\b/ITG/g' \
+        -e 's/\b[Mm] [Dd] [Pp]\b/MDP/g' \
+        -e 's/\b[Cc] [Oo] [Tt]\b/CoT/g' \
+        -e 's/\b[Ss] [Ff] [Tt]\b/SFT/g' \
+        -e 's/\b[Ll] [Rr] [Mm]\b/LRM/g' \
+        -e 's/\b[Qq] [Aa]\b/QA/g' \
+        -e 's/\b[SsCc] [Mm] [Mm]\b/SMM/g' \
+        -e 's/\b[CcGg] [Pp] [Uu]\b/CPU/g' \
+        -e 's/\b[Rr] [Aa] [Mm]\b/RAM/g' \
+        -e 's/\b[Rr] [Oo] [Mm]\b/ROM/g' \
+        -e 's/\b[Aa] [Pp] [Ii]\b/API/g' \
+        -e 's/\b[Ii] [Oo]\b/I\/O/g' \
+        -e 's/\b[Uu] [Rr] [Ll]\b/URL/g' \
+        -e 's/\b[Hh] [Tt] [Mm] [Ll]\b/HTML/g' \
+        -e 's/\b[Hh] [Tt] [Tt] [Pp]\b/HTTP/g' \
+        -e 's/\b[Uu] [Ss] [Bb]\b/USB/g' \
+        -e 's/\b[Ss] [Ss] [Dd]\b/SSD/g' \
+        -e 's/\b[Hh] [Dd] [Dd]\b/HDD/g' \
+        -e 's/\b[Bb] [Ii] [Oo] [Ss]\b/BIOS/g' \
+        -e 's/\b[Uu] [Ee] [Ff] [Ii]\b/UEFI/g' \
+        -e 's/\b[Vv] [Mm] [Mm]\b/VMM/g' \
+        -e 's/\b[Oo] [Ss]\b/OS/g' \
+        -e 's/\b[Oo] [Ee] [Mm]\b/OEM/g' \
+        -e 's/\b[Ee] [Cc] [Cc]\b/ECC/g' \
+        -e 's/\b[Ss] [Mm] [Ii]\b/SMI/g' \
+        -e 's/\b[Ii] [Dd] [Tt] [Ss]\b/IDTs/g' \
+        -e 's/\b[Qq] [Oo] [Ss]\b/QoS/g' \
+        -e 's/\b[Jj] [Ss] [Oo] [Nn]\b/JSON/g' \
+        -e 's/\b[Xx] [Mm] [Ll]\b/XML/g' \
+        -e 's/\b[Cc] [Ss] [Vv]\b/CSV/g' \
+        -e 's/\b[Ss] [Qq] [Ll]\b/SQL/g' \
+        -e 's/\b[Tt] [Cc] [Pp]\b/TCP/g' \
+        -e 's/\b[Uu] [Dd] [Pp]\b/UDP/g' \
+        -e 's/\b[Ss] [Ss] [Hh]\b/SSH/g' \
+        -e '/^no best words!!*$/d' \
+        -e '/^Preprint$/d' \
+        -e '/^Detected [0-9]\+ diacritics$/d' \
+        -e '/^[[:space:]]*no best words!!*[[:space:]]*$/d' \
+        -e 's/no best words!!*//g' \
+        -e 's/\bPreprint\b//g' \
+        -e 's/\bDetected [0-9]\+ diacritics\b//g' \
+        -e '/^\s*\([[:punct:]]\|[[:space:]]\)*\s*$/d' \
+        -e '/^[[:punct:][:space:]]*$/d' \
+        -e 's/\b[Oo][Cc][Rr]\s*[Ee]rror\b//gi' \
+        -e 's/\b[Tt]esseract\s*[Ee]rror\b//gi' \
+        -e 's/\b[Tt]esseract\s*[Ww]arning\b//gi' \
+        -e 's/\b[Oo][Cc][Rr]\s*[Ww]arning\b//gi' \
+        -e 's/\b[Cc]onfidence\s*:\s*[0-9]\+\%*\b//gi' \
+        -e 's/\b[Pp]age\s*[0-9]\+\s*of\s*[0-9]\+\b//gi' \
+        -e 's/\b[Dd]raft\b//gi' \
+        -e 's/\b[Ww]atermark\b//gi' \
+        -e 's/\b[Cc]opyright\s*©\?\s*[0-9]\{4\}\b//gi' \
+        -e 's/\b[Dd]o\s*[Nn]ot\s*[Dd]istribute\b//gi' \
+        -e 's/\b[Cc]onfidential\b//gi' \
+        -e 's/\b[Ii]nternal\s*[Uu]se\s*[Oo]nly\b//gi' \
+        -e 's/^\s*[|]\+\s*$//g' \
+        -e 's/^\s*[-_=]\{3,\}\s*$//g' \
+        -e 's/^\s*[.]\{3,\}\s*$//g' \
+        -e 's/\([a-z]\)\s\+\([A-Z]\)/\1 \2/g' \
+        -e 's/\[[0-9]\+\(,\s*[0-9]\+\)*\]//g' \
+        -e 's/\[\([0-9]\+\)\]/citation \1/g' \
+        -e 's/\bFigure\s\+\([0-9]\+\):/Figure \1 shows/g' \
+        -e 's/\bTable\s\+\([0-9]\+\):/Table \1 presents/g' \
+        -e 's/\bSection\s\+\([0-9]\+\)/section \1/g' \
+        -e 's/arXiv:\([0-9]\+\.[0-9]\+\)v\?[0-9]*\s*\[\([^]]*\)\]\s*\([0-9]\+\s*[A-Za-z]*\s*[0-9]*\)*/arXiv paper \1/g' \
+        -e 's/\b[Cc]hain-of-[Tt]hought\b/Chain of Thought/g' \
+        -e 's/\b[Ll]arge [Rr]easoning [Mm]odels\b/Large Reasoning Models/g' \
+        -e 's/\b[Ll]arge [Ll]anguage [Mm]odels\b/Large Language Models/g' \
+        -e 's/~~//g' \
+        -e 's/⋅⋅//g' \
+        -e 's/∖↽//g' \
+        -e 's/⊲\+//g' \
+        -e 's/[|]\+//g' \
+        -e 's/—/, /g' \
+        -e 's/–/, /g' \
+        -e 's/"[^"]*"//g' \
+        -e "s/'[^']*'//g" \
+        -e 's/"//g' \
+        -e "s/'//g" \
+        -e 's/`//g' \
+        -e 's/\[[0-9,\s]\+\]//g' \
+        -e 's/\[[^]]*\]//g' \
+        -e 's/([^)]*)//g' \
+        -e 's/0=0+A//g' \
+        -e 's/\bWY\b//g' \
+        -e 's/\bEE\b//g' \
+        -e 's/\bSE\b//g' \
+        -e 's/NIV oie fn oo//g' \
+        -e 's/kp --ofeks\] > Jars) | |//g' \
+        -e 's/wet ∖↽//g' \
+        -e 's/Ee ry//g' \
+        -e 's/Toma |//g' \
+        -e 's/J Specialized Solvers \///g' \
+        -e 's/ANS//g' \
+        -e 's/IN Qi Sk e\. g\.//g' \
+        -e 's/Gonerste n//g' \
+        -e 's/\[Fema (Self consistency) EI//g' \
+        -e 's/Testtime =//g' \
+        -e 's/scaling//g' \
+        -e 's/approaches//g' \
+        -e 's/0 guarantees//g' \
+        -e 's/\[= o Learned a//g' \
+        -e 's/\\ \/ a Cees//g' \
+        -e 's/\.\.\.\.$//g' \
+        -e 's/rea-$//g' \
+        -e 's/soning$//g' \
+        -e 's/\bau-$//g' \
+        -e 's/^toregressively//g' \
+        -e 's/\bim-$//g' \
+        -e 's/^pressive//g' \
+        -e 's/\bsurpris-$//g' \
+        -e 's/^ingly//g' \
+        -e 's/\bsuffi-$//g' \
+        -e 's/^ciently//g' \
+        -e 's/\bcomple-$//g' \
+        -e 's/^tions//g' \
+        -e 's/\bperfor-$//g' \
+        -e 's/^mance//g' \
+        -e 's/\bincom-$//g' \
+        -e 's/^plete//g' \
+        -e 's/\banthro-$//g' \
+        -e 's/^po-$//g' \
+        -e 's/^morphizing//g' \
+        -e 's/\.\!/./' \
+        -e 's/\.\{3,\}/./' \
+        -e 's/\s\+\([,.;:?!]\)/\1/g' \
+        -e 's/\([^.]\)\.\s*\([A-Z]\)/\1. \2/g' \
+        -e 's/\b[Ii]\.e\.\b/that is/g' \
+        -e 's/\be\.g\.\b/for example/g' \
+        -e 's/\bet\s\+al\.\?/and others/g' \
+        -e 's/\bi\.\?e\.\?/that is/g' \
+        -e 's/\be\.\?g\.\?/for example/g' \
+        -e 's/\bvs\.\?/versus/g' \
+        -e 's/\bcf\.\?/compare/g' \
+        -e 's/://g' \
+        -e 's/\.\!/./' \
+        -e 's/!\+/./g' \
+        -e 's/\?\+/./g' \
+        -e 's/[{}]//g' \
+        -e 's/[<>]//g' \
+        -e 's/[*]//g' \
+        -e 's/[#]//g' \
+        -e 's/[%]//g' \
+        -e 's/[&]//g' \
+        -e 's/[+]//g' \
+        -e 's/[=]//g' \
+        -e 's/[_]//g' \
+        -e 's/[\\]//g' \
+        -e 's/[|]//g' \
+        -e 's/[~]//g' \
+        -e 's/[`]//g' \
+        -e 's/[@]//g' \
+        -e 's/[$]//g' \
+        -e 's/[\^]//g' \
+        -e 's/[-][-]/-/g' \
+        -e 's/[-][-][-]\+//g' \
+        -e 's/;\+/,/g' \
+        -e 's/?\+/./g' \
+        -e 's/!\+/./g' \
+        -e 's/\n\+/, /g' \
+        -e ':a;N;$!ba;s/\n/, /g' \
+        -e 's/,\s*,\+/,/g' \
+        -e 's/,\+/,/g' \
+        -e 's/\s\+,/,/g' \
+        -e 's/,\s\+/, /g' \
+        -e 's/^\s*,\s*//' \
+        -e 's/\s*,\s*$//' \
+        -e 's/\bTable\s*of\s*Contents\b//gi' \
+        -e 's/\bReferences\b//gi' \
+        -e 's/\bBibliography\b//gi' \
+        -e 's/\bAppendix\b//gi' \
+        -e 's/\bFigure\s*\([0-9]\+\)[^a-zA-Z]*/Figure \1 shows /g' \
+        -e 's/\bTable\s*\([0-9]\+\)[^a-zA-Z]*/Table \1 presents /g' \
+        -e 's/\bsection\s*\([0-9]\+\)/section \1/g' \
+        -e 's/\bSection\s*\([0-9]\+\)/section \1/g' \
+        -e 's/\bChapter\s*\([0-9]\+\)/chapter \1/g' \
+        -e 's/\bAppendix\s*\([A-Z]\)/appendix \1/g' \
+        -e 's/\bEquation\s*\([0-9]\+\)/equation \1/g' \
+        -e 's/\bAlgorithm\s*\([0-9]\+\)/algorithm \1/g' \
+        -e 's/\bListing\s*\([0-9]\+\)/listing \1/g' \
+        -e 's/\bDeepSeek.s R1/DeepSeek R1/g' \
+        -e 's/\bOpenAl.s/OpenAI/g' \
+        -e 's/\bGemini-2\.5-pro/Gemini 2.5 pro/g' \
+        -e 's/\bClaude 3\.7 Sonnet/Claude 3.7 Sonnet/g' \
+        -e 's/\bR1-Zero/R1 Zero/g' \
+        -e 's/\bGSM8k/GSM 8k/g' \
+        -e 's/\bA\*/A star/g' \
+        -e 's/\bCoT/Chain of Thought/g' \
+        -e 's/\bITG/Intermediate Token Generation/g' \
+        -e 's/\bLRM/Large Reasoning Model/g' \
+        -e 's/\bLLM/Large Language Model/g' \
+        -e 's/\bRL/Reinforcement Learning/g' \
+        -e 's/\bSFT/Supervised Fine Tuning/g' \
+        -e 's/\bMDP/Markov Decision Process/g' \
+        -e 's/arXiv:\s*\([0-9]\+\.[0-9]\+\)/arXiv:\1/g' \
+        -e 's/Section\s\+\([0-9]\+\)/Section \1/g' \
+        -e 's/Figure\s\+\([0-9]\+\)/Figure \1/g' \
+        -e 's/Table\s\+\([0-9]\+\)/Table \1/g' \
+        -e 's/\bx eight six\b/x86/g' \
+        -e 's/\bzero to three\b/0-3/g' \
+        -e 's/\bhexadecimal zero x B two\b/0xB2/g' \
+        -e 's/±/plus or minus/g' \
+        -e 's/×/times/g' \
+        -e 's/÷/divided by/g' \
+        -e 's/≤/less than or equal to/g' \
+        -e 's/≥/greater than or equal to/g' \
+        -e 's/≠/not equal to/g' \
+        -e 's/∞/infinity/g' \
+        -e 's/°/degrees/g' \
+        -e 's/√/sqrt/g' \
+        -e 's/α/alpha/g' \
+        -e 's/β/beta/g' \
+        -e 's/γ/gamma/g' \
+        -e 's/δ/delta/g' \
+        -e 's/ε/epsilon/g' \
+        -e 's/θ/theta/g' \
+        -e 's/λ/lambda/g' \
+        -e 's/μ/mu/g' \
+        -e 's/π/pi/g' \
+        -e 's/σ/sigma/g' \
+        -e 's/τ/tau/g' \
+        -e 's/φ/phi/g' \
+        -e 's/ω/omega/g' \
+        -e 's/ \+/ /g' \
+        -e 's/ \([,.;:?!]\)/\1/g' \
+        -e 's/\([,.;:?!]\)\([A-Za-z]\)/\1 \2/g' \
+        -- "$input_file"
+
+}
+
+clean_tesseract_text_file "$@"
