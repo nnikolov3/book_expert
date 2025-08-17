@@ -39,4 +39,8 @@ data/raw/*.pdf
 .shellcheck*
 *.bash-lint.db
 
+# Project documentation and notes
+# (Allow markdown by default; README always included)
+README.md
+
 

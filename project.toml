@@ -13,6 +13,7 @@ version = "0.0.0"
 [paths]
 input_dir = "/home/niko/Dev/book_expert/data/raw"
 output_dir = "/home/niko/Dev/book_expert/data"
+rag_input_dir = "/home/niko/Dev/book_expert/data/rag"
 python_path = "/home/niko/Dev/book_expert/.venv/bin"
 ckpts_path = "/home/niko/Dev/book_expert/F5-TTS/ckpts/"
 png_to_text = "/home/niko/Dev/book_expert/logs/png_to_text"
@@ -76,8 +77,9 @@ api_key_variable = "CEREBRAS_API_KEY"
 max_tokens = 4096
 temperature = 0.5
 top_p = 0.6
-final_model = "qwen-3-235b-a22b"
-unify_model = "qwen-3-coder-480b"
+# Better models for text enhancement with 65,536 context length
+enhancement_models = ["gpt-oss-120b", "llama-3.3-70b", "qwen-3-32b"]
+max_context_length = 65536
 
 # ========================================================================
 [f5_tts_settings]
@@ -100,7 +102,7 @@ fast_fuzz_percent = 5
 
 # ========================================================================
 [clean]
-helper_script = "/home/niko/Dev/book_expert/scripts/helpers/clean_text_with_sed_helper.sh"
+# helper_script = "/home/niko/Dev/book_expert/scripts/helpers/clean_text_with_sed_helper.sh"  # Legacy - no longer used
 
 # ========================================================================
 [retry]

@@ -1,0 +1,12 @@
+{
+    "file_name": "test_book.json",
+    "file_hash": "test123",
+    "processed_date": "2025-08-14T01:00:00.000000",
+    "total_pages": 1,
+    "processed": "2025-08-14",
+    "name": "Test Book",
+    "content": {
+        "ocr": "This is test OCR content with some technical information.",
+        "pdf_text": "This is test PDF text content."
+    }
+}
