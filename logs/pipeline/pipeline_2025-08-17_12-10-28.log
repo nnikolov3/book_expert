@@ -1,0 +1,26 @@
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Starting pipeline in: /home/niko/Dev/book_expert
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Log file: /home/niko/Dev/book_expert/logs/pipeline/pipeline_2025-08-17_12-10-28.log
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Found go at /usr/bin/go
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Found shellcheck at /home/niko/.local/share/nvim/mason/bin/shellcheck
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Found jq at /usr/bin/jq
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Found yq at /home/niko/.local/share/nvim/mason/bin/yq
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Checking project configuration...
+[Sun Aug 17 12:10:28 PM PDT 2025] PASS: project.toml syntax valid
+[Sun Aug 17 12:10:28 PM PDT 2025] PASS: go.mod verification passed
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Running Bash script quality checks...
+[Sun Aug 17 12:10:28 PM PDT 2025] PASS: ShellCheck analysis passed
+[Sun Aug 17 12:10:28 PM PDT 2025] PASS: Bash syntax check passed
+[Sun Aug 17 12:10:28 PM PDT 2025] INFO: Running Go code quality checks...
+[Sun Aug 17 12:10:29 PM PDT 2025] PASS: Go formatting check passed
+[Sun Aug 17 12:10:29 PM PDT 2025] PASS: Go vet check passed
+[Sun Aug 17 12:10:29 PM PDT 2025] PASS: Go build check passed
+[Sun Aug 17 12:10:29 PM PDT 2025] INFO: Running Go unit tests...
+[Sun Aug 17 12:10:30 PM PDT 2025] PASS: Go unit tests passed
+[Sun Aug 17 12:10:30 PM PDT 2025] INFO: Checking remaining bash scripts...
+[Sun Aug 17 12:10:30 PM PDT 2025] PASS: Remaining bash scripts pass shellcheck
+[Sun Aug 17 12:10:30 PM PDT 2025] INFO: Skipping code metrics in quick mode
+[Sun Aug 17 12:10:30 PM PDT 2025] INFO: Setting up git hooks...
+[Sun Aug 17 12:10:30 PM PDT 2025] PASS: Git pre-commit hook installed
+[Sun Aug 17 12:10:30 PM PDT 2025] PASS: Git pre-push hook installed
+[Sun Aug 17 12:10:30 PM PDT 2025] PASS: All checks passed! ✅
+[Sun Aug 17 12:10:30 PM PDT 2025] INFO: Pipeline completed successfully in /home/niko/Dev/book_expert
