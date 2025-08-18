@@ -22,7 +22,7 @@ test-quick: ## Run essential checks only (fast)
 	@./scripts/test_pipeline.sh --quick
 
 test-verbose: ## Run pipeline with verbose output
-	@./scripts/test_pipeline.sh --verbose
+	@./scripts/test_pipeline.sh
 
 test-profile: ## Run pipeline with profiling enabled
 	@./scripts/test_pipeline.sh --profile
@@ -33,10 +33,8 @@ build: ## Build all Go binaries
 	@# triple-enhance removed per simplified pipeline
 	@go build -o bin/pdf-to-png ./cmd/pdf-to-png
 	@go build -o bin/png-to-text-tesseract ./cmd/png-to-text-tesseract
-	@go build -o bin/merge-text ./cmd/merge-text
 	@go build -o bin/png-text-augment ./cmd/png-text-augment
-	@go build -o bin/text-to-wav ./cmd/text-to-wav
-	@go build -o bin/wav-to-mp3 ./cmd/wav-to-mp3
+	@go build -o bin/chunk-text ./cmd/chunk-text
 	@echo "Build completed ✅"
 	@echo "Binaries in bin/: $$(ls -1 bin | tr '\n' ' ')"
 

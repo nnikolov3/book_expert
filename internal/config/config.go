@@ -92,6 +92,14 @@ type Config struct {
 		TimeoutSeconds int    `toml:"timeout_duration"`
 	} `toml:"f5_tts_settings"`
 
+	Chunking struct {
+		TargetSize         int  `toml:"target_size"`
+		MaxSize            int  `toml:"max_size"`
+		MinSize            int  `toml:"min_size"`
+		PreferSentences    bool `toml:"prefer_sentences"`
+		PreserveParagraphs bool `toml:"preserve_paragraphs"`
+	} `toml:"chunking"`
+
 	TextConcatenation struct {
 		TextType string `toml:"text_type"`
 	} `toml:"text_concatenation"`

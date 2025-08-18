@@ -1,0 +1,30 @@
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Starting pipeline in: /home/niko/Dev/book_expert
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Log file: /home/niko/Dev/book_expert/logs/pipeline/pipeline_2025-08-17_17-20-10.log
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Found go at /usr/bin/go
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Found shellcheck at /home/niko/.local/share/nvim/mason/bin/shellcheck
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Found jq at /usr/bin/jq
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Found yq at /home/niko/.local/share/nvim/mason/bin/yq
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Checking project configuration...
+[Sun Aug 17 05:20:10 PM PDT 2025] PASS: project.toml syntax valid
+[Sun Aug 17 05:20:10 PM PDT 2025] PASS: go.mod verification passed
+[Sun Aug 17 05:20:10 PM PDT 2025] INFO: Running Bash script quality checks...
+[Sun Aug 17 05:20:11 PM PDT 2025] ERROR: ShellCheck FAILED: ./TTS/recipes/bel-alex73/docker-prepare-start.sh:4:1: warning: Use 'cd ... || exit' or 'cd ... || return' in case cd fails. [SC2164]
+./TTS/recipes/bel-alex73/docker-prepare-start.sh:4:4: warning: Quote this to prevent word splitting. [SC2046]
+./TTS/recipes/bel-alex73/docker-prepare-start.sh:15:8: warning: Quote this to prevent word splitting. [SC2046]
+./TTS/recipes/bel-alex73/docker-prepare-start.sh:16:8: warning: Quote this to prevent word splitting. [SC2046]
+./TTS/recipes/bel-alex73/docker-prepare-start.sh:17:8: warning: Quote this to prevent word splitting. [SC2046]
+./TTS/recipes/bel-alex73/docker-prepare-start.sh:18:8: warning: Quote this to prevent word splitting. [SC2046]\n./TTS/recipes/bel-alex73/docker-prepare/runtime.sh:3:1: warning: Use 'cd ... || exit' or 'cd ... || return' in case cd fails. [SC2164]
+./TTS/recipes/bel-alex73/docker-prepare/runtime.sh:4:17: note: Ranges can only match single chars (mentioned due to duplicates). [SC2102]\n./TTS/recipes/kokoro/tacotron2-DDC/run.sh:19:1: note: The mentioned syntax error was in this simple command. [SC1009]
+./TTS/recipes/kokoro/tacotron2-DDC/run.sh:23:105: error: Couldn't parse this escaped char. Fix to allow more checks. [SC1073]
+./TTS/recipes/kokoro/tacotron2-DDC/run.sh:23:106: error:  Fix any mentioned problems and try again. [SC1072]\n./TTS/recipes/ljspeech/download_ljspeech.sh:4:6: note: Double quote to prevent globbing and word splitting. [SC2086]
+./TTS/recipes/ljspeech/download_ljspeech.sh:13:17: note: Double quote to prevent globbing and word splitting. [SC2086]\n./TTS/recipes/thorsten_DE/download_thorsten_DE.sh:1:1: error: Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive. [SC2148]
+./TTS/recipes/thorsten_DE/download_thorsten_DE.sh:3:8: note: Not following: .env/bin/activate was not specified as input (see shellcheck -x). [SC1091]\n./TTS/recipes/vctk/download_vctk.sh:4:6: note: Double quote to prevent globbing and word splitting. [SC2086]
+./TTS/recipes/vctk/download_vctk.sh:11:9: note: Double quote to prevent globbing and word splitting. [SC2086]\n./TTS/run_bash_tests.sh:1:1: error: Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive. [SC2148]
+./TTS/run_bash_tests.sh:2:1: warning: TF_CPP_MIN_LOG_LEVEL appears unused. Verify use (or export if used externally). [SC2034]\n./TTS/tests/bash_tests/test_compute_statistics.sh:6:76: note: Double quote to prevent globbing and word splitting. [SC2086]
+./TTS/tests/bash_tests/test_compute_statistics.sh:6:125: note: Double quote to prevent globbing and word splitting. [SC2086]\n./.venv/lib/python3.12/site-packages/tqdm/completion.sh:12:16: warning: Prefer mapfile or read -a to split command output (or quote to avoid splitting). [SC2207]
+./.venv/lib/python3.12/site-packages/tqdm/completion.sh:12:92: note: Double quote to prevent globbing and word splitting. [SC2086]
+./.venv/lib/python3.12/site-packages/tqdm/completion.sh:15:16: warning: Prefer mapfile or read -a to split command output (or quote to avoid splitting). [SC2207]
+./.venv/lib/python3.12/site-packages/tqdm/completion.sh:15:391: note: Double quote to prevent globbing and word splitting. [SC2086]\n
+[Sun Aug 17 05:20:11 PM PDT 2025] PASS: Bash syntax check passed
+[Sun Aug 17 05:20:11 PM PDT 2025] INFO: Running Go code quality checks...
+[Sun Aug 17 05:20:12 PM PDT 2025] PASS: Go formatting check passed

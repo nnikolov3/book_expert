@@ -35,7 +35,6 @@ else
 fi
 
 # Pipeline configuration
-declare -g VERBOSE=0
 declare -g PROFILE=0
 declare -g QUICK=0
 declare -ga FAILED_CHECKS=()
@@ -55,14 +54,12 @@ Usage: $0 [OPTIONS]
 Comprehensive testing pipeline for book_expert project.
 
 OPTIONS:
-    --verbose, -v     Enable verbose output
     --profile, -p     Enable code profiling
     --quick, -q       Quick mode (skip heavy tests)
     --help, -h        Show this help message
 
 EXAMPLES:
     $0                    # Run full pipeline
-    $0 --verbose          # Run with detailed output
     $0 --quick            # Run essential checks only
     $0 --profile          # Run with profiling enabled
 
@@ -74,10 +71,6 @@ parse_args()
 {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --verbose|-v)
-                VERBOSE=1
-                shift
-                ;;
             --profile|-p)
                 PROFILE=1
                 shift
@@ -149,75 +142,71 @@ record_failure()
 check_go_code()
 {
     # ALL local variables at the top of function
-    local go_files=""
-    local unformatted=""
     local vet_output=""
     local build_output=""
     local lint_output=""
     local static_output=""
     local vet_check_exit=""
     local build_check_exit=""
-    
+
     log_info "Running Go code quality checks..."
-    
-    go_files=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.git/*")
-    
-    if [[ -z "${go_files}" ]]; then
-        log_info "No Go files found, skipping Go checks"
-        return 0
-    fi
-    
+
     # Go formatting check
-    if ! gofmt -l "${go_files}" | grep -q .; then
+    local unformatted
+    unformatted=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.git/*" -not -path "./TTS/*" -not -path "./.venv/*" -print0 | xargs -0 gofmt -l)
+    if [[ -z "${unformatted}" ]]; then
         log_success "Go formatting check passed"
     else
-        unformatted=$(gofmt -l "${go_files}")
-        record_failure "Go Formatting" "Files need formatting: ${unformatted}"
+        record_failure "Go Formatting" "Files need formatting:\n${unformatted}"
     fi
-    
+
     # Go imports check
     if command -v goimports >/dev/null 2>&1; then
-        if ! goimports -l "${go_files}" | grep -q .; then
+        unformatted=$(find . -name "*.go" -not -path "./vendor/*" -not -path "./.git/*" -not -path "./TTS/*" -not -path "./.venv/*" -print0 | xargs -0 goimports -l)
+        if [[ -z "${unformatted}" ]]; then
             log_success "Go imports check passed"
         else
-            unformatted=$(goimports -l "${go_files}")
-            record_failure "Go Imports" "Files need import formatting: ${unformatted}"
+            record_failure "Go Imports" "Files need import formatting:\n${unformatted}"
         fi
     fi
-    
+
     # Go vet
     vet_output=$(go vet ./... 2>&1)
     vet_check_exit="$?"
+    log_info "Go vet output:\n${vet_output}"
     if [[ "$vet_check_exit" -eq 0 ]]; then
         log_success "Go vet check passed"
     else
         record_failure "Go Vet" "${vet_output}"
     fi
-    
+
     # Go build test
     build_output=$(go build ./... 2>&1)
     build_check_exit="$?"
+    log_info "Go build output:\n${build_output}"
     if [[ "$build_check_exit" -eq 0 ]]; then
         log_success "Go build check passed"
     else
         record_failure "Go Build" "${build_output}"
     fi
-    
+
     # Advanced linting (if available)
     if command -v golangci-lint >/dev/null 2>&1; then
         lint_output=$(golangci-lint run --timeout=5m 2>&1 | head -20)
         lint_exit="$?"
+        log_info "golangci-lint output:\n${lint_output}"
         if [[ "$lint_exit" -eq 0 ]]; then
             log_success "golangci-lint check passed"
         else
             record_failure "golangci-lint" "${lint_output}"
         fi
     fi
-    
+
     # Static analysis (if available)
     if command -v staticcheck >/dev/null 2>&1; then
         static_output=$(staticcheck ./... 2>&1 | head -10)
         static_exit="$?"
+        log_info "staticcheck output:\n${static_output}"
         if [[ "$static_exit" -eq 0 ]]; then
             log_success "staticcheck passed"
         else
@@ -276,7 +265,7 @@ check_bash_scripts()
     log_info "Running Bash script quality checks..."
     
     local bash_files
-    bash_files=$(find . -name "*.sh" -not -path "./.git/*" -not -path "./vendor/*")
+    bash_files=$(find . -name "*.sh" -not -path "./.git/*" -not -path "./vendor/*" -not -path "./TTS/*" -not -path "./.venv/*")
     
     if [[ -z "${bash_files}" ]]; then
         log_info "No Bash scripts found, skipping Bash checks"
@@ -284,41 +273,20 @@ check_bash_scripts()
     fi
     
     # ShellCheck analysis
-    local shellcheck_failed=0
     local shellcheck_output=""
     
-    while IFS= read -r script; do
-        if [[ ${VERBOSE} -eq 1 ]]; then
-            log_info "Checking: ${script}"
-        fi
-        
-        local check_output
-        if ! check_output=$(shellcheck -f gcc "${script}" 2>&1); then
-            shellcheck_failed=1
-            shellcheck_output+="${check_output}\n"
-        fi
-    done <<< "${bash_files}"
-    
-    if [[ ${shellcheck_failed} -eq 0 ]]; then
+    shellcheck_output=$(find . -name "*.sh" -not -path "./.git/*" -not -path "./vendor/*" -not -path "./TTS/*" -not -path "./.venv/*" -print0 | xargs -0 -r shellcheck -f gcc || true)
+    if [[ -z "${shellcheck_output}" ]]; then
         log_success "ShellCheck analysis passed"
     else
         record_failure "ShellCheck" "${shellcheck_output}"
     fi
     
     # Bash syntax check
-    local syntax_failed=0
     local syntax_output=""
     
-    while IFS= read -r script; do
-        if ! bash -n "${script}" 2>/dev/null; then
-            syntax_failed=1
-            local error
-            error=$(bash -n "${script}" 2>&1)
-            syntax_output+="${script}: ${error}\n"
-        fi
-    done <<< "${bash_files}"
-    
-    if [[ ${syntax_failed} -eq 0 ]]; then
+    syntax_output=$(find . -name "*.sh" -not -path "./.git/*" -not -path "./vendor/*" -not -path "./TTS/*" -not -path "./.venv/*" -print0 | xargs -0 -r -n 1 bash -n 2>&1 || true)
+    if [[ -z "${syntax_output}" ]]; then
         log_success "Bash syntax check passed"
     else
         record_failure "Bash Syntax" "${syntax_output}"
@@ -478,47 +446,44 @@ print_summary()
 # Main pipeline execution
 main()
 {
-    # ALL local variables at the top of function
-    local temp_log=""
-    local shellcheck_output=""
-    local shellcheck_exit=""
-    
-    parse_args "$@"
-    setup_environment
-    
-    # Only show verbose output if requested or if there are failures
-    temp_log=$(mktemp)
-    
-    {
-        check_project_config
-        check_bash_scripts
-        check_go_code
-        run_go_tests
-        # Minimal bash script validation (we have very few left)
-        log_info "Checking remaining bash scripts..."
-        shellcheck_output=$(find scripts/ -name "*.sh" -exec shellcheck {} \; 2>&1)
-        shellcheck_exit="$?"
-        
-        if [[ "$shellcheck_exit" -eq 0 ]]; then
-            log_success "Remaining bash scripts pass shellcheck"
-        else
-            record_failure "ShellCheck" "Some bash scripts have issues: $shellcheck_output"
-        fi
-        run_code_metrics
-        setup_git_hooks
-        generate_profile_report
-    } > "${temp_log}" 2>&1
-    
-    # Show output only if verbose or if there were failures
-    if [[ ${VERBOSE} -eq 1 ]] || [[ ${EXIT_CODE} -ne 0 ]]; then
-        cat "${temp_log}"
-    fi
-    
-    rm -f "${temp_log}"
-    
-    print_summary
-    
-    exit ${EXIT_CODE}
+	# ALL local variables at the top of function
+	local shellcheck_output=""
+
+	parse_args "$@"
+	setup_environment
+
+	# Only show verbose output if requested or if there are failures
+	temp_log=$(mktemp)
+
+	{
+		check_project_config
+		check_bash_scripts
+		check_go_code
+		run_go_tests
+		# Minimal bash script validation (we have very few left)
+		log_info "Checking remaining bash scripts..."
+		shellcheck_output=$(find scripts/ -name "*.sh" -exec shellcheck {} \; 2>&1)
+		# shellcheck disable=SC2181
+		if [[ "$?" -eq 0 ]]; then
+			log_success "Remaining bash scripts pass shellcheck"
+		else
+			record_failure "ShellCheck" "Some bash scripts have issues: $shellcheck_output"
+		fi
+		run_code_metrics
+		setup_git_hooks
+		generate_profile_report
+	} > "${temp_log}" 2>&1
+
+	# Show output only if verbose or if there were failures
+	if [[ ${EXIT_CODE} -ne 0 ]]; then
+		cat "${temp_log}"
+	fi
+
+	rm -f "${temp_log}"
+
+	print_summary
+
+	exit ${EXIT_CODE}
 }
 
 # Error handling

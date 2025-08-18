@@ -87,6 +87,13 @@ model = "E2TTS_Base"
 workers = 2
 timeout_duration = 300
 
+[chunking]
+target_size = 150        # Target chunk size for TTS (sweet spot)
+max_size = 200          # Maximum before forced break  
+min_size = 100          # Minimum viable chunk
+prefer_sentences = true  # Break on sentence boundaries
+preserve_paragraphs = true # Keep paragraphs together when possible
+
 [text_concatenation]
 text_type = "unified_text"  # Options: "final_text" or "unified_text"
 
