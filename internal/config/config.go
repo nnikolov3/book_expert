@@ -18,11 +18,13 @@ type Config struct {
 	} `toml:"project"`
 
 	Paths struct {
-		InputDir    string `toml:"input_dir"`
-		OutputDir   string `toml:"output_dir"`
-		RagInputDir string `toml:"rag_input_dir"`
-		PythonPath  string `toml:"python_path"`
-		CkptsPath   string `toml:"ckpts_path"`
+		InputDir     string `toml:"input_dir"`
+		OutputDir    string `toml:"output_dir"`
+		PythonPath   string `toml:"python_path"`
+		CkptsPath    string `toml:"ckpts_path"`
+		TorchModels  string `toml:"torch_models"`
+		PngToText    string `toml:"png_to_text"`
+		CleanText    string `toml:"clean_text"`
 	} `toml:"paths"`
 
 	Directories struct {
@@ -86,11 +88,13 @@ type Config struct {
 		TopP           float64 `toml:"top_p"`
 	} `toml:"cerebras_api"`
 
-	F5TTSSettings struct {
-		Model          string `toml:"model"`
-		Workers        int    `toml:"workers"`
-		TimeoutSeconds int    `toml:"timeout_duration"`
-	} `toml:"f5_tts_settings"`
+	TTSSettings struct {
+		Model           string  `toml:"model"`
+		Workers         int     `toml:"workers"`
+		TimeoutSeconds  int     `toml:"timeout_duration"`
+		GPUMemoryLimitGB float64 `toml:"gpu_memory_limit_gb"`
+		UseGPU          bool    `toml:"use_gpu"`
+	} `toml:"tts_settings"`
 
 	Chunking struct {
 		TargetSize         int  `toml:"target_size"`

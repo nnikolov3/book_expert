@@ -1,3 +1,5 @@
+# GO CODING STANDARD
+
 ## Overview
 
 This document establishes comprehensive Go coding standards for projects, updated as of August 2025 to align with the latest Go best practices (Go 1.23 features, including improved generics and iterators). These standards emphasize **explicit behavior**, **robust error handling**, **maintainable code structure**, and **reliability focus**, while incorporating core design principles such as simplicity, modularity, correctness, and consistency. The refactor focuses on clarity, reduced redundancy, and integration of modern guidelines for readability, security, and performance. All code must adhere to these rules to ensure robustness, testability, and ease of maintenance.

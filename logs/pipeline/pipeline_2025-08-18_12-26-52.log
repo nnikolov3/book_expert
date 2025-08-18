@@ -1,0 +1,22 @@
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Starting pipeline in: /home/niko/Dev/book_expert
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Log file: /home/niko/Dev/book_expert/logs/pipeline/pipeline_2025-08-18_12-26-52.log
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Found go at /usr/bin/go
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Found shellcheck at /home/niko/.local/share/nvim/mason/bin/shellcheck
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Found jq at /usr/bin/jq
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Found yq at /home/niko/.local/share/nvim/mason/bin/yq
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Checking project configuration...
+[Mon Aug 18 12:26:52 PM PDT 2025] PASS: project.toml syntax valid
+[Mon Aug 18 12:26:52 PM PDT 2025] PASS: go.mod verification passed
+[Mon Aug 18 12:26:52 PM PDT 2025] INFO: Running Bash script quality checks...
+[Mon Aug 18 12:26:53 PM PDT 2025] PASS: ShellCheck analysis passed
+[Mon Aug 18 12:26:53 PM PDT 2025] PASS: Bash syntax check passed
+[Mon Aug 18 12:26:53 PM PDT 2025] INFO: Running Go code quality checks...
+[Mon Aug 18 12:26:54 PM PDT 2025] ERROR: Go Formatting FAILED: Files need formatting:\n./cmd/text-to-speech/main_test.go
+./cmd/text-to-speech/main.go
+./internal/config/config.go
+./internal/tts/tts_test.go
+./internal/tts/audio_processor.go
+./internal/tts/tts.go
+./internal/tts/text_processor.go
+./internal/tts/model_engine.go
+./internal/tts/model_downloader.go

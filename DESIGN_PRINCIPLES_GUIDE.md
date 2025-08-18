@@ -39,7 +39,6 @@ This guide defines foundational design principles for coding, system design, and
 - Every line of code should have a reason to be there.
 - To win we need to be a team.
 
-
 ## Clarifications and Operationalization
 
 ### 0) Pre-Code Validation
@@ -48,13 +47,11 @@ This guide defines foundational design principles for coding, system design, and
 - Search the codebase and shared libraries first; prefer reuse or extension over reimplementation.
 - If new code is justified, document why existing solutions are insufficient and how duplication is avoided.
 
-
 ### 1) Simplicity and Clarity
 
 - Strive for the simplest solution that meets requirements.
 - Choose clear names and straightforward control flow over clever constructs.
 - Avoid premature optimization; optimize only after measurement.
-
 
 ### 2) Explicitness
 
@@ -62,13 +59,11 @@ This guide defines foundational design principles for coding, system design, and
 - Prefer explicit data types, explicit dependencies, and explicit interfaces.
 - Avoid hidden side effects and ambiguous behavior.
 
-
 ### 3) Modularity and Abstraction
 
 - Isolate responsibilities into small, composable units.
 - Define clear boundaries and interfaces; favor composition over inheritance.
 - Hide implementation details behind stable interfaces.
-
 
 ### 4) Correctness and Testing
 
@@ -76,13 +71,11 @@ This guide defines foundational design principles for coding, system design, and
 - Cover the happy path and edge cases; test for regressions.
 - Validate inputs at boundaries; fail fast with actionable diagnostics.
 
-
 ### 5) Maintainability and Readability
 
 - Keep functions short, focused, and intention-revealing.
 - Remove dead code and unnecessary abstraction immediately.
 - Prefer standard libraries and well-understood patterns over bespoke solutions.
-
 
 ### 6) Performance with Purpose
 
@@ -90,13 +83,11 @@ This guide defines foundational design principles for coding, system design, and
 - Reduce memory allocations and I/O where it matters.
 - Document performance expectations and validate them routinely.
 
-
 ### 7) Consistency and Convention
 
 - Follow established style guides and project conventions rigorously.
 - Consistent patterns reduce cognitive load and defects.
 - Avoid one-off exceptions unless documented and justified.
-
 
 ### 8) Documentation and Self-Documentation
 
@@ -104,20 +95,17 @@ This guide defines foundational design principles for coding, system design, and
 - Keep documentation synchronized with code and architecture.
 - Provide runnable examples for critical flows and APIs.
 
-
 ### 9) Security and Safety
 
 - Design for secure defaults and least privilege.
 - Validate and sanitize inputs; handle secrets correctly.
 - Log security-relevant events with care; never log secrets.
 
-
 ### 10) Continuous Improvement
 
 - Iterate in small steps; test, lint, format, analyze, refactor, and repeat.
 - Regularly review design decisions; improve where justified.
 - Keep dependencies, tools, and knowledge up to date.
-
 
 ## Process Guidelines
 
@@ -127,13 +115,11 @@ This guide defines foundational design principles for coding, system design, and
 - Identify missing information and plan how to obtain it.
 - Write out the intended logic in plain English before coding.
 
-
 ### Planning and Decomposition
 
 - Break work into minimal, independent, testable tasks.
 - Order tasks by dependency and impact; set up a Kanban or TODO board.
 - After each task: test, lint, format, refactor, and commit.
-
 
 ### Implementation Discipline
 
@@ -141,20 +127,17 @@ This guide defines foundational design principles for coding, system design, and
 - Avoid magic numbers; parameterize via configuration.
 - Keep code paths simple; if logic needs too many conditionals, revisit design.
 
-
 ### Verification Loop
 
 - Test continuously at unit, integration, and end-to-end levels as needed.
 - Validate performance targets on critical paths.
 - Run static analysis, linting, and formatting on every change.
 
-
 ### Housekeeping
 
 - Remove unused files, tools, directories, and stale artifacts.
 - Keep repository structure organized and documentation current.
 - Ensure every line in the codebase has a clear, necessary purpose.
-
 
 ## Practical Checklists
 
@@ -165,7 +148,6 @@ This guide defines foundational design principles for coding, system design, and
 - Interfaces and boundaries are explicit and minimal.
 - Reuse checked: no duplication created; rationale recorded.
 
-
 ### Code Review Gate
 
 - Readable, minimal, and follows conventions.
@@ -173,13 +155,11 @@ This guide defines foundational design principles for coding, system design, and
 - Tests exist and pass; names are intention-revealing; comments explain “why.”
 - Confirms no duplication with existing modules, utilities, or services.
 
-
 ### Testing Gate
 
 - Happy paths and edge cases covered.
 - Regression tests exist for fixed issues.
 - Performance and resource behavior meet expectations.
-
 
 ### Security Gate
 
@@ -187,16 +167,15 @@ This guide defines foundational design principles for coding, system design, and
 - Secrets not logged or exposed; configs parameterized.
 - Permissions limited to least privilege; failure modes are safe.
 
-
 ## Example Application Flow
 
-1) Validate necessity: confirm functionality doesn’t already exist; document reuse vs. build decision.
-2) Define the objective and constraints in plain language.
-3) Identify subproblems; create a dependency-ordered task list.
-4) Implement the smallest task first with tests; run lint/format.
-5) Refactor for clarity and simplicity; remove any unused elements.
-6) Repeat for each task until the objective is met.
-7) Validate performance and security; document final design decisions.
+1. Validate necessity: confirm functionality doesn’t already exist; document reuse vs. build decision.
+2. Define the objective and constraints in plain language.
+3. Identify subproblems; create a dependency-ordered task list.
+4. Implement the smallest task first with tests; run lint/format.
+5. Refactor for clarity and simplicity; remove any unused elements.
+6. Repeat for each task until the objective is met.
+7. Validate performance and security; document final design decisions.
 
 ## Team Principles
 
@@ -205,18 +184,6 @@ This guide defines foundational design principles for coding, system design, and
 - Share knowledge, review constructively, and maintain collective code ownership.
 - Align on the principles above; consistency beats cleverness.
 
-
 ## Closing
 
 These principles are non-negotiable foundations for robust, maintainable, and scalable systems. Apply them rigorously, question complexity, confirm necessity before coding, avoid duplication, and keep improving. Each change should move the system toward simplicity, clarity, and correctness.
-
-<div style="text-align: center">⁂</div>
-
-[^1]: DESIGN_PRINCIPLES.md
-
-[^2]: GO_CODING_STANDARD.md
-
-[^3]: BASH_CODING_STANDARD_CLAUDE.md
-
-[^4]: Design_Principles.md
-

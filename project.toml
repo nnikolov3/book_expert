@@ -13,9 +13,9 @@ version = "0.0.0"
 [paths]
 input_dir = "/home/niko/Dev/book_expert/data/raw"
 output_dir = "/home/niko/Dev/book_expert/data"
-rag_input_dir = "/home/niko/Dev/book_expert/data/rag"
 python_path = "/home/niko/Dev/book_expert/.venv/bin"
-ckpts_path = "/home/niko/Dev/book_expert/F5-TTS/ckpts/"
+ckpts_path = "/home/niko/Dev/book_expert/ckpts"
+torch_models = "/home/niko/Dev/book_expert/torch_models"
 png_to_text = "/home/niko/Dev/book_expert/logs/png_to_text"
 clean_text = "/home/niko/Dev/book_expert/logs/clean_text"
 
@@ -82,10 +82,12 @@ enhancement_models = ["gpt-oss-120b", "llama-3.3-70b", "qwen-3-32b"]
 max_context_length = 65536
 
 # ========================================================================
-[f5_tts_settings]
-model = "E2TTS_Base"
+[tts_settings]
+model = "tts_models/multilingual/multi-dataset/xtts_v2"  # XTTS v2 - best for fine-tuning and narration
 workers = 2
 timeout_duration = 300
+gpu_memory_limit_gb = 5.5
+use_gpu = true
 
 [chunking]
 target_size = 150        # Target chunk size for TTS (sweet spot)

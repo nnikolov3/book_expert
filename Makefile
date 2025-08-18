@@ -35,6 +35,7 @@ build: ## Build all Go binaries
 	@go build -o bin/png-to-text-tesseract ./cmd/png-to-text-tesseract
 	@go build -o bin/png-text-augment ./cmd/png-text-augment
 	@go build -o bin/chunk-text ./cmd/chunk-text
+	@go build -o bin/text-to-speech ./cmd/text-to-speech
 	@echo "Build completed ✅"
 	@echo "Binaries in bin/: $$(ls -1 bin | tr '\n' ' ')"
 
